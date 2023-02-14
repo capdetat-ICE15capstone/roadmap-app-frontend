@@ -6,6 +6,7 @@ import RoadmapCreatePage from './pages/RoadmapCreatePage'
 import Setting from './pages/Setting'
 import Profile from './pages/Profile'
 import Calendar from './pages/Calendar'
+import NoPage from './pages/NoPage'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
             <Route path="setting" element={<Setting/>}></Route>
             <Route path="profile" element={<Profile/>}/>
             <Route path="calendar" element={<Calendar/>}/>
+            <Route path="*" element={<NoPage/>}/>
           </Route>
         </Routes>
       </BrowserRouter>

@@ -11,7 +11,8 @@ module.exports = {
         'nav-gray': "#5E646D"
       },
       fontFamily: {
-        "nunito-sans": ['Nunito Sans', "sans-serif"]
+        "nunito-sans": ['Nunito Sans', "sans-serif"],
+        "inter": ['Inter', "sans-serif"]
       }
     },
   },
