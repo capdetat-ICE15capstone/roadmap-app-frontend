@@ -37,22 +37,42 @@ const Login = () => {
                         </p>
                         <form className="px-8">
                             <div className="mb-4">
-                                <input class="shadow appearance-none border rounded-3xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="username" type="text" placeholder="Username" />
+                                <input
+                                    type="username"
+                                    className="shadow appearance-none border rounded-3xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    id="InputEmail"
+                                    placeholder="Username"
+                                />
                             </div>
-                            <div className="mb-6">
-                                <input className="shadow appearance-none border rounded-3xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="password" type="password" placeholder="******************" />
+                            <div className="mb-4">
+                                <input
+                                    type="password"
+                                    className="shadow appearance-none border rounded-3xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                    id="InputPassword"
+                                    placeholder="********"
+                                />
                             </div>
-                            <div className="flex items-center justify-between mb-6">
-                                <div className="flex items-center mr-4">
-                                    <input id="checkbox" type="checkbox" value="" class="w-4 h-4S bg-gray-100 border-gray-300 rounded" />
-                                    <label for="checkbox" class="ml-2 text-xs font-medium text-gray-400">Remember Me</label>
+                            <div className="flex justify-between mb-4">
+                                <div>
+                                    <label>
+                                        <input
+                                            type="checkbox"
+                                            className="w-4 h-4S bg-gray-100 border-gray-300 rounded"
+                                            id="CheckRememberMe"
+                                        />
+                                        <a className="ml-2 text-xs font-medium text-gray-400">
+                                            Remember Me
+                                        </a>
+                                    </label>
                                 </div>
-                                <a className="inline-block align-center font-bold text-xs text-blue-900" href="#">
-                                    Forgot Password?
-                                </a>
+                                <div>
+                                    <a className="font-bold text-xs text-blue-900" href="#">
+                                        Forgot Password?
+                                    </a>
+                                </div>
                             </div>
                             <div className="flex items-center justify-center">
-                                <button className="bg-blue-900 text-white font-bold py-2 px-16 rounded-lg focus:outline-none focus:shadow-outline" type="button">
+                                <button type="submit" className="bg-blue-900 text-white shadow font-bold py-2 px-16 rounded-lg focus:outline-none focus:shadow-outline">
                                     Log In
                                 </button>
                             </div>
@@ -80,7 +100,6 @@ const Login = () => {
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </>
