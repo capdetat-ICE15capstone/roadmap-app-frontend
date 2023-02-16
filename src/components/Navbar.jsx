@@ -14,12 +14,12 @@ const NavItem = ( props ) => {
   // iconClass, navLinkClass, SvgIcon, to, parentDivClass, childDivClass
   return (
     <>
-      <div className={`p-5 flex justify-center content-middle ${props.parentDivClass}`}>
+      <NavLink className={`py-5 flex justify-center content-middle hover:bg-yellow-500 hover:scale-105 transition duration-200 ${props.parentDivClass}`} to={props.to}>
         <div className={`overflow-hidden whitespace-nowrap flex ${props.childDivClass}`}>
           <props.SvgIcon className={`w-6 h-auto inline ${props.iconClass}`}/>
-          <NavLink className={`font-nunito-sans text-white font-bold ml-2 justify-self-center ${props.navLinkClass}`} to={props.to}>{props.displayName}</NavLink>
+          <div className={`font-nunito-sans text-white font-bold ml-2 justify-self-center ${props.navLinkClass}`}>{props.displayName}</div>
         </div>
-      </div>
+      </NavLink>
     </>
   )
 }
@@ -27,8 +27,8 @@ const NavItem = ( props ) => {
 const Navbar = () => {
   return (
     <>
-      <div className="flex fixed">
-        <div className="flex flex-col h-screen bg-nav-black justify-between">
+      <div className="flex fixed h-screen w-screen">
+        <div className="flex flex-col h-screen bg-nav-black justify-between w-0 md:w-36">
           <div className="flex flex-col">
             <Logo className="justify-self-center self-center h-20"/>
             <NavItem SvgIcon={HomeLogo} displayName="Home" to="/"/>
@@ -36,12 +36,12 @@ const Navbar = () => {
             <NavItem SvgIcon={CalendarLogo} displayName="Calendar" to="/calendar"/>
           </div>
           <NavItem SvgIcon={UserLogo} displayName="Username" to="/profile" 
-                  parentDivClass="bg-nav-gray py-7"/>
+                  parentDivClass="bg-nav-gray w-0 md:w-36"/>
         </div>
-        <div className="flex flex-col">
-            <div className="w-screen h-20 bg-nav-gray p-4 flex">
+        <div className="flex flex-col w-full">
+            <div className="h-20 bg-nav-gray p-4 flex justify-end">
               <div className="flex">
-                <BellIcon className="self-center w-10 px-2"/>
+                <BellIcon className="self-center w-10 px-2 hover:scale-110 hover:text-yellow-500 focus:text-red-500"/>
                 <BookIcon className="self-center px-2 w-10"/>
               </div>
             </div>
