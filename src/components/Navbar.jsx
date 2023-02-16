@@ -14,12 +14,12 @@ const NavItem = (props) => {
   // iconClass, navLinkClass, SvgIcon, to, parentDivClass, childDivClass
   return (
     <>
-      <div className={`p-5 flex justify-center content-middle ${props.parentDivClass}`}>
+      <NavLink className={`py-5 flex justify-center content-middle hover:bg-yellow-500 hover:scale-105 transition duration-200 ${props.parentDivClass}`} to={props.to}>
         <div className={`overflow-hidden whitespace-nowrap flex ${props.childDivClass}`}>
           <props.SvgIcon className={`w-6 h-auto inline ${props.iconClass}`} />
           <NavLink className={`font-nunito-sans text-white font-bold ml-2 justify-self-center ${props.navLinkClass}`} to={props.to}>{props.displayName}</NavLink>
         </div>
-      </div>
+      </NavLink>
     </>
   )
 }
@@ -27,8 +27,8 @@ const NavItem = (props) => {
 const Navbar = () => {
   return (
     <>
-      <div className="flex">
-        <div className="sticky top-0 left-0 flex flex-col h-screen bg-nav-black justify-between">
+      <div className="flex fixed h-screen w-screen">
+        <div className="flex flex-col h-screen bg-nav-black justify-between w-0 md:w-36">
           <div className="flex flex-col">
             <Logo className="justify-self-center self-center h-20" />
             <NavItem SvgIcon={HomeLogo} displayName="Home" to="/" />
@@ -39,9 +39,12 @@ const Navbar = () => {
             parentDivClass="bg-nav-gray py-7" />
         </div>
         <div className="flex flex-col grow">
-          <div className="sticky top-0 left-0 h-20 bg-nav-gray p-4 flex">
-            <BellIcon className="self-center w-10 px-2" />
-            <BookIcon className="self-center px-2 w-10" />
+          <div className="sticky top-0 left-0 h-20 bg-nav-gray p-4 flex justify-end">
+            <div className="flex">
+              <BellIcon className="self-center w-10 px-2 hover:scale-110 transition duration-300" />
+              <BookIcon className="self-center px-2 w-10 hover:scale-110 transition duration-300" />
+            </div>
+            
           </div>
           <Outlet />
         </div>
