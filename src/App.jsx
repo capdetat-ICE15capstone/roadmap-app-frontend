@@ -7,6 +7,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { lazy, Suspense } from "react";
 
 const Login = lazy(() => import("./pages/Login"));
+const Signup = lazy(() => import("./pages/Signup"));
 const RoadmapCreatePage = lazy(() => import("./pages/RoadmapCreatePage"));
 const Setting = lazy(() => import("./pages/Setting"));
 const Profile = lazy(() => import("./pages/Profile"));
@@ -26,7 +27,15 @@ function App() {
                   <RoadmapCreatePage />
                 </Suspense>
               }
-            />
+            ></Route>
+            <Route
+              path="signup"
+              element={
+                <Suspense fallback={<Spinner/>}>
+                  <Signup />
+                </Suspense>
+              }
+            ></Route>
             <Route
               path="login"
               element={
