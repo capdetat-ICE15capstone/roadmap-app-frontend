@@ -12,7 +12,7 @@ module.exports = {
       },
       fontFamily: {
         "nunito-sans": ['Nunito Sans', "sans-serif"]
-      }
+      },
     },
   },
   plugins: [],
