@@ -17,7 +17,7 @@ const NavItem = (props) => {
       <NavLink className={`py-5 flex justify-center content-middle hover:bg-yellow-500 hover:scale-105 transition duration-200 ${props.parentDivClass}`} to={props.to}>
         <div className={`overflow-hidden whitespace-nowrap flex ${props.childDivClass}`}>
           <props.SvgIcon className={`w-6 h-auto inline ${props.iconClass}`} />
-          <NavLink className={`font-nunito-sans text-white font-bold ml-2 justify-self-center ${props.navLinkClass}`} to={props.to}>{props.displayName}</NavLink>
+          <div className={`font-nunito-sans text-white font-bold ml-2 justify-self-center ${props.navLinkClass}`} to={props.to}>{props.displayName}</div>
         </div>
       </NavLink>
     </>
