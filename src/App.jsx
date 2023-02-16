@@ -1,11 +1,7 @@
 import "./App.css";
 import Navbar from "./components/Navbar";
 import Feed from "./pages/Feed";
-// import Login from "./pages/Login";
-// import RoadmapCreatePage from "./pages/RoadmapCreatePage";
-// import Setting from "./pages/Setting";
-// import Profile from "./pages/Profile";
-// import Calendar from "./pages/Calendar";
+import Spinner from './components/Spinner'
 import NoPage from "./pages/NoPage";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { lazy, Suspense } from "react";
@@ -26,7 +22,7 @@ function App() {
             <Route
               path="createRoadMap"
               element={
-                <Suspense fallback={<h1>Loading</h1>}>
+                <Suspense fallback={<Spinner/>}>
                   <RoadmapCreatePage />
                 </Suspense>
               }
@@ -34,7 +30,7 @@ function App() {
             <Route
               path="login"
               element={
-                <Suspense fallback={<h1>Loading</h1>}>
+                <Suspense fallback={<Spinner/>}>
                   <Login />
                 </Suspense>
               }
@@ -42,7 +38,7 @@ function App() {
             <Route
               path="setting"
               element={
-                <Suspense fallback={<h1>Loading</h1>}>
+                <Suspense fallback={<Spinner/>}>
                   <Setting />{" "}
                 </Suspense>
               }
@@ -50,7 +46,7 @@ function App() {
             <Route
               path="profile"
               element={
-                <Suspense fallback={<h1>Loading</h1>}>
+                <Suspense fallback={<Spinner/>}>
                   <Profile />{" "}
                 </Suspense>
               }
@@ -58,7 +54,7 @@ function App() {
             <Route
               path="calendar"
               element={
-                <Suspense fallback={<h1>Loading</h1>}>
+                <Suspense fallback={<Spinner/>}>
                   <Calendar />{" "}
                 </Suspense>
               }
