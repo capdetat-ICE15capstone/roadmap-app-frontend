@@ -14,7 +14,7 @@ const Signup = () => {
             <form>
               <div className="flex flex-col space-y-2 mb-4">
                 <div className="flex flex-row justify-between space-x-4">
-                  <lable>
+                  <label>
                     <p className="text-gray-600 text-xs mb-1">
                       First Name
                     </p>
@@ -24,8 +24,8 @@ const Signup = () => {
                       id="InputFirstName"
                       placeholder="First Name"
                     />
-                  </lable>
-                  <lable>
+                  </label>
+                  <label>
                     <p className="text-gray-600 text-xs mb-1">
                       Last Name
                     </p>
@@ -35,10 +35,10 @@ const Signup = () => {
                       id="InputLastName"
                       placeholder="Last Name"
                     />
-                  </lable>
+                  </label>
                 </div>
                 <div className="flex flex-col">
-                  <lable>
+                  <label>
                     <p className="text-gray-600 text-xs mb-1">
                       Username
                     </p>
@@ -48,10 +48,10 @@ const Signup = () => {
                       id="InputUsername"
                       placeholder="Username"
                     />
-                  </lable>
+                  </label>
                 </div>
                 <div className="flex flex-row justify-between space-x-4">
-                  <lable>
+                  <label>
                     <p className="text-gray-600 text-xs mb-1">
                       Password
                     </p>
@@ -61,8 +61,8 @@ const Signup = () => {
                       id="InputPassword"
                       placeholder="********"
                     />
-                  </lable>
-                  <lable>
+                  </label>
+                  <label>
                     <p className="text-gray-600 text-xs mb-1">
                       Confirm Password
                     </p>
@@ -72,7 +72,7 @@ const Signup = () => {
                       id="InputPasswordConfirm"
                       placeholder="********"
                     />
-                  </lable>
+                  </label>
                 </div>
               </div>
               <div className="flex flex-col space-y-2">
@@ -83,7 +83,10 @@ const Signup = () => {
                     id="CheckAgree"
                   />
                   <a className="ml-2 text-xs font-medium text-gray-400">
-                    I have agreed to <a href="#" className="font-bold"> ayayayayay </a>
+                    I have agreed to
+                  </a>
+                  <a href="#" className="ml-2 text-xs font-bold text-gray-400">
+                    ayayayayayaya
                   </a>
                 </label>
                 <button type="submit" className="bg-blue-900 text-white shadow font-bold py-2 grow rounded-3xl focus:outline-none focus:shadow-outline">
