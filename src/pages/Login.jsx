@@ -38,10 +38,12 @@ const Login = () => {
                                     TASK successfully
                                 </p>
                             </div>
-                            <div className="flex items-center justify-center mb-4">
-                                <button className="text-white bg-red-500 px-12 py-2 font-bold rounded-lg text-sm" type="button">
-                                    Sign Up
-                                </button>
+                            <div className="flex items-center justify-center mb-2">
+                                <a href="/signup">
+                                    <button className="text-white bg-red-500 px-12 py-2 font-bold rounded-lg text-sm" type="button" href="/signup">
+                                        Sign Up
+                                    </button>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -49,14 +51,14 @@ const Login = () => {
                         <p className="flex justify-center mb-4 text-3xl font-bold text-slate-600">
                             USER LOGIN
                         </p>
-                        <form id="login-form" onSubmit={ handleSubmit }>
+                        <form id="login-form" onSubmit={handleSubmit}>
                             <div className="flex flex-col space-y-4 mb-4">
                                 <input
                                     type="username"
                                     className="shadow appearance-none border rounded-3xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                     id="InputEmail"
                                     placeholder="Username"
-                                    onChange={ (event) =>
+                                    onChange={(event) =>
                                         setUsername(event.target.value)
                                     }
                                 />
@@ -65,7 +67,7 @@ const Login = () => {
                                     className="shadow appearance-none border rounded-3xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                     id="InputPassword"
                                     placeholder="********"
-                                    onChange={ (event) =>
+                                    onChange={(event) =>
                                         setPassword(event.target.value)
                                     }
                                 />
@@ -77,7 +79,7 @@ const Login = () => {
                                             type="checkbox"
                                             className="w-4 h-4S bg-gray-100 border-gray-300 rounded"
                                             id="CheckRememberMe"
-                                            onChange={ () => setRememberMe(!rememberMe) }
+                                            onChange={() => setRememberMe(!rememberMe)}
                                         />
                                         <a className="ml-2 text-xs font-medium text-gray-400">
                                             Remember Me
