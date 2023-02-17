@@ -32,19 +32,17 @@ const Login = () => {
                         </div>
                     </div>
                     <div className="flex flex-col m-6">
-                        <p className="text-center mb-4 text-3xl font-bold text-slate-600">
+                        <p className="flex justify-center mb-4 text-3xl font-bold text-slate-600">
                             USER LOGIN
                         </p>
-                        <form className="px-8">
-                            <div className="mb-4">
+                        <form>
+                            <div className="flex flex-col space-y-4 mb-4">
                                 <input
                                     type="username"
                                     className="shadow appearance-none border rounded-3xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                     id="InputEmail"
                                     placeholder="Username"
                                 />
-                            </div>
-                            <div className="mb-4">
                                 <input
                                     type="password"
                                     className="shadow appearance-none border rounded-3xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -52,8 +50,8 @@ const Login = () => {
                                     placeholder="********"
                                 />
                             </div>
-                            <div className="flex justify-between mb-4">
-                                <div>
+                            <div className="flex flex-col mb-4">
+                                <div className="flex flex-row  justify-between ">
                                     <label>
                                         <input
                                             type="checkbox"
@@ -64,15 +62,15 @@ const Login = () => {
                                             Remember Me
                                         </a>
                                     </label>
-                                </div>
-                                <div>
-                                    <a className="font-bold text-xs text-blue-900" href="#">
-                                        Forgot Password?
-                                    </a>
+                                    <div>
+                                        <a className="font-bold text-xs text-blue-900" href="#">
+                                            Forgot Password?
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="flex items-center justify-center">
-                                <button type="submit" className="bg-blue-900 text-white shadow font-bold py-2 px-16 rounded-lg focus:outline-none focus:shadow-outline">
+                            <div className="flex flex-col">
+                                <button type="submit" className="bg-blue-900 text-white shadow font-bold py-2 rounded-lg">
                                     Log In
                                 </button>
                             </div>
@@ -82,7 +80,7 @@ const Login = () => {
                                 ---------------- OR ----------------
                             </p>
                         </div>
-                        <div className="flex flex-col mb-2 mx-8">
+                        <div className="flex flex-col mb-2">
                             <div className="flex items-center justify-center mb-4">
                                 <button className="bg-transparent grow text-gray-600 border border-grey-500 py-2 font-semilight rounded-lg text-sm" type="button">
                                     Continue with Google
