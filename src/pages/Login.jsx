@@ -1,8 +1,22 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import { ReactComponent as Logo } from "../assets/logo-big.svg"
 
 const Login = () => {
+
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [rememberMe, setRememberMe] = useState(false);
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        console.log(username, password, rememberMe);
+        document.getElementById("login-form").reset();
+        setUsername("");
+        setPassword("");
+        setRememberMe(false);
+    };
+
     return (
         <>
             <div className="m-auto">
@@ -35,19 +49,25 @@ const Login = () => {
                         <p className="flex justify-center mb-4 text-3xl font-bold text-slate-600">
                             USER LOGIN
                         </p>
-                        <form>
+                        <form id="login-form" onSubmit={ handleSubmit }>
                             <div className="flex flex-col space-y-4 mb-4">
                                 <input
                                     type="username"
                                     className="shadow appearance-none border rounded-3xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                     id="InputEmail"
                                     placeholder="Username"
+                                    onChange={ (event) =>
+                                        setUsername(event.target.value)
+                                    }
                                 />
                                 <input
                                     type="password"
                                     className="shadow appearance-none border rounded-3xl w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                                     id="InputPassword"
                                     placeholder="********"
+                                    onChange={ (event) =>
+                                        setPassword(event.target.value)
+                                    }
                                 />
                             </div>
                             <div className="flex flex-col mb-4">
@@ -57,6 +77,7 @@ const Login = () => {
                                             type="checkbox"
                                             className="w-4 h-4S bg-gray-100 border-gray-300 rounded"
                                             id="CheckRememberMe"
+                                            onChange={ () => setRememberMe(!rememberMe) }
                                         />
                                         <a className="ml-2 text-xs font-medium text-gray-400">
                                             Remember Me
