@@ -15,7 +15,10 @@ const Signup = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    
+    if (firstName === "" || lastName === "" || username === "" || password === "" || passwordConfirm === "") {
+      console.log("all form must be filled");
+      return;
+    }
     if (specialChars.test(firstName)) {
       console.log("invalid first name")
       return;
@@ -40,11 +43,10 @@ const Signup = () => {
       console.log("password does not match")
       return;
     }
-    if (agreement) {
+    if (!agreement) {
       console.log("agreement must be set to TRUE")
       return;
     }
-
     console.log(firstName, lastName, username, password, passwordConfirm, agreement);
     document.getElementById("register-form").reset();
     setFirstName("");
