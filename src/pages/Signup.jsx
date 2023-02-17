@@ -4,6 +4,8 @@ import { ReactComponent as Logo } from "../assets/logo-big.svg"
 
 const Signup = () => {
 
+  const specialChars = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
@@ -13,24 +15,44 @@ const Signup = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    
+    if (specialChars.test(firstName)) {
+      console.log("invalid first name")
+      return;
+    }
+    if (specialChars.test(lastName)) {
+      console.log("invalid last name")
+      return;
+    }
+    if (specialChars.test(username)) {
+      console.log("invalid username")
+      return;
+    }
+    if (password.length < 8) {
+      console.log("password too short")
+      return;
+    }
+    if (password.length > 24) {
+      console.log("password too long")
+      return;
+    }
+    if (password !== passwordConfirm) {
+      console.log("password does not match")
+      return;
+    }
     if (agreement) {
-      if (password === passwordConfirm) {
-        console.log(firstName, lastName, username, password, passwordConfirm, agreement);
-        document.getElementById("register-form").reset();
-        setFirstName("");
-        setLastName("");
-        setUsername("");
-        setPassword("");
-        setPasswordConfirm("");
-        setAgreement(false);
-      } else {
-        console.log("password does not match")
-        return;
-      }
-    } else {
       console.log("agreement must be set to TRUE")
       return;
     }
+    
+    console.log(firstName, lastName, username, password, passwordConfirm, agreement);
+    document.getElementById("register-form").reset();
+    setFirstName("");
+    setLastName("");
+    setUsername("");
+    setPassword("");
+    setPasswordConfirm("");
+    setAgreement(false);
   };
 
   return (
