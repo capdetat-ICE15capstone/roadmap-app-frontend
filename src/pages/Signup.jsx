@@ -44,7 +44,7 @@ const Signup = () => {
       console.log("agreement must be set to TRUE")
       return;
     }
-    
+
     console.log(firstName, lastName, username, password, passwordConfirm, agreement);
     document.getElementById("register-form").reset();
     setFirstName("");
