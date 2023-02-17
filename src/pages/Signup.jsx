@@ -1,8 +1,38 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import { ReactComponent as Logo } from "../assets/logo-big.svg"
 
 const Signup = () => {
+
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [agreement, setAgreement] = useState(false);
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (agreement) {
+      if (password === passwordConfirm) {
+        console.log(firstName, lastName, username, password, passwordConfirm, agreement);
+        document.getElementById("register-form").reset();
+        setFirstName("");
+        setLastName("");
+        setUsername("");
+        setPassword("");
+        setPasswordConfirm("");
+        setAgreement(false);
+      } else {
+        console.log("password does not match")
+        return;
+      }
+    } else {
+      console.log("agreement must be set to TRUE")
+      return;
+    }
+  };
+
   return (
     <>
       <div className="m-auto">
@@ -11,7 +41,7 @@ const Signup = () => {
             <p className="text-center mb-2 text-3xl font-bold text-slate-600">
               Create Account
             </p>
-            <form>
+            <form id="register-form" onSubmit={handleSubmit}>
               <div className="flex flex-col space-y-2 mb-4">
                 <div className="flex flex-row justify-between space-x-4">
                   <label>
@@ -23,6 +53,9 @@ const Signup = () => {
                       className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-sm text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                       id="InputFirstName"
                       placeholder="First Name"
+                      onChange={(event) =>
+                        setFirstName(event.target.value)
+                      }
                     />
                   </label>
                   <label>
@@ -34,6 +67,9 @@ const Signup = () => {
                       className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-sm text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                       id="InputLastName"
                       placeholder="Last Name"
+                      onChange={(event) =>
+                        setLastName(event.target.value)
+                      }
                     />
                   </label>
                 </div>
@@ -47,6 +83,9 @@ const Signup = () => {
                       className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-sm text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                       id="InputUsername"
                       placeholder="Username"
+                      onChange={(event) =>
+                        setUsername(event.target.value)
+                      }
                     />
                   </label>
                 </div>
@@ -60,6 +99,9 @@ const Signup = () => {
                       className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-sm text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                       id="InputPassword"
                       placeholder="********"
+                      onChange={(event) =>
+                        setPassword(event.target.value)
+                      }
                     />
                   </label>
                   <label>
@@ -67,25 +109,27 @@ const Signup = () => {
                       Confirm Password
                     </p>
                     <input
-                      type="passwordConfirm"
+                      type="password"
                       className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-sm text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                       id="InputPasswordConfirm"
                       placeholder="********"
+                      onChange={(event) =>
+                        setPasswordConfirm(event.target.value)
+                      }
                     />
                   </label>
                 </div>
               </div>
               <div className="flex flex-col space-y-2">
-                <label>
+                <label className="ml-2 text-xs font-medium text-gray-400">
                   <input
                     type="checkbox"
-                    className="w-4 h-4S bg-gray-100 border-gray-300 rounded"
+                    className="w-4 h-4S mr-1 bg-gray-100 border-gray-300 rounded"
                     id="CheckAgree"
+                    onChange={() => setAgreement(!agreement)}
                   />
-                  <a className="ml-2 text-xs font-medium text-gray-400">
-                    I have agreed to
-                  </a>
-                  <a href="#" className="ml-2 text-xs font-bold text-gray-400">
+                  I have agreed to
+                  <a href="#" className="ml-1 text-xs font-bold text-gray-400">
                     ayayayayayaya
                   </a>
                 </label>
