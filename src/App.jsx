@@ -18,36 +18,36 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
+          <Route
+            path="/signup"
+            element={
+              <Suspense fallback={<Spinner />}>
+                <Signup />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/login"
+            element={
+              <Suspense fallback={<Spinner />}>
+                <Login />
+              </Suspense>
+            }
+          ></Route>
           <Route path="/" element={<Navbar />}>
             <Route index element={<Feed />} />
             <Route
               path="createRoadMap"
               element={
-                <Suspense fallback={<Spinner/>}>
+                <Suspense fallback={<Spinner />}>
                   <RoadmapCreatePage />
-                </Suspense>
-              }
-            ></Route>
-            <Route
-              path="signup"
-              element={
-                <Suspense fallback={<Spinner/>}>
-                  <Signup />
-                </Suspense>
-              }
-            ></Route>
-            <Route
-              path="login"
-              element={
-                <Suspense fallback={<Spinner/>}>
-                  <Login />
                 </Suspense>
               }
             ></Route>
             <Route
               path="setting"
               element={
-                <Suspense fallback={<Spinner/>}>
+                <Suspense fallback={<Spinner />}>
                   <Setting />{" "}
                 </Suspense>
               }
@@ -55,7 +55,7 @@ function App() {
             <Route
               path="profile"
               element={
-                <Suspense fallback={<Spinner/>}>
+                <Suspense fallback={<Spinner />}>
                   <Profile />{" "}
                 </Suspense>
               }
@@ -63,7 +63,7 @@ function App() {
             <Route
               path="calendar"
               element={
-                <Suspense fallback={<Spinner/>}>
+                <Suspense fallback={<Spinner />}>
                   <Calendar />{" "}
                 </Suspense>
               }

@@ -59,8 +59,8 @@ const Signup = () => {
 
   return (
     <>
-      <div className="m-auto">
-        <div className="flex bg-white rounded shadow-lg max-w-3xl">
+      <div className="flex flex-col h-screen bg-gray-200">
+        <div className="flex bg-white rounded shadow-lg max-w-3xl m-auto">
           <div className="flex flex-col m-6">
             <p className="text-center mb-2 text-3xl font-bold text-slate-600">
               Create Account

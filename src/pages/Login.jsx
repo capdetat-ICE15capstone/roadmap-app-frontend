@@ -19,8 +19,8 @@ const Login = () => {
 
     return (
         <>
-            <div className="m-auto">
-                <div className="flex bg-white rounded shadow-lg">
+            <div className="flex flex-col h-screen bg-gray-200">
+                <div className="flex bg-white rounded shadow-xl m-auto">
                     <div className="flex flex-col bg-gradient-to-b from-teal-300 to-amber-100 rounded">
                         <div className="flex flex-col grow justify-center my-4 mx-12">
                             <Logo className="justify-center self-center" />
