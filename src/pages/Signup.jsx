@@ -1,6 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 
-import { ReactComponent as Logo } from "../assets/logo-big.svg"
+import { ReactComponent as Logo } from "../assets/logo-big.svg";
+import email from "../assets/images/email.png";
+import facebook from "../assets/images/facebook.png";
+import google from "../assets/images/google.png";
 
 const Signup = () => {
 
@@ -161,7 +164,6 @@ const Signup = () => {
                   Sign Up
                 </button>
               </div>
-
             </form>
             <div className="flex justify-center m-4">
               <p className="text-xs font-light text-gray-400">
@@ -171,17 +173,26 @@ const Signup = () => {
             <div className="flex justify-between mb-2 mx-8 space-x-2">
               <div className="flex flex-auto">
                 <button className="bg-transparent grow text-gray-600 border border-grey-500 py-2 font-semilight rounded-3xl text-sm" type="button">
-                  Google
+                  <div className="flex justify-center items-center space-x-2">
+                    <img src={google} alt="google" className="w-4 h-4"></img>
+                    <span>Google</span>
+                  </div>
                 </button>
               </div>
               <div className="flex flex-auto">
                 <button className="bg-transparent grow text-gray-600 border border-grey-500 py-2 font-semilight rounded-3xl text-sm" type="button">
-                  Facebook
+                  <div className="flex justify-center items-center space-x-2">
+                    <img src={facebook} alt="google" className="w-4 h-4"></img>
+                    <span>Facebook</span>
+                  </div>
                 </button>
               </div>
               <div className="flex flex-auto">
                 <button className="bg-transparent grow text-gray-600 border border-grey-500 py-2 font-semilight rounded-3xl text-sm" type="button">
-                  Email
+                  <div className="flex justify-center items-center space-x-2">
+                    <img src={email} alt="google" className="w-4 h-4"></img>
+                    <span>Email</span>
+                  </div>
                 </button>
               </div>
             </div>
