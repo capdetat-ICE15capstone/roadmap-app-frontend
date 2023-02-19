@@ -8,6 +8,7 @@ import google from "../assets/images/google.png";
 const Signup = () => {
 
   const specialChars = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+  const emailValidation = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
