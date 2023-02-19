@@ -1,22 +1,61 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import { ReactComponent as AddButton } from "../assets/addButton.svg"
+import { ReactComponent as DeleteButton } from "../assets/addButton.svg"
 
 const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
   const nameRef = useRef("");
   const descriptionRef = useRef("");
+  const [lastId, setLastId] = useState(0); // DO NOT use these parameter directly, use getID to get an id instead
   const [subtasks, setSubTasks] = useState([])
-  // subtask: name
+  // subtask (obj): id, detail, status
+  // subtasks (obj[])
 
-  const placeHolderFunction = (someText = "world") => {
-    console.log(`Hello, ${someText}`);
-  };
+  const getId = () => {
+    // IMPORTANT: only use this function to get an ID
+    // return an ID and increment so that the id can never repeat
+    const id = lastId;
+    setLastId(id + 1)
+    return id
+  }
+
+  useEffect(() => {
+    console.log(subtasks)
+  }, [subtasks])
 
   const addSubTask = (event) => {
     event.preventDefault();
     setSubTasks([...subtasks,
-      {}
+      {
+        id: getId(),
+        detail: "",
+        status: false
+      }
     ])
+  }
+
+  const deleteSubTask = (event, id) => {
+    event.preventDefault();
+    console.warn("Pls change the plus icon to minus ones")
+    setSubTasks((subtasks) => 
+      subtasks.filter((subtask) => subtask.id !== id)
+    )
+  }
+
+  const onSubtaskTextEdit = (newValue, id) => {
+    setSubTasks(subtasks.map((subtask) => 
+      subtask.id === id 
+        ? {...subtask, detail: newValue}
+        : {...subtask }
+    ))
+  }
+
+  const onSubTaskCheckboxChange = (newValue, id) => {
+    setSubTasks(subtasks.map((subtask) => 
+      subtask.id === id  
+        ? {...subtask, status: newValue}
+        : {...subtask}
+    ))
   }
 
   return (
@@ -40,7 +79,7 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
                 </button>
               </div>
               {/*body*/}
-              <div className="m-4">
+              <div className="m-4 overflow-auto">
                 <div className="flex flex-col lg:flex-row">
                   <div className="flex flex-col w-full lg:w-1/2">
                     <label>Name</label>
@@ -48,12 +87,14 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
                       type="text"
                       className="border-2 border-black rounded-md m-2 grow"
                       placeholder=" Enter task name..."
+                      ref={nameRef}
                     ></input>
                     <label>Description</label>
                     <input
                       type="text"
                       className="border-2 border-black rounded-md m-2 grow"
                       placeholder=" Enter description..."
+                      ref={descriptionRef}
                     ></input>
                     <div className="w-full flex">
                       <label className="self-center">Start</label>
@@ -69,22 +110,38 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
                         className="border-2 border-black rounded-md m-2 justify-self-end grow shrink"
                       ></input>
                     </div>
-                    <label>Add Subtask</label>
+                    <div className="bg-gray-100 rounded-md mr-2 mt-2 pb-2">
+                    <label className="block p-2">Add Subtask</label>
                     {
                       subtasks.map((subtask) => {
+                        console.log(subtask)
                         return (
-                          <div className="flex">
-                            <input type="checkbox">{subtask.name}</input>
-                            <input type="text" className="border-2 border-black rounded-md m-2 grow"></input>
+                          <div className="flex" key={subtask.id}>
+                            <input type="checkbox" 
+                                    className="ml-2"
+                                    onChange={() => onSubTaskCheckboxChange(event.target.checked, subtask.id)}
+                                    value={subtask.status}></input>
+                            <button onClick={() => deleteSubTask(event, subtask.id)}>
+                              <DeleteButton className="ml-2 w-8 h-auto"/> {/* IMPORTANT: Change this button to delete later */}
+                            </button>
+                            <input type="text" 
+                                    className="border-2 border-black rounded-md m-2 grow" 
+                                    onChange={() => onSubtaskTextEdit(event.target.value, subtask.id)} 
+                                    value={subtask.detail}></input>
                           </div>
                         )
                       })
                     }
                     <button onClick={addSubTask}>
-                      <AddButton className="w-10 h-auto"/>
+                      <AddButton className="ml-2 w-8 h-auto"/> 
                     </button>
+                    </div>
                   </div>
-                  <div className="flex flex-col w-full lg:w-1/2">hello world 2</div>
+                  <div className="flex flex-col w-full lg:w-1/2">
+                    <div className="m-2 rounded-lg border-2 border-dashed border-blue-500 h-1/3">
+                      <p className="text-center">File</p>
+                    </div>
+                  </div>
                 </div>
               </div>
               {/*footer*/}
@@ -92,14 +149,17 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
                 <button
                   className="text-red-500 background-transparent font-bold uppercase px-6 py-2 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                   type="button"
-                  onClick={() => editTaskCallBack("failed", [])}
+                  onClick={() => editTaskCallBack("failed", {})}
                 >
                   Close
                 </button>
                 <button
                   className="bg-emerald-500 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                   type="button"
-                  onClick={() => editTaskCallBack("failed", [])}
+                  onClick={() => editTaskCallBack("success", { // This code may or may not be permanent, but definitely usable for testing
+                    name: nameRef.current.value, 
+                    description: descriptionRef.current.value
+                  })}
                 >
                   Save Changes
                 </button>
