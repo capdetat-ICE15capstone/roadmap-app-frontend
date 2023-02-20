@@ -1,9 +1,6 @@
 import React, { useState } from 'react'
 
 import { ReactComponent as Logo } from "../assets/logo-big.svg"
-import email from "../assets/images/email.png";
-import facebook from "../assets/images/facebook.png";
-import google from "../assets/images/google.png";
 
 const Login = () => {
 
@@ -40,6 +37,13 @@ const Login = () => {
                                     We're here to help YOU complete your <br />
                                     TASK successfully
                                 </p>
+                            </div>
+                            <div className="flex items-center justify-center mb-2">
+                                <a href="/signup">
+                                    <button className="text-white bg-red-500 px-12 py-2 font-bold rounded-lg text-sm" type="button" href="/signup">
+                                        Sign Up
+                                    </button>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -100,28 +104,19 @@ const Login = () => {
                             </p>
                         </div>
                         <div className="flex flex-col mb-2">
-                            <div className="flex flex-col mb-4">
+                            <div className="flex items-center justify-center mb-4">
                                 <button className="bg-transparent grow text-gray-600 border border-grey-500 py-2 font-semilight rounded-lg text-sm" type="button">
-                                    <div className="flex justify-center items-center space-x-2">
-                                        <img src={google} alt="google" className="w-4 h-4"></img>
-                                        <span>Continue with Google</span>
-                                    </div>
+                                    Continue with Google
                                 </button>
                             </div>
-                            <div className="flex flex-col mb-4">
+                            <div className="flex items-center justify-center mb-4">
                                 <button className="bg-transparent grow text-gray-600 border border-grey-500 py-2 font-semilight rounded-lg text-sm" type="button">
-                                    <div className="flex justify-center items-center space-x-2">
-                                        <img src={facebook} alt="google" className="w-4 h-4"></img>
-                                        <span>Continue with Facebook</span>
-                                    </div>
+                                    Continue with Facebook
                                 </button>
                             </div>
-                            <div className="flex flex-col mb-4">
-                                <button className="bg-transparent text-gray-600 border border-grey-500 py-2 font-semilight rounded-lg text-sm" type="button">
-                                    <div className="flex justify-center items-center space-x-2">
-                                        <img src={email} alt="google" className="w-4 h-4"></img>
-                                        <span>Sign up with email</span>
-                                    </div>
+                            <div className="flex items-center justify-center mb-4">
+                                <button className="bg-transparent grow text-gray-600 border border-grey-500 py-2 font-semilight rounded-lg text-sm" type="button">
+                                    Continue with Email
                                 </button>
                             </div>
                         </div>
