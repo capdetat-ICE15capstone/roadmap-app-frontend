@@ -1,55 +1,122 @@
-import React, { useEffect, useRef, useState } from "react";
-import PropTypes, { node } from "prop-types";
+import React, { useRef, useState } from "react";
+import PropTypes from "prop-types";
 import { ReactComponent as AddButton } from "../assets/addButton.svg";
 import { ReactComponent as DeleteButton } from "../assets/deleteButton.svg";
-import DatePicker from 'react-datepicker'
+import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
 
-const CustomSVG = ({height=42, width=42, radius=20, stroke="black", strokeWidth=1, className="", type="circle"}) => {
-  let cx = Math.floor(width/2);
-  let cy = Math.floor(height/2);
+const CustomSVG = ({
+  height = 42,
+  width = 42,
+  radius = 20,
+  className = "",
+  type = "circle",
+}) => {
+  let cx = Math.ceil(width / 2);
+  let cy = Math.ceil(height / 2);
   return (
     <svg height={height} width={width} className={className}>
-      {
-        type === "circle" ? <circle cx={cx} cy={cy} r={radius} stroke={stroke} stroke-width={strokeWidth} /> : null
-      }
-      {
-        type === "square" ? <rect height={height} width={width} className={className}/> : null
-      }
-      {
-        type === "triangle" ? <polygon points={`${cx},0 ${width},${height-strokeWidth} 0,${height-strokeWidth}`} className={className}/> : null
-      }
+      {type === "circle" ? (
+        <circle cx={cx} cy={cy} r={radius} className={className} />
+      ) : null}
+      {type === "square" ? (
+        <rect
+          height={height - 2}
+          width={width - 2}
+          x={1}
+          y={1}
+          className={className}
+        />
+      ) : null}
+      {type === "triangle" ? (
+        <polygon
+          points={`${cx},2 ${width - 2},${height - 1} 2,${height - 1}`}
+          className={className}
+        />
+      ) : null}
     </svg>
-  )
-}
+  );
+};
 
-const allNodeShape = ["circle", "square", "triangle"]
+// const allNodeShape = ["circle", "square", "triangle"]
 
 const allNodeColor = [
-  {name: "Gray", twprop: "fill-gray-400", twtext: "text-gray-400", twbg: "bg-gray-400"}, 
-  {name: "Red", twprop: "fill-red-400", twtext: "text-red-400", twbg: "bg-red-400"}, 
-  {name: "Orange", twprop: "fill-orange-400", twtext: "text-orange-400", twbg: "bg-orange-400"}, 
-  {name: "Yellow", twprop: "fill-yellow-400", twtext: "text-yellow-400", twbg: "bg-yellow-400"}, 
-  {name: "Green", twprop: "fill-green-400", twtext: "text-green-400", twbg: "bg-green-400"}, 
-  {name: "Cyan", twprop: "fill-cyan-400", twtext: "text-cyan-400", twbg: "bg-cyan-400"}, 
-  {name: "Blue", twprop: "fill-blue-400", twtext: "text-blue-400", twbg: "bg-blue-400"}, 
-  {name: "Violet", twprop: "fill-violet-400", twtext: "text-violet-400", twbg: "bg-violet-400"}, 
-  {name: "Pink", twprop: "fill-pink-400", twtext: "text-pink-400", twbg: "bg-pink-400"}, 
-]
+  {
+    name: "Gray",
+    twprop: "fill-gray-400",
+    twtext: "text-gray-400",
+    twbg: "bg-gray-400",
+  },
+  {
+    name: "Red",
+    twprop: "fill-red-400",
+    twtext: "text-red-400",
+    twbg: "bg-red-400",
+  },
+  {
+    name: "Orange",
+    twprop: "fill-orange-400",
+    twtext: "text-orange-400",
+    twbg: "bg-orange-400",
+  },
+  {
+    name: "Yellow",
+    twprop: "fill-yellow-400",
+    twtext: "text-yellow-400",
+    twbg: "bg-yellow-400",
+  },
+  {
+    name: "Green",
+    twprop: "fill-green-400",
+    twtext: "text-green-400",
+    twbg: "bg-green-400",
+  },
+  {
+    name: "Cyan",
+    twprop: "fill-cyan-400",
+    twtext: "text-cyan-400",
+    twbg: "bg-cyan-400",
+  },
+  {
+    name: "Blue",
+    twprop: "fill-blue-400",
+    twtext: "text-blue-400",
+    twbg: "bg-blue-400",
+  },
+  {
+    name: "Violet",
+    twprop: "fill-violet-400",
+    twtext: "text-violet-400",
+    twbg: "bg-violet-400",
+  },
+  {
+    name: "Pink",
+    twprop: "fill-pink-400",
+    twtext: "text-pink-400",
+    twbg: "bg-pink-400",
+  },
+];
 
 const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
   const nameRef = useRef("");
   const descriptionRef = useRef("");
   const [lastId, setLastId] = useState(0); // DO NOT use these parameter directly, use getID to get an id instead
   const [subtasks, setSubTasks] = useState([]);
-  const [nodeColor, setNodeColor] = useState(allNodeColor[0])
-  const [nodeShape, setNodeShape] = useState("circle")
-  const [startDate, setStartDate] = useState(new Date())
-  const [endDate, setEndDate] = useState(new Date())
-  
-  // subtask (obj): id, detail, status
-  // subtasks (obj[])
+  const [nodeColor, setNodeColor] = useState(allNodeColor[0]);
+  const [nodeShape, setNodeShape] = useState("circle");
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
+
+  if (mode === "edit") {
+    nameRef.current.value = oldData.name;
+    descriptionRef.current.value = oldData.description;
+    setSubTasks(oldData.subtasks);
+    setNodeColor(allNodeColor.find(({ name }) => name === oldData.nodeColor));
+    setNodeShape(oldData.nodeShape);
+    setStartDate(oldData.startDate);
+    setEndDate(oldData.dueDate);
+  }
 
   const getId = () => {
     // IMPORTANT: only use this function to get an ID
@@ -60,9 +127,13 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
   };
 
   const handleNodeColorChange = (event) => {
-    console.log(event.target.value)
-    setNodeColor(allNodeColor.find(({name}) => name === event.target.value))
-  }
+    setNodeColor(allNodeColor.find(({ name }) => name === event.target.value));
+  };
+
+  const handleNodeShapeChange = (event, shapeType) => {
+    event.preventDefault();
+    setNodeShape(shapeType);
+  };
 
   const addSubTask = (event) => {
     event.preventDefault();
@@ -105,7 +176,9 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
             {/*content*/}
             <div className=" rounded-2xl shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
               {/*header*/}
-              <div className={`flex items-start justify-between py-8 px-5 border-b border-solid border-slate-200 rounded-t-2xl ${nodeColor.twbg}`}>
+              <div
+                className={`flex items-start justify-between py-8 px-5 border-b border-solid border-slate-200 rounded-t-2xl ${nodeColor.twbg} transition duration-300`}
+              >
                 <h3 className="text-3xl font-semibold text-white">
                   Create task
                 </h3>
@@ -121,63 +194,132 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
               <div className="m-4 overflow-auto">
                 <div className="flex flex-col lg:flex-row gap-2">
                   <div className="flex flex-col w-full lg:w-1/2">
-                    <label>Name</label>
+                    <label className="font-nunito-sans font-bold">Name</label>
                     <input
                       type="text"
-                      className="border-2 border-black rounded-md m-2 placeholder:italic"
+                      className="border border-black rounded-md m-2 placeholder:italic"
                       placeholder=" Enter task name..."
                       ref={nameRef}
                     ></input>
-                    <label>Description</label>
+                    <label className="font-nunito-sans font-bold placeholder:t">
+                      Description
+                    </label>
                     <input
                       type="textbox"
-                      className="border-2 border-black rounded-md m-2 grow placeholder:italic placeholder:justify-start h-24"
+                      className="border border-black rounded-md m-2 grow placeholder:italic placeholder:justify-start h-24"
                       placeholder=" Enter description..."
                       ref={descriptionRef}
                     ></input>
                     <div className="w-full flex">
-                      <label className="self-center">Start</label>
-                      <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} className="border-2 border-black rounded-md m-2 justify-self-end grow shrink"></DatePicker>
+                      <label className="self-center font-nunito-sans font-bold">
+                        Start
+                      </label>
+                      <DatePicker
+                        selected={startDate}
+                        onChange={(date) => setStartDate(date)}
+                        className="border border-black rounded-md m-2 justify-self-end grow shrink"
+                      ></DatePicker>
                       {/* <input // have shrink problem
                         type="textbox"
                         className="border-2 border-black rounded-md m-2 justify-self-end grow"
                       ></input> */}
                     </div>
                     <div className="w-full flex">
-                      <label className="self-center">Due</label>
-                      <DatePicker selected={endDate} onChange={(date) => setEndDate(date)} className="border-2 border-black rounded-md m-2 justify-self-end grow shrink"></DatePicker>
+                      <label className="self-center font-nunito-sans font-bold">
+                        Due
+                      </label>
+                      <DatePicker
+                        selected={endDate}
+                        onChange={(date) => setEndDate(date)}
+                        className="border border-black rounded-md m-2 justify-self-end grow shrink"
+                      ></DatePicker>
                       {/* <input // have shrink problem
                         type="text"
                         className="border-2 border-black rounded-md m-2 justify-self-end grow shrink"
                       ></input> */}
                     </div>
                     <div className="">
-                    <label>Nodes</label>
+                      <label className="font-nunito-sans font-bold">
+                        Nodes
+                      </label>
                       <div className="flex flex-1 gap-x-1">
-                        <div className="bg-gray-100 basis-1/2 rounded-lg p-4 flex gap-2">
-                          <CustomSVG className={`${nodeColor.twprop}`}></CustomSVG>
-                          <select value={nodeColor.name} onChange={handleNodeColorChange} className={`${nodeColor.twtext} font-bold grow self-center border border-black rounded-lg `}>
-                            {
-                              allNodeColor.map((colorObj) => (
-                                <option value={colorObj.name} className={`${colorObj.twtext} font-bold`}>
-                                  {colorObj.name}
-                                </option>
-                              ))
-                            }
+                        <div className="basis-1/5 bg-gray-100 rounded-lg self-center flex justify-center p-2">
+                          <CustomSVG
+                            type={nodeShape}
+                            className={`${nodeColor.twprop}`}
+                          ></CustomSVG>
+                        </div>
+                        <div className="bg-gray-100 basis-2/5 rounded-lg p-4 flex gap-2">
+                          <select
+                            value={nodeColor.name}
+                            onChange={handleNodeColorChange}
+                            className={`${nodeColor.twtext} font-bold grow self-center border border-black rounded-lg `}
+                          >
+                            {allNodeColor.map((colorObj) => (
+                              <option
+                                value={colorObj.name}
+                                className={`${colorObj.twtext} font-bold`}
+                              >
+                                {colorObj.name}
+                              </option>
+                            ))}
                           </select>
                         </div>
-                        <div className="bg-gray-100 basis-1/2 rounded-lg flex p-2 gap-2 content-center justify-center">
-                          <CustomSVG className={`${nodeColor.twprop} ${nodeShape === "circle" ? "stroke-black stroke-2": ""} self-center`}></CustomSVG>
-                          <CustomSVG className={`${nodeColor.twprop} ${nodeShape === "square" ? "stroke-black stroke-2": ""} self-center`} type="square"></CustomSVG>
-                          <CustomSVG className={`${nodeColor.twprop} ${nodeShape === "triangle" ? "stroke-black stroke-1 ": ""} self-center`} type="triangle"/>
+                        <div className="bg-gray-100 basis-2/5 rounded-lg flex p-2 gap-2 content-center justify-center">
+                          <button
+                            onClick={() =>
+                              handleNodeShapeChange(event, "circle")
+                            }
+                          >
+                            <CustomSVG
+                              className={`${nodeColor.twprop} ${
+                                nodeShape === "circle"
+                                  ? "stroke-black stroke-2"
+                                  : ""
+                              } self-center`}
+                            />
+                          </button>
+
+                          <button
+                            onClick={() =>
+                              handleNodeShapeChange(event, "square")
+                            }
+                          >
+                            <CustomSVG
+                              className={`${nodeColor.twprop} ${
+                                nodeShape === "square"
+                                  ? "stroke-black stroke-2"
+                                  : ""
+                              } self-center`}
+                              type="square"
+                            />
+                          </button>
+
+                          <button
+                            onClick={() =>
+                              handleNodeShapeChange(event, "triangle")
+                            }
+                            value="triangle"
+                          >
+                            <CustomSVG
+                              className={`${nodeColor.twprop} ${
+                                nodeShape === "triangle"
+                                  ? "stroke-black stroke-2 "
+                                  : ""
+                              } self-center`}
+                              type="triangle"
+                            />
+                          </button>
                         </div>
                       </div>
                     </div>
                   </div>
                   {/* Right side */}
-                  <div className="flex flex-col w-full lg:w-1/2">
+                  <div className="flex flex-col w-full lg:w-1/2 overflow-y-auto">
                     <div className="bg-gray-100 rounded-md p-4 flex flex-col gap-2">
-                      <label className="block">Add Subtask</label>
+                      <label className="block font-nunito-sans font-bold">
+                        Add Subtask
+                      </label>
                       {subtasks.map((subtask) => {
                         return (
                           <div className="flex gap-2" key={subtask.id}>
@@ -200,7 +342,7 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
                             </button>
                             <input
                               type="text"
-                              className="border-2 border-black rounded-md grow"
+                              className="border border-black rounded-md grow"
                               onChange={() =>
                                 onSubtaskTextEdit(
                                   event.target.value,
@@ -213,12 +355,23 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
                         );
                       })}
                       <div className="flex gap-4">
-                        <button onClick={addSubTask} disabled={subtasks.length >= 8}>
-                          <AddButton className={`ml-2 w-8 h-auto ${subtasks.length >= 8 ? "opacity-30" : "opacity-100"}`}/>
+                        <button
+                          onClick={addSubTask}
+                          disabled={subtasks.length >= 8}
+                        >
+                          <AddButton
+                            className={`ml-2 w-8 h-auto ${
+                              subtasks.length >= 8
+                                ? "opacity-30"
+                                : "opacity-100"
+                            }`}
+                          />
                         </button>
-                        {
-                          subtasks.length >= 8 ? <p className="font-bold text-red-700">Limited to 8 subtasks</p> : null
-                        }
+                        {subtasks.length >= 8 ? (
+                          <p className="font-bold text-red-700">
+                            Limited to 8 subtasks
+                          </p>
+                        ) : null}
                       </div>
                     </div>
                   </div>
@@ -234,6 +387,11 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
                       // This code may or may not be permanent, but definitely usable for testing
                       name: nameRef.current.value,
                       description: descriptionRef.current.value,
+                      startDate: startDate,
+                      dueDate: endDate,
+                      nodeColor: nodeColor.name,
+                      nodeShape: nodeShape,
+                      subtasks: subtasks,
                     })
                   }
                 >
@@ -258,8 +416,16 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
 
 TaskModal.propTypes = {
   mode: PropTypes.string.isRequired,
-  oldData: PropTypes.object,
-  editTaskCallBack: PropTypes.func,
+  oldData: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    description: PropTypes.string.isRequired,
+    startDate: PropTypes.instanceOf(Date).isRequired,
+    dueDate: PropTypes.instanceOf(Date).isRequired,
+    nodeColor: PropTypes.string.isRequired,
+    nodeShape: PropTypes.string.isRequired,
+    subtasks: PropTypes.object.isRequired
+  }),
+  editTaskCallBack: PropTypes.func.isRequired,
 };
 
 export default TaskModal;
