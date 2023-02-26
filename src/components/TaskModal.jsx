@@ -6,6 +6,18 @@ import DatePicker from "react-datepicker";
 
 import "react-datepicker/dist/react-datepicker.css";
 
+// Current issues
+// 1. User can choose whatever start and due date they want, incluing in the past
+// 2. Data domain has yet to be enforced
+// 3. CustomSVG is terribly implemented (hard code everywhere)
+// 4. Styling is yet to be finalized 
+// 5. Input box shrink problem
+// 6. Datepicker style
+// 7. Modal size and scrolling (the modal overflowing the screen)
+// 8. Using new Date() will also select the time for you, not only date
+// 9. Description box size problem (box size tends to varies)
+// 10. Description text and placeholder starting position (text starts in the middle of the box)
+
 const CustomSVG = ({
   height = 42,
   width = 42,
