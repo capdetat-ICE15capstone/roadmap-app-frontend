@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { ReactComponent as AddButton } from "../assets/addButton.svg";
 import { ReactComponent as DeleteButton } from "../assets/deleteButton.svg";
 import DatePicker from "react-datepicker";
+import Spinner from "./Spinner"
 
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -125,24 +126,33 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
   const [nodeShape, setNodeShape] = useState("circle");
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (mode === "edit") {
-      nameRef.current.value = oldData.name;
-      descriptionRef.current.value = oldData.description;
-      setSubTasks(oldData.subtasks);
-      setNodeColor(allNodeColor.find(({ name }) => name === oldData.nodeColor));
-      setNodeShape(oldData.nodeShape);
-      setStartDate(oldData.startDate);
-      setEndDate(oldData.dueDate);
-      let highestID = 0;
-      oldData.subtasks.forEach((subtask) => {
-        if (subtask.id > highestID) {
-          lowestID = subtask.id;
-        }
-      });
-      setLastId(highestID + 1);
+    async function setModalData() {
+      if (mode === "edit") {
+        await setLoading(true);
+        nameRef.current.value = oldData.name;
+        descriptionRef.current.value = oldData.description;
+        setSubTasks(oldData.subtasks);
+        setNodeColor(allNodeColor.find(({ name }) => name === oldData.nodeColor));
+        setNodeShape(oldData.nodeShape);
+        setStartDate(oldData.startDate);
+        setEndDate(oldData.dueDate);
+        let highestID = 0;
+        oldData.subtasks.forEach((subtask) => {
+          if (subtask.id > highestID) {
+            lowestID = subtask.id;
+          }
+        });
+        await setLastId(highestID + 1); 
+        // I'm not sure about this one. if react set data in order,
+        // then awaiting for this last line to finish should ensure
+        // that everything is finished before leaving the function
+      }
     }
+    setModalData()
+    setLoading(false)
   }, []);
 
   const getId = () => {
@@ -197,10 +207,13 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
 
   return (
     <>
+      
       <form>
-        <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
+        
+        <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-20 outline-none focus:outline-none">
           <div className="relative w-11/12 md:w-5/6 my-6 mx-auto xl:w-2/3 2xl:w-1/2 max-h-screen">
             {/*content*/}
+            {loading && <Spinner className="z-30 absolute rounded-xl"/>}
             <div className=" rounded-2xl shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
               {/*header*/}
               <div
@@ -441,8 +454,9 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
             </div>
           </div>
         </div>
-        <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+        <div className="opacity-25 fixed inset-0 z-10 bg-black"></div>
       </form>
+      
     </>
   );
 };
