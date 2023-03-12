@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { ReactComponent as AddButton } from "../assets/addButton.svg";
 import { ReactComponent as DeleteButton } from "../assets/deleteButton.svg";
@@ -7,16 +7,22 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 // Current issues
-// 1. User can choose whatever start and due date they want, incluing in the past
 // 2. Data domain has yet to be enforced
 // 3. CustomSVG is terribly implemented (hard code everywhere)
-// 4. Styling is yet to be finalized 
+// 4. Styling is yet to be finalized
 // 5. Input box shrink problem
 // 6. Datepicker style
-// 7. Modal size and scrolling (the modal overflowing the screen)
-// 8. Using new Date() will also select the time for you, not only date
-// 9. Description box size problem (box size tends to varies)
+// 7. Modal size (the modal overflowing the screen)
 // 10. Description text and placeholder starting position (text starts in the middle of the box)
+// 11. Node selector overflow in small screen
+// 12. Problems with some mobile devices
+
+// Fixed isses
+// 1. User can choose whatever start and due date they want, incluing in the past
+// 2. (Untested) No logic to check for the lastID when the roadmap is edited instead of created
+// 3. subtask scrolling
+// 4. Description box size problem (box size tends to varies)
+// 5. Using new Date() will also select the time for you, not only date
 
 const CustomSVG = ({
   height = 42,
@@ -120,15 +126,24 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
 
-  if (mode === "edit") {
-    nameRef.current.value = oldData.name;
-    descriptionRef.current.value = oldData.description;
-    setSubTasks(oldData.subtasks);
-    setNodeColor(allNodeColor.find(({ name }) => name === oldData.nodeColor));
-    setNodeShape(oldData.nodeShape);
-    setStartDate(oldData.startDate);
-    setEndDate(oldData.dueDate);
-  }
+  useEffect(() => {
+    if (mode === "edit") {
+      nameRef.current.value = oldData.name;
+      descriptionRef.current.value = oldData.description;
+      setSubTasks(oldData.subtasks);
+      setNodeColor(allNodeColor.find(({ name }) => name === oldData.nodeColor));
+      setNodeShape(oldData.nodeShape);
+      setStartDate(oldData.startDate);
+      setEndDate(oldData.dueDate);
+      let highestID = 0;
+      oldData.subtasks.forEach((subtask) => {
+        if (subtask.id > lowestID) {
+          lowestID = subtask.id;
+        }
+      });
+      setLastId(highestID + 1);
+    }
+  }, []);
 
   const getId = () => {
     // IMPORTANT: only use this function to get an ID
@@ -184,12 +199,12 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
     <>
       <form>
         <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
-          <div className="relative w-11/12 md:w-5/6 my-6 mx-auto xl:w-2/3 2xl:w-1/2 max-h-full">
+          <div className="relative w-11/12 md:w-5/6 my-6 mx-auto xl:w-2/3 2xl:w-1/2 max-h-screen">
             {/*content*/}
             <div className=" rounded-2xl shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
               {/*header*/}
               <div
-                className={`flex items-start justify-between py-8 px-5 border-b border-solid border-slate-200 rounded-t-2xl ${nodeColor.twbg} transition duration-300`}
+                className={`flex items-start justify-between py-4 px-5 lg:py-8 border-b border-solid border-slate-200 rounded-t-2xl ${nodeColor.twbg} transition duration-300`}
               >
                 <h3 className="text-3xl font-semibold text-white">
                   Create task
@@ -222,34 +237,37 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
                       placeholder=" Enter description..."
                       ref={descriptionRef}
                     ></input>
-                    <div className="w-full flex">
-                      <label className="self-center font-nunito-sans font-bold">
-                        Start
-                      </label>
-                      <DatePicker
-                        selected={startDate}
-                        onChange={(date) => setStartDate(date)}
-                        className="border border-black rounded-md m-2 justify-self-end grow shrink"
-                      ></DatePicker>
-                      {/* <input // have shrink problem
-                        type="textbox"
-                        className="border-2 border-black rounded-md m-2 justify-self-end grow"
-                      ></input> */}
+                    <div className="grid grid-rows-2">
+                      <div className="w-full">
+                        <label className="self-center font-nunito-sans font-bold">
+                          Start
+                        </label>
+                        <div className="m-2">
+                          <DatePicker
+                            selected={startDate}
+                            showTimeSelect
+                            minDate={Date.now()}
+                            onChange={(date) => setStartDate(date)}
+                            className="border border-black rounded-md justify-self-end w-full"
+                          ></DatePicker>
+                        </div>
+                      </div>
+                      <div className="w-full">
+                        <label className="self-center font-nunito-sans font-bold">
+                          Due
+                        </label>
+                        <div className="m-2">
+                          <DatePicker
+                            selected={endDate}
+                            showTimeSelect
+                            minDate={Date.now()}
+                            onChange={(date) => setEndDate(date)}
+                            className="border border-black rounded-md justify-self-end w-full"
+                          ></DatePicker>
+                        </div>
+                      </div>
                     </div>
-                    <div className="w-full flex">
-                      <label className="self-center font-nunito-sans font-bold">
-                        Due
-                      </label>
-                      <DatePicker
-                        selected={endDate}
-                        onChange={(date) => setEndDate(date)}
-                        className="border border-black rounded-md m-2 justify-self-end grow shrink"
-                      ></DatePicker>
-                      {/* <input // have shrink problem
-                        type="text"
-                        className="border-2 border-black rounded-md m-2 justify-self-end grow shrink"
-                      ></input> */}
-                    </div>
+
                     <div className="">
                       <label className="font-nunito-sans font-bold">
                         Nodes
@@ -327,45 +345,48 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
                     </div>
                   </div>
                   {/* Right side */}
-                  <div className="flex flex-col w-full lg:w-1/2 overflow-y-auto">
-                    <div className="bg-gray-100 rounded-md p-4 flex flex-col gap-2">
+                  <div className="flex flex-col w-full lg:w-1/2">
+                    <div className="bg-gray-100 rounded-md p-4">
                       <label className="block font-nunito-sans font-bold">
                         Add Subtask
                       </label>
-                      {subtasks.map((subtask) => {
-                        return (
-                          <div className="flex gap-2" key={subtask.id}>
-                            <input
-                              type="checkbox"
-                              className="w-4 h-4 self-center"
-                              onChange={() =>
-                                onSubTaskCheckboxChange(
-                                  event.target.checked,
-                                  subtask.id
-                                )
-                              }
-                              value={subtask.status}
-                            ></input>
-                            <button
-                              onClick={() => deleteSubTask(event, subtask.id)}
-                              className="w-8 h-8 self-center"
-                            >
-                              <DeleteButton className="w-8 h-8 self-center mt-1" />
-                            </button>
-                            <input
-                              type="text"
-                              className="border border-black rounded-md grow"
-                              onChange={() =>
-                                onSubtaskTextEdit(
-                                  event.target.value,
-                                  subtask.id
-                                )
-                              }
-                              value={subtask.detail}
-                            ></input>
-                          </div>
-                        );
-                      })}
+                      <div className="flex flex-col gap-2 overflow-y-auto max-h-32 lg:max-h-none py-2">
+                        {subtasks.map((subtask) => {
+                          return (
+                            <div className="flex gap-2" key={subtask.id}>
+                              <input
+                                type="checkbox"
+                                className="w-4 h-4 self-center"
+                                onChange={() =>
+                                  onSubTaskCheckboxChange(
+                                    event.target.checked,
+                                    subtask.id
+                                  )
+                                }
+                                value={subtask.status}
+                              ></input>
+                              <button
+                                onClick={() => deleteSubTask(event, subtask.id)}
+                                className="w-8 h-8 self-center"
+                              >
+                                <DeleteButton className="w-8 h-8 self-center mt-1" />
+                              </button>
+                              <input
+                                type="text"
+                                className="border border-black rounded-md grow"
+                                onChange={() =>
+                                  onSubtaskTextEdit(
+                                    event.target.value,
+                                    subtask.id
+                                  )
+                                }
+                                value={subtask.detail}
+                              ></input>
+                            </div>
+                          );
+                        })}
+                      </div>
+
                       <div className="flex gap-4">
                         <button
                           onClick={addSubTask}
@@ -390,7 +411,7 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
                 </div>
               </div>
               {/*footer*/}
-              <div className="flex items-center justify-end p-6  rounded-b gap-3">
+              <div className="flex items-center justify-end p-3 lg:p-6 rounded-b gap-3">
                 <button
                   className="bg-blue-400 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                   type="button"
@@ -435,7 +456,7 @@ TaskModal.propTypes = {
     dueDate: PropTypes.instanceOf(Date).isRequired,
     nodeColor: PropTypes.string.isRequired,
     nodeShape: PropTypes.string.isRequired,
-    subtasks: PropTypes.object.isRequired
+    subtasks: PropTypes.object.isRequired,
   }),
   editTaskCallBack: PropTypes.func.isRequired,
 };
