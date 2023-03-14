@@ -1,15 +1,20 @@
 import React, { useRef, useState, useEffect } from "react";
 import TaskModal  from "../components/TaskModal";
+import { useNavigate } from "react-router";
+import Spinner from "../components/Spinner";
 
 const RoadmapCreatePage = () => {
   const [RMName, setRMName] = useState("");
   const [RMDesc, setRMDesc] = useState("")
   const [tasks, setTasks] = useState([])
   const [modalState, setModalState] = useState(false)
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     console.log(tasks)
   }, [tasks])
+
   
   const editTaskCallBack = (success, submissionObject) => {
     // need more logic as describe in the sheet
@@ -22,12 +27,17 @@ const RoadmapCreatePage = () => {
   }
 
   const onPressingSaveButton = (e) => {
-    e.preventDefault(); // stop the page from reloading when submitting the form, may remove in the future
+    // e.preventDefault(); // stop the page from reloading when submitting the form, may remove in the future
     console.log({ // used for sprint 1
       name: RMName,
       description: RMDesc
     });
-    console.log(tasks)
+
+    // Begin the spinner
+    // Add a fetch POST request here
+    // Stop the spinner after the promise of Fetch() has resolved
+
+    navigate("/") // forward to view roadmap page, unsure how to navigate this though cuz this is stateless navigate
   };
 
   return (
@@ -36,7 +46,7 @@ const RoadmapCreatePage = () => {
         <div className="text-4xl font-inter font-bold ml-10 mt-10">
           Create your roadmap
         </div>
-        <form onSubmit={onPressingSaveButton}>
+        <form>
           <div>
             <label>Name: </label>
             <input
@@ -55,8 +65,11 @@ const RoadmapCreatePage = () => {
             value={RMDesc}
             onChange={e => setRMDesc(e.target.value)}
           ></textarea>
-          <button className="rounded-xl bg-emerald-400 text-white font-bold hover:bg-yellow-300 transition duration-200 w-20 h-10 fixed right-2 bottom-2">
+          <button className="rounded-xl bg-emerald-400 text-white font-bold hover:bg-yellow-300 transition duration-200 w-20 h-10 fixed right-24 bottom-2" onClick={onPressingSaveButton}>
             Save
+          </button>
+          <button className="rounded-xl bg-red-400 text-white font-bold hover:bg-yellow-300 transition duration-200 w-20 h-10 fixed bottom-2 right-2">
+            Cancel
           </button>
         </form>
 
