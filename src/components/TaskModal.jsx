@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, forwardRef  } from "react";
 import PropTypes from "prop-types";
 import { ReactComponent as AddButton } from "../assets/addButton.svg";
 import { ReactComponent as DeleteButton } from "../assets/deleteButton.svg";
@@ -127,6 +127,11 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [loading, setLoading] = useState(false);
+  const DatePickerButton = forwardRef(({ value, onClick }, ref) => (
+    <div className="w-full">
+      <button className="bg-blue-400 w-full rounded-md" ref={ref} onClick={(e) => {e.preventDefault(); onClick()}}>{value}</button>
+    </div>
+  ));
 
   useEffect(() => {
     async function setModalData() {
@@ -261,7 +266,8 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
                             showTimeSelect
                             minDate={Date.now()}
                             onChange={(date) => setStartDate(date)}
-                            className="border border-black rounded-md justify-self-end w-full"
+                            // className="border border-black rounded-md justify-self-end w-full"
+                            customInput={<DatePickerButton/>}
                           ></DatePicker>
                         </div>
                       </div>
@@ -275,7 +281,8 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
                             showTimeSelect
                             minDate={Date.now()}
                             onChange={(date) => setEndDate(date)}
-                            className="border border-black rounded-md justify-self-end w-full"
+                            // className="border border-black rounded-md justify-self-end w-full"
+                            customInput={<DatePickerButton/>}
                           ></DatePicker>
                         </div>
                       </div>
@@ -286,13 +293,13 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
                         Nodes
                       </label>
                       <div className="flex flex-1 gap-x-1">
-                        <div className="basis-1/5 bg-gray-100 rounded-lg self-center flex justify-center p-2">
+                        {/* <div className="basis-1/5 bg-gray-100 rounded-lg self-center flex justify-center p-2">
                           <CustomSVG
                             type={nodeShape}
                             className={`${nodeColor.twprop}`}
                           ></CustomSVG>
-                        </div>
-                        <div className="bg-gray-100 basis-2/5 rounded-lg p-4 flex gap-2">
+                        </div> */}
+                        <div className="bg-gray-100 basis-1/2 rounded-lg p-4 flex gap-2">
                           <select
                             value={nodeColor.name}
                             onChange={handleNodeColorChange}
@@ -308,7 +315,7 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
                             ))}
                           </select>
                         </div>
-                        <div className="bg-gray-100 basis-2/5 rounded-lg flex p-2 gap-2 content-center justify-center">
+                        <div className="bg-gray-100 basis-1/2 rounded-lg flex p-2 gap-2 content-center justify-center">
                           <button
                             onClick={() =>
                               handleNodeShapeChange(event, "circle")
