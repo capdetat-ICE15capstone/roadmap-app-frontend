@@ -44,7 +44,6 @@ const Navbar = () => {
               <BellIcon className="self-center w-10 px-2 hover:scale-110 transition duration-300" />
               <BookIcon className="self-center px-2 w-10 hover:scale-110 transition duration-300" />
             </div>
-            
           </div>
           <Outlet />
         </div>
