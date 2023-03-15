@@ -1,9 +1,9 @@
-import React, { useRef, useState, useEffect, forwardRef  } from "react";
-import PropTypes from "prop-types";
+import React, { useRef, useState, useEffect, forwardRef } from "react";
+import PropTypes, { object } from "prop-types";
 import { ReactComponent as AddButton } from "../assets/addButton.svg";
 import { ReactComponent as DeleteButton } from "../assets/deleteButton.svg";
 import DatePicker from "react-datepicker";
-import Spinner from "./Spinner"
+import Spinner from "./Spinner";
 
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -117,7 +117,7 @@ const allNodeColor = [
   },
 ];
 
-const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
+const TaskModal = ({ oldData, editTaskCallBack }) => {
   const nameRef = useRef("");
   const descriptionRef = useRef("");
   const [lastId, setLastId] = useState(0); // DO NOT use these parameter directly, use getID to get an id instead
@@ -129,35 +129,48 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
   const [loading, setLoading] = useState(false);
   const DatePickerButton = forwardRef(({ value, onClick }, ref) => (
     <div className="w-full">
-      <button className="bg-blue-400 w-full rounded-md" ref={ref} onClick={(e) => {e.preventDefault(); onClick()}}>{value}</button>
+      <button
+        type="button"
+        className="bg-blue-400 w-full rounded-md"
+        ref={ref}
+        onClick={(e) => {
+          e.preventDefault();
+          onClick();
+        }}
+      >
+        {value}
+      </button>
     </div>
   ));
 
   useEffect(() => {
+    console.log(oldData);
     async function setModalData() {
-      if (mode === "edit") {
+      if (oldData.id !== -1) {
         await setLoading(true);
         nameRef.current.value = oldData.name;
         descriptionRef.current.value = oldData.description;
         setSubTasks(oldData.subtasks);
-        setNodeColor(allNodeColor.find(({ name }) => name === oldData.nodeColor));
+        setNodeColor(
+          allNodeColor.find(({ name }) => name === oldData.nodeColor)
+        );
         setNodeShape(oldData.nodeShape);
         setStartDate(oldData.startDate);
         setEndDate(oldData.dueDate);
         let highestID = 0;
         oldData.subtasks.forEach((subtask) => {
           if (subtask.id > highestID) {
-            lowestID = subtask.id;
+            highestID = subtask.id;
           }
         });
-        await setLastId(highestID + 1); 
+        await setLastId(highestID + 1);
         // I'm not sure about this one. if react set data in order,
         // then awaiting for this last line to finish should ensure
         // that everything is finished before leaving the function
       }
     }
-    setModalData()
-    setLoading(false)
+    setModalData();
+    setLoading(false);
   }, []);
 
   const getId = () => {
@@ -210,15 +223,28 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
     );
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    editTaskCallBack("success", {
+      // This code may or may not be permanent, but definitely usable for testing
+      id: oldData.id,
+      name: nameRef.current.value,
+      description: descriptionRef.current.value,
+      startDate: startDate,
+      dueDate: endDate,
+      nodeColor: nodeColor.name,
+      nodeShape: nodeShape,
+      subtasks: subtasks,
+    });
+  };
+
   return (
     <>
-      
-      <form>
-        
+      <form onSubmit={handleSubmit}>
         <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-20 outline-none focus:outline-none">
           <div className="relative w-11/12 md:w-5/6 my-6 mx-auto xl:w-2/3 2xl:w-1/2 max-h-screen">
             {/*content*/}
-            {loading && <Spinner className="z-30 absolute rounded-xl"/>}
+            {loading && <Spinner className="z-30 absolute rounded-xl" />}
             <div className=" rounded-2xl shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
               {/*header*/}
               <div
@@ -228,8 +254,9 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
                   Create task
                 </h3>
                 <button
+                  type="button"
                   className="p-1 ml-auto bg-transparent border-0 text-white float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
-                  onClick={() => editTaskCallBack("failed", {})}
+                  onClick={() => editTaskCallBack("delete", oldData)}
                 >
                   {" "}
                   x
@@ -267,7 +294,7 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
                             minDate={Date.now()}
                             onChange={(date) => setStartDate(date)}
                             // className="border border-black rounded-md justify-self-end w-full"
-                            customInput={<DatePickerButton/>}
+                            customInput={<DatePickerButton />}
                           ></DatePicker>
                         </div>
                       </div>
@@ -282,7 +309,7 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
                             minDate={Date.now()}
                             onChange={(date) => setEndDate(date)}
                             // className="border border-black rounded-md justify-self-end w-full"
-                            customInput={<DatePickerButton/>}
+                            customInput={<DatePickerButton />}
                           ></DatePicker>
                         </div>
                       </div>
@@ -308,6 +335,7 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
                             {allNodeColor.map((colorObj) => (
                               <option
                                 value={colorObj.name}
+                                key={colorObj.name}
                                 className={`${colorObj.twtext} font-bold`}
                               >
                                 {colorObj.name}
@@ -317,6 +345,7 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
                         </div>
                         <div className="bg-gray-100 basis-1/2 rounded-lg flex p-2 gap-2 content-center justify-center">
                           <button
+                            type="button"
                             onClick={() =>
                               handleNodeShapeChange(event, "circle")
                             }
@@ -331,6 +360,7 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
                           </button>
 
                           <button
+                            type="button"
                             onClick={() =>
                               handleNodeShapeChange(event, "square")
                             }
@@ -346,6 +376,7 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
                           </button>
 
                           <button
+                            type="button"
                             onClick={() =>
                               handleNodeShapeChange(event, "triangle")
                             }
@@ -376,6 +407,7 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
                             <div className="flex gap-2" key={subtask.id}>
                               <input
                                 type="checkbox"
+                                checked={subtask.status}
                                 className="w-4 h-4 self-center"
                                 onChange={() =>
                                   onSubTaskCheckboxChange(
@@ -386,6 +418,7 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
                                 value={subtask.status}
                               ></input>
                               <button
+                                type="button"
                                 onClick={() => deleteSubTask(event, subtask.id)}
                                 className="w-8 h-8 self-center"
                               >
@@ -409,6 +442,7 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
 
                       <div className="flex gap-4">
                         <button
+                          type="button"
                           onClick={addSubTask}
                           disabled={subtasks.length >= 8}
                         >
@@ -434,26 +468,14 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
               <div className="flex items-center justify-end p-3 lg:p-6 rounded-b gap-3">
                 <button
                   className="bg-blue-400 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                  type="button"
-                  onClick={() =>
-                    editTaskCallBack("success", {
-                      // This code may or may not be permanent, but definitely usable for testing
-                      name: nameRef.current.value,
-                      description: descriptionRef.current.value,
-                      startDate: startDate,
-                      dueDate: endDate,
-                      nodeColor: nodeColor.name,
-                      nodeShape: nodeShape,
-                      subtasks: subtasks,
-                    })
-                  }
+                  type="submit"
                 >
                   Save
                 </button>
                 <button
                   className="text-black border border-black rounded-md background-transparent font-bold uppercase px-6 py-3 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                   type="button"
-                  onClick={() => editTaskCallBack("failed", {})}
+                  onClick={() => editTaskCallBack("failed", oldData)}
                 >
                   Close
                 </button>
@@ -463,21 +485,19 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
         </div>
         <div className="opacity-25 fixed inset-0 z-10 bg-black"></div>
       </form>
-      
     </>
   );
 };
 
 TaskModal.propTypes = {
-  mode: PropTypes.string.isRequired,
   oldData: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired,
-    startDate: PropTypes.instanceOf(Date).isRequired,
-    dueDate: PropTypes.instanceOf(Date).isRequired,
-    nodeColor: PropTypes.string.isRequired,
-    nodeShape: PropTypes.string.isRequired,
-    subtasks: PropTypes.object.isRequired,
+    name: PropTypes.string,
+    description: PropTypes.string,
+    startDate: PropTypes.instanceOf(Date),
+    dueDate: PropTypes.instanceOf(Date),
+    nodeColor: PropTypes.string,
+    nodeShape: PropTypes.string,
+    subtasks: PropTypes.arrayOf(object),
   }),
   editTaskCallBack: PropTypes.func.isRequired,
 };
