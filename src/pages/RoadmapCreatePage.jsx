@@ -10,16 +10,24 @@ const RoadmapCreatePage = () => {
   const [modalState, setModalState] = useState(false)
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [editTaskID, setEditTaskID] = useState(0)
 
   useEffect(() => {
     console.log(tasks)
   }, [tasks])
-
   
   const editTaskCallBack = (success, submissionObject) => {
     // need more logic as describe in the sheet
 
+    success ? console.log("editTaskCallBack: true"): console.log("editTaskCallBack: false")
+
     setModalState(false);
+
+    submissionObject.name != undefined ? {
+      
+    } : null
+
+    // append task obj
     setTasks([...tasks, { // these 4 lines can be used for adding task, not edit
       name: submissionObject.name,
       description: submissionObject.description
@@ -27,7 +35,7 @@ const RoadmapCreatePage = () => {
   }
 
   const onPressingSaveButton = (e) => {
-    // e.preventDefault(); // stop the page from reloading when submitting the form, may remove in the future
+    e.preventDefault(); // stop the page from reloading when submitting the form, may remove in the future
     console.log({ // used for sprint 1
       name: RMName,
       description: RMDesc
@@ -38,6 +46,7 @@ const RoadmapCreatePage = () => {
     // Stop the spinner after the promise of Fetch() has resolved
 
     navigate("/") // forward to view roadmap page, unsure how to navigate this though cuz this is stateless navigate
+    console.log(tasks)
   };
 
   return (
@@ -65,34 +74,37 @@ const RoadmapCreatePage = () => {
             value={RMDesc}
             onChange={e => setRMDesc(e.target.value)}
           ></textarea>
-          <button className="rounded-xl bg-emerald-400 text-white font-bold hover:bg-yellow-300 transition duration-200 w-20 h-10 fixed right-24 bottom-2" onClick={onPressingSaveButton}>
+          <button className="rounded-xl bg-emerald-400 text-white font-bold hover:bg-yellow-300 transition duration-200 w-20 h-10 fixed right-2 bottom-2">
             Save
-          </button>
-          <button className="rounded-xl bg-red-400 text-white font-bold hover:bg-yellow-300 transition duration-200 w-20 h-10 fixed bottom-2 right-2">
-            Cancel
           </button>
         </form>
 
         <div className="flex">
-          <p className="text-4xl font-inter font-bold m-10 break-word w-32 inline-block">
+          {/* <p className="text-4xl font-inter font-bold m-10 break-word w-32 inline-block">
             {RMName === "" ? "Roadmap Name" : RMName}
-          </p>
+          </p> */}
           {
           tasks.map((task) => {
             return (
               <>
+                <button key={task.id} className="bg-emerald-500 hover:bg-yellow-500 p-2 m-3 h-10 w-10 self-center rounded-full transtition duration-200 text-white font-bold" 
+                onClick={() => {setModalState(true); setEditTaskID(task.id);}}> {task.id} </button>
                 <hr className="block self-center w-10 border-blue-800 border-2" key={task.id + "hr"}></hr>
-                <button key={task.id} className="bg-emerald-500 hover:bg-yellow-500 p-2 m-3 h-10 w-10 self-center rounded-full transtition duration-200 text-white font-bold"> {task.id} </button>
               </>
           )})
         }
-          <hr className="block self-center w-10 border-blue-800 border-2 hover:border-yellow-500"></hr>
-          <button className="bg-emerald-500 hover:bg-yellow-500 p-2 m-2 h-10 w-16 self-center rounded-md text-white font-bold" onClick={() => setModalState(true)}>Add</button>
+          {/* <hr className="block self-center w-10 border-blue-800 border-2 hover:border-yellow-500"></hr> */}
+          <button className="bg-emerald-500 hover:bg-yellow-500 p-2 m-2 h-10 w-16 self-center rounded-md text-white font-bold" 
+          onClick={() => {setModalState(true); setEditTaskID(-1);}}>Add</button>
         </div>
         {
           // currently the mode and olddata attr is hard coded
           // both should be changed to correspond to the correct node type (new node or edit old node)
-          modalState ? <TaskModal mode="create" oldData={{}} editTaskCallBack={editTaskCallBack}/> : null
+          modalState ? (
+            editTaskID == -1 ? <TaskModal mode="create" oldData={{}} editTaskCallBack={editTaskCallBack}/> 
+            : <TaskModal mode="edit" oldData={tasks.at(editTaskID)} editTaskCallBack={editTaskCallBack}/>
+          ) : null
+          
         }
       </div>
     </>
