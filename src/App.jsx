@@ -12,7 +12,6 @@ const RoadmapCreatePage = lazy(() => import("./pages/RoadmapCreatePage"));
 const Setting = lazy(() => import("./pages/Setting"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Calendar = lazy(() => import("./pages/Calendar"));
-const Feed = lazy(() => import("./pages/Feed"))  
 
 function App() {
   return (
@@ -66,14 +65,6 @@ function App() {
               element={
                 <Suspense fallback={<Spinner/>}>
                   <Calendar />{" "}
-                </Suspense>
-              }
-            />
-            <Route 
-              path="feed" 
-              element={
-                <Suspense fallback={<Spinner/>}>
-                  <Feed />{" "}
                 </Suspense>
               }
             />
