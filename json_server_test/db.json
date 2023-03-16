@@ -1,0 +1,158 @@
+{
+    "roadmaps": [
+        {
+          "name": "SDLC",
+          "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sagittis dolor magna, vel fringilla massa ornare at. Proin dictum nunc mauris, non euismod sapien congue ac. Etiam non est congue, porta justo sit amet, consequat dolor. Cras sed turpis mattis, vulputate ipsum ut, consectetur mauris. Nunc ut purus convallis, condimentum mauris non, bibendum eros. Praesent fringilla purus sed sem fringilla mattis. Sed sit amet nunc ut tortor porttitor sagittis in elementum libero. Etiam nibh tortor, tincidunt ultrices sapien eu, fermentum luctus enim. Mauris venenatis lectus nec velit laoreet, dapibus viverra neque lobortis. Fusce semper at urna ut porta. In massa.",
+          "tasks": [
+            {
+              "name": "plan",
+              "description": "plan description",
+              "startDate": "2023-03-12T13:00:00.490Z",
+              "dueDate": "2023-03-12T14:00:00.490Z",
+              "nodeColor": "Yellow",
+              "nodeShape": "square",
+              "subtasks": [
+                {
+                  "id": 0,
+                  "detail": "why are you reading this",
+                  "status": false
+                },
+                {
+                  "id": 1,
+                  "detail": "hi",
+                  "status": false
+                }
+              ]
+            },
+            {
+              "name": "Analysis",
+              "description": "analysis description",
+              "startDate": "2023-03-16T13:20:21.000Z",
+              "dueDate": "2023-03-22T13:20:21.000Z",
+              "nodeColor": "Yellow",
+              "nodeShape": "circle",
+              "subtasks": [
+                {
+                  "id": 0,
+                  "detail": "hello",
+                  "status": true
+                }
+              ]
+            },
+            {
+              "name": "Design",
+              "description": "design description",
+              "startDate": "2023-03-12T13:20:51.465Z",
+              "dueDate": "2023-03-12T13:20:51.465Z",
+              "nodeColor": "Green",
+              "nodeShape": "square",
+              "subtasks": [
+                {
+                  "id": 0,
+                  "detail": "lorem ipsum",
+                  "status": false
+                }
+              ]
+            },
+            {
+              "name": "Implement",
+              "description": "no",
+              "startDate": "2023-03-12T13:21:14.603Z",
+              "dueDate": "2023-03-12T13:21:14.603Z",
+              "nodeColor": "Gray",
+              "nodeShape": "circle",
+              "subtasks": [
+                {
+                  "id": 0,
+                  "detail": "yes",
+                  "status": false
+                }
+              ]
+            }
+          ],
+          "id": 1
+        },
+        {
+          "name": "lorem ipsum",
+          "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sagittis dolor magna, vel fringilla massa ornare at. Proin dictum nunc mauris, non euismod sapien congue ac. Etiam non est congue, porta justo sit amet, consequat dolor. Cras sed turpis mattis, vulputate ipsum ut, consectetur mauris. Nunc ut purus convallis, condimentum mauris non, bibendum eros. Praesent fringilla purus sed sem fringilla mattis. Sed sit amet nunc ut tortor porttitor sagittis in elementum libero. Etiam nibh tortor, tincidunt ultrices sapien eu, fermentum luctus enim. Mauris venenatis lectus nec velit laoreet, dapibus viverra neque lobortis. Fusce semper at urna ut porta. In massa.",
+          "tasks": [
+            {
+              "name": "step 1",
+              "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ac elementum nunc. Suspendisse rhoncus lacus porttitor quam ultrices vehicula. Fusce.",
+              "startDate": "2023-03-12T13:22:38.425Z",
+              "dueDate": "2023-03-12T13:22:38.425Z",
+              "nodeColor": "Yellow",
+              "nodeShape": "square",
+              "subtasks": [
+                {
+                  "id": 1,
+                  "detail": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ac elementum nunc. Suspendisse rhoncus lacus porttitor quam ultrices vehicula. Fusce.",
+                  "status": false
+                },
+                {
+                  "id": 2,
+                  "detail": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ac elementum nunc. Suspendisse rhoncus lacus porttitor quam ultrices vehicula. Fusce.",
+                  "status": false
+                },
+                {
+                  "id": 3,
+                  "detail": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ac elementum nunc. Suspendisse rhoncus lacus porttitor quam ultrices vehicula. Fusce.",
+                  "status": true
+                }
+              ]
+            },
+            {
+              "name": "step 2",
+              "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ac elementum nunc. Suspendisse rhoncus lacus porttitor quam ultrices vehicula. Fusce.",
+              "startDate": "2023-03-25T13:23:22.000Z",
+              "dueDate": "2023-03-29T13:23:22.000Z",
+              "nodeColor": "Violet",
+              "nodeShape": "square",
+              "subtasks": [
+                {
+                  "id": 0,
+                  "detail": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ac elementum nunc. Suspendisse rhoncus lacus porttitor quam ultrices vehicula. Fusce.",
+                  "status": false
+                }
+              ]
+            },
+            {
+              "name": "step 3",
+              "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ac elementum nunc. Suspendisse rhoncus lacus porttitor quam ultrices vehicula. Fusce.",
+              "startDate": "2023-04-13T13:23:38.000Z",
+              "dueDate": "2023-03-22T13:23:38.000Z",
+              "nodeColor": "Orange",
+              "nodeShape": "square",
+              "subtasks": [
+                {
+                  "id": 0,
+                  "detail": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ac elementum nunc. Suspendisse rhoncus lacus porttitor quam ultrices vehicula. Fusce.",
+                  "status": false
+                },
+                {
+                  "id": 1,
+                  "detail": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ac elementum nunc. Suspendisse rhoncus lacus porttitor quam ultrices vehicula. Fusce.",
+                  "status": false
+                },
+                {
+                  "id": 2,
+                  "detail": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ac elementum nunc. Suspendisse rhoncus lacus porttitor quam ultrices vehicula. Fusce.",
+                  "status": false
+                },
+                {
+                  "id": 3,
+                  "detail": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ac elementum nunc. Suspendisse rhoncus lacus porttitor quam ultrices vehicula. Fusce.",
+                  "status": false
+                },
+                {
+                  "id": 4,
+                  "detail": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse ac elementum nunc. Suspendisse rhoncus lacus porttitor quam ultrices vehicula. Fusce.",
+                  "status": false
+                }
+              ]
+            }
+          ],
+          "id": 2
+        }
+      ]
+}
