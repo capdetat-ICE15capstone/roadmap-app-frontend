@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import SearchBar from "../components/SearchBar";
+import SearchButton from "../components/Button";
 import { ReactComponent as SearchIcon } from "../assets/searchIcon.svg";
 import Roadmap from "../components/Roadmap";
 import Roadmap2 from "../components/Roadmap2";
@@ -21,22 +22,8 @@ const Feed = () => {
           className="relative inline-block my-4"
           onSubmit={handleSubmit}
         >
-          <input
-            type="search"
-            className=" static shadow appearance-none border rounded-3xl py-4 pl-16 px-4 pr4 w-fi text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="InputSearch"
-            placeholder="Search"
-            onChange={(event) => setSearch(event.target.value)}
-          />
-          <span className="absolute left-6 bottom-4">
-            <SearchIcon />
-          </span>
-          <button
-            type="submit"
-            className="bg-[#DF5E76] hover:bg-[#BE4057] text-white font-bold appearance-none border rounded-3xl px-12 py-4 ml-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          >
-            Search
-          </button>
+          <SearchBar/>
+          <SearchButton/>
         </div>
       </form>
       {/*Roadmaps*/}

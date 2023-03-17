@@ -12,7 +12,7 @@ const SearchBar = () => {
     <div className="inline-block relative" onSubmit={handleSubmit}>
       <input
         type="search"
-        className=" static shadow appearance-none border rounded-3xl py-4 pl-16 pr-32 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+        className="static shadow appearance-none border rounded-3xl py-4 pl-16 px-4 pr4 w-fi text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
         id="InputSearch"
         placeholder="Search"
         onChange={(event) => setSearch(event.target.value)}
