@@ -15,7 +15,7 @@ const Home = () => {
         </div>
         <div className="inline-block">
           <Roadmap 
-          username="Thanapat" 
+          userName="Thanapat" 
           ownerName="Tripipat" 
           roadmapName="React skill issue" 
           createdDate="03/17/2023" 
@@ -24,7 +24,7 @@ const Home = () => {
         </div>
         <div className="inline-block">
           <Roadmap
-          username="FingTheMan" 
+          userName="FingTheMan" 
           ownerName="Wuttikorn" 
           roadmapName="Dying From Capstone" 
           createdDate="03/17/2023" 
