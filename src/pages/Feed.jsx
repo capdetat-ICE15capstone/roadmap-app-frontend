@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import SearchBar from "../components/SearchBar";
 import SearchButton from "../components/Button";
-import { ReactComponent as SearchIcon } from "../assets/searchIcon.svg";
 import Roadmap from "../components/Roadmap";
 import RoadmapCreate from "../components/RoadmapCreate";
 
