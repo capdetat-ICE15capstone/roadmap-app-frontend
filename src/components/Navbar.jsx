@@ -3,6 +3,7 @@ import { Outlet, NavLink } from 'react-router-dom';
 
 // Image/Logo SVG
 import { ReactComponent as Logo } from "../assets/logo.svg"
+import { ReactComponent as FeedLogo } from "../assets/navbar_assets/feed_icon.svg"
 import { ReactComponent as HomeLogo } from "../assets/navbar_assets/home_icon.svg"
 import { ReactComponent as CalendarLogo } from "../assets/navbar_assets/calendar_icon.svg"
 import { ReactComponent as SettingLogo } from "../assets/navbar_assets/setting_icon.svg"
@@ -32,6 +33,7 @@ const Navbar = () => {
           <div className="flex flex-col">
             <Logo className="justify-self-center self-center h-20" />
             <NavItem SvgIcon={HomeLogo} displayName="Home" to="/" />
+            <NavItem SvgIcon={FeedLogo} displayName="Feed" to="/feed" />
             <NavItem SvgIcon={SettingLogo} displayName="Setting" to="/setting" />
             <NavItem SvgIcon={CalendarLogo} displayName="Calendar" to="/calendar" />
           </div>
