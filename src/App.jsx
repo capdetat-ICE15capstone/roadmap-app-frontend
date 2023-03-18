@@ -8,6 +8,7 @@ import { lazy, Suspense } from "react";
 
 const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
+const View = lazy(() => import("./pages/View"));
 const RoadmapCreatePage = lazy(() => import("./pages/RoadmapCreatePage"));
 const Setting = lazy(() => import("./pages/Setting"));
 const Profile = lazy(() => import("./pages/Profile"));
@@ -65,6 +66,14 @@ function App() {
               element={
                 <Suspense fallback={<Spinner />}>
                   <Calendar />{" "}
+                </Suspense>
+              }
+            />
+            <Route
+              path="view"
+              element={
+                <Suspense fallback={<Spinner />}>
+                  <View />{" "}
                 </Suspense>
               }
             />
