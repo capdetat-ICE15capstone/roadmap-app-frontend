@@ -3,7 +3,6 @@ import SearchBar from "../components/SearchBar";
 import SearchButton from "../components/Button";
 import { ReactComponent as SearchIcon } from "../assets/searchIcon.svg";
 import Roadmap from "../components/Roadmap";
-import Roadmap2 from "../components/Roadmap2";
 import RoadmapCreate from "../components/RoadmapCreate";
 
 const Feed = () => {
@@ -16,7 +15,6 @@ const Feed = () => {
   return (
     <>
       {/*Search bar*/}
-      <SearchBar />
       <form className="mx-auto" id="searchForm" onSubmit={handleSubmit}>
         <div
           className="relative inline-block my-4"
@@ -32,19 +30,22 @@ const Feed = () => {
           <RoadmapCreate />
         </div>
         <div className="inline-block">
-          <Roadmap />
-        </div>
-        <div className="inline-block">
-          <Roadmap />
-        </div>
-        <div className="inline-block">
-          <Roadmap2 
+          <Roadmap 
           username="Thanapat" 
           ownerName="Tripipat" 
           roadmapName="React skill issue" 
           createdDate="03/17/2023" 
           updateDate="today bich" 
           views={6338098421} />
+        </div>
+        <div className="inline-block">
+          <Roadmap 
+          username="FingTheMan" 
+          ownerName="Wuttikorn" 
+          roadmapName="Dying From Capstone" 
+          createdDate="03/17/2023" 
+          updateDate="03/18/2023" 
+          views={177013} />
         </div>
       </div>
     </>
