@@ -2,11 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import placeholderImage from "../assets/roadmap_assets/Placeholder_Image.png"
 import { ReactComponent as EyeIcon } from "../assets/roadmap_assets/eye_Icon.svg"
-//import { ReactComponent as Placeholder_Image } from "../assets/roadmap_assets/Placeholder_Image.svg"
 
-const Roadmap = ({ username, ownerName, roadmapName, createdDate, updateDate, views }) => {
+const Roadmap = ({ userName, ownerName, roadmapName, createdDate, updateDate, views }) => {
   Roadmap.propTypes = {
-    username: PropTypes.string.isRequired,
+    userName: PropTypes.string.isRequired,
     ownerName: PropTypes.string.isRequired,
     roadmapName: PropTypes.string.isRequired,
     createdDate: PropTypes.string.isRequired,
@@ -18,7 +17,7 @@ const Roadmap = ({ username, ownerName, roadmapName, createdDate, updateDate, vi
       <div className="relative container rounded-3xl h-3/5 w-auto m-2">
         <img src={placeholderImage} className="relative object-cover rounded-[48px] h-full w-full" />
         <h3 className="absolute text-black bottom-2 left-6">
-          {username}
+          {userName}
         </h3>
         <h6 className="absolute text-gray-600 bottom-2 right-6">
           Last updated: {updateDate}
@@ -49,13 +48,13 @@ export default Roadmap;
 
 
 
-/*const roadmap1 = {username: "FingTheMan", 
+/*const roadmap1 = {userName: "FingTheMan", 
               ownerName: "Wuttikorn", 
               roadmapName: "Doing Capstone", 
               createdDate: "01/01/2023", 
               updateDate: "18/03/2023", 
               views: 177013};
-const roadmap2 = {username: "FingTheMan", 
+const roadmap2 = {userName: "FingTheMan", 
               ownerName: "Wuttikorn", 
               roadmapName: "Dying from Capstone", 
               createdDate: "19/02/2023", 
@@ -69,7 +68,7 @@ allRoadmap.forEach((roadmap)=>{
   <div className="relative container rounded-3xl h-3/5 w-auto m-2">
     <img src={placeholderImage} className="relative object-cover rounded-[48px] h-full w-full" />
     <h3 className="absolute text-black bottom-2 left-6">
-      {roadmap.username}
+      {roadmap.userName}
     </h3>
     <h6 className="absolute text-gray-600 bottom-2 right-6">
       Last updated: {roadmap.updateDate}

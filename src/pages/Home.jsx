@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Roadmap from "../components/Roadmap";
-import Roadmap2 from "../components/Roadmap2";
 import RoadmapCreate from "../components/RoadmapCreate";
 
 const Home = () => {
@@ -15,7 +14,7 @@ const Home = () => {
           <Roadmap />
         </div>
         <div className="inline-block">
-          <Roadmap2 
+          <Roadmap 
           username="Thanapat" 
           ownerName="Tripipat" 
           roadmapName="React skill issue" 
@@ -24,7 +23,7 @@ const Home = () => {
           views={6338098421} />
         </div>
         <div className="inline-block">
-          <Roadmap2
+          <Roadmap
           username="FingTheMan" 
           ownerName="Wuttikorn" 
           roadmapName="Dying From Capstone" 
