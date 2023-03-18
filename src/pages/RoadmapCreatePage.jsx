@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from "react";
 import TaskModal from "../components/TaskModal";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 import Spinner from "../components/Spinner";
 
-const RoadmapCreatePage = () => {
+const RoadmapCreatePage = (props) => {
+  // const { mode } = props;
+  const { state } = useLocation();
+  const { id } = useParams();
   const [RMName, setRMName] = useState("");
   const [RMDesc, setRMDesc] = useState("");
   const [tasks, setTasks] = useState([]);
@@ -16,8 +19,13 @@ const RoadmapCreatePage = () => {
   const publicButtonStyle = "";
 
   useEffect(() => {
-    console.log(tasks);
-  }, [tasks]);
+    // use to load roadmap into edit or clone page
+    if (state !== null && state !== undefined) {
+      setRoadmapWithState()
+    } else {
+      setRoadmapWithoutState()
+    }
+  }, [])
 
   const getID = () => {
     const id = lastId;
@@ -25,11 +33,16 @@ const RoadmapCreatePage = () => {
     return id;
   };
 
+  const setRoadmapWithState = () => {
+    console.log("setting up roadmap with state")
+    console.log(state);
+  }
+
+  const setRoadmapWithoutState = () => {
+    console.log("setting up roadmap without state")
+  }
+
   const editTaskCallBack = (status, submissionObject) => {
-    // need more logic as describe in the sheet
-    // status === "success" ? console.log("editTaskCallBack: true"): console.log("editTaskCallBack: false")
-    // console.log("Submitted object");
-    // console.log(submissionObject);
     switch (status) {
       case "success":
         switch (submissionObject.id) {
