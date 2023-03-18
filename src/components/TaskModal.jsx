@@ -147,7 +147,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
     console.log(oldData);
     async function setModalData() {
       if (oldData.id !== -1) {
-        await setLoading(true);
+        setLoading(true);
         nameRef.current.value = oldData.name;
         descriptionRef.current.value = oldData.description;
         setSubTasks(oldData.subtasks);
@@ -163,10 +163,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
             highestID = subtask.id;
           }
         });
-        await setLastId(highestID + 1);
-        // I'm not sure about this one. if react set data in order,
-        // then awaiting for this last line to finish should ensure
-        // that everything is finished before leaving the function
+        setLastId(lastId => highestID + 1);
       }
     }
     setModalData();
@@ -226,7 +223,6 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     editTaskCallBack("success", {
-      // This code may or may not be permanent, but definitely usable for testing
       id: oldData.id,
       name: nameRef.current.value,
       description: descriptionRef.current.value,
