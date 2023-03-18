@@ -1,5 +1,5 @@
 import React from "react";
-import { Outlet, NavLink } from 'react-router-dom'
+import { Outlet, NavLink } from 'react-router-dom';
 
 // Image/Logo SVG
 import { ReactComponent as Logo } from "../assets/logo.svg"
