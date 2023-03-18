@@ -13,6 +13,7 @@ const Setting = lazy(() => import("./pages/Setting"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Calendar = lazy(() => import("./pages/Calendar"));
 const FeedPage = lazy(() => import("./pages/Feed"));
+const Home = lazy(() => import("./pages/Home"))
 
 function App() {
   return (
@@ -20,11 +21,11 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Navbar />}>
-            <Route index element={<Feed />} />
+            <Route index element={<Home />} />
             <Route
               path="createRoadMap"
               element={
-                <Suspense fallback={<Spinner/>}>
+                <Suspense fallback={<Spinner />}>
                   <RoadmapCreatePage />
                 </Suspense>
               }
@@ -32,7 +33,7 @@ function App() {
             <Route
               path="signup"
               element={
-                <Suspense fallback={<Spinner/>}>
+                <Suspense fallback={<Spinner />}>
                   <Signup />
                 </Suspense>
               }
@@ -40,7 +41,7 @@ function App() {
             <Route
               path="login"
               element={
-                <Suspense fallback={<Spinner/>}>
+                <Suspense fallback={<Spinner />}>
                   <Login />
                 </Suspense>
               }
@@ -48,7 +49,7 @@ function App() {
             <Route
               path="setting"
               element={
-                <Suspense fallback={<Spinner/>}>
+                <Suspense fallback={<Spinner />}>
                   <Setting />{" "}
                 </Suspense>
               }
@@ -56,7 +57,7 @@ function App() {
             <Route
               path="profile"
               element={
-                <Suspense fallback={<Spinner/>}>
+                <Suspense fallback={<Spinner />}>
                   <Profile />{" "}
                 </Suspense>
               }
@@ -64,7 +65,7 @@ function App() {
             <Route
               path="calendar"
               element={
-                <Suspense fallback={<Spinner/>}>
+                <Suspense fallback={<Spinner />}>
                   <Calendar />{" "}
                 </Suspense>
               }
@@ -72,8 +73,16 @@ function App() {
             <Route
               path="feed"
               element={
-                <Suspense fallback={<Spinner/>}>
+                <Suspense fallback={<Spinner />}>
                   <FeedPage />{" "}
+                </Suspense>
+              }
+            />
+            <Route
+              path="home"
+              element={
+                <Suspense fallback={<Spinner />}>
+                  <Home />{" "}
                 </Suspense>
               }
             />
