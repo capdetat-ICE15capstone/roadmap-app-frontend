@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import SearchBar from "../components/SearchBar";
 import SearchButton from "../components/Button";
 import Roadmap from "../components/Roadmap";
-import Roadmap2 from "../components/Roadmap2";
 
 const Feed = () => {
   const [search, setSearch] = useState("");
