@@ -40,20 +40,18 @@ function View() {
             Sub-Tasks
           </div>
           <div className='flex flex-col justify-center space-y-2 text-sm'>
-            {roadmap.tasks.map(task => 
-              {
-
-              })
-            }
-            <label>
-              <input
-                type="checkbox"
-                className="w-4 h-4S mr-2 bg-gray-100 border-gray-300 rounded"
-                id="CheckRememberMe"
-                onChange={() => setRememberMe(!rememberMe)}
-              />
-              lacus eget faucibus tempor
-            </label>
+            {roadmap.tasks[current - 1].subtasks.map(subtask => {
+              return (
+                <label key={subtask.id}>
+                  <input
+                    type="checkbox"
+                    className="w-4 h-4S mr-2 bg-gray-100 border-gray-300 rounded"
+                    onChange={() => setRoadmap({...roadmap, reasons:{...formState.reasons, [changedReason]: !formState.reasons[changedReason]}})}
+                  />
+                  {subtask.detail}
+                </label>
+              )
+            })}
           </div>
         </div>
       </div>
