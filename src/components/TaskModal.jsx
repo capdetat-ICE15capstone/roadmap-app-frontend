@@ -2,6 +2,9 @@ import React, { useRef, useState, useEffect, forwardRef } from "react";
 import PropTypes, { object } from "prop-types";
 import { ReactComponent as AddButton } from "../assets/addButton.svg";
 import { ReactComponent as DeleteButton } from "../assets/deleteButton.svg";
+import { ReactComponent as ArrowIcon } from "../assets/taskmodal/arrow.svg";
+import { ReactComponent as CalendarIcon } from "../assets/taskmodal/calendar.svg";
+import { ReactComponent as TrashIcon } from "../assets/taskmodal/trash.svg";
 import DatePicker from "react-datepicker";
 import Spinner from "./Spinner";
 
@@ -10,13 +13,11 @@ import "react-datepicker/dist/react-datepicker.css";
 // Current issues
 // 2. Data domain has yet to be enforced
 // 3. CustomSVG is terribly implemented (hard code everywhere)
-// 4. Styling is yet to be finalized
-// 5. Input box shrink problem
-// 6. Datepicker style
 // 7. Modal size (the modal overflowing the screen)
-// 10. Description text and placeholder starting position (text starts in the middle of the box)
 // 11. Node selector overflow in small screen
 // 12. Problems with some mobile devices
+// 13. Some edges are not rounded
+// 14. Nodes shape selector arent actually centered
 
 // Fixed isses
 // 1. User can choose whatever start and due date they want, incluing in the past
@@ -24,6 +25,10 @@ import "react-datepicker/dist/react-datepicker.css";
 // 3. subtask scrolling
 // 4. Description box size problem (box size tends to varies)
 // 5. Using new Date() will also select the time for you, not only date
+// 6. fixed a lot of styling
+// 7. Datepicker style
+// 8. input box shrink
+// 9. Description text and placeholder starting position (text starts in the middle of the box)
 
 const CustomSVG = ({
   height = 42,
@@ -131,14 +136,23 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
     <div className="w-full">
       <button
         type="button"
-        className="bg-blue-400 w-full rounded-md"
+        className="w-full rounded-md h-12 bg-gray-100 border-2 border-gray-300"
         ref={ref}
         onClick={(e) => {
           e.preventDefault();
           onClick();
         }}
       >
-        {value}
+        <div className="flex items-center px-2 justify-between">
+          <div className="flex gap-3 items-center">
+            <CalendarIcon className="h-full" />
+            <div className="flex flex-col items-start">
+              <p className="text-xs text-blue-400">Select date</p>
+              <p className="font-bold text-black">{value}</p>
+            </div>
+          </div>
+          <ArrowIcon />
+        </div>
       </button>
     </div>
   ));
@@ -163,7 +177,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
             highestID = subtask.id;
           }
         });
-        setLastId(lastId => highestID + 1);
+        setLastId((lastId) => highestID + 1);
       }
     }
     setModalData();
@@ -244,7 +258,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
             <div className=" rounded-2xl shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
               {/*header*/}
               <div
-                className={`flex items-start justify-between py-4 px-5 lg:py-8 border-b border-solid border-slate-200 rounded-t-2xl ${nodeColor.twbg} transition duration-300`}
+                className={`flex items-start justify-between py-4 px-5 lg:py-8 border-b border-solid border-slate-200 rounded-t-2xl ${nodeColor.twbg} transition duration-300 items-center`}
               >
                 <h3 className="text-3xl font-semibold text-white">
                   Create task
@@ -255,91 +269,94 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                   onClick={() => editTaskCallBack("delete", oldData)}
                 >
                   {" "}
-                  x
+                  <TrashIcon className="h-10" />
                 </button>
               </div>
               {/*body*/}
-              <div className="m-4 overflow-auto">
-                <div className="flex flex-col lg:flex-row gap-2">
-                  <div className="flex flex-col w-full lg:w-1/2">
-                    <label className="font-nunito-sans font-bold">Name</label>
-                    <input
-                      type="text"
-                      className="border border-black rounded-md m-2 placeholder:italic"
-                      placeholder=" Enter task name..."
-                      ref={nameRef}
-                    ></input>
-                    <label className="font-nunito-sans font-bold placeholder:t">
-                      Description
-                    </label>
-                    <input
-                      type="textbox"
-                      className="border border-black rounded-md m-2 grow placeholder:italic placeholder:justify-start h-24"
-                      placeholder=" Enter description..."
-                      ref={descriptionRef}
-                    ></input>
-                    <div className="grid grid-rows-2">
-                      <div className="w-full">
-                        <label className="self-center font-nunito-sans font-bold">
-                          Start
-                        </label>
-                        <div className="m-2">
-                          <DatePicker
-                            selected={startDate}
-                            showTimeSelect
-                            minDate={Date.now()}
-                            onChange={(date) => setStartDate(date)}
-                            // className="border border-black rounded-md justify-self-end w-full"
-                            customInput={<DatePickerButton />}
-                          ></DatePicker>
-                        </div>
-                      </div>
-                      <div className="w-full">
-                        <label className="self-center font-nunito-sans font-bold">
-                          Due
-                        </label>
-                        <div className="m-2">
-                          <DatePicker
-                            selected={endDate}
-                            showTimeSelect
-                            minDate={Date.now()}
-                            onChange={(date) => setEndDate(date)}
-                            // className="border border-black rounded-md justify-self-end w-full"
-                            customInput={<DatePickerButton />}
-                          ></DatePicker>
-                        </div>
+              {/* <div className="p-4 overflow-auto"> */}
+              <div className="flex flex-col lg:flex-row">
+                <div className="flex flex-col w-full lg:w-1/2 p-6">
+                  <label className="font-nunito-sans font-bold">Name</label>
+                  <input
+                    type="text"
+                    className="border-2 border-gray-300 rounded-md my-1 placeholder:italic px-1"
+                    placeholder=" Enter task name..."
+                    ref={nameRef}
+                  ></input>
+                  <label className="font-nunito-sans font-bold">
+                    Description
+                  </label>
+                  <textarea
+                    className="border-2 border-gray-300 rounded-md my-1 grow placeholder:italic placeholder:justify-start px-1"
+                    cols="50"
+                    rows="4"
+                    placeholder=" Enter description..."
+                    ref={descriptionRef}
+                  ></textarea>
+                  <div className="flex flex-col my-2 gap-2">
+                    <div className="w-full grid grid-cols-10">
+                      <label className="self-center font-nunito-sans font-bold">
+                        Start
+                      </label>
+                      <div className="col-span-9">
+                        <DatePicker
+                          selected={startDate}
+                          showTimeSelect
+                          minDate={Date.now()}
+                          onChange={(date) => setStartDate(date)}
+                          // className="border border-black rounded-md justify-self-end w-full"
+                          customInput={<DatePickerButton />}
+                        ></DatePicker>
                       </div>
                     </div>
-
-                    <div className="">
-                      <label className="font-nunito-sans font-bold">
-                        Nodes
+                    <div className="w-full grid grid-cols-10">
+                      <label className="self-center font-nunito-sans font-bold">
+                        Due
                       </label>
-                      <div className="flex flex-1 gap-x-1">
-                        {/* <div className="basis-1/5 bg-gray-100 rounded-lg self-center flex justify-center p-2">
+                      <div className="col-span-9">
+                        <DatePicker
+                          selected={endDate}
+                          showTimeSelect
+                          minDate={Date.now()}
+                          onChange={(date) => setEndDate(date)}
+                          // className="border border-black rounded-md justify-self-end w-full"
+                          customInput={<DatePickerButton />}
+                        ></DatePicker>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="font-nunito-sans font-bold">Nodes</label>
+                    <div className="flex flex-1 gap-x-1 mt-1 mb-4">
+                      {/* <div className="basis-1/5 bg-gray-100 rounded-lg self-center flex justify-center p-2">
                           <CustomSVG
                             type={nodeShape}
                             className={`${nodeColor.twprop}`}
                           ></CustomSVG>
                         </div> */}
-                        <div className="bg-gray-100 basis-1/2 rounded-lg p-4 flex gap-2">
-                          <select
-                            value={nodeColor.name}
-                            onChange={handleNodeColorChange}
-                            className={`${nodeColor.twtext} font-bold grow self-center border border-black rounded-lg `}
-                          >
-                            {allNodeColor.map((colorObj) => (
-                              <option
-                                value={colorObj.name}
-                                key={colorObj.name}
-                                className={`${colorObj.twtext} font-bold`}
-                              >
-                                {colorObj.name.charAt(0).toUpperCase() + colorObj.name.slice(1)}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                        <div className="bg-gray-100 basis-1/2 rounded-lg flex p-2 gap-2 content-center justify-center">
+                      <div className="bg-gray-100 basis-1/2 rounded-lg grid grid-rows-3 grid-cols-7 gap-2 h-30 border-2 border-gray-300">
+                        <p className="font-bold text-gray-400 pl-2">Color</p>
+                        <select
+                          value={nodeColor.name}
+                          onChange={handleNodeColorChange}
+                          className={`${nodeColor.twtext} font-bold grow self-center border border-black rounded-lg col-span-5 row-start-2 col-start-2`}
+                        >
+                          {allNodeColor.map((colorObj) => (
+                            <option
+                              value={colorObj.name}
+                              key={colorObj.name}
+                              className={`${colorObj.twtext} font-bold`}
+                            >
+                              {colorObj.name.charAt(0).toUpperCase() +
+                                colorObj.name.slice(1)}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="bg-gray-100 basis-1/2 rounded-lg flex flex-col content-center border-gray-300 border-2">
+                        <p className="font-bold text-gray-400 pl-2">Shape</p>
+                        <div className="flex gap-2 justify-center">
                           <button
                             type="button"
                             onClick={() =>
@@ -383,7 +400,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                                 nodeShape === "triangle"
                                   ? "stroke-black stroke-2 "
                                   : ""
-                              } self-center`}
+                              } self-center `}
                               type="triangle"
                             />
                           </button>
@@ -391,16 +408,18 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                       </div>
                     </div>
                   </div>
-                  {/* Right side */}
-                  <div className="flex flex-col w-full lg:w-1/2">
-                    <div className="bg-gray-100 rounded-md p-4">
+                </div>
+                {/* Right side */}
+                <div className="flex flex-col w-full lg:w-1/2">
+                  <div className="bg-gray-100 p-6 basis-full flex flex-col justify-between">
+                    <div>
                       <label className="block font-nunito-sans font-bold">
                         Add Subtask
                       </label>
                       <div className="flex flex-col gap-2 overflow-y-auto max-h-32 lg:max-h-none py-2">
                         {subtasks.map((subtask) => {
                           return (
-                            <div className="flex gap-2" key={subtask.id}>
+                            <div className="flex gap-2 mx-2" key={subtask.id}>
                               <input
                                 type="checkbox"
                                 checked={subtask.status}
@@ -457,25 +476,19 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                         ) : null}
                       </div>
                     </div>
+                    <div className="flex items-center justify-end p-4 rounded-b gap-3">
+                      <button
+                        className="bg-blue-700 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                        type="submit"
+                      >
+                        Save
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
+              {/* </div> */}
               {/*footer*/}
-              <div className="flex items-center justify-end p-3 lg:p-6 rounded-b gap-3">
-                <button
-                  className="bg-blue-400 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                  type="submit"
-                >
-                  Save
-                </button>
-                <button
-                  className="text-black border border-black rounded-md background-transparent font-bold uppercase px-6 py-3 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                  type="button"
-                  onClick={() => editTaskCallBack("failed", oldData)}
-                >
-                  Close
-                </button>
-              </div>
             </div>
           </div>
         </div>

@@ -11,7 +11,7 @@
           "description": "ssssssssssssssss",
           "startDate": "2023-03-18T14:30:28.910Z",
           "dueDate": "2023-03-22T14:30:28.000Z",
-          "nodeColor": "Green",
+          "nodeColor": "green",
           "nodeShape": "square",
           "subtasks": [
             {
@@ -28,7 +28,7 @@
           "description": "sdasdasdadasdasdasdasdasdadas",
           "startDate": "2023-03-18T14:30:46.206Z",
           "dueDate": "2023-03-18T14:30:46.206Z",
-          "nodeColor": "Gray",
+          "nodeColor": "gray",
           "nodeShape": "square",
           "subtasks": [
             {
@@ -50,7 +50,7 @@
           "description": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
           "startDate": "2023-04-01T14:30:55.000Z",
           "dueDate": "2023-04-19T14:30:55.000Z",
-          "nodeColor": "Gray",
+          "nodeColor": "gray",
           "nodeShape": "circle",
           "subtasks": []
         }
