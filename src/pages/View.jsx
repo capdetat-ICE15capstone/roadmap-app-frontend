@@ -18,43 +18,60 @@ function View() {
   function MilestoneDetails(props) {
     const current = parseInt(props.milestone);
     return (
-      <div className='flex bg-white rounded-lg shadow-lg p-4'>
-        <div className='flex flex-col bg-white p-4 space-y-2 w-1/2'>
-          <div className='font-bold'>
-            {roadmap.tasks[current - 1].name}
-          </div>
-          <div className='text-sm'>
-            {roadmap.tasks[current - 1].description}
-          </div>
-          <div className='flex space-x-2'>
-            <div className='bg-green-100 grow font-bold text-center p-2'>
-              {roadmap.tasks[current - 1].startDate}
+      <div className='flex flex-col bg-white rounded-lg shadow-lg p-4 space-y-4'>
+        <div className='flex flex-row space-x-4 justify-between'>
+          <div className='flex flex-col bg-white space-y-2 w-1/2'>
+            <div className='font-bold'>
+              {roadmap.tasks[current - 1].name}
             </div>
-            <div className='bg-red-100 grow font-bold text-center p-2'>
-              {roadmap.tasks[current - 1].dueDate}
+            <div className='text-sm'>
+              {roadmap.tasks[current - 1].description}
+            </div>
+            <div className='flex space-x-2'>
+              <div className='bg-green-100 grow font-bold text-center p-2'>
+                {roadmap.tasks[current - 1].startDate}
+              </div>
+              <div className='bg-red-100 grow font-bold text-center p-2'>
+                {roadmap.tasks[current - 1].dueDate}
+              </div>
+            </div>
+          </div>
+          <div className='flex flex-col bg-white space-y-2 w-1/2'>
+            <div className='font-bold'>
+              Sub-Tasks
+            </div>
+            <div className='flex flex-col justify-center space-y-2 text-sm'>
+              {roadmap.tasks[current - 1].subtasks.map(subtask => {
+                return (
+                  <label key={subtask.id}>
+                    <input
+                      type="checkbox"
+                      className="w-4 h-4S mr-2 bg-gray-100 border-gray-300 rounded"
+                      defaultChecked={subtask.status ? true : false}
+                      onChange={() => {
+                        let res = { ...roadmap };
+                        res.tasks[current - 1].subtasks[subtask.id - 1].status = !subtask.status;
+                        setRoadmap(res);
+                      }
+                      }
+                    />
+                    {subtask.detail}
+                  </label>
+                )
+              })}
             </div>
           </div>
         </div>
-        <div className='flex flex-col bg-white p-4 space-y-2 w-1/2 shrink-0'>
-          <div className='font-bold'>
-            Sub-Tasks
-          </div>
-          <div className='flex flex-col justify-center space-y-2 text-sm'>
-            {roadmap.tasks[current - 1].subtasks.map(subtask => {
-              return (
-                <label key={subtask.id}>
-                  <input
-                    type="checkbox"
-                    className="w-4 h-4S mr-2 bg-gray-100 border-gray-300 rounded"
-                    onChange={() => setRoadmap({...roadmap, reasons:{...formState.reasons, [changedReason]: !formState.reasons[changedReason]}})}
-                  />
-                  {subtask.detail}
-                </label>
-              )
-            })}
-          </div>
+        <div className="flex flex-col space-y-2">
+          <button className="bg-transparent grow text-gray-600 border border-grey-500 px-4 py-2 font-semilight rounded-lg text-sm" type="button">
+            Save Changes
+          </button>
+          <button className="bg-transparent grow text-gray-600 border border-grey-500 px-4 py-2 font-semilight rounded-lg text-sm" type="button">
+            Complete Milestone
+          </button>
         </div>
       </div>
+
     )
   }
 
@@ -97,7 +114,7 @@ function View() {
     'tasks': [
       {
         'id': '1',
-        'name': 'start',
+        'name': 'First Task',
         'description': 'Task descriptions. This is the task for the first milestone.',
         'startDate': '20200110',
         'dueDate': '20200115',
@@ -107,7 +124,7 @@ function View() {
           {
             'id': '1',
             'detail': 'Morbi facilisis finibus lacus quis aliquam.',
-            'status': false,
+            'status': true,
           },
           {
             'id': '2',
@@ -118,7 +135,7 @@ function View() {
       },
       {
         'id': '2',
-        'name': 'second',
+        'name': 'Second Task',
         'description': 'Task descriptions. This is the task for the second milestone.',
         'startDate': '20200115',
         'dueDate': '20200120',
@@ -139,7 +156,7 @@ function View() {
       },
       {
         'id': '3',
-        'name': 'third',
+        'name': 'Third Task',
         'description': 'Task descriptions. This is the task for the third milestone.',
         'startDate': '20200120',
         'dueDate': '20200121',
