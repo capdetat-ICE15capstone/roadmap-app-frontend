@@ -62,56 +62,56 @@ const CustomSVG = ({
 
 const allNodeColor = [
   {
-    name: "Gray",
-    twprop: "fill-gray-400",
+    name: "gray",
+    twfill: "fill-gray-400",
     twtext: "text-gray-400",
     twbg: "bg-gray-400",
   },
   {
-    name: "Red",
-    twprop: "fill-red-400",
+    name: "red",
+    twfill: "fill-red-400",
     twtext: "text-red-400",
     twbg: "bg-red-400",
   },
   {
-    name: "Orange",
-    twprop: "fill-orange-400",
+    name: "orange",
+    twfill: "fill-orange-400",
     twtext: "text-orange-400",
     twbg: "bg-orange-400",
   },
   {
-    name: "Yellow",
-    twprop: "fill-yellow-400",
+    name: "yellow",
+    twfill: "fill-yellow-400",
     twtext: "text-yellow-400",
     twbg: "bg-yellow-400",
   },
   {
-    name: "Green",
-    twprop: "fill-green-400",
+    name: "green",
+    twfill: "fill-green-400",
     twtext: "text-green-400",
     twbg: "bg-green-400",
   },
   {
-    name: "Cyan",
-    twprop: "fill-cyan-400",
+    name: "cyan",
+    twfill: "fill-cyan-400",
     twtext: "text-cyan-400",
     twbg: "bg-cyan-400",
   },
   {
-    name: "Blue",
-    twprop: "fill-blue-400",
+    name: "blue",
+    twfill: "fill-blue-400",
     twtext: "text-blue-400",
     twbg: "bg-blue-400",
   },
   {
-    name: "Violet",
-    twprop: "fill-violet-400",
+    name: "violet",
+    twfill: "fill-violet-400",
     twtext: "text-violet-400",
     twbg: "bg-violet-400",
   },
   {
-    name: "Pink",
-    twprop: "fill-pink-400",
+    name: "pink",
+    twfill: "fill-pink-400",
     twtext: "text-pink-400",
     twbg: "bg-pink-400",
   },
@@ -334,7 +334,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                                 key={colorObj.name}
                                 className={`${colorObj.twtext} font-bold`}
                               >
-                                {colorObj.name}
+                                {colorObj.name.charAt(0).toUpperCase() + colorObj.name.slice(1)}
                               </option>
                             ))}
                           </select>
@@ -347,7 +347,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                             }
                           >
                             <CustomSVG
-                              className={`${nodeColor.twprop} ${
+                              className={`${nodeColor.twfill} ${
                                 nodeShape === "circle"
                                   ? "stroke-black stroke-2"
                                   : ""
@@ -362,7 +362,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                             }
                           >
                             <CustomSVG
-                              className={`${nodeColor.twprop} ${
+                              className={`${nodeColor.twfill} ${
                                 nodeShape === "square"
                                   ? "stroke-black stroke-2"
                                   : ""
@@ -379,7 +379,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                             value="triangle"
                           >
                             <CustomSVG
-                              className={`${nodeColor.twprop} ${
+                              className={`${nodeColor.twfill} ${
                                 nodeShape === "triangle"
                                   ? "stroke-black stroke-2 "
                                   : ""

@@ -37,7 +37,17 @@ const RoadmapCreatePage = (props) => {
     if (mode === "edit" || mode === "clone") {
       if (state !== null && state !== undefined) { // check if state is available
         // set up the data to variable
-
+        setRMName(state.roadmap.name);
+        setRMDesc(state.roadmap.description);
+        setTasks(state.roadmap.tasks);
+        setPublic(state.roadmap.publicity);
+        let highestID = 0;
+        state.roadmap.tasks.forEach((task) => {
+          if (task.id > highestID) {
+            highestID = task.id
+          }
+        })
+        setLastId(lastId => highestID+1);
       } else {
         // fetch the roadmap data
         setLoading(true);
@@ -49,7 +59,9 @@ const RoadmapCreatePage = (props) => {
           setPublic(tempRoadmap.publicity)
           let highestID = 0;
           tempRoadmap.tasks.forEach(task => {
-            highestID = task.id;
+            if (task.id > highestID) {
+              highestID = task.id
+            }
           })
           setLastId(lastId => highestID+1);
         } else {
