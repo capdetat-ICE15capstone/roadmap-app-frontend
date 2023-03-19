@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Signup = () => {
@@ -14,6 +14,13 @@ const Signup = () => {
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [agreement, setAgreement] = useState(false);
 
+  const [clickEmail, setClickEmail] = useState(false);
+  const [clickFirstName, setClickFirstName] = useState(false);
+  const [clickLastName, setClickLastName] = useState(false);
+  const [clickUsername, setClickUsername] = useState(false);
+  const [clickPassword, setClickPassword] = useState(false);
+  const [clickPasswordConfirm, setClickPasswordConfirm] = useState(false);
+
   const handleSubmit = (event) => {
     event.preventDefault();
 
@@ -21,44 +28,28 @@ const Signup = () => {
       console.log("all form must be filled");
       return;
     }
-    if (specialChars.test(firstName)) {
-      console.log("invalid first name");
+    if (validateEmail() !== "") {
+      console.log(validateEmail());
       return;
     }
-    if (specialChars.test(lastName)) {
-      console.log("invalid last name");
+    if (validateFirstName() !== "") {
+      console.log(validateFirstName());
       return;
     }
-    if (firstName.length > 255) {
-      console.log("Please shorten your first name");
+    if (validateLastName() !== "") {
+      console.log(validateLastName());
       return;
     }
-    if (lastName.length > 255) {
-      console.log("Please shorten your last name");
+    if (validateUsername() !== "") {
+      console.log(validateUsername());
       return;
     }
-    if (specialChars.test(username)) {
-      console.log("invalid username");
+    if (validatePassword() !== "") {
+      console.log(validatePassword());
       return;
     }
-    if (username.length > 24) {
-      console.log("username is too long");
-      return;
-    }
-    if (password.length < 8) {
-      console.log("password too short");
-      return;
-    }
-    if (password.length > 24) {
-      console.log("password too long");
-      return;
-    }
-    if (password !== passwordConfirm) {
-      console.log("password does not match");
-      return;
-    }
-    if (!agreement) {
-      console.log("agreement must be set to TRUE");
+    if (validatePasswordConfirm() !== "") {
+      console.log(validatePasswordConfirm());
       return;
     }
     
@@ -72,6 +63,40 @@ const Signup = () => {
 
     console.log(res);
   };
+
+  function validateEmail () {
+    if (!email.includes("@")) return "invalid email"
+    return ""
+  }
+
+  function validateFirstName() {
+    if (specialChars.test(firstName)) return "First name must not contain special characters."
+    if (firstName.length > 255) return "First name must not exceed 255 characters."
+    return ""
+  }
+
+  function validateLastName() {
+    if (specialChars.test(lastName)) return "Last name must not contain special characters."
+    if (lastName.length > 255) return "Last name must not exceed 255 characters."
+    return ""
+  }
+
+  function validateUsername() {
+    if (specialChars.test(username)) return "Username must not contain special characters."
+    if (username.length > 24) return "Username must not exceed 24 characters."
+    // if (username is taken) return "Username is taken"
+    return ""
+  }
+
+  function validatePassword() {
+    if (password.length < 8 || password.length > 24) return "Password must be between 8 and 24 characters"
+    return ""
+  }
+
+  function validatePasswordConfirm() {
+    if (password !== passwordConfirm) return "Confirm password must match password"
+    return ""
+  }
 
   return (
     <>
@@ -96,7 +121,11 @@ const Signup = () => {
                       onChange={(event) =>
                         setEmail(event.target.value)
                       }
+                      onClick={(event) =>
+                        setClickEmail(true)
+                      }
                     />
+                    {validateEmail() !== "" && clickEmail ? <p className="text-red-500 text-xs mb-1">{validateEmail()}</p> : ""}
                   </label>
                 </div>
                 <div className="flex flex-row justify-between space-x-4">
@@ -113,7 +142,11 @@ const Signup = () => {
                       onChange={(event) =>
                         setFirstName(event.target.value)
                       }
+                      onClick={(event) =>
+                        setClickFirstName(true)
+                      }
                     />
+                    {validateFirstName() !== "" && clickFirstName ? <p className="text-red-500 text-xs mb-1">{validateFirstName()}</p> : ""}
                   </label>
                   <label>
                     <p className="text-gray-600 text-xs mb-1">
@@ -127,7 +160,11 @@ const Signup = () => {
                       onChange={(event) =>
                         setLastName(event.target.value)
                       }
+                      onClick={(event) =>
+                        setClickLastName(true)
+                      }
                     />
+                    {validateLastName() !== "" && clickLastName ? <p className="text-red-500 text-xs mb-1">{validateLastName()}</p> : ""}
                   </label>
                 </div>
                 <div className="flex flex-col">
@@ -143,7 +180,11 @@ const Signup = () => {
                       onChange={(event) =>
                         setUsername(event.target.value)
                       }
+                      onClick={(event) =>
+                        setClickUsername(true)
+                      }
                     />
+                    {validateUsername() !== "" && clickUsername ? <p className="text-red-500 text-xs mb-1">{validateUsername()}</p> : ""}
                   </label>
                 </div>
                 <div className="flex flex-row justify-between space-x-4">
@@ -159,7 +200,11 @@ const Signup = () => {
                       onChange={(event) =>
                         setPassword(event.target.value)
                       }
+                      onClick={(event) =>
+                        setClickPassword(true)
+                      }
                     />
+                    {validatePassword() !== "" && clickPassword ? <p className="text-red-500 text-xs mb-1">{validatePassword()}</p> : ""}
                   </label>
                   <label>
                     <p className="text-gray-600 text-xs mb-1">
@@ -173,7 +218,11 @@ const Signup = () => {
                       onChange={(event) =>
                         setPasswordConfirm(event.target.value)
                       }
+                      onClick={(event) =>
+                        setClickPasswordConfirm(true)
+                      }
                     />
+                    {validatePasswordConfirm() !== "" && clickPasswordConfirm ? <p className="text-red-500 text-xs mb-1">{validatePasswordConfirm()}</p> : ""}
                   </label>
                 </div>
               </div>
