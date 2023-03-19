@@ -157,31 +157,35 @@ const RoadmapCreatePage = (props) => {
   return (
     <>
       {loading && <Spinner/>} 
-      <div>
+      <div className="px-4">
         <div className="text-4xl font-inter font-bold mt-10 flex items-center">
-          <span className="m-4">{mode === "create" ? "Create" : mode === "edit" ? "Edit": mode === "clone" ? "Clone" : null} roadmap</span>
-          <button type="button" onClick={() => setPublic(!isPublic)} className="rounded-md bg-gray-500 h-10 text-sm p-2">{isPublic ? "Make private" : "Make public"}</button>
+          <span>{mode === "create" ? "Create" : mode === "edit" ? "Edit": mode === "clone" ? "Clone" : null} roadmap</span>
         </div>
         <form onSubmit={handleSubmit}>
-          <div>
-            <label>Name: </label>
+          <div className="flex">
             <input
-              className="border-4 border-emerald-400 rounded-md text-4xl"
+              className="text-4xl"
               type="text"
               value={RMName}
               onChange={(e) => setRMName(e.target.value)}
+              placeholder="UNTITLED"
             />
+            <button type="button" onClick={() => setPublic(!isPublic)} className="rounded-md bg-gray-500 h-10 text-sm p-2">{isPublic ? "Make private" : "Make public"}</button>
+
           </div>
           
 
           <label>Description: </label>
+          <div>
           <textarea
-            className="border ml-2 border-emerald-400 block text-2xl"
-            rows={10}
-            cols={60}
+            className="border-4 border-gray-300 block text-2xl w-full"
+            rows="4"
+            cols="60"
             value={RMDesc}
             onChange={(e) => setRMDesc(e.target.value)}
           ></textarea>
+          </div>
+          
           <button
             className="rounded-xl bg-emerald-400 text-white font-bold hover:bg-yellow-300 transition duration-200 w-20 h-10 fixed right-2 bottom-2"
             type="submit"

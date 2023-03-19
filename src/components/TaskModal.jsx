@@ -478,6 +478,13 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                     </div>
                     <div className="flex items-center justify-end p-4 rounded-b gap-3">
                       <button
+                        className="text-black border border-black rounded-md background-transparent font-bold uppercase px-6 py-3 text-sm outline-none focus:outline-none ease-linear transition-all duration-150"
+                        type="button"
+                        onClick={() => editTaskCallBack("failed", oldData)}
+                      >
+                        Close
+                      </button>
+                      <button
                         className="bg-blue-700 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
                         type="submit"
                       >
