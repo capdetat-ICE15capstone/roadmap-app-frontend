@@ -1,8 +1,11 @@
 import React from 'react'
+import SettingTab from '../components/SettingTab';
 
 const Setting = () => {
     return (
-        <h3>Welcome to Setting</h3>
+        <div className='flex flex-col'>
+            <SettingTab/>
+        </div>
     )
 }
 
