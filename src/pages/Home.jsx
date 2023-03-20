@@ -12,9 +12,6 @@ const Home = () => {
           <RoadmapCreate />
         </div>
         <div className="inline-block">
-          <Roadmap />
-        </div>
-        <div className="inline-block">
           <Roadmap 
           creator_name="Thanapat" 
           owner_name="Tripipat" 
