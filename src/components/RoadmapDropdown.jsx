@@ -7,6 +7,7 @@ import { ReactComponent as DropdownIcon } from "../assets/roadmapDropdown_assets
 
 const RoadmapDropdown = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const [isPublic, setIsPublic] = useState(false);
     var showDropdown = {display:"none"};
 
     const handleClick = () => {
@@ -17,18 +18,23 @@ const RoadmapDropdown = () => {
         showDropdown = {display:"inline-block"};
 
     return (
-        <>
+        <div className="inline-block relative">
             <button onClick={handleClick}>
-                <div className="absolute left-[690px] top-[320px] flex justify-center items-center w-[20px] h-[20px] rounded-[20px] hover:bg-[#EEEAEA]">
+                <div className="relative left-[-80px] top-[-45px] flex justify-center items-center w-[20px] h-[20px] rounded-[20px] hover:bg-[#EEEAEA]">
                     <DropdownIcon/>
                 </div>
             </button>
-            <div className="absolute left-[570px] top-[350px] bg-[#FFFFFF] font-bold appearance-none border rounded-xl px-12 py-4 ml-2 leading-tight focus:outline-none focus:shadow-outline w-60 h-36 z-50" style={showDropdown}>
-                <div className="absolute left-0">
-                    <PrivateIcon/>
+            <div className="absolute left-[-116px] top-[30px] bg-[#FFFFFF] font-bold appearance-none border rounded-xl px-12 py-4 ml-2 leading-tight focus:outline-none focus:shadow-outline w-60 h-36" style={showDropdown}>
+                <div className="inline-block">
+                    <div className="absolute left-[14px] top-[17px]">
+                        <PrivateIcon/>
+                    </div>
+                    <div className="absolute left-[37px] top-[16px]">
+                        Private
+                    </div>
                 </div>
-            </div>
-        </>
+            </div>            
+        </div>
     )
 }
 
