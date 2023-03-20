@@ -9,13 +9,21 @@ const RoadmapDropdown = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [isPublic, setIsPublic] = useState(false);
     var showDropdown = {display:"none"};
+    var togglePrivacy = {transform:"translateX(0px)"};
 
     const handleClick = () => {
         setIsOpen(!isOpen);
     };
 
+    const roadmapPrivacy = () => {
+        setIsPublic(!isPublic)
+    }
+
     if (isOpen)
         showDropdown = {display:"inline-block"};
+
+    if (isPublic)
+        togglePrivacy = {transform:"translateX(19px)"}
 
     return (
         <div className="absolute flex justify-center z-50">
@@ -30,6 +38,8 @@ const RoadmapDropdown = () => {
                     <div className="absolute left-[37px] top-[-1px]">
                         Private
                     </div>
+                    <button onClick={roadmapPrivacy} className="absolute left-[96px] top-[4px] w-[14px] h-[14px] bg-[#FFFFFF] rounded-[14px] border-[0.7px] border-solid border-[#D9D9D9] hover:scale-[1.15] z-50" style={togglePrivacy}></button>
+                    <div className="absolute left-[96px] top-[6px] w-[33px] h-[10px] bg-[#736666] rounded-[50px] border-[0.7px] border-solid border-[#D9D9D9]"></div>
                 </div>
             </div>            
         </div>
