@@ -340,7 +340,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                         <select
                           value={nodeColor.name}
                           onChange={handleNodeColorChange}
-                          className={`${nodeColor.twtext} font-bold grow self-center border border-black rounded-lg col-span-5 row-start-2 col-start-2`}
+                          className={`${nodeColor.twtext} font-bold grow self-center border-2 border-gray-300 rounded-lg col-span-5 row-start-2 col-start-2`}
                         >
                           {allNodeColor.map((colorObj) => (
                             <option

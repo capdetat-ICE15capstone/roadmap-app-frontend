@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import TaskModal from "../components/TaskModal";
 import { useLocation, useNavigate, useParams } from "react-router";
-import { getRoadmap, createRoadmap } from "../functions/roadmapFunction.jsx"
+import { getRoadmap, createRoadmap } from "../functions/roadmapFunction.jsx";
 import Spinner from "../components/Spinner";
 
 // TODO: put a null check around getRoadmap and createRoadmap pls
@@ -19,12 +19,12 @@ const RoadmapCreatePage = (props) => {
   const [loading, setLoading] = useState(false);
   const [editTaskID, setEditTaskID] = useState(0);
   const [lastId, setLastId] = useState(0);
-  const [isPublic, setPublic] = useState(true)
+  const [isPublic, setPublic] = useState(true);
 
   useEffect(() => {
     // This run once when the page load
     setUpRoadmap();
-  }, [])
+  }, []);
 
   const getID = () => {
     const x = lastId;
@@ -35,7 +35,8 @@ const RoadmapCreatePage = (props) => {
   const setUpRoadmap = async () => {
     // use to load roadmap into edit or clone page
     if (mode === "edit" || mode === "clone") {
-      if (state !== null && state !== undefined) { // check if state is available
+      if (state !== null && state !== undefined) {
+        // check if state is available
         // set up the data to variable
         setRMName(state.roadmap.name);
         setRMDesc(state.roadmap.description);
@@ -44,26 +45,26 @@ const RoadmapCreatePage = (props) => {
         let highestID = 0;
         state.roadmap.tasks.forEach((task) => {
           if (task.id > highestID) {
-            highestID = task.id
+            highestID = task.id;
           }
-        })
-        setLastId(lastId => highestID+1);
+        });
+        setLastId((lastId) => highestID + 1);
       } else {
         // fetch the roadmap data
         setLoading(true);
-        const tempRoadmap = await getRoadmap(id)
+        const tempRoadmap = await getRoadmap(id);
         if (tempRoadmap !== null) {
-          setRMName(tempRoadmap.name)
-          setRMDesc(tempRoadmap.description)
-          setTasks(tempRoadmap.tasks)
-          setPublic(tempRoadmap.publicity)
+          setRMName(tempRoadmap.name);
+          setRMDesc(tempRoadmap.description);
+          setTasks(tempRoadmap.tasks);
+          setPublic(tempRoadmap.publicity);
           let highestID = 0;
-          tempRoadmap.tasks.forEach(task => {
+          tempRoadmap.tasks.forEach((task) => {
             if (task.id > highestID) {
-              highestID = task.id
+              highestID = task.id;
             }
-          })
-          setLastId(lastId => highestID+1);
+          });
+          setLastId((lastId) => highestID + 1);
         } else {
           alert("GET error"); // this ran twice
           navigate("/");
@@ -75,16 +76,18 @@ const RoadmapCreatePage = (props) => {
     if (mode === "clone") {
       setupCloneMode();
     }
-  }
+  };
 
   const setupCloneMode = () => {
     // in clone mode, reset all the progress of the roadmap, including the active to false and checkbox to unchecked
-    setTasks((tasks) => tasks.map((task) => {
-      task.active = false;
-      return task
-    }))
-  }
- 
+    setTasks((tasks) =>
+      tasks.map((task) => {
+        task.active = false;
+        return task;
+      })
+    );
+  };
+
   const editTaskCallBack = (status, submissionObject) => {
     switch (status) {
       case "success":
@@ -125,23 +128,25 @@ const RoadmapCreatePage = (props) => {
       name: RMName,
       description: RMDesc,
       tasks: tasks,
-      publicity: isPublic
+      publicity: isPublic,
     });
 
     // Begin the spinner
     setLoading(true);
 
     // schedule notification
-    
+
     // Add a fetch POST request here
     if (mode === "create") {
       console.log("create function called");
-      if (await createRoadmap({
-        name: RMName,
-        description: RMDesc,
-        tasks: tasks,
-        publicity: isPublic
-      }) === null) {
+      if (
+        (await createRoadmap({
+          name: RMName,
+          description: RMDesc,
+          tasks: tasks,
+          publicity: isPublic,
+        })) === null
+      ) {
         alert("CREATE error");
       }
     } else {
@@ -156,36 +161,59 @@ const RoadmapCreatePage = (props) => {
 
   return (
     <>
-      {loading && <Spinner/>} 
+      {loading && <Spinner />}
       <div className="px-4">
         <div className="text-4xl font-inter font-bold mt-10 flex items-center">
-          <span>{mode === "create" ? "Create" : mode === "edit" ? "Edit": mode === "clone" ? "Clone" : null} roadmap</span>
+          <span>
+            {mode === "create"
+              ? "Create"
+              : mode === "edit"
+              ? "Edit"
+              : mode === "clone"
+              ? "Clone"
+              : null}{" "}
+            roadmap
+          </span>
         </div>
+        <hr className="border-2 border-black"></hr>
         <form onSubmit={handleSubmit}>
-          <div className="flex">
+          <div className="flex mt-4">
             <input
-              className="text-4xl"
+              className="text-2xl"
               type="text"
               value={RMName}
               onChange={(e) => setRMName(e.target.value)}
               placeholder="UNTITLED"
             />
-            <button type="button" onClick={() => setPublic(!isPublic)} className="rounded-md bg-gray-500 h-10 text-sm p-2">{isPublic ? "Make private" : "Make public"}</button>
-
+            <button
+              type="button"
+              disabled={isPublic}
+              onClick={() => setPublic(true)}
+              className={`rounded-md ${isPublic ? "bg-gray-300" : "bg-gray-500"} h-10 text-sm p-2 font-bold rounded-l-full`}
+            >
+              Public
+            </button>
+            <button
+              type="button"
+              disabled={!isPublic}
+              onClick={() => setPublic(false)}
+              className={`rounded-md ${isPublic ? "bg-gray-500" : "bg-gray-300"} h-10 text-sm p-2 font-bold rounded-r-full`}
+            >
+              Private
+            </button>
           </div>
-          
 
           <label>Description: </label>
           <div>
-          <textarea
-            className="border-4 border-gray-300 block text-2xl w-full"
-            rows="4"
-            cols="60"
-            value={RMDesc}
-            onChange={(e) => setRMDesc(e.target.value)}
-          ></textarea>
+            <textarea
+              className="border-4 border-gray-300 block text-2xl w-full"
+              rows="4"
+              cols="60"
+              value={RMDesc}
+              onChange={(e) => setRMDesc(e.target.value)}
+            ></textarea>
           </div>
-          
+
           <button
             className="rounded-xl bg-emerald-400 text-white font-bold hover:bg-yellow-300 transition duration-200 w-20 h-10 fixed right-2 bottom-2"
             type="submit"
@@ -194,43 +222,53 @@ const RoadmapCreatePage = (props) => {
           </button>
         </form>
 
-        <div className="flex">
+        <div className="flex flex-col bg-blue-100 my-4 border-4 border-gray-300 rounded-lg items-start">
           {/* <p className="text-4xl font-inter font-bold m-10 break-word w-32 inline-block">
             {RMName === "" ? "Roadmap Name" : RMName}
           </p> */}
-          {tasks.map((task) => {
-            return (
-              <div key={task.id} className="flex">
-                <button
-                  className={`p-2 m-3 h-10 w-10 self-center rounded-full transtition duration-200 text-white font-bold ${task.active ? "bg-gray-500" : "bg-emerald-500 hover:bg-yellow-500 "}`}
-                  type="button"
-                  disabled={task.active}
-                  onClick={async () => {
-                    await setEditTaskID(task.id);
-                    await setModalState(true);
-                  }}
-                >
-                  {" "}
-                  {task.id}{" "}
-                </button>
-                <hr
-                  className="block self-center w-10 border-blue-800 border-2"
-                  key={task.id + "hr"}
-                ></hr>
-              </div>
-            );
-          })}
+          <div>
+            <button
+              className="bg-emerald-500 hover:bg-yellow-500 p-2 m-2 h-10 w-16 self-center rounded-md text-white font-bold"
+              type="button"
+              onClick={() => {
+                setModalState(true);
+                setEditTaskID(-1);
+              }}
+            >
+              Add
+            </button>
+          </div>
+
+          <div className="flex overflow-scroll"> 
+            {tasks.map((task) => {
+              return (
+                <div key={task.id} className="flex">
+                  <button
+                    className={`p-2 m-3 h-10 w-10 self-center rounded-full transtition duration-200 text-white font-bold ${
+                      task.active
+                        ? "bg-gray-500"
+                        : "bg-emerald-500 hover:bg-yellow-500 "
+                    }`}
+                    type="button"
+                    disabled={task.active}
+                    onClick={async () => {
+                      await setEditTaskID(task.id); // await in setState does not work lol
+                      await setModalState(true);
+                    }}
+                  >
+                    {" "}
+                    {task.id}{" "}
+                  </button>
+                  <hr
+                    className="block self-center w-10 border-blue-800 border-2"
+                    key={task.id + "hr"}
+                  ></hr>
+                </div>
+              );
+            })}
+          </div>
+
           {/* <hr className="block self-center w-10 border-blue-800 border-2 hover:border-yellow-500"></hr> */}
-          <button
-            className="bg-emerald-500 hover:bg-yellow-500 p-2 m-2 h-10 w-16 self-center rounded-md text-white font-bold"
-            type="button"
-            onClick={() => {
-              setModalState(true);
-              setEditTaskID(-1);
-            }}
-          >
-            Add
-          </button>
         </div>
         {modalState ? ( // id -1 is passed as a temp id to let the modal know it's in create mode, otherwise it's in edit mode
           editTaskID == -1 ? (
