@@ -57,7 +57,7 @@ const Feed = () => {
         </div>
       </form>
       {/*Search Result*/}
-      <div className="flex flex-wrap mx-4">
+      <div className="relative flex flex-wrap mx-4 overflow-y-scroll">
         {roadmapArray.map((roadmap, index) => (
           <div key={index} className="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 p-2">
             <Roadmap
