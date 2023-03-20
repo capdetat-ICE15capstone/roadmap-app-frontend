@@ -18,18 +18,16 @@ const RoadmapDropdown = () => {
         showDropdown = {display:"inline-block"};
 
     return (
-        <div className="inline-block relative">
-            <button onClick={handleClick}>
-                <div className="relative left-[-80px] top-[-45px] flex justify-center items-center w-[20px] h-[20px] rounded-[20px] hover:bg-[#EEEAEA]">
-                    <DropdownIcon/>
-                </div>
+        <div className="absolute flex justify-center z-50">
+            <button onClick={handleClick} className="relative flex justify-center items-center top-[-70px] left-[310px] w-[20px] h-[20px] rounded-[20px] hover:bg-[rgb(238,234,234)]">                
+                <DropdownIcon/>
             </button>
-            <div className="absolute left-[-116px] top-[30px] bg-[#FFFFFF] font-bold appearance-none border rounded-xl px-12 py-4 ml-2 leading-tight focus:outline-none focus:shadow-outline w-60 h-36" style={showDropdown}>
-                <div className="inline-block">
-                    <div className="absolute left-[14px] top-[17px]">
+            <div className="absolute top-[-30px] left-[200px] bg-[#FFFFFF] font-bold appearance-none border rounded-xl leading-tight focus:outline-none focus:shadow-outline w-60 h-36" style={showDropdown}>
+                <div className="inline-block relative">
+                    <div className="absolute left-[14px] top-[0px]">
                         <PrivateIcon/>
                     </div>
-                    <div className="absolute left-[37px] top-[16px]">
+                    <div className="absolute left-[37px] top-[-1px]">
                         Private
                     </div>
                 </div>
