@@ -16,22 +16,22 @@ const Home = () => {
         </div>
         <div className="inline-block">
           <Roadmap 
-          userName="Thanapat" 
-          ownerName="Tripipat" 
-          roadmapName="React skill issue" 
-          createdDate="03/17/2023" 
-          updateDate="today bich" 
-          views={6338098421} />
+          creator_name="Thanapat" 
+          owner_name="Tripipat" 
+          title="React skill issue" 
+          created_at="03/17/2023" 
+          edited_at="today bich" 
+          views_counts={6338098421} />
           <RoadmapDropdown />
         </div>
         <div className="inline-block">
           <Roadmap
-          userName="FingTheMan" 
-          ownerName="Wuttikorn" 
-          roadmapName="Dying From Capstone" 
-          createdDate="03/17/2023" 
-          updateDate="03/18/2023" 
-          views={177013} />
+          creator_name="FingTheMan" 
+          owner_name="Wuttikorn" 
+          title="Dying From Capstone" 
+          created_at="03/17/2023" 
+          edited_at="03/18/2023" 
+          views_counts={177013} />
           <RoadmapDropdown />
         </div>
       </div>
