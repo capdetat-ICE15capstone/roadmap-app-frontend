@@ -1,3 +1,5 @@
+// BUG: timeout does not work
+
 export const getRoadmap = async (rid, timeout = 1000) => {
 
   // this function is used to fetch full roadmap information

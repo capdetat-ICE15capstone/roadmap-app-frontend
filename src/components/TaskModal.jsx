@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, forwardRef } from "react";
-import PropTypes, { object } from "prop-types";
+import PropTypes, { node, object } from "prop-types";
 import { ReactComponent as AddButton } from "../assets/addButton.svg";
 import { ReactComponent as DeleteButton } from "../assets/deleteButton.svg";
 import { ReactComponent as ArrowIcon } from "../assets/taskmodal/arrow.svg";
@@ -7,6 +7,7 @@ import { ReactComponent as CalendarIcon } from "../assets/taskmodal/calendar.svg
 import { ReactComponent as TrashIcon } from "../assets/taskmodal/trash.svg";
 import DatePicker from "react-datepicker";
 import Spinner from "./Spinner";
+import { CustomSVG, allNodeColor } from "./CustomSVG";
 
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -35,101 +36,9 @@ import "react-datepicker/dist/react-datepicker.css";
 const MAX_NAME_LENGTH = 24; 
 const MAX_DESCRIPTION_LENGTH = 255; 
 
-const CustomSVG = ({
-  height = 42,
-  width = 42,
-  radius = 20,
-  className = "",
-  type = "circle",
-}) => {
-  let cx = Math.ceil(width / 2);
-  let cy = Math.ceil(height / 2);
-  return (
-    <svg height={height} width={width} className={className}>
-      {type === "circle" ? (
-        <circle cx={cx} cy={cy} r={radius} className={className} />
-      ) : null}
-      {type === "square" ? (
-        <rect
-          height={height - 2}
-          width={width - 2}
-          x={1}
-          y={1}
-          className={className}
-        />
-      ) : null}
-      {type === "triangle" ? (
-        <polygon
-          points={`${cx},2 ${width - 2},${height - 1} 2,${height - 1}`}
-          className={className}
-        />
-      ) : null}
-    </svg>
-  );
-};
-
-const allNodeColor = [
-  {
-    name: "gray",
-    twfill: "fill-gray-400",
-    twtext: "text-gray-400",
-    twbg: "bg-gray-400",
-  },
-  {
-    name: "red",
-    twfill: "fill-red-400",
-    twtext: "text-red-400",
-    twbg: "bg-red-400",
-  },
-  {
-    name: "orange",
-    twfill: "fill-orange-400",
-    twtext: "text-orange-400",
-    twbg: "bg-orange-400",
-  },
-  {
-    name: "yellow",
-    twfill: "fill-yellow-400",
-    twtext: "text-yellow-400",
-    twbg: "bg-yellow-400",
-  },
-  {
-    name: "green",
-    twfill: "fill-green-400",
-    twtext: "text-green-400",
-    twbg: "bg-green-400",
-  },
-  {
-    name: "cyan",
-    twfill: "fill-cyan-400",
-    twtext: "text-cyan-400",
-    twbg: "bg-cyan-400",
-  },
-  {
-    name: "blue",
-    twfill: "fill-blue-400",
-    twtext: "text-blue-400",
-    twbg: "bg-blue-400",
-  },
-  {
-    name: "violet",
-    twfill: "fill-violet-400",
-    twtext: "text-violet-400",
-    twbg: "bg-violet-400",
-  },
-  {
-    name: "pink",
-    twfill: "fill-pink-400",
-    twtext: "text-pink-400",
-    twbg: "bg-pink-400",
-  },
-];
-
 const TaskModal = ({ oldData, editTaskCallBack }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  // const nameRef = useRef("");
-  // const descriptionRef = useRef("");
   const [lastId, setLastId] = useState(0); // DO NOT use these parameter directly, use getID to get an id instead
   const [subtasks, setSubTasks] = useState([]);
   const [nodeColor, setNodeColor] = useState(allNodeColor[0]);
@@ -385,13 +294,14 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                               handleNodeShapeChange(event, "circle")
                             }
                           >
-                            <CustomSVG
+                            {/* <CustomSVG
                               className={`${nodeColor.twfill} ${
                                 nodeShape === "circle"
-                                  ? "stroke-black stroke-2"
-                                  : ""
+                                  // ? "stroke-black stroke-2"
+                                  // : ""
                               } self-center`}
-                            />
+                            /> */}
+                            <CustomSVG isStrokeOn={nodeShape === "circle"} className={`${nodeColor.twfill}`}/>
                           </button>
 
                           <button
@@ -400,14 +310,15 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                               handleNodeShapeChange(event, "square")
                             }
                           >
-                            <CustomSVG
+                            {/* <CustomSVG
                               className={`${nodeColor.twfill} ${
                                 nodeShape === "square"
                                   ? "stroke-black stroke-2"
                                   : ""
                               } self-center`}
                               type="square"
-                            />
+                            /> */}
+                            <CustomSVG type="square" isStrokeOn={nodeShape === "square"} className={`${nodeColor.twfill}`}/>
                           </button>
 
                           <button
@@ -417,14 +328,15 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                             }
                             value="triangle"
                           >
-                            <CustomSVG
+                            {/* <CustomSVG
                               className={`${nodeColor.twfill} ${
                                 nodeShape === "triangle"
                                   ? "stroke-black stroke-2 "
                                   : ""
                               } self-center `}
                               type="triangle"
-                            />
+                            /> */}
+                            <CustomSVG type="triangle" isStrokeOn={nodeShape === "triangle"} className={`${nodeColor.twfill}`}/>
                           </button>
                         </div>
                       </div>

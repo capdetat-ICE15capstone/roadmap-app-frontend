@@ -4,6 +4,7 @@ import { useLocation, useNavigate, useParams } from "react-router";
 import { getRoadmap, createRoadmap } from "../functions/roadmapFunction.jsx";
 import Spinner from "../components/Spinner";
 import { isUserPremium } from "../functions/userFunction";
+import { CustomSVG, getTWFill } from "../components/CustomSVG";
 
 // TODO: put a null check around getRoadmap and createRoadmap pls
 // BUG: get error alert run twice
@@ -39,10 +40,10 @@ const RoadmapCreatePage = (props) => {
   };
 
   const setUpRoadmap = async () => {
-    // use to load roadmap into edit or clone page
+    // use to load roadmap pageinto edit or clone page
     if (mode === "edit" || mode === "clone") {
+      // check if state is available
       if (state !== null && state !== undefined) {
-        // check if state is available
         // set up the data to variable
         setRMName(state.roadmap.name);
         setRMDesc(state.roadmap.description);
@@ -57,6 +58,7 @@ const RoadmapCreatePage = (props) => {
         setLastId((lastId) => highestID + 1);
       } else {
         // fetch the roadmap data
+        // then set the data to variable
         setLoading(true);
         const tempRoadmap = await getRoadmap(id);
         if (tempRoadmap !== null) {
@@ -85,7 +87,8 @@ const RoadmapCreatePage = (props) => {
   };
 
   const setupCloneMode = () => {
-    // in clone mode, reset all the progress of the roadmap, including the active to false and checkbox to unchecked
+    // in clone mode, reset all the progress of the roadmap, 
+    // including the active to false and checkbox to unchecked
     setTasks((tasks) =>
       tasks.map((task) => {
         task.active = false;
@@ -95,8 +98,11 @@ const RoadmapCreatePage = (props) => {
   };
 
   const editTaskCallBack = (status, submissionObject) => {
+    // the task edit modal would call this back to close the modal 
+    // and save the data to the react state
     switch (status) {
       case "success":
+        // user click save
         switch (submissionObject.id) {
           case -1:
             submissionObject.id = getID();
@@ -113,9 +119,11 @@ const RoadmapCreatePage = (props) => {
         }
         break;
       case "failed":
+        // user quit modal without saving
         console.log("failed");
         break;
       case "delete":
+        // user click delete task button
         setTasks((tasks) =>
           tasks.filter((task) => task.id !== submissionObject.id)
         );
@@ -149,7 +157,8 @@ const RoadmapCreatePage = (props) => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // stop the page from reloading when submitting the form, may remove in the future
+    // stop the page from reloading when submitting the form, may remove in the future
+    e.preventDefault();
     console.log({
       // used for sprint 1
       name: RMName,
@@ -183,13 +192,14 @@ const RoadmapCreatePage = (props) => {
     setLoading(false);
     // Stop the spinner after the promise of Fetch() has resolved
 
-    navigate("/"); // forward to view roadmap page, unsure how to navigate this though cuz this is stateless navigate
+    // forward to view roadmap page, unsure how to navigate this though cuz this is stateless navigate
+    navigate("/");
   };
 
   return (
     <>
       {loading && <Spinner />}
-      <div className="px-4">
+      <div className="px-4 h-full">
         <div className="text-4xl font-inter font-bold mt-10 flex items-center">
           <span>
             {mode === "create"
@@ -203,7 +213,7 @@ const RoadmapCreatePage = (props) => {
           </span>
         </div>
         {/* <hr className="border-2 border-black"></hr> */}
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="h-full">
           <div className="flex mt-4">
             <input
               className="text-2xl focus:outline-none"
@@ -240,75 +250,72 @@ const RoadmapCreatePage = (props) => {
               onChange={handleDescriptionChange}
             ></textarea>
           </div>
-        </form>
 
-        <div className="flex flex-col bg-blue-100 my-4 border-4 border-gray-300 rounded-lg items-start h-2/3 p-4">
-          {/* <p className="text-4xl font-inter font-bold m-10 break-word w-32 inline-block">
-            {RMName === "" ? "Roadmap Name" : RMName}
-          </p> */}
-
-          <div className="flex items-center flex-wrap">
-            {tasks.map((task) => {
-              return (
-                <div key={task.id} className="flex">
-                  <div className="relative items-center">
-                    <button
-                      className={`p-2 m-3 h-16 w-16 self-center rounded-full transtition duration-200 text-white font-bold ${
-                        task.active
-                          ? "bg-gray-500"
-                          : "bg-emerald-500 hover:bg-yellow-500 "
-                      }`}
-                      type="button"
-                      disabled={task.active}
-                      onClick={async () => {
-                        await setEditTaskID(task.id); // awaiting a setState does not work lol
-                        await setModalState(true);
-                      }}
-                    >
-                      {" "}
-                      {task.id}{" "}
-                    </button>
-                    <div className="w-full">
-                      <span className="font-bold absolute mx-auto translate-x-1/2 right-1/2 text-center leading-5 text-ellipsis">{task.name}</span>
+          <div className="h-1/2">
+            <div className="flex flex-col bg-blue-100 my-4 border-4 border-gray-300 rounded-lg items-start h-2/3 p-4 overflow-auto">
+              <div className="flex items-center flex-wrap">
+                {tasks.map((task) => {
+                  return (
+                    <div key={task.id} className="flex">
+                      <div className="relative items-center">
+                        <button
+                          className={`self-center$`}
+                          type="button"
+                          disabled={task.active}
+                          onClick={async () => {
+                            await setEditTaskID(task.id); // awaiting a setState does not work lol
+                            await setModalState(true);
+                          }}
+                        >
+                          <CustomSVG
+                            type={task.nodeShape}
+                            className={`${getTWFill(task.nodeColor)}`}
+                            size={60}
+                          />
+                        </button>
+                        <div className="w-full">
+                          <span className="font-bold absolute mx-auto translate-x-1/2 right-1/2 text-center leading-5 text-ellipsis">
+                            {task.name}
+                          </span>
+                        </div>
+                      </div>
+                      <hr
+                        className="block self-center w-10 border-blue-800 border-2"
+                        key={task.id + "hr"}
+                      ></hr>
                     </div>
-                  </div>
-                  <hr
-                    className="block self-center w-10 border-blue-800 border-2"
-                    key={task.id + "hr"}
-                  ></hr>
+                  );
+                })}
+                <div>
+                  <button
+                    className="bg-blue-700 disabled:bg-gray-500 p-2 m-2 h-10 w-10 self-center rounded-full text-white font-bold"
+                    type="button"
+                    disabled={isAddButtonDisabled()}
+                    onClick={initializeTaskCreator}
+                  >
+                    +
+                  </button>
                 </div>
-              );
-            })}
-            <div>
-              <button
-                className="bg-blue-700 disabled:bg-gray-500 p-2 m-2 h-10 w-10 self-center rounded-full text-white font-bold"
-                type="button"
-                disabled={isAddButtonDisabled()}
-                onClick={initializeTaskCreator}
-              >
-                +
-              </button>
+              </div>
+            </div>
+            <div className="relative">
+              <div className="absolute right-0">
+                <button
+                  className="bg-transparent border-blue-700 font-bold text-blue-700 w-20 h-10 rounded-md border-2 mr-2"
+                  type="button"
+                >
+                  Discard
+                </button>
+                <button
+                  className="rounded-md w-20 h-10 bg-blue-700 font-bold text-white"
+                  type="submit"
+                >
+                  Save
+                </button>
+              </div>
             </div>
           </div>
-
-          {/* <hr className="block self-center w-10 border-blue-800 border-2 hover:border-yellow-500"></hr> */}
-        </div>
-        <div className="relative">
-          <div className="absolute right-0">
-            <button
-              className="bg-transparent border-blue-700 font-bold text-blue-700 w-20 h-10 rounded-md border-2 mr-2"
-              type="button"
-            >
-              Discard
-            </button>
-            <button
-              className="rounded-md w-20 h-10 bg-blue-700 font-bold text-white"
-              type="submit"
-            >
-              Save
-            </button>
-          </div>
-        </div>
+        </form>
 
         {modalState ? ( // id -1 is passed as a temp id to let the modal know it's in create mode, otherwise it's in edit mode
           editTaskID == -1 ? (
