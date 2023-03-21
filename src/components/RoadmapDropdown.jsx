@@ -10,6 +10,7 @@ const RoadmapDropdown = () => {
     const [isPublic, setIsPublic] = useState(false);
     var showDropdown = {display:"none"};
     var togglePrivacy = {transform:"translateX(0px)"};
+    var toggleButtonColor = {background:"#736666"}
 
     const handleClick = () => {
         setIsOpen(!isOpen);
@@ -22,8 +23,10 @@ const RoadmapDropdown = () => {
     if (isOpen)
         showDropdown = {display:"inline-block"};
 
-    if (isPublic)
+    if (isPublic) {
         togglePrivacy = {transform:"translateX(19px)"}
+        toggleButtonColor = {background:"#00FF00"}
+    }
 
     return (
         <div className="absolute flex justify-center z-50">
@@ -39,7 +42,29 @@ const RoadmapDropdown = () => {
                         Private
                     </div>
                     <button onClick={roadmapPrivacy} className="absolute left-[96px] top-[4px] w-[14px] h-[14px] bg-[#FFFFFF] rounded-[14px] border-[0.7px] border-solid border-[#D9D9D9] hover:scale-[1.15] z-50" style={togglePrivacy}></button>
-                    <div className="absolute left-[96px] top-[6px] w-[33px] h-[10px] bg-[#736666] rounded-[50px] border-[0.7px] border-solid border-[#D9D9D9]"></div>
+                    <button onClick={roadmapPrivacy} className="absolute left-[96px] top-[6px] w-[33px] h-[10px] bg-[#736666] rounded-[50px]" style={toggleButtonColor}></button>
+                    <div className="absolute left-[134px] top-[0px]">
+                        <PublicIcon/>
+                    </div>
+                    <div className="absolute left-[152px] top-[-1px]">
+                        Public
+                    </div>
+                </div>
+                <div className="inline-block relative">
+                    <div className="absolute left-[13px] top-[35px]">
+                        <DeleteIcon/>
+                    </div>
+                    <div className="absolute left-[37px] top-[34px]">
+                        Delete
+                    </div>
+                </div>
+                <div className="inline-block relative">
+                    <div className="absolute left-[13px] top-[70px]">
+                        <RenameIcon/>
+                    </div>
+                    <div className="absolute left-[37px] top-[69px]">
+                        Rename
+                    </div>
                 </div>
             </div>            
         </div>
