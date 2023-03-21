@@ -30,6 +30,11 @@ import "react-datepicker/dist/react-datepicker.css";
 // 8. input box shrink
 // 9. Description text and placeholder starting position (text starts in the middle of the box)
 
+// data domain
+// const allNodeShape = ["circle", "square", "triangle"]
+const MAX_NAME_LENGTH = 24; 
+const MAX_DESCRIPTION_LENGTH = 255; 
+
 const CustomSVG = ({
   height = 42,
   width = 42,
@@ -62,8 +67,6 @@ const CustomSVG = ({
     </svg>
   );
 };
-
-// const allNodeShape = ["circle", "square", "triangle"]
 
 const allNodeColor = [
   {
@@ -123,8 +126,10 @@ const allNodeColor = [
 ];
 
 const TaskModal = ({ oldData, editTaskCallBack }) => {
-  const nameRef = useRef("");
-  const descriptionRef = useRef("");
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  // const nameRef = useRef("");
+  // const descriptionRef = useRef("");
   const [lastId, setLastId] = useState(0); // DO NOT use these parameter directly, use getID to get an id instead
   const [subtasks, setSubTasks] = useState([]);
   const [nodeColor, setNodeColor] = useState(allNodeColor[0]);
@@ -162,8 +167,10 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
     async function setModalData() {
       if (oldData.id !== -1) {
         setLoading(true);
-        nameRef.current.value = oldData.name;
-        descriptionRef.current.value = oldData.description;
+        // nameRef.current.value = oldData.name;
+        setName(oldData.name);
+        // descriptionRef.current.value = oldData.description;
+        setDescription(oldData.description);
         setSubTasks(oldData.subtasks);
         setNodeColor(
           allNodeColor.find(({ name }) => name === oldData.nodeColor)
@@ -184,6 +191,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
     setLoading(false);
   }, []);
 
+
   const getId = () => {
     // IMPORTANT: only use this function to get an ID
     // return an ID and increment so that the id can never repeat
@@ -191,6 +199,18 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
     setLastId(id + 1);
     return id;
   };
+
+  const handleNameChange = (event) => {
+    if (name.length < MAX_NAME_LENGTH) {
+      setName(event.target.value);
+    }
+  }
+
+  const handleDescriptionChange = (event) => {
+    if (description.length < MAX_DESCRIPTION_LENGTH) {
+      setDescription(event.target.value)
+    }
+  }
 
   const handleNodeColorChange = (event) => {
     setNodeColor(allNodeColor.find(({ name }) => name === event.target.value));
@@ -238,8 +258,8 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
     e.preventDefault();
     editTaskCallBack("success", {
       id: oldData.id,
-      name: nameRef.current.value,
-      description: descriptionRef.current.value,
+      name: name,
+      description: description,
       startDate: startDate,
       dueDate: endDate,
       nodeColor: nodeColor.name,
@@ -279,19 +299,21 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                   <label className="font-nunito-sans font-bold">Name</label>
                   <input
                     type="text"
+                    value={name}
                     className="border-2 border-gray-300 rounded-md my-1 placeholder:italic px-1"
                     placeholder=" Enter task name..."
-                    ref={nameRef}
+                    onChange={(e) => handleNameChange(e)}
                   ></input>
                   <label className="font-nunito-sans font-bold">
                     Description
                   </label>
                   <textarea
                     className="border-2 border-gray-300 rounded-md my-1 grow placeholder:italic placeholder:justify-start px-1"
+                    value={description}
                     cols="50"
                     rows="4"
                     placeholder=" Enter description..."
-                    ref={descriptionRef}
+                    onChange={(e) => handleDescriptionChange(e)}
                   ></textarea>
                   <div className="flex flex-col my-2 gap-2">
                     <div className="w-full grid grid-cols-10">
