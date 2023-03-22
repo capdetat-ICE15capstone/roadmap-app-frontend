@@ -5,10 +5,14 @@ import { getRoadmap, createRoadmap } from "../functions/roadmapFunction.jsx";
 import Spinner from "../components/Spinner";
 import { isUserPremium } from "../functions/userFunction";
 import { CustomSVG, getTWFill } from "../components/CustomSVG";
+import { ReactComponent as AddButton } from "../assets/addButton.svg";
+import { ReactComponent as NotiOff } from "../assets/notification/notiOff.svg";
+import { ReactComponent as NotiOn } from "../assets/notification/notiOn.svg";
 
 // TODO: put a null check around getRoadmap and createRoadmap pls
-// BUG: get error alert run twice
 // BUG: word under nodes overflowing if it's one long word
+// BUG: styling for the node is a mess with the name
+// BUG: spinner does not stop spinning in error
 
 const MAX_TASKS_NONPREMIUM = 5;
 const MAX_RMNAME_LENGTH = 100;
@@ -27,6 +31,7 @@ const RoadmapCreatePage = (props) => {
   const [editTaskID, setEditTaskID] = useState(0);
   const [lastId, setLastId] = useState(0);
   const [isPublic, setPublic] = useState(true);
+  const [isNotiOn, setNoti] = useState(true);
 
   useEffect(() => {
     // This run once when the page load
@@ -87,7 +92,7 @@ const RoadmapCreatePage = (props) => {
   };
 
   const setupCloneMode = () => {
-    // in clone mode, reset all the progress of the roadmap, 
+    // in clone mode, reset all the progress of the roadmap,
     // including the active to false and checkbox to unchecked
     setTasks((tasks) =>
       tasks.map((task) => {
@@ -98,7 +103,7 @@ const RoadmapCreatePage = (props) => {
   };
 
   const editTaskCallBack = (status, submissionObject) => {
-    // the task edit modal would call this back to close the modal 
+    // the task edit modal would call this back to close the modal
     // and save the data to the react state
     switch (status) {
       case "success":
@@ -257,26 +262,28 @@ const RoadmapCreatePage = (props) => {
                 {tasks.map((task) => {
                   return (
                     <div key={task.id} className="flex">
-                      <div className="relative items-center">
-                        <button
-                          className={`self-center$`}
-                          type="button"
-                          disabled={task.active}
-                          onClick={async () => {
-                            await setEditTaskID(task.id); // awaiting a setState does not work lol
-                            await setModalState(true);
-                          }}
-                        >
-                          <CustomSVG
-                            type={task.nodeShape}
-                            className={`${getTWFill(task.nodeColor)}`}
-                            size={60}
-                          />
-                        </button>
-                        <div className="w-full">
-                          <span className="font-bold absolute mx-auto translate-x-1/2 right-1/2 text-center leading-5 text-ellipsis">
-                            {task.name}
-                          </span>
+                      <div className="flex max-w-[100px]">
+                        <div className="flex flex-col gap-2 items-center">
+                          <button
+                            className=""
+                            type="button"
+                            disabled={task.active}
+                            onClick={async () => {
+                              await setEditTaskID(task.id); // awaiting a setState does not work lol
+                              await setModalState(true);
+                            }}
+                          >
+                            <CustomSVG
+                              type={task.nodeShape}
+                              className={`${getTWFill(task.nodeColor)}`}
+                              size={60}
+                            />
+                          </button>
+                          <div className="w-full">
+                            <span className="block font-bold mx-auto text-center leading-5 text-ellipsis truncate">
+                              {task.name}
+                            </span>
+                          </div>
                         </div>
                       </div>
                       <hr
@@ -288,15 +295,16 @@ const RoadmapCreatePage = (props) => {
                 })}
                 <div>
                   <button
-                    className="bg-blue-700 disabled:bg-gray-500 p-2 m-2 h-10 w-10 self-center rounded-full text-white font-bold"
+                    // className="bg-blue-700 disabled:bg-gray-500 p-2 m-2 h-10 w-10 self-center rounded-full text-white font-bold text-2xl"
                     type="button"
                     disabled={isAddButtonDisabled()}
                     onClick={initializeTaskCreator}
                   >
-                    +
+                    <AddButton className="h-10 w-auto" />
                   </button>
                 </div>
               </div>
+              
             </div>
             <div className="relative">
               <div className="absolute right-0">
