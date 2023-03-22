@@ -1,7 +1,7 @@
 import "./App.css";
 import Navbar from "./components/Navbar";
 import Feed from "./pages/Feed";
-import Spinner from './components/Spinner'
+import Spinner from "./components/Spinner";
 import NoPage from "./pages/NoPage";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { lazy, Suspense } from "react";
@@ -11,7 +11,7 @@ const Signup = lazy(() => import("./pages/Signup"));
 const RoadmapCreatePage = lazy(() => import("./pages/RoadmapCreatePage"));
 const Setting = lazy(() => import("./pages/Setting"));
 const Profile = lazy(() => import("./pages/Profile"));
-const Calendar = lazy(() => import("./pages/Calendar"));
+const Introduction = lazy(() => import("./pages/Introduction"));
 
 function App() {
   return (
@@ -34,13 +34,21 @@ function App() {
               </Suspense>
             }
           ></Route>
+          <Route
+            path="/intro"
+            element={
+              <Suspense fallback={<Spinner />}>
+                <Introduction />
+              </Suspense>
+            }
+          ></Route>
           <Route path="/" element={<Navbar />}>
             <Route index element={<Feed />} />
             <Route
               path="create"
               element={
                 <Suspense fallback={<Spinner />}>
-                  <RoadmapCreatePage mode="create"/>
+                  <RoadmapCreatePage mode="create" />
                 </Suspense>
               }
             ></Route>
@@ -48,7 +56,7 @@ function App() {
               path="edit/:id"
               element={
                 <Suspense fallback={<Spinner />}>
-                  <RoadmapCreatePage mode="edit"/>
+                  <RoadmapCreatePage mode="edit" />
                 </Suspense>
               }
             ></Route>
@@ -56,7 +64,7 @@ function App() {
               path="clone/:id"
               element={
                 <Suspense fallback={<Spinner />}>
-                  <RoadmapCreatePage mode="clone"/>
+                  <RoadmapCreatePage mode="clone" />
                 </Suspense>
               }
             ></Route>
@@ -84,8 +92,8 @@ function App() {
                 </Suspense>
               }
             />
-            <Route path="/404" element={<NoPage/> } />
-            <Route path="*" element={<Navigate replace to="/404"/> } />
+            <Route path="/404" element={<NoPage />} />
+            <Route path="*" element={<Navigate replace to="/404" />} />
           </Route>
         </Routes>
       </BrowserRouter>
