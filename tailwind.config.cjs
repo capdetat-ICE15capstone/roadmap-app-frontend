@@ -10,7 +10,9 @@ module.exports = {
         "dark-blue": "#00286E",
         "light-blue": "#0047C4",
         "gray-background": "#F2F2F2",
-        "button-pink": "#F43054"
+        "button-pink": "#F43054",
+        'nav-black': "#36393E",
+        'nav-gray': "#5E646D"
       },
       fontFamily: {
         "nunito-sans": ['Nunito Sans', "sans-serif"],

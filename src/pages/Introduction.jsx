@@ -144,7 +144,7 @@ const Introduction = () => {
           <div className="flex justify-center">
             <h1 className="font-bold text-xl">How it works</h1>
           </div>
-          <div className="grid grid-cols-5 grid-rows-2 grid-flow-col-dense md:flex-row">
+          <div className="grid grid-cols-5 grid-rows-2 grid-flow-col-dense">
             {featureData.map((data) => {
               return (
                 <>
@@ -167,7 +167,7 @@ const Introduction = () => {
           <div className="flex justify-center">
             <h1 className="text-xl font-bold">Other Features</h1>
           </div>
-          <div className="grid grid-cols-5 grid-rows-2 grid-flow-col-dense md:flex-row">
+          <div className="grid grid-cols-5 grid-rows-2 grid-flow-col-dense">
             {howItWorkData.map((data) => {
               return (
                 <>
