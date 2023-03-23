@@ -21,7 +21,7 @@ const Feed = () => {
       let newArray = [];
       data.forEach((data) => {
         newArray = newArray.concat(data.roadmapArray);
-      });     
+      });
       setRoadmapArray(prevArray => [...prevArray, ...newArray]);
     } catch (error) {
       console.log(error);
@@ -77,3 +77,4 @@ const Feed = () => {
 };
 
 export default Feed;
+//npx json-server --watch json_server_test/db.json
