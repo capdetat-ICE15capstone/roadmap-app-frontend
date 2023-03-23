@@ -10,11 +10,14 @@ import { ReactComponent as NotiOff } from "../assets/notification/notiOff.svg";
 import { ReactComponent as NotiOn } from "../assets/notification/notiOn.svg";
 
 // TODO: put a null check around getRoadmap and createRoadmap pls
-// BUG: word under nodes overflowing if it's one long word
-// BUG: styling for the node is a mess with the name
 // BUG: spinner does not stop spinning in error
+// TODO: draw line between button
+// TODO: notification setting
+// TODO: more styling
+// TODO: confirm prompt
+// TODO: zigzag div
 
-const MAX_TASKS_NONPREMIUM = 5;
+const MAX_TASKS_NONPREMIUM = 16;
 const MAX_RMNAME_LENGTH = 100;
 const MAX_RMDESCRIPTION_LENGTH = 255;
 
@@ -31,7 +34,6 @@ const RoadmapCreatePage = (props) => {
   const [editTaskID, setEditTaskID] = useState(0);
   const [lastId, setLastId] = useState(0);
   const [isPublic, setPublic] = useState(true);
-  const [isNotiOn, setNoti] = useState(true);
   const [edges, setEdges] = useState([]); 
   // [{from: {rid: string, x: number, y: number}, to: {rid: string, x: number, y: number}}]
   const [tasksRef, setTasksRef] = useState([]);
@@ -43,7 +45,8 @@ const RoadmapCreatePage = (props) => {
   }, []);
 
   useEffect(() => {
-    console.log(tasksRef);;
+    // console.log(tasksRef);
+    // calculate the edges position
   }, [tasksRef])
 
   const getID = () => {
@@ -87,7 +90,7 @@ const RoadmapCreatePage = (props) => {
           });
           setLastId((lastId) => highestID + 1);
         } else {
-          alert("GET error"); // this ran twice
+          alert("GET error");
           navigate("/");
         }
         setLoading(false);
@@ -111,15 +114,9 @@ const RoadmapCreatePage = (props) => {
   };
 
   const addRef = (id, preref) => {
+    // add ref from all the tasks node into a container array
     if (tasksRef.findIndex(tRef => tRef.id === id) === -1 && preref) {
       setTasksRef((tasksRef) => [...tasksRef, {id: id, ref: preref}])
-    }
-  }
-
-  const setPointerRelation = () => {
-    // this function calculate the edges state
-    for (let i = 0; i < tasks.length-1; i++) {
-
     }
   }
 
@@ -134,7 +131,6 @@ const RoadmapCreatePage = (props) => {
             // new tasks
             submissionObject.id = getID();
             setTasks([...tasks, submissionObject]);
-            // TODO: set relation
             break;
           default:
             // edit task
@@ -192,7 +188,6 @@ const RoadmapCreatePage = (props) => {
     // stop the page from reloading when submitting the form, may remove in the future
     e.preventDefault();
     console.log({
-      // used for sprint 1
       name: RMName,
       description: RMDesc,
       tasks: tasks,
@@ -221,8 +216,8 @@ const RoadmapCreatePage = (props) => {
       // for edit or clone mode
     }
 
-    setLoading(false);
     // Stop the spinner after the promise of Fetch() has resolved
+    setLoading(false);
 
     // forward to view roadmap page, unsure how to navigate this though cuz this is stateless navigate
     navigate("/");
