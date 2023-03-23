@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, createRef, useRef } from "react";
 import TaskModal from "../components/TaskModal";
 import { useLocation, useNavigate, useParams } from "react-router";
 import { getRoadmap, createRoadmap } from "../functions/roadmapFunction.jsx";
@@ -32,11 +32,19 @@ const RoadmapCreatePage = (props) => {
   const [lastId, setLastId] = useState(0);
   const [isPublic, setPublic] = useState(true);
   const [isNotiOn, setNoti] = useState(true);
+  const [edges, setEdges] = useState([]); 
+  // [{from: {rid: string, x: number, y: number}, to: {rid: string, x: number, y: number}}]
+  const [tasksRef, setTasksRef] = useState([]);
+  // [{rid: string, ref: Ref}]
 
   useEffect(() => {
     // This run once when the page load
     setUpRoadmap();
   }, []);
+
+  useEffect(() => {
+    console.log(tasksRef);;
+  }, [tasksRef])
 
   const getID = () => {
     const x = lastId;
@@ -102,6 +110,19 @@ const RoadmapCreatePage = (props) => {
     );
   };
 
+  const addRef = (id, preref) => {
+    if (tasksRef.findIndex(tRef => tRef.id === id) === -1 && preref) {
+      setTasksRef((tasksRef) => [...tasksRef, {id: id, ref: preref}])
+    }
+  }
+
+  const setPointerRelation = () => {
+    // this function calculate the edges state
+    for (let i = 0; i < tasks.length-1; i++) {
+
+    }
+  }
+
   const editTaskCallBack = (status, submissionObject) => {
     // the task edit modal would call this back to close the modal
     // and save the data to the react state
@@ -110,10 +131,13 @@ const RoadmapCreatePage = (props) => {
         // user click save
         switch (submissionObject.id) {
           case -1:
+            // new tasks
             submissionObject.id = getID();
             setTasks([...tasks, submissionObject]);
+            // TODO: set relation
             break;
           default:
+            // edit task
             console.log("editing");
             setTasks(
               tasks.map((task) =>
@@ -132,6 +156,9 @@ const RoadmapCreatePage = (props) => {
         setTasks((tasks) =>
           tasks.filter((task) => task.id !== submissionObject.id)
         );
+        setTasksRef((tasksref) => 
+          tasksref.filter((tRef) => tRef.id !== submissionObject.id)
+        )
         break;
       default:
         console.warn("Unexplained default case");
@@ -258,15 +285,16 @@ const RoadmapCreatePage = (props) => {
 
           <div className="h-1/2">
             <div className="flex flex-col bg-blue-100 my-4 border-4 border-gray-300 rounded-lg items-start h-2/3 p-4 overflow-auto">
-              <div className="flex items-center flex-wrap">
-                {tasks.map((task) => {
+              <div className="flex items-center flex-wrap gap-4">
+                {tasks.map((task, i) => {
                   return (
-                    <div key={task.id} className="flex">
-                      <div className="flex max-w-[100px]">
-                        <div className="flex flex-col gap-2 items-center">
+                    <div key={task.id} className="flex" >
+                      <div className="flex" >
+                        <div className="flex flex-col gap-2 items-center" >
                           <button
                             className=""
                             type="button"
+                            ref={(el) => addRef(task.id, el)}
                             disabled={task.active}
                             onClick={async () => {
                               await setEditTaskID(task.id); // awaiting a setState does not work lol
@@ -286,10 +314,6 @@ const RoadmapCreatePage = (props) => {
                           </div>
                         </div>
                       </div>
-                      <hr
-                        className="block self-center w-10 border-blue-800 border-2"
-                        key={task.id + "hr"}
-                      ></hr>
                     </div>
                   );
                 })}
@@ -339,6 +363,7 @@ const RoadmapCreatePage = (props) => {
           )
         ) : null}
       </div>
+      <button onClick={() => console.log(tasksRef.current)}>check ref</button>
     </>
   );
 };
