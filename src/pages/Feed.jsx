@@ -8,6 +8,7 @@ const Feed = () => {
   const [roadmapArray, setRoadmapArray] = useState([]);
   const [page, setPage] = useState(1);
   const containerRef = useRef(null);
+  const isMountedRef = useRef(false);
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -17,6 +18,7 @@ const Feed = () => {
   //fetch roadmap data from API
   const fetchData = async () => {
     try {
+      console.log("fetch")
       const response = await fetch(`http://localhost:3000/multipleRoadmaps`); //`http://localhost:3000/multipleRoadmaps=${page}`
       const data = await response.json();
       let newArray = [];
@@ -29,7 +31,13 @@ const Feed = () => {
     }
   };
 
+  // fetch data when page is changed or reloaded
   useEffect(() => {
+    // use to stop fetching twice when feed page is reloaded
+    if (!isMountedRef.current) {
+      isMountedRef.current = true;
+      return;
+    }
     fetchData();
   }, [page]);
 
@@ -51,7 +59,7 @@ const Feed = () => {
           onSubmit={handleSubmit}
         >
           <SearchBar />
-          <button type="submit" className="bg-[#00286E] hover:bg-[#011C4B] text-white font-bold appearance-none border rounded-3xl px-12 py-4 ml-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+          <button type="submit" className="bg-[#00286E] hover:bg-[#011C4B] text-white font-bold appearance-none border rounded-3xl px-12 py-4 ml-2 leading-tight focus:outline-none focus:shadow-outline">
             Search
           </button>
         </div>
