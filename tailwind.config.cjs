@@ -8,7 +8,8 @@ module.exports = {
     extend: {
       colors: {
         'nav-black': "#36393E",
-        'nav-gray': "#5E646D"
+        'nav-gray': "#5E646D",
+        'nav-blue': "#00286E"
       },
       fontFamily: {
         "nunito-sans": ['Nunito Sans', "sans-serif"],
