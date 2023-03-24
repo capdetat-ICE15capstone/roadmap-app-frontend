@@ -9,14 +9,21 @@ const Feed = () => {
   const [page, setPage] = useState(1);
   const containerRef = useRef(null);
   const isMountedRef = useRef(false);
+  const [isFetching, setIsFetching] = useState(false);
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    setRoadmapArray([]);
+    setPage(1);
+    fetchData();
+    setSearch(document.getElementById("InputSearch").value);
     console.log("search: " + document.getElementById("InputSearch").value);
   };
 
   //fetch roadmap data from API
   const fetchData = async () => {
+    if (isFetching) return; // return if a fetch is already in progress
+    setIsFetching(true); // set isFetching to true to indicate a fetch is starting
     try {
       console.log("fetch")
       const response = await fetch(`http://localhost:3000/multipleRoadmaps`); //`http://localhost:3000/multipleRoadmaps=${page}`
@@ -29,9 +36,10 @@ const Feed = () => {
     } catch (error) {
       console.log(error);
     }
+    setIsFetching(false); // set isFetching to false to indicate a fetch is complete
   };
 
-  // fetch data when page is changed or reloaded
+  // fetch data when page is changed and when feed is reloaded
   useEffect(() => {
     // use to stop fetching twice when feed page is reloaded
     if (!isMountedRef.current) {
@@ -69,12 +77,17 @@ const Feed = () => {
         {roadmapArray.map((roadmap, index) => (
           <div key={index} className="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 p-2">
             <Roadmap
-              creator_name={roadmap.creator_name}
+              owner_id = {roadmap.owner_id}
+              creator_id = {roadmap.creator_id}
               owner_name={roadmap.owner_name}
-              title={roadmap.title}
+              creator_name={roadmap.creator_name}
+              rid = {roadmap.rid}
+              views_count={roadmap.views_count}
+              stars_count = {roadmap.stars_count}
+              forks_count={roadmap.forks_count}
               created_at={roadmap.created_at}
               edited_at={roadmap.edited_at}
-              views_counts={roadmap.views_counts}
+              title={roadmap.title}
             />
           </div>
         ))}
