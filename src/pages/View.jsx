@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 
 function View() {
+  const navigate = useNavigate();
+  
   const [currentMilestone, setCurrentMilestone] = useState('1');
   const [currentDetail, setCurrentDetail] = useState("");
   const [detailToggle, setCurrentDetailToggle] = useState(true);
@@ -69,7 +71,7 @@ function View() {
             <button onClick={()=>console.log("like!")} className="bg-gray-500 grow text-white px-4 py-2 font-semilight rounded-full text-sm font-bold" type="button">
               Like
             </button>
-            <button onClick={()=>console.log("edit!")} className="bg-gray-300 grow text-white px-4 py-2 font-semilight rounded-full text-sm font-bold" type="button">
+            <button onClick={()=>navigate("/edit", {'state': {'roadmap' : roadmap}})} className="bg-gray-300 grow text-white px-4 py-2 font-semilight rounded-full text-sm font-bold" type="button">
               Edit
             </button>
             <button onClick={() => setCurrentDetailToggle(!detailToggle)} className="bg-gray-300 grow text-white px-4 py-2 font-semilight rounded-full text-sm font-bold" type="button">
@@ -112,10 +114,10 @@ function View() {
               if (task.id != '1') {
                 return (
                   <div key={task.id} className='flex items-center'>
-                    <hr className="w-8 h-1 bg-gray-100 border-0 md:my-10 dark:bg-gray-500" />
+                    <hr className="w-8 h-1 bg-gray-400 border-0 md:my-10" />
                     <button
                       id={task.id}
-                      className={`${(task.id === currentMilestone) ? 'bg-green-200' : 'bg-red-200'} hover:bg-black p-4 rounded-full focus:bg-green text-white`}
+                      className={`${(task.id === currentMilestone) ? 'bg-gray-800' : 'bg-gray-400'} hover:bg-black p-4 rounded-full focus:bg-green text-white`}
                       onClick={() => {
                         setCurrentMilestone(task.id);
                       }}
@@ -129,7 +131,7 @@ function View() {
                   <div key={task.id} className='flex items-center'>
                     <button
                       id={task.id}
-                      className={`${(task.id === currentMilestone) ? 'bg-green-200' : 'bg-red-200'} hover:bg-black p-4 rounded-full focus:bg-green text-white`}
+                      className={`${(task.id === currentMilestone) ? 'bg-gray-800' : 'bg-gray-400'} hover:bg-black p-4 rounded-full focus:bg-green text-white`}
                       onClick={() => {
                         setCurrentMilestone(task.id);
                       }}
@@ -143,10 +145,10 @@ function View() {
             if (task.id != '1') {
               return (
                 <div key={task.id} className='flex items-center'>
-                  <hr className="w-8 h-1 bg-gray-100 border-0 md:my-10 dark:bg-gray-700" />
+                  <hr className="w-8 h-1 bg-gray-400 border-0 md:my-10" />
                   <button
                     id={task.id}
-                    className={`${(task.id === currentMilestone) ? 'bg-green-500' : 'bg-red-500'} hover:bg-black p-4 rounded-full focus:bg-green text-white`}
+                    className={`${(task.id === currentMilestone) ? 'bg-gray-800' : 'bg-gray-600'} hover:bg-black p-4 rounded-full focus:bg-green text-white`}
                     onClick={() => {
                       setCurrentMilestone(task.id);
                     }}
@@ -160,7 +162,7 @@ function View() {
                 <div key={task.id} className='flex items-center'>
                   <button
                     id={task.id}
-                    className={`${(task.id === currentMilestone) ? 'bg-green-500' : 'bg-red-500'} hover:bg-black p-4 rounded-full focus:bg-green text-white`}
+                    className={`${(task.id === currentMilestone) ? 'bg-gray-800' : 'bg-gray-600'} hover:bg-black p-4 rounded-full focus:bg-green text-white`}
                     onClick={() => {
                       setCurrentMilestone(task.id);
                     }}
