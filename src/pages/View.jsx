@@ -6,21 +6,12 @@ function View() {
   const [currentDetail, setCurrentDetail] = useState("");
   const [detailToggle, setCurrentDetailToggle] = useState(true);
 
-  // useEffect(() => {
-  //   return () => {
-  //     console.log('test');
-  //       setCurrentDetail(
-
-  //       );
-  //   }
-  // }, [currentMilestone])
-
   function MilestoneDetails(props) {
     const current = parseInt(props.milestone);
     return (
-      <div className='flex flex-col bg-white rounded-lg shadow-lg p-4 space-y-4'>
+      <div className='flex flex-col bg-gray-100 rounded-2xl shadow-sm p-4 space-y-4'>
         <div className='flex flex-row space-x-4 justify-between'>
-          <div className='flex flex-col bg-white space-y-2 w-1/2'>
+          <div className='flex flex-col space-y-2 w-1/2'>
             <div className='font-bold'>
               {roadmap.tasks[current - 1].name}
             </div>
@@ -36,7 +27,7 @@ function View() {
               </div>
             </div>
           </div>
-          <div className='flex flex-col bg-white space-y-2 w-1/2'>
+          <div className='flex flex-col space-y-2 w-1/2'>
             <div className='font-bold'>
               Sub-Tasks
             </div>
@@ -62,14 +53,6 @@ function View() {
             </div>
           </div>
         </div>
-        <div className="flex flex-col space-y-2">
-          <button className="bg-transparent grow text-gray-600 border border-grey-500 px-4 py-2 font-semilight rounded-lg text-sm" type="button">
-            Save Changes
-          </button>
-          <button className="bg-transparent grow text-gray-600 border border-grey-500 px-4 py-2 font-semilight rounded-lg text-sm" type="button">
-            Complete Milestone
-          </button>
-        </div>
       </div>
 
     )
@@ -77,35 +60,121 @@ function View() {
 
   function RoadmapDetails(props) {
     return (
-      <div className='flex flex-col bg-white rounded-lg shadow-lg p-4 space-y-4'>
-        <div className='flex justify-between'>
+      <>
+        <div className='flex justify-between items-center'>
           <div className='text-3xl font-extrabold'>
             {roadmap.name}
           </div>
-          <button onClick={() => setCurrentDetailToggle(!detailToggle)} className="bg-transparent text-gray-600 border border-grey-500 px-4 py-2 font-semilight rounded-lg text-sm" type="button">
-            Expand/Collapse
-          </button>
-        </div>
-        <div className={`${(detailToggle) ? 'visible' : 'hidden'}`}>
-          <div className='flex flex-col bg-slate-100 rounded p-4 text-sm'>
-            {roadmap.description}
+          <div className="flex space-x-1">
+            <button onClick={()=>console.log("like!")} className="bg-gray-500 grow text-white px-4 py-2 font-semilight rounded-full text-sm font-bold" type="button">
+              Like
+            </button>
+            <button onClick={()=>console.log("edit!")} className="bg-gray-300 grow text-white px-4 py-2 font-semilight rounded-full text-sm font-bold" type="button">
+              Edit
+            </button>
+            <button onClick={() => setCurrentDetailToggle(!detailToggle)} className="bg-gray-300 grow text-white px-4 py-2 font-semilight rounded-full text-sm font-bold" type="button">
+              i
+            </button>
           </div>
         </div>
-        <div className="flex space-x-4">
-          <button className="bg-transparent grow text-gray-600 border border-grey-500 px-4 py-2 font-semilight rounded-lg text-sm" type="button">
-            Modify
-          </button>
-          <button className="bg-transparent grow text-gray-600 border border-grey-500 px-4 py-2 font-semilight rounded-lg text-sm" type="button">
-            Clone
-          </button>
-          <button className="bg-transparent grow text-gray-600 border border-grey-500 px-4 py-2 font-semilight rounded-lg text-sm" type="button">
-            Something?
-          </button>
+        <div className={`${(detailToggle) ? 'visible' : 'hidden'}`}>
+          <div className='flex flex-col bg-gray-100 rounded-2xl shadow-sm p-4 text-sm space-y-2'>
+            <div className='font-bold'>
+              Publicity: {roadmap.publicity ? "Public" : "Private"}
+            </div>
+            <div>
+              {roadmap.description}
+            </div>
+          </div>
         </div>
-      </div >
+      </>
     )
   }
 
+  function RoadmapDisplay(props) {
+    const roadmap_props = props.roadmap;
+
+    return (
+      <div className='flex bg-gray-100 rounded-2xl shadow-sm p-4 overflow-x-auto'>
+        <div className='flex m-8'>
+          {roadmap_props.tasks.map(task => {
+            const subtasks = task.subtasks;
+            let currentActiveTask = '1';
+            let status = true;
+            for (var i = 0; i < subtasks.length; i++) {
+              if (subtasks[i].status === false) {
+                status = false;
+                currentActiveTask = task.id;
+                break;
+              }
+            }
+            if (status === true) {
+              if (task.id != '1') {
+                return (
+                  <div key={task.id} className='flex items-center'>
+                    <hr className="w-8 h-1 bg-gray-100 border-0 md:my-10 dark:bg-gray-500" />
+                    <button
+                      id={task.id}
+                      className={`${(task.id === currentMilestone) ? 'bg-green-200' : 'bg-red-200'} hover:bg-black p-4 rounded-full focus:bg-green text-white`}
+                      onClick={() => {
+                        setCurrentMilestone(task.id);
+                      }}
+                    >
+                      {task.id}
+                    </button>
+                  </div>
+                );
+              } else {
+                return (
+                  <div key={task.id} className='flex items-center'>
+                    <button
+                      id={task.id}
+                      className={`${(task.id === currentMilestone) ? 'bg-green-200' : 'bg-red-200'} hover:bg-black p-4 rounded-full focus:bg-green text-white`}
+                      onClick={() => {
+                        setCurrentMilestone(task.id);
+                      }}
+                    >
+                      {task.id}
+                    </button>
+                  </div>
+                );
+              }
+            }
+            if (task.id != '1') {
+              return (
+                <div key={task.id} className='flex items-center'>
+                  <hr className="w-8 h-1 bg-gray-100 border-0 md:my-10 dark:bg-gray-700" />
+                  <button
+                    id={task.id}
+                    className={`${(task.id === currentMilestone) ? 'bg-green-500' : 'bg-red-500'} hover:bg-black p-4 rounded-full focus:bg-green text-white`}
+                    onClick={() => {
+                      setCurrentMilestone(task.id);
+                    }}
+                  >
+                    {task.id}
+                  </button>
+                </div>
+              );
+            } else {
+              return (
+                <div key={task.id} className='flex items-center'>
+                  <button
+                    id={task.id}
+                    className={`${(task.id === currentMilestone) ? 'bg-green-500' : 'bg-red-500'} hover:bg-black p-4 rounded-full focus:bg-green text-white`}
+                    onClick={() => {
+                      setCurrentMilestone(task.id);
+                    }}
+                  >
+                    {task.id}
+                  </button>
+                </div>
+              );
+            }
+          })}
+        </div>
+      </div>
+    );
+  }
 
   const [roadmap, setRoadmap] = useState({
     'name': 'Lorem Ipsum Roadmap',
@@ -129,7 +198,7 @@ function View() {
           {
             'id': '2',
             'detail': 'Vestibulum turpis nibh.',
-            'status': false,
+            'status': true,
           }
         ]
       },
@@ -178,55 +247,18 @@ function View() {
     ]
   });
 
-  // useEffect(() => {
-  //   //Runs on the first render
-  //   //And any time any dependency value changes
-  // }, [currentMilestone]);
-
-  const description = "Morbi facilisis finibus lacus quis aliquam. Vestibulum turpis nibh, imperdiet non gravida quis, pretium vitae est. Phasellus in sollicitudin quam, id lacinia nisl. Suspendisse non commodo est. Vestibulum ut mauris fermentum, laoreet ex sed, elementum ante. Sed mollis neque vel purus laoreet condimentum.";
-
   return (
     <div>
-      <div className='flex h-screen bg-gray-200 overflow-y-scroll'>
-        <div className="container w-5/6 flex-col m-auto py-8 space-y-4">
+      <div className='flex h-screen bg-white overflow-y-scroll'>
+        <div className="container w-5/6 flex-col m-auto py-8 space-y-6">
           <RoadmapDetails />
-          <div className='flex bg-white rounded-lg shadow-lg p-4 overflow-x-auto'>
-            <div className='flex m-8'>
-              {roadmap.tasks.map(task => {
-                if (task.id != '1') {
-                  return (
-                    <div key={task.id} className='flex items-center'>
-                      <hr className="w-8 h-1 bg-gray-100 border-0 md:my-10 dark:bg-gray-700" />
-                      <button
-                        id={task.id}
-                        className='p-4 rounded-full bg-slate-500 hover:bg-black focus:bg-green text-white'
-                        onClick={() => {
-                          setCurrentMilestone(task.id);
-                        }}
-                      >
-                        {task.id}
-                      </button>
-                    </div>
-                  );
-                } else {
-                  return (
-                    <div key={task.id} className='flex items-center'>
-                      <button
-                        id={task.id}
-                        className='p-4 rounded-full bg-slate-500 hover:bg-black focus:bg-green text-white'
-                        onClick={() => {
-                          setCurrentMilestone(task.id);
-                        }}
-                      >
-                        {task.id}
-                      </button>
-                    </div>
-                  );
-                }
-              })}
-            </div>
-          </div>
+          <RoadmapDisplay roadmap={roadmap} />
           <MilestoneDetails milestone={currentMilestone} />
+          <div className="flex flex-col space-y-2">
+            <button onClick={()=>console.log("save!")} className="bg-gray-500 grow text-white px-4 py-2 font-semilight rounded-full text-sm font-bold" type="button">
+              Save Changes
+            </button>
+          </div>
         </div>
       </div>
     </div>
