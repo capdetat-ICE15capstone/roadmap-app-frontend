@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { AnimatePresence, motion, useAnimate } from "framer-motion";
 
 // Old CustomSVG, delete after testing is completed
 // export const CustomSVG = ({
@@ -34,6 +35,21 @@ import React, { useState, useEffect } from "react";
 //     );
 //   };
 
+const draw = {
+  hidden: { pathLength: 0, opacity: 0 },
+  visible: (i) => {
+    const delay = 1 + i * 0.5;
+    return {
+      pathLength: 1,
+      opacity: 1,
+      transition: {
+        pathLength: { delay, type: "spring", duration: 1.5, bounce: 0 },
+        opacity: { delay, duration: 0.01 },
+      },
+    };
+  },
+};
+
 export const CustomSVG = ({
   size = 42,
   className = "",
@@ -42,27 +58,26 @@ export const CustomSVG = ({
   strokeWidth = 2,
   strokeColor = "black",
 }) => {
-
   const [shapeAttr, setShapeAttr] = useState({});
 
   useEffect(() => {
     // Use to handle props update
-    attrSetter()
-  }, [size, type, isStrokeOn, strokeWidth, strokeColor])
+    attrSetter();
+  }, [size, type, isStrokeOn, strokeWidth, strokeColor]);
 
   const attrSetter = () => {
     switch (type) {
-        case "circle":
-          setShapeAttr(calculateCircle());
-          break;
-        case "square":
-          setShapeAttr(calculateSquare());
-          break;
-        case "triangle":
-          setShapeAttr(calculateTriangle());
-          break;
-      }
-  }
+      case "circle":
+        setShapeAttr(calculateCircle());
+        break;
+      case "square":
+        setShapeAttr(calculateSquare());
+        break;
+      case "triangle":
+        setShapeAttr(calculateTriangle());
+        break;
+    }
+  };
 
   const calculateCircle = () => {
     if (isStrokeOn) {
@@ -108,7 +123,7 @@ export const CustomSVG = ({
           size - strokeWidth / 2
         } ${strokeWidth},${size - strokeWidth / 2}`,
         stroke: strokeColor,
-        strokeWidth: strokeWidth
+        strokeWidth: strokeWidth,
       };
     }
 
@@ -118,18 +133,27 @@ export const CustomSVG = ({
   };
 
   return (
-    <svg height={size} width={size}>
-      {type === "circle" ? (
-        <circle {...shapeAttr} className={className} />
-      ) : type === "square" ? (
-        <rect {...shapeAttr} className={className} />
-      ) : type === "triangle" ? (
-        <polygon
-          {... shapeAttr}
-          className={className}
-        />
-      ) : null}
-    </svg>
+    <AnimatePresence>
+      {/* <motion.svg height={size} width={size} initial="hidden" animate="visible" whileHover={{scale: 1.2}} key={type}> */}
+        {type === "circle" ? (
+          <motion.svg height={size} width={size} initial="hidden" animate="visible" whileHover={{scale: 1.2}} key={type}>
+          <motion.circle {...shapeAttr} className={className} variants={draw} />
+          </motion.svg>
+        ) : type === "square" ? (
+          <motion.svg height={size} width={size} initial="hidden" animate="visible" whileHover={{scale: 1.2}} key={type}>
+          <motion.rect {...shapeAttr} className={className} variants={draw} />
+          </motion.svg>
+        ) : type === "triangle" ? (
+          <motion.svg height={size} width={size} initial="hidden" animate="visible" whileHover={{scale: 1.2}} key={type}>
+          <motion.polygon
+            {...shapeAttr}
+            variants={draw}
+            className={className} 
+          />
+          </motion.svg>
+        ) : null}
+      {/* </motion.svg> */}
+    </AnimatePresence>
   );
 };
 

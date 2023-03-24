@@ -6,6 +6,7 @@ import Spinner from "../components/Spinner";
 import { isUserPremium } from "../functions/userFunction";
 import { CustomSVG, getTWFill } from "../components/CustomSVG";
 import { ReactComponent as AddButton } from "../assets/addButton.svg";
+import { motion } from "framer-motion";
 import { ReactComponent as NotiOff } from "../assets/notification/notiOff.svg";
 import { ReactComponent as NotiOn } from "../assets/notification/notiOn.svg";
 
@@ -21,6 +22,16 @@ const MAX_TASKS_NONPREMIUM = 16;
 const MAX_RMNAME_LENGTH = 100;
 const MAX_RMDESCRIPTION_LENGTH = 255;
 
+const usePreviousState = (value) => {
+  const ref = useRef();
+  useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
+};
+
+const notificationDayOption = [1, 3, 5, 7, 14];
+
 const RoadmapCreatePage = (props) => {
   const { mode } = props; // props from parent
   const { state } = useLocation(); // state from previous page, including fetched roadmap data
@@ -34,10 +45,13 @@ const RoadmapCreatePage = (props) => {
   const [editTaskID, setEditTaskID] = useState(0);
   const [lastId, setLastId] = useState(0);
   const [isPublic, setPublic] = useState(true);
-  const [edges, setEdges] = useState([]); 
-  // [{from: {rid: string, x: number, y: number}, to: {rid: string, x: number, y: number}}]
+  const [edges, setEdges] = useState([]);
+  // [{from: rid1, to: rid2}]
   const [tasksRef, setTasksRef] = useState([]);
   // [{rid: string, ref: Ref}]
+  const previousValue = usePreviousState(tasksRef);
+  const [notiStatus, setNotiStatus] = useState({ on: false });
+  const [tags, setTags] = useState([]);
 
   useEffect(() => {
     // This run once when the page load
@@ -45,9 +59,24 @@ const RoadmapCreatePage = (props) => {
   }, []);
 
   useEffect(() => {
-    // console.log(tasksRef);
-    // calculate the edges position
-  }, [tasksRef])
+    addEdges();
+  }, [tasksRef]);
+
+  useEffect(() => {
+    // this code is excessive
+    // use to call a functiob when the user did not
+    // update RMDesc for 1500 ms
+    const timeoutID = setTimeout(() => {
+      console.log(RMDesc)
+      searchTags()
+    }, 1500)
+
+    return () => clearTimeout(timeoutID)
+  }, [RMDesc])
+
+  useEffect(() => {
+    console.log(tags);
+  }, [tags])
 
   const getID = () => {
     const x = lastId;
@@ -104,21 +133,65 @@ const RoadmapCreatePage = (props) => {
 
   const setupCloneMode = () => {
     // in clone mode, reset all the progress of the roadmap,
-    // including the active to false and checkbox to unchecked
+    // including the isDone to false and checkbox to unchecked
     setTasks((tasks) =>
       tasks.map((task) => {
-        task.active = false;
+        task.isDone = false;
         return task;
       })
     );
   };
 
+  const searchTags = () => {
+    const allWords = RMDesc.split(" ");
+    let allTags = []
+    allWords.forEach((word) => {
+      if (word.charAt(0) === "#") {
+        allTags.push(word);
+      }
+    })
+
+    setTags(allTags);
+  }
+
   const addRef = (id, preref) => {
     // add ref from all the tasks node into a container array
-    if (tasksRef.findIndex(tRef => tRef.id === id) === -1 && preref) {
-      setTasksRef((tasksRef) => [...tasksRef, {id: id, ref: preref}])
+    if (tasksRef.findIndex((tRef) => tRef.id === id) === -1 && preref) {
+      setTasksRef((tasksRef) => [...tasksRef, { id: id, ref: preref }]);
     }
-  }
+  };
+
+  const addEdges = () => {
+    // add edges object when new task is created
+    if (tasksRef.length <= 1) {
+      return;
+    }
+    const lastTwo = tasks.slice(-2);
+    // setEdges(edges => [...edges, {from: tasksRef.find((r) => r.id === lastTwo[0].id).ref , to: tasksRef.find((r) => r.id === lastTwo[1].id).ref}])
+    // setEdges([...edges, { from: lastTwo[0].id, to: lastTwo[1].id }]);
+    const firstPos = tasksRef.find((r) => r.id === lastTwo[0].id).ref;
+    const secondPos = tasksRef.find((r) => r.id === lastTwo[1].id).ref;
+    setEdges([
+      ...edges,
+      {
+        from: {
+          id: lastTwo[0].id,
+          x: firstPos.offsetLeft,
+          y: firstPos.offsetTop,
+        },
+        to: {
+          id: lastTwo[1].id,
+          x: secondPos.offsetLeft,
+          y: secondPos.offsetTop,
+        },
+      },
+    ]);
+    // setEdges([...edges, {from: lastTwo[]}])
+  };
+
+  const editEdges = () => {
+    // find the tasks that switch location or was deleted and recalculate the edges
+  };
 
   const editTaskCallBack = (status, submissionObject) => {
     // the task edit modal would call this back to close the modal
@@ -152,9 +225,9 @@ const RoadmapCreatePage = (props) => {
         setTasks((tasks) =>
           tasks.filter((task) => task.id !== submissionObject.id)
         );
-        setTasksRef((tasksref) => 
+        setTasksRef((tasksref) =>
           tasksref.filter((tRef) => tRef.id !== submissionObject.id)
-        )
+        );
         break;
       default:
         console.warn("Unexplained default case");
@@ -185,7 +258,6 @@ const RoadmapCreatePage = (props) => {
   };
 
   const handleSubmit = async (e) => {
-    // stop the page from reloading when submitting the form, may remove in the future
     e.preventDefault();
     console.log({
       name: RMName,
@@ -216,12 +288,18 @@ const RoadmapCreatePage = (props) => {
       // for edit or clone mode
     }
 
-    // Stop the spinner after the promise of Fetch() has resolved
     setLoading(false);
-
-    // forward to view roadmap page, unsure how to navigate this though cuz this is stateless navigate
     navigate("/");
   };
+
+  const handleNotiSettingChange = (event) => {
+    console.log(JSON.parse(event.target.value));
+    setNotiStatus(JSON.parse(event.target.value));
+  };
+
+  const generateNotificationObjects = () => {
+    // generate array of noti object to be sent to the server
+  }
 
   return (
     <>
@@ -270,7 +348,7 @@ const RoadmapCreatePage = (props) => {
           <label className="text-xl font-bold">Roadmap Description: </label>
           <div className="my-3">
             <textarea
-              className="border-2 rounded-md border-gray-400 block text-2xl w-full bg-gray-200 focus:outline-none"
+              className="border rounded-lg border-gray-400 block text-xl p-1 w-full focus:outline-none shadow-lg"
               rows="4"
               cols="60"
               value={RMDesc}
@@ -279,20 +357,24 @@ const RoadmapCreatePage = (props) => {
           </div>
 
           <div className="h-1/2">
-            <div className="flex flex-col bg-blue-100 my-4 border-4 border-gray-300 rounded-lg items-start h-2/3 p-4 overflow-auto">
+            <div className="flex flex-col bg-blue-100 my-4 border-2 shadow-xl border-gray-300 rounded-3xl items-start h-2/3 p-4 pr-16 overflow-auto relative">
               <div className="flex items-center flex-wrap gap-4">
-                {tasks.map((task, i) => {
+                {tasks.map((task) => {
                   return (
-                    <div key={task.id} className="flex" >
-                      <div className="flex" >
-                        <div className="flex flex-col gap-2 items-center" >
+                    <div
+                      key={task.id}
+                      className="flex"
+                      ref={(el) => addRef(task.id, el)}
+                    >
+                      <div className="flex">
+                        <div className="flex flex-col gap-2 items-center">
                           <button
                             className=""
                             type="button"
-                            ref={(el) => addRef(task.id, el)}
-                            disabled={task.active}
+                            disabled={task.isDone}
                             onClick={async () => {
-                              await setEditTaskID(task.id); // awaiting a setState does not work lol
+                              // awaiting a setState does not work lol
+                              await setEditTaskID(task.id); 
                               await setModalState(true);
                             }}
                           >
@@ -312,7 +394,8 @@ const RoadmapCreatePage = (props) => {
                     </div>
                   );
                 })}
-                <div>
+
+                <div className="">
                   <button
                     // className="bg-blue-700 disabled:bg-gray-500 p-2 m-2 h-10 w-10 self-center rounded-full text-white font-bold text-2xl"
                     type="button"
@@ -322,8 +405,39 @@ const RoadmapCreatePage = (props) => {
                     <AddButton className="h-10 w-auto" />
                   </button>
                 </div>
+                <select
+                  value={JSON.stringify(notiStatus)}
+                  onChange={handleNotiSettingChange}
+                >
+                  <option value={JSON.stringify({ on: false })}>
+                    No notification
+                  </option>
+                  {notificationDayOption.map((day) => {
+                    return (
+                      <>
+                        <option
+                          value={JSON.stringify({
+                            on: true,
+                            detail: { day: day, beforeDueDate: true },
+                          })}
+                          key={day * 2}
+                        >
+                          {`${day} days before due date`}
+                        </option>
+
+                        <option
+                          value={JSON.stringify({
+                            on: true,
+                            detail: { day: day, beforeDueDate: false },
+                          })}
+                        >
+                          {`${day} days before start date`}
+                        </option>
+                      </>
+                    );
+                  })}
+                </select>
               </div>
-              
             </div>
             <div className="relative">
               <div className="absolute right-0">
@@ -344,7 +458,8 @@ const RoadmapCreatePage = (props) => {
           </div>
         </form>
 
-        {modalState ? ( // id -1 is passed as a temp id to let the modal know it's in create mode, otherwise it's in edit mode
+        {modalState ? ( 
+          // id -1 is passed as a temp id to let the modal know it's in create mode, otherwise it's in edit mode
           editTaskID == -1 ? (
             <TaskModal
               oldData={{ id: -1 }}
@@ -358,7 +473,6 @@ const RoadmapCreatePage = (props) => {
           )
         ) : null}
       </div>
-      <button onClick={() => console.log(tasksRef.current)}>check ref</button>
     </>
   );
 };
