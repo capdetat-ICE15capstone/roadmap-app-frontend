@@ -12,7 +12,8 @@ module.exports = {
         "gray-background": "#F2F2F2",
         "button-pink": "#F43054",
         'nav-black': "#36393E",
-        'nav-gray': "#5E646D"
+        'nav-gray': "#5E646D",
+        'nav-blue': "#00286E"
       },
       fontFamily: {
         "nunito-sans": ['Nunito Sans', "sans-serif"],
