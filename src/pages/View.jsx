@@ -11,9 +11,9 @@ function View() {
   function MilestoneDetails(props) {
     const current = parseInt(props.milestone);
     return (
-      <div className='flex flex-col bg-gray-100 rounded-2xl shadow-sm p-4 space-y-4'>
+      <div className='flex flex-col bg-gray-100 rounded-2xl shadow-sm space-y-4'>
         <div className='flex flex-row space-x-4 justify-between'>
-          <div className='flex flex-col space-y-2 w-1/2'>
+          <div className='flex flex-col space-y-2 w-1/2 p-4'>
             <div className='font-bold'>
               {roadmap.tasks[current - 1].name}
             </div>
@@ -29,7 +29,7 @@ function View() {
               </div>
             </div>
           </div>
-          <div className='flex flex-col space-y-2 w-1/2'>
+          <div className='flex flex-col space-y-2 w-1/2 p-4 bg-gray-50 rounded'>
             <div className='font-bold'>
               Sub-Tasks
             </div>
@@ -39,7 +39,7 @@ function View() {
                   <label key={subtask.id}>
                     <input
                       type="checkbox"
-                      className="w-4 h-4S mr-2 bg-gray-100 border-gray-300 rounded"
+                      className="w-4 h-4 mr-2 bg-gray-100 border-gray-300 rounded"
                       defaultChecked={subtask.status ? true : false}
                       onChange={() => {
                         let res = { ...roadmap };
@@ -56,7 +56,6 @@ function View() {
           </div>
         </div>
       </div>
-
     )
   }
 
@@ -68,7 +67,7 @@ function View() {
             {roadmap.name}
           </div>
           <div className="flex space-x-1">
-            <button onClick={()=>console.log("like!")} className="bg-gray-500 grow text-white px-4 py-2 font-semilight rounded-full text-sm font-bold" type="button">
+            <button onClick={()=>console.log("like!")} className="bg-sub-blue grow text-white px-4 py-2 font-semilight rounded-full text-sm font-bold" type="button">
               Like
             </button>
             <button onClick={()=>navigate("/edit", {'state': {'roadmap' : roadmap}})} className="bg-gray-300 grow text-white px-4 py-2 font-semilight rounded-full text-sm font-bold" type="button">
@@ -257,7 +256,7 @@ function View() {
           <RoadmapDisplay roadmap={roadmap} />
           <MilestoneDetails milestone={currentMilestone} />
           <div className="flex flex-col space-y-2">
-            <button onClick={()=>console.log("save!")} className="bg-gray-500 grow text-white px-4 py-2 font-semilight rounded-full text-sm font-bold" type="button">
+            <button onClick={()=>console.log("save!")} className="bg-main-blue grow text-white px-4 py-2 font-semilight rounded-full text-sm font-bold" type="button">
               Save Changes
             </button>
           </div>
