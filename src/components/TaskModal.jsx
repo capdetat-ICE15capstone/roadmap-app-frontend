@@ -36,16 +36,6 @@ import "react-datepicker/dist/react-datepicker.css";
 const MAX_NAME_LENGTH = 24;
 const MAX_DESCRIPTION_LENGTH = 255;
 
-const calculateLastId = (data) => {
-  let highestID = 0;
-  data.subtasks.forEach((subtask) => {
-    if (subtask.id > highestID) {
-      highestID = subtask.id;
-    }
-  });
-  return highestID + 1;
-};
-
 const TaskModal = ({ oldData, editTaskCallBack }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -102,11 +92,12 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
         setStartDate(oldData.startDate);
         setdueDate(oldData.dueDate);
         let highestID = 0;
-        oldData.subtasks.forEach((subtask) => {
+        data.subtasks.forEach((subtask) => {
           if (subtask.id > highestID) {
             highestID = subtask.id;
           }
         });
+
         setLastId((lastId) => highestID + 1);
       }
     }
@@ -125,30 +116,30 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
   const handleNameChange = (event) => {
     if (name.length < MAX_NAME_LENGTH) {
       setName(event.target.value);
-      setDataChange(true)
+      setDataChange(true);
     }
   };
 
   const handleDescriptionChange = (event) => {
     if (description.length < MAX_DESCRIPTION_LENGTH) {
       setDescription(event.target.value);
-      setDataChange(true)
+      setDataChange(true);
     }
   };
 
   const handleNodeColorChange = (event) => {
     setNodeColor(allNodeColor.find(({ name }) => name === event.target.value));
-    setDataChange(true)
+    setDataChange(true);
   };
 
   const handleNodeShapeChange = (event, shapeType) => {
     setNodeShape(shapeType);
-    setDataChange(true)
+    setDataChange(true);
   };
 
   const addSubTask = (event) => {
     event.preventDefault();
-    setDataChange(true)
+    setDataChange(true);
     setSubTasks([
       ...subtasks,
       {
@@ -160,12 +151,12 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
   };
 
   const deleteSubTask = (event, id) => {
-    setDataChange(true)
+    setDataChange(true);
     setSubTasks((subtasks) => subtasks.filter((subtask) => subtask.id !== id));
   };
 
   const onSubtaskTextEdit = (newValue, id) => {
-    setDataChange(true)
+    setDataChange(true);
     setSubTasks(
       subtasks.map((subtask) =>
         subtask.id === id ? { ...subtask, detail: newValue } : { ...subtask }
@@ -174,7 +165,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
   };
 
   const onSubTaskCheckboxChange = (newValue, id) => {
-    setDataChange(true)
+    setDataChange(true);
     setSubTasks(
       subtasks.map((subtask) =>
         subtask.id === id ? { ...subtask, status: newValue } : { ...subtask }
@@ -287,7 +278,10 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                           selected={startDate}
                           showTimeSelect
                           minDate={Date.now()}
-                          onChange={(date) => {setStartDate(date); setDataChange(true)}}
+                          onChange={(date) => {
+                            setStartDate(date);
+                            setDataChange(true);
+                          }}
                           // className="border border-black rounded-md justify-self-end w-full"
                           customInput={<DatePickerButton />}
                         ></DatePicker>
@@ -302,7 +296,10 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                           selected={dueDate}
                           showTimeSelect
                           minDate={Date.now()}
-                          onChange={(date) => {setdueDate(date); setDataChange(true)}}
+                          onChange={(date) => {
+                            setdueDate(date);
+                            setDataChange(true);
+                          }}
                           // className="border border-black rounded-md justify-self-end w-full"
                           customInput={<DatePickerButton />}
                         ></DatePicker>
