@@ -20,14 +20,20 @@ const Home = () => {
           <div className="relative flex flex-row bg-[#FFFFFF] w-[1118px] h-[266px] font-bold appearance-none border border-[#D9D9D9] rounded-[30px]">
             <div className="relative flex items-center justify-center left-[30px] top-[0px] h-fit m-[20px]">
               <div className="relative mr-4">
-                Kurumi
+                <div className="font-inter font-extrabold text-[40px] text-[#09275B] leading-[48px]">
+                  Kurumi
+                </div>
               </div>
               <div className="relative flex flex-col justify-center bg-[#034DCF] text-white font-bold w-[223px] h-[57px] rounded-[30px]">
                 <div className="absolute flex justify-start items-center left-[19px]">
-                  Level:
+                  <div className="font-inter font-bold text-[30px] text-[#FFFFFF] leading-[36px]">
+                    Level:
+                  </div>
                 </div>    
                 <div className="absolute flex justify-end items-center right-[28px]">
-                  10
+                  <div className="font-inter font-bold text-[30px] text-[#FFFFFF] leading-[36px]">
+                    10
+                  </div>
                 </div>               
               </div>
             </div>    
@@ -40,10 +46,14 @@ const Home = () => {
       <div className="relative flex top-[200px] justify-center items-start h-fit">
         <div className="relative flex left-[-320px] justify-center items-center w-[448px]">
           <button onClick={clickRoadmap} className="absolute flex left-[0px] justify-start items-center">
-            Roadmap
+            <div className="font-inter font-extrabold text-[32px] text-[#09275B] leading-[39px]">
+              Roadmap
+            </div>            
           </button>
           <button onClick={clickArchive} className="absolute flex justify-end right-[0px] items-center">
-            Archive
+            <div className="font-inter font-extrabold text-[32px] text-[#09275B] leading-[39px]">
+              Archive
+            </div>    
           </button>
           <div className="absolute flex top-[23px] left-[0px] bg-[#D9D9D9] w-[491px] h-[7px] rounded-[15px]">
             {isRoadmap ? <div className="absolute bg-[#09275B] w-[159px] h-[7px] rounded-[15px]"></div> : <div className="absolute right-0 bg-[#09275B] w-[159px] h-[7px] rounded-[15px]"></div>}
