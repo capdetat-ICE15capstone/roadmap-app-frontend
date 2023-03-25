@@ -40,7 +40,7 @@ const Navbar = () => {
               parentDivClass="bg-nav-gray py-7" />
           </div>
         </div>
-        <div className="flex flex-col grow">
+        <div className="flex flex-col w-full max-w-full overflow-scroll">
           <Outlet />
         </div>
       </div>

@@ -67,16 +67,16 @@ const RoadmapCreatePage = (props) => {
     // use to call a functiob when the user did not
     // update RMDesc for 1500 ms
     const timeoutID = setTimeout(() => {
-      console.log(RMDesc)
-      searchTags()
-    }, 1500)
+      console.log(RMDesc);
+      searchTags();
+    }, 1500);
 
-    return () => clearTimeout(timeoutID)
-  }, [RMDesc])
+    return () => clearTimeout(timeoutID);
+  }, [RMDesc]);
 
   useEffect(() => {
     console.log(tags);
-  }, [tags])
+  }, [tags]);
 
   const getID = () => {
     const x = lastId;
@@ -144,15 +144,15 @@ const RoadmapCreatePage = (props) => {
 
   const searchTags = () => {
     const allWords = RMDesc.split(" ");
-    let allTags = []
+    let allTags = [];
     allWords.forEach((word) => {
       if (word.charAt(0) === "#") {
         allTags.push(word);
       }
-    })
+    });
 
     setTags(allTags);
-  }
+  };
 
   const addRef = (id, preref) => {
     // add ref from all the tasks node into a container array
@@ -299,7 +299,7 @@ const RoadmapCreatePage = (props) => {
 
   const generateNotificationObjects = () => {
     // generate array of noti object to be sent to the server
-  }
+  };
 
   return (
     <>
@@ -318,7 +318,7 @@ const RoadmapCreatePage = (props) => {
           </span>
         </div>
         {/* <hr className="border-2 border-black"></hr> */}
-        <form onSubmit={handleSubmit} className="h-full">
+        <form onSubmit={handleSubmit} className="h-full w-full max-w-full">
           <div className="flex mt-4">
             <input
               className="text-2xl focus:outline-none"
@@ -357,57 +357,11 @@ const RoadmapCreatePage = (props) => {
           </div>
 
           <div className="h-1/2">
-            <div className="flex flex-col bg-blue-100 my-4 border-2 shadow-xl border-gray-300 rounded-3xl items-start h-2/3 p-4 pr-16 overflow-auto relative">
-              <div className="flex items-center flex-wrap gap-4">
-                {tasks.map((task) => {
-                  return (
-                    <div
-                      key={task.id}
-                      className="flex"
-                      ref={(el) => addRef(task.id, el)}
-                    >
-                      <div className="flex">
-                        <div className="flex flex-col gap-2 items-center">
-                          <button
-                            className=""
-                            type="button"
-                            disabled={task.isDone}
-                            onClick={async () => {
-                              // awaiting a setState does not work lol
-                              await setEditTaskID(task.id); 
-                              await setModalState(true);
-                            }}
-                          >
-                            <CustomSVG
-                              type={task.nodeShape}
-                              className={`${getTWFill(task.nodeColor)}`}
-                              size={60}
-                            />
-                          </button>
-                          <div className="w-full">
-                            <span className="block font-bold mx-auto text-center leading-5 text-ellipsis truncate">
-                              {task.name}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-
-                <div className="">
-                  <button
-                    // className="bg-blue-700 disabled:bg-gray-500 p-2 m-2 h-10 w-10 self-center rounded-full text-white font-bold text-2xl"
-                    type="button"
-                    disabled={isAddButtonDisabled()}
-                    onClick={initializeTaskCreator}
-                  >
-                    <AddButton className="h-10 w-auto" />
-                  </button>
-                </div>
+          <div className="relative">
                 <select
                   value={JSON.stringify(notiStatus)}
                   onChange={handleNotiSettingChange}
+                  className="absolute z-10 right-4 top-4"
                 >
                   <option value={JSON.stringify({ on: false })}>
                     No notification
@@ -437,7 +391,62 @@ const RoadmapCreatePage = (props) => {
                     );
                   })}
                 </select>
+                </div>
+            <div className="flex flex-col justify-center bg-blue-100 my-4 border-2 shadow-xl border-gray-300 rounded-3xl items-start h-2/3 p-4 pr-16 relative max-w-full w-full overflow-auto">
+              <div className="flex items-center">
+                {tasks.map((task) => {
+                  return (
+                    <>
+                      <div
+                        key={task.id}
+                        className="flex"
+                        ref={(el) => addRef(task.id, el)}
+                      >
+                        <div className="flex">
+                          <div className="flex flex-col gap-2 items-center">
+                            <button
+                              className=""
+                              type="button"
+                              disabled={task.isDone}
+                              onClick={async () => {
+                                // awaiting a setState does not work lol
+                                await setEditTaskID(task.id);
+                                await setModalState(true);
+                              }}
+                            >
+                              <CustomSVG
+                                type={task.nodeShape}
+                                className={`${getTWFill(task.nodeColor)}`}
+                                size={60}
+                              />
+                            </button>
+                            <div className="w-full">
+                              <span className="block font-bold mx-auto text-center leading-5">
+                                {task.name}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="h-full flex items-center">
+                        <hr className="bg-black h-1 w-20"></hr>
+                      </div>
+                    </>
+                  );
+                })}
+                <div className="">
+                  <button
+                    // className="bg-blue-700 disabled:bg-gray-500 p-2 m-2 h-10 w-10 self-center rounded-full text-white font-bold text-2xl"
+                    type="button"
+                    disabled={isAddButtonDisabled()}
+                    onClick={initializeTaskCreator}
+                  >
+                    <AddButton className="h-10 w-auto" />
+                  </button>
+                </div>
+                
               </div>
+              
             </div>
             <div className="relative">
               <div className="absolute right-0">
@@ -458,7 +467,7 @@ const RoadmapCreatePage = (props) => {
           </div>
         </form>
 
-        {modalState ? ( 
+        {modalState ? (
           // id -1 is passed as a temp id to let the modal know it's in create mode, otherwise it's in edit mode
           editTaskID == -1 ? (
             <TaskModal
