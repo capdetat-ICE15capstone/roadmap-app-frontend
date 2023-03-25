@@ -2,31 +2,38 @@ import React from "react";
 
 import { ReactComponent as HomeLogo } from "../assets/navbar_assets/home_icon.svg"
 
-const TabItem = (props) => {
+const SettingTab = (props) => {
     return (
-        <button className='grow py-1 hover:bg-blue-500 hover:scale-105 transition duration-200' onClick={() => props.setTab(props.tabName)}>
-            <div className='overflow-hidden whitespace-nowrap flex justify-center'>
-                <props.SvgIcon className='w-6 h-auto inline'/>
-                <div className='font-nunito-sans text-black font-bold justify-self-center'>
-                    {props.displayName}
+        <>
+            <div className='flex'>
+                <div className='flex justify-evenly flex-grow'>
+                    <TabItem SvgIcon={HomeLogo} displayName="Profile" tabName="profile" tab={props.tab} setTab={props.setTab}/>
+                    <TabItem SvgIcon={HomeLogo} displayName="Account" tabName="account" tab={props.tab} setTab={props.setTab}/>
+                    <TabItem SvgIcon={HomeLogo} displayName="Appearance" tabName="appearance" tab={props.tab} setTab={props.setTab}/>
+                </div>
+                <div className='grow'>
+
                 </div>
             </div>
-        </button>
+            <hr className='border-1 border-gray-700'/>
+        </>
     )
 }
 
-const SettingTab = (props) => {
+const TabItem = ({SvgIcon, displayName, tabName, tab, setTab}) => {
     return (
-        <div className='flex'>
-            <div className='flex justify-evenly grow'>
-                <TabItem SvgIcon={HomeLogo} displayName="Profile" tabName="profile" setTab={props.setTab}/>
-                <TabItem SvgIcon={HomeLogo} displayName="Account" tabName="account" setTab={props.setTab}/>
-                <TabItem SvgIcon={HomeLogo} displayName="Appearance" tabName="appearance" setTab={props.setTab}/>
+        <button className='grow pt-1 hover:bg-gray-700 hover:scale-105 transition duration-200 group' onClick={() => setTab(tabName)}>
+            <div className='overflow-hidden whitespace-nowrap flex justify-center'>
+                <SvgIcon className='w-6 h-auto inline stroke-gray-700'/>
+                <div className='text-gray-800 text-2xl font-bold px-1 group-hover:text-white'>
+                    <span>{displayName}</span>
+                </div>
             </div>
-            <div className='grow'>
-
-            </div>
-        </div>
+            {tabName === tab ? 
+                <hr className='border-2 border-gray-700'/>:
+                <hr className='border-2 border-transparent'/>
+            }
+        </button>
     )
 }
 
