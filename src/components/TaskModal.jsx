@@ -8,6 +8,7 @@ import { ReactComponent as TrashIcon } from "../assets/taskmodal/trash.svg";
 import DatePicker from "react-datepicker";
 import Spinner from "./Spinner";
 import { CustomSVG, allNodeColor } from "./CustomSVG";
+import TwoButtonModal from "./TwoButtonModal";
 
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -33,19 +34,33 @@ import "react-datepicker/dist/react-datepicker.css";
 
 // data domain
 // const allNodeShape = ["circle", "square", "triangle"]
-const MAX_NAME_LENGTH = 24; 
-const MAX_DESCRIPTION_LENGTH = 255; 
+const MAX_NAME_LENGTH = 24;
+const MAX_DESCRIPTION_LENGTH = 255;
+
+const calculateLastId = (data) => {
+  let highestID = 0;
+  data.subtasks.forEach((subtask) => {
+    if (subtask.id > highestID) {
+      highestID = subtask.id;
+    }
+  });
+  return highestID + 1;
+};
 
 const TaskModal = ({ oldData, editTaskCallBack }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [lastId, setLastId] = useState(0); // DO NOT use these parameter directly, use getID to get an id instead
+  // DO NOT use these parameter directly, use getID to get an id instead
+  const [lastId, setLastId] = useState(0);
   const [subtasks, setSubTasks] = useState([]);
   const [nodeColor, setNodeColor] = useState(allNodeColor[0]);
   const [nodeShape, setNodeShape] = useState("circle");
   const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
+  const [dueDate, setdueDate] = useState(new Date());
   const [loading, setLoading] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [unSavedModal, setUnSavedModal] = useState(false);
+  const [dataChange, setDataChange] = useState(false);
   const DatePickerButton = forwardRef(({ value, onClick }, ref) => (
     <div className="w-full">
       <button
@@ -76,9 +91,9 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
     async function setModalData() {
       if (oldData.id !== -1) {
         setLoading(true);
-        // nameRef.current.value = oldData.name;
         setName(oldData.name);
-        // descriptionRef.current.value = oldData.description;
+        setName(oldData.name);
+        setDescription(oldData.description);
         setDescription(oldData.description);
         setSubTasks(oldData.subtasks);
         setNodeColor(
@@ -86,7 +101,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
         );
         setNodeShape(oldData.nodeShape);
         setStartDate(oldData.startDate);
-        setEndDate(oldData.dueDate);
+        setdueDate(oldData.dueDate);
         let highestID = 0;
         oldData.subtasks.forEach((subtask) => {
           if (subtask.id > highestID) {
@@ -100,7 +115,6 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
     setLoading(false);
   }, []);
 
-
   const getId = () => {
     // IMPORTANT: only use this function to get an ID
     // return an ID and increment so that the id can never repeat
@@ -112,26 +126,30 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
   const handleNameChange = (event) => {
     if (name.length < MAX_NAME_LENGTH) {
       setName(event.target.value);
+      setDataChange(true)
     }
-  }
+  };
 
   const handleDescriptionChange = (event) => {
     if (description.length < MAX_DESCRIPTION_LENGTH) {
-      setDescription(event.target.value)
+      setDescription(event.target.value);
+      setDataChange(true)
     }
-  }
+  };
 
   const handleNodeColorChange = (event) => {
     setNodeColor(allNodeColor.find(({ name }) => name === event.target.value));
+    setDataChange(true)
   };
 
   const handleNodeShapeChange = (event, shapeType) => {
-    event.preventDefault();
     setNodeShape(shapeType);
+    setDataChange(true)
   };
 
   const addSubTask = (event) => {
     event.preventDefault();
+    setDataChange(true)
     setSubTasks([
       ...subtasks,
       {
@@ -143,11 +161,12 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
   };
 
   const deleteSubTask = (event, id) => {
-    event.preventDefault();
+    setDataChange(true)
     setSubTasks((subtasks) => subtasks.filter((subtask) => subtask.id !== id));
   };
 
   const onSubtaskTextEdit = (newValue, id) => {
+    setDataChange(true)
     setSubTasks(
       subtasks.map((subtask) =>
         subtask.id === id ? { ...subtask, detail: newValue } : { ...subtask }
@@ -156,11 +175,23 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
   };
 
   const onSubTaskCheckboxChange = (newValue, id) => {
+    setDataChange(true)
     setSubTasks(
       subtasks.map((subtask) =>
         subtask.id === id ? { ...subtask, status: newValue } : { ...subtask }
       )
     );
+  };
+
+  const handleTaskChange = () => {
+    // use to check whether the task has changed
+    // if change is detected but user press close
+    // set the display unsaved change modal to true
+    if (dataChange === true) {
+      setUnSavedModal(true);
+      return;
+    }
+    editTaskCallBack("failed", oldData);
   };
 
   const handleSubmit = (e) => {
@@ -170,7 +201,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
       name: name,
       description: description,
       startDate: startDate,
-      dueDate: endDate,
+      dueDate: dueDate,
       nodeColor: nodeColor.name,
       nodeShape: nodeShape,
       subtasks: subtasks,
@@ -179,6 +210,28 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
 
   return (
     <>
+      <TwoButtonModal
+        isOpen={deleteModal}
+        onLightPress={() => setDeleteModal(false)}
+        onDarkPress={() => editTaskCallBack("delete", oldData)}
+        textField={{
+          title: "Confirm Deletion",
+          body: "Deleting task will permanantly remove it from your roadmap",
+          lightButtonText: "Cancel",
+          darkButtonText: "Delete",
+        }}
+      />
+      <TwoButtonModal
+        isOpen={unSavedModal}
+        onLightPress={() => editTaskCallBack("failed", oldData)}
+        onDarkPress={() => setUnSavedModal(false)}
+        textField={{
+          title: "Unsaved Change",
+          body: "Are you sure you want to discard",
+          lightButtonText: "Ok",
+          darkButtonText: " Cancel",
+        }}
+      />
       <form onSubmit={handleSubmit}>
         <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-20 outline-none focus:outline-none">
           <div className="relative w-11/12 md:w-5/6 my-6 mx-auto xl:w-2/3 2xl:w-1/2 max-h-screen">
@@ -195,7 +248,8 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                 <button
                   type="button"
                   className="p-1 ml-auto bg-transparent border-0 text-white float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
-                  onClick={() => editTaskCallBack("delete", oldData)}
+                  onClick={() => setDeleteModal(true)}
+                  hidden={oldData.id === -1}
                 >
                   {" "}
                   <TrashIcon className="h-10" />
@@ -234,7 +288,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                           selected={startDate}
                           showTimeSelect
                           minDate={Date.now()}
-                          onChange={(date) => setStartDate(date)}
+                          onChange={(date) => {setStartDate(date); setDataChange(true)}}
                           // className="border border-black rounded-md justify-self-end w-full"
                           customInput={<DatePickerButton />}
                         ></DatePicker>
@@ -246,10 +300,10 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                       </label>
                       <div className="col-span-9">
                         <DatePicker
-                          selected={endDate}
+                          selected={dueDate}
                           showTimeSelect
                           minDate={Date.now()}
-                          onChange={(date) => setEndDate(date)}
+                          onChange={(date) => {setdueDate(date); setDataChange(true)}}
                           // className="border border-black rounded-md justify-self-end w-full"
                           customInput={<DatePickerButton />}
                         ></DatePicker>
@@ -301,7 +355,10 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                                   // : ""
                               } self-center`}
                             /> */}
-                            <CustomSVG isStrokeOn={nodeShape === "circle"} className={`${nodeColor.twfill}`}/>
+                            <CustomSVG
+                              isStrokeOn={nodeShape === "circle"}
+                              className={`${nodeColor.twfill}`}
+                            />
                           </button>
 
                           <button
@@ -318,7 +375,11 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                               } self-center`}
                               type="square"
                             /> */}
-                            <CustomSVG type="square" isStrokeOn={nodeShape === "square"} className={`${nodeColor.twfill}`}/>
+                            <CustomSVG
+                              type="square"
+                              isStrokeOn={nodeShape === "square"}
+                              className={`${nodeColor.twfill}`}
+                            />
                           </button>
 
                           <button
@@ -336,7 +397,11 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                               } self-center `}
                               type="triangle"
                             /> */}
-                            <CustomSVG type="triangle" isStrokeOn={nodeShape === "triangle"} className={`${nodeColor.twfill}`}/>
+                            <CustomSVG
+                              type="triangle"
+                              isStrokeOn={nodeShape === "triangle"}
+                              className={`${nodeColor.twfill}`}
+                            />
                           </button>
                         </div>
                       </div>
@@ -414,7 +479,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                       <button
                         className="text-black border border-black rounded-md background-transparent font-bold uppercase px-6 py-3 text-sm outline-none focus:outline-none ease-linear transition-all duration-150"
                         type="button"
-                        onClick={() => editTaskCallBack("failed", oldData)}
+                        onClick={handleTaskChange}
                       >
                         Close
                       </button>

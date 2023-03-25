@@ -12,15 +12,15 @@ import { ReactComponent as NotiOn } from "../assets/notification/notiOn.svg";
 
 // TODO: put a null check around getRoadmap and createRoadmap pls
 // BUG: spinner does not stop spinning in error
-// TODO: draw line between button
-// TODO: notification setting
 // TODO: more styling
 // TODO: confirm prompt
 // TODO: zigzag div
+// BUG: notification time 
 
 const MAX_TASKS_NONPREMIUM = 16;
 const MAX_RMNAME_LENGTH = 100;
 const MAX_RMDESCRIPTION_LENGTH = 255;
+const notificationDayOption = [1, 3, 5, 7, 14];
 
 const usePreviousState = (value) => {
   const ref = useRef();
@@ -29,8 +29,6 @@ const usePreviousState = (value) => {
   });
   return ref.current;
 };
-
-const notificationDayOption = [1, 3, 5, 7, 14];
 
 const RoadmapCreatePage = (props) => {
   const { mode } = props; // props from parent
