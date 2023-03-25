@@ -13,12 +13,10 @@ import TwoButtonModal from "./TwoButtonModal";
 import "react-datepicker/dist/react-datepicker.css";
 
 // Current issues
-// 2. Data domain has yet to be enforced
-// 3. CustomSVG is terribly implemented (hard code everywhere)
+// 2. Date data domain has yet to be enforced
 // 7. Modal size (the modal overflowing the screen)
 // 11. Node selector overflow in small screen
-// 12. Problems with some mobile devices
-// 13. Some edges are not rounded
+// 12. Problems with some mobile device
 // 14. Nodes shape selector arent actually centered
 
 // Fixed isses
@@ -31,9 +29,10 @@ import "react-datepicker/dist/react-datepicker.css";
 // 7. Datepicker style
 // 8. input box shrink
 // 9. Description text and placeholder starting position (text starts in the middle of the box)
+// 10. Some edges are not rounded
+// 1. CustomSVG is terribly implemented (hard code everywhere)
 
 // data domain
-// const allNodeShape = ["circle", "square", "triangle"]
 const MAX_NAME_LENGTH = 24;
 const MAX_DESCRIPTION_LENGTH = 255;
 
@@ -216,7 +215,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
         onDarkPress={() => editTaskCallBack("delete", oldData)}
         textField={{
           title: "Confirm Deletion",
-          body: "Deleting task will permanantly remove it from your roadmap",
+          body: "Deleting task will permanantly remove it from your roadmap?",
           lightButtonText: "Cancel",
           darkButtonText: "Delete",
         }}
@@ -227,7 +226,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
         onDarkPress={() => setUnSavedModal(false)}
         textField={{
           title: "Unsaved Change",
-          body: "Are you sure you want to discard",
+          body: "Are you sure you want to discard the change of a roadmap?",
           lightButtonText: "Ok",
           darkButtonText: " Cancel",
         }}
@@ -410,7 +409,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                 </div>
                 {/* Right side */}
                 <div className="flex flex-col w-full lg:w-1/2">
-                  <div className="bg-gray-100 p-6 basis-full flex flex-col justify-between">
+                  <div className="bg-gray-100 p-6 basis-full flex flex-col justify-between rounded-b-2xl lg:rounded-bl-none">
                     <div>
                       <label className="block font-nunito-sans font-bold">
                         Add Subtask

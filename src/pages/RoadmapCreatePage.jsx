@@ -6,6 +6,7 @@ import Spinner from "../components/Spinner";
 import { isUserPremium } from "../functions/userFunction";
 import { CustomSVG, getTWFill } from "../components/CustomSVG";
 import { ReactComponent as AddButton } from "../assets/addButton.svg";
+import TwoButtonModal from "../components/TwoButtonModal";
 import { motion } from "framer-motion";
 import { ReactComponent as NotiOff } from "../assets/notification/notiOff.svg";
 import { ReactComponent as NotiOn } from "../assets/notification/notiOn.svg";
@@ -15,7 +16,7 @@ import { ReactComponent as NotiOn } from "../assets/notification/notiOn.svg";
 // TODO: more styling
 // TODO: confirm prompt
 // TODO: zigzag div
-// BUG: notification time 
+// BUG: notification time
 
 const MAX_TASKS_NONPREMIUM = 16;
 const MAX_RMNAME_LENGTH = 100;
@@ -50,6 +51,7 @@ const RoadmapCreatePage = (props) => {
   const previousValue = usePreviousState(tasksRef);
   const [notiStatus, setNotiStatus] = useState({ on: false });
   const [tags, setTags] = useState([]);
+  const [publicModal, setPublicModal] = useState(false);
 
   useEffect(() => {
     setUpRoadmap();
@@ -64,7 +66,6 @@ const RoadmapCreatePage = (props) => {
     // use to call a functiob when the user did not
     // update RMDesc for 1500 ms
     const timeoutID = setTimeout(() => {
-      console.log(RMDesc);
       searchTags();
     }, 1500);
 
@@ -250,6 +251,11 @@ const RoadmapCreatePage = (props) => {
     }
   };
 
+  const handlePublicityChange = () => {
+    setPublic(!isPublic);
+    setPublicModal(false);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     await searchTags();
@@ -264,12 +270,11 @@ const RoadmapCreatePage = (props) => {
     console.log(completeRoadmap);
 
     // Begin the spinner
-    setLoading(true);
+    // setLoading(true);
     await generateNotificationObjects();
 
     // Add a fetch POST request here
     if (mode === "create") {
-      console.log("create function called");
       if ((await createRoadmap({ completeRoadmap })) === null) {
         alert("CREATE error");
       }
@@ -308,8 +313,19 @@ const RoadmapCreatePage = (props) => {
 
   return (
     <>
+      <TwoButtonModal
+        isOpen={publicModal}
+        onLightPress={() => setPublicModal(false)}
+        onDarkPress={handlePublicityChange}
+        textField={{
+          title: `Change to ${isPublic ? '"private"': '"public"'}?`,
+          body: `Are you sure you want to change the roadmap to ${isPublic ? '"private"': '"public"'}?`,
+          lightButtonText: "Cancel",
+          darkButtonText: "OK",
+        }}
+      />
       {loading && <Spinner />}
-      <div className="px-4 h-full">
+      <div className="px-10 h-full">
         <div className="text-4xl font-inter font-bold mt-10 flex items-center">
           <div className="flex flex-col">
             <span>
@@ -325,7 +341,6 @@ const RoadmapCreatePage = (props) => {
             <div className="h-2">
               <hr className="h-1 bg-blue-600"></hr>
             </div>
-            
           </div>
         </div>
         {/* <hr className="border-2 border-black"></hr> */}
@@ -341,7 +356,7 @@ const RoadmapCreatePage = (props) => {
             <button
               type="button"
               disabled={isPublic}
-              onClick={() => setPublic(true)}
+              onClick={() => setPublicModal(true)}
               className="bg-white disabled:bg-blue-100 h-10 w-28 text-md p-2 font-bold rounded-l-full border border-black"
             >
               Public
@@ -349,7 +364,7 @@ const RoadmapCreatePage = (props) => {
             <button
               type="button"
               disabled={!isPublic}
-              onClick={() => setPublic(false)}
+              onClick={() => setPublicModal(true)}
               className="h-10 w-28 bg-white disabled:bg-blue-100 text-md p-2 font-bold rounded-r-full border-black border-y border-r"
             >
               Private
@@ -374,30 +389,33 @@ const RoadmapCreatePage = (props) => {
                 onChange={handleNotiSettingChange}
                 className="absolute z-10 right-4 top-4"
               >
-                <option value={JSON.stringify({ on: false })}>
+                <option
+                  value={JSON.stringify({ on: false })}
+                  key={(0).toString()}
+                >
                   No notification
                 </option>
                 {notificationDayOption.map((day) => {
                   return (
                     <>
-                      <option
-                        value={JSON.stringify({
-                          on: true,
-                          detail: { day: day, beforeDueDate: true },
-                        })}
-                        key={day * 2}
-                      >
-                        {`${day} days before due date`}
-                      </option>
-
-                      <option
-                        value={JSON.stringify({
-                          on: true,
-                          detail: { day: day, beforeDueDate: false },
-                        })}
-                      >
-                        {`${day} days before start date`}
-                      </option>
+                      {[false, true].map((beforeDueDate) => {
+                        return (
+                          <option
+                            value={JSON.stringify({
+                              on: true,
+                              detail: {
+                                day: day,
+                                beforeDueDate: beforeDueDate,
+                              },
+                            })}
+                            key={(day * (beforeDueDate ? -1 : 1)).toString()}
+                          >
+                            {`${day} days before ${
+                              beforeDueDate ? "due" : "start"
+                            } date`}
+                          </option>
+                        );
+                      })}
                     </>
                   );
                 })}
