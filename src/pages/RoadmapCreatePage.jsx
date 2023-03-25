@@ -54,7 +54,6 @@ const RoadmapCreatePage = (props) => {
   const [tags, setTags] = useState([]);
 
   useEffect(() => {
-    // This run once when the page load
     setUpRoadmap();
   }, []);
 
@@ -73,10 +72,6 @@ const RoadmapCreatePage = (props) => {
 
     return () => clearTimeout(timeoutID);
   }, [RMDesc]);
-
-  useEffect(() => {
-    console.log(tags);
-  }, [tags]);
 
   const getID = () => {
     const x = lastId;
@@ -259,29 +254,25 @@ const RoadmapCreatePage = (props) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({
+    await searchTags();
+    const completeRoadmap = {
       name: RMName,
       description: RMDesc,
       tasks: tasks,
       publicity: isPublic,
-    });
+      tags: tags,
+    };
+
+    console.log(completeRoadmap);
 
     // Begin the spinner
     setLoading(true);
-
-    // schedule notification
+    await generateNotificationObjects();
 
     // Add a fetch POST request here
     if (mode === "create") {
       console.log("create function called");
-      if (
-        (await createRoadmap({
-          name: RMName,
-          description: RMDesc,
-          tasks: tasks,
-          publicity: isPublic,
-        })) === null
-      ) {
+      if ((await createRoadmap({ completeRoadmap })) === null) {
         alert("CREATE error");
       }
     } else {
@@ -289,7 +280,7 @@ const RoadmapCreatePage = (props) => {
     }
 
     setLoading(false);
-    navigate("/");
+    // navigate("/");
   };
 
   const handleNotiSettingChange = (event) => {
@@ -299,6 +290,22 @@ const RoadmapCreatePage = (props) => {
 
   const generateNotificationObjects = () => {
     // generate array of noti object to be sent to the server
+    if (notiStatus.on === false) {
+      return {};
+    }
+
+    const dayInMs = notiStatus.detail.day * 24 * 60 * 60 * 1000;
+    const completeNotiObject = tasks.map((task) => {
+      const taskDate = (
+        notiStatus.detail.beforeDueDate === true ? task.dueDate : task.startDate
+      ).getTime();
+      return {
+        id: task.id,
+        datetime: new Date(taskDate - dayInMs),
+      };
+    });
+
+    return completeNotiObject;
   };
 
   return (
@@ -306,16 +313,22 @@ const RoadmapCreatePage = (props) => {
       {loading && <Spinner />}
       <div className="px-4 h-full">
         <div className="text-4xl font-inter font-bold mt-10 flex items-center">
-          <span>
-            {mode === "create"
-              ? "Create"
-              : mode === "edit"
-              ? "Edit"
-              : mode === "clone"
-              ? "Clone"
-              : null}{" "}
-            roadmap
-          </span>
+          <div className="flex flex-col">
+            <span>
+              {mode === "create"
+                ? "Create"
+                : mode === "edit"
+                ? "Edit"
+                : mode === "clone"
+                ? "Clone"
+                : null}{" "}
+              roadmap
+            </span>
+            <div className="h-2">
+              <hr className="h-1 bg-blue-600"></hr>
+            </div>
+            
+          </div>
         </div>
         {/* <hr className="border-2 border-black"></hr> */}
         <form onSubmit={handleSubmit} className="h-full w-full max-w-full">
@@ -331,7 +344,7 @@ const RoadmapCreatePage = (props) => {
               type="button"
               disabled={isPublic}
               onClick={() => setPublic(true)}
-              className="bg-white disabled:bg-gray-500 h-10 w-20 text-md p-2 font-bold rounded-l-lg border border-black"
+              className="bg-white disabled:bg-blue-100 h-10 w-28 text-md p-2 font-bold rounded-l-full border border-black"
             >
               Public
             </button>
@@ -339,7 +352,7 @@ const RoadmapCreatePage = (props) => {
               type="button"
               disabled={!isPublic}
               onClick={() => setPublic(false)}
-              className="h-10 w-20 bg-white disabled:bg-gray-500 text-md p-2 font-bold rounded-r-lg border-black border-y border-r"
+              className="h-10 w-28 bg-white disabled:bg-blue-100 text-md p-2 font-bold rounded-r-full border-black border-y border-r"
             >
               Private
             </button>
@@ -357,41 +370,41 @@ const RoadmapCreatePage = (props) => {
           </div>
 
           <div className="h-1/2">
-          <div className="relative">
-                <select
-                  value={JSON.stringify(notiStatus)}
-                  onChange={handleNotiSettingChange}
-                  className="absolute z-10 right-4 top-4"
-                >
-                  <option value={JSON.stringify({ on: false })}>
-                    No notification
-                  </option>
-                  {notificationDayOption.map((day) => {
-                    return (
-                      <>
-                        <option
-                          value={JSON.stringify({
-                            on: true,
-                            detail: { day: day, beforeDueDate: true },
-                          })}
-                          key={day * 2}
-                        >
-                          {`${day} days before due date`}
-                        </option>
+            <div className="relative">
+              <select
+                value={JSON.stringify(notiStatus)}
+                onChange={handleNotiSettingChange}
+                className="absolute z-10 right-4 top-4"
+              >
+                <option value={JSON.stringify({ on: false })}>
+                  No notification
+                </option>
+                {notificationDayOption.map((day) => {
+                  return (
+                    <>
+                      <option
+                        value={JSON.stringify({
+                          on: true,
+                          detail: { day: day, beforeDueDate: true },
+                        })}
+                        key={day * 2}
+                      >
+                        {`${day} days before due date`}
+                      </option>
 
-                        <option
-                          value={JSON.stringify({
-                            on: true,
-                            detail: { day: day, beforeDueDate: false },
-                          })}
-                        >
-                          {`${day} days before start date`}
-                        </option>
-                      </>
-                    );
-                  })}
-                </select>
-                </div>
+                      <option
+                        value={JSON.stringify({
+                          on: true,
+                          detail: { day: day, beforeDueDate: false },
+                        })}
+                      >
+                        {`${day} days before start date`}
+                      </option>
+                    </>
+                  );
+                })}
+              </select>
+            </div>
             <div className="flex flex-col justify-center bg-blue-100 my-4 border-2 shadow-xl border-gray-300 rounded-3xl items-start h-2/3 p-4 pr-16 relative max-w-full w-full overflow-auto">
               <div className="flex items-center">
                 {tasks.map((task) => {
@@ -418,6 +431,7 @@ const RoadmapCreatePage = (props) => {
                                 type={task.nodeShape}
                                 className={`${getTWFill(task.nodeColor)}`}
                                 size={60}
+                                isStrokeOn={true}
                               />
                             </button>
                             <div className="w-full">
@@ -436,7 +450,6 @@ const RoadmapCreatePage = (props) => {
                 })}
                 <div className="">
                   <button
-                    // className="bg-blue-700 disabled:bg-gray-500 p-2 m-2 h-10 w-10 self-center rounded-full text-white font-bold text-2xl"
                     type="button"
                     disabled={isAddButtonDisabled()}
                     onClick={initializeTaskCreator}
@@ -444,9 +457,7 @@ const RoadmapCreatePage = (props) => {
                     <AddButton className="h-10 w-auto" />
                   </button>
                 </div>
-                
               </div>
-              
             </div>
             <div className="relative">
               <div className="absolute right-0">

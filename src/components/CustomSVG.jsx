@@ -135,23 +135,44 @@ export const CustomSVG = ({
   return (
     <AnimatePresence>
       {/* <motion.svg height={size} width={size} initial="hidden" animate="visible" whileHover={{scale: 1.2}} key={type}> */}
-        {type === "circle" ? (
-          <motion.svg height={size} width={size} initial="hidden" animate="visible" whileHover={{scale: 1.2}} key={type}>
+      {type === "circle" ? (
+        <motion.svg
+          height={size}
+          width={size}
+          initial="hidden"
+          animate="visible"
+          whileHover={{ scale: 1.2 }}
+          key={type}
+        >
           <motion.circle {...shapeAttr} className={className} variants={draw} />
-          </motion.svg>
-        ) : type === "square" ? (
-          <motion.svg height={size} width={size} initial="hidden" animate="visible" whileHover={{scale: 1.2}} key={type}>
+        </motion.svg>
+      ) : type === "square" ? (
+        <motion.svg
+          height={size}
+          width={size}
+          initial="hidden"
+          animate="visible"
+          whileHover={{ scale: 1.2 }}
+          key={type}
+        >
           <motion.rect {...shapeAttr} className={className} variants={draw} />
-          </motion.svg>
-        ) : type === "triangle" ? (
-          <motion.svg height={size} width={size} initial="hidden" animate="visible" whileHover={{scale: 1.2}} key={type}>
+        </motion.svg>
+      ) : type === "triangle" ? (
+        <motion.svg
+          height={size}
+          width={size}
+          initial="hidden"
+          animate="visible"
+          whileHover={{ scale: 1.2 }}
+          key={type}
+        >
           <motion.polygon
             {...shapeAttr}
             variants={draw}
-            className={className} 
+            className={className}
           />
-          </motion.svg>
-        ) : null}
+        </motion.svg>
+      ) : null}
       {/* </motion.svg> */}
     </AnimatePresence>
   );
