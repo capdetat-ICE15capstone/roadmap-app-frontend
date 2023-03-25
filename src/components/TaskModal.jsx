@@ -233,7 +233,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                 className={`flex items-start justify-between py-4 px-5 lg:py-8 border-b border-solid border-slate-200 rounded-t-2xl ${nodeColor.twbg} transition duration-300 items-center`}
               >
                 <h3 className="text-3xl font-semibold text-white">
-                  Create task
+                  {oldData.id === -1 ? "Create" : "Edit"} task
                 </h3>
                 <button
                   type="button"

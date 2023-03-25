@@ -52,6 +52,7 @@ const RoadmapCreatePage = (props) => {
   const [notiStatus, setNotiStatus] = useState({ on: false });
   const [tags, setTags] = useState([]);
   const [publicModal, setPublicModal] = useState(false);
+  const [leaveModal, setLeaveModal] = useState(false);
 
   useEffect(() => {
     setUpRoadmap();
@@ -318,8 +319,10 @@ const RoadmapCreatePage = (props) => {
         onLightPress={() => setPublicModal(false)}
         onDarkPress={handlePublicityChange}
         textField={{
-          title: `Change to ${isPublic ? '"private"': '"public"'}?`,
-          body: `Are you sure you want to change the roadmap to ${isPublic ? '"private"': '"public"'}?`,
+          title: `Change to ${isPublic ? '"private"' : '"public"'}?`,
+          body: `Are you sure you want to change the roadmap to ${
+            isPublic ? '"private"' : '"public"'
+          }?`,
           lightButtonText: "Cancel",
           darkButtonText: "OK",
         }}
@@ -389,35 +392,29 @@ const RoadmapCreatePage = (props) => {
                 onChange={handleNotiSettingChange}
                 className="absolute z-10 right-4 top-4"
               >
-                <option
-                  value={JSON.stringify({ on: false })}
-                  key={(0).toString()}
-                >
+                <option value={JSON.stringify({ on: false })} key={"Nonoti"}>
                   No notification
                 </option>
                 {notificationDayOption.map((day) => {
-                  return (
-                    <>
-                      {[false, true].map((beforeDueDate) => {
-                        return (
-                          <option
-                            value={JSON.stringify({
-                              on: true,
-                              detail: {
-                                day: day,
-                                beforeDueDate: beforeDueDate,
-                              },
-                            })}
-                            key={(day * (beforeDueDate ? -1 : 1)).toString()}
-                          >
-                            {`${day} days before ${
-                              beforeDueDate ? "due" : "start"
-                            } date`}
-                          </option>
-                        );
+                  return [true, false].map((beforeDueDate) => {
+                    return <option
+                      value={JSON.stringify({
+                        on: true,
+                        detail: {
+                          day: day,
+                          beforeDueDate: beforeDueDate,
+                        },
                       })}
-                    </>
-                  );
+                      key={JSON.stringify({
+                        detail: {
+                          day: day,
+                          beforeDueDate: beforeDueDate,
+                        },
+                      })}
+                    >
+                      {`${day} days before ${beforeDueDate ? "due" : "start"} date`}
+                    </option>;
+                  });
                 })}
               </select>
             </div>
