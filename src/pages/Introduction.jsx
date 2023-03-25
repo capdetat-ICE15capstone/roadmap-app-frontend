@@ -99,14 +99,14 @@ const Introduction = () => {
           <button
             className="m-4 font-bold"
             type="button"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/premium")}
           >
             Premium
           </button>
           <button
             className="m-4 font-bold"
             type="button"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/explore")}
           >
             Explore
           </button>

@@ -12,6 +12,7 @@ const RoadmapCreatePage = lazy(() => import("./pages/RoadmapCreatePage"));
 const Setting = lazy(() => import("./pages/Setting"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Introduction = lazy(() => import("./pages/Introduction"));
+const Premium = lazy(() => import("./pages/Premium"));
 
 function App() {
   return (
@@ -42,6 +43,14 @@ function App() {
               </Suspense>
             }
           ></Route>
+          <Route
+            path="/premium"
+            element={
+              <Suspense fallback={<Spinner />}>
+                <Premium />
+              </Suspense>
+            }
+          ></Route>
           <Route path="/" element={<Navbar />}>
             <Route index element={<Feed />} />
             <Route
@@ -49,6 +58,14 @@ function App() {
               element={
                 <Suspense fallback={<Spinner />}>
                   <RoadmapCreatePage mode="create" />
+                </Suspense>
+              }
+            ></Route>
+            <Route
+              path="explore"
+              element={
+                <Suspense fallback={<Spinner />}>
+                  <Feed />
                 </Suspense>
               }
             ></Route>
