@@ -9,7 +9,7 @@ import { lazy, Suspense } from "react";
 import { useState } from "react";
 import Login from "./pages/Login";
 
-const Login = lazy(() => import("./pages/Login"));
+// const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
 const RoadmapCreatePage = lazy(() => import("./pages/RoadmapCreatePage"));
 const Setting = lazy(() => import("./pages/Setting"));
@@ -23,7 +23,7 @@ function App() {
   if (!token) {
     return <Login setToken={setToken} />
   }
-  
+
   return (
     <>
       <BrowserRouter>
