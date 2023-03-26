@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import PropTypes, { func } from 'prop-types';
 
 import { ReactComponent as Logo } from "../assets/logo-big.svg"
@@ -16,7 +16,7 @@ async function loginUser(credentials) {
 }
 
 export default function Login({ setToken }) {
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -102,10 +102,7 @@ export default function Login({ setToken }) {
                             <div className="flex flex-col space-y-2">
                                 <button type="submit" className="bg-blue-900 text-white shadow font-bold py-2 rounded-lg">
                                     Log In
-                                </button>
-                                <button type="button" className="bg-red-500 text-white shadow font-bold py-2 rounded-lg" onClick={() => navigate("/signup")}>
-                                    Sign Up
-                                </button>
+                                </button>      
                             </div>
                         </form>
                         {/* <div className="flex justify-center m-4">
@@ -137,6 +134,6 @@ export default function Login({ setToken }) {
     )
 }
 
-Login.PropTypes = {
+Login.propTypes = {
     setToken: PropTypes.func.isRequired
 }
