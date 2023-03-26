@@ -8,6 +8,7 @@ import { lazy, Suspense } from "react";
 
 import { useState } from "react";
 import Login from "./pages/Login";
+import useToken from "./components/useToken";
 
 // const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
@@ -18,7 +19,8 @@ const Introduction = lazy(() => import("./pages/Introduction"));
 const Premium = lazy(() => import("./pages/Premium"));
 
 function App() {
-  const [token, setToken] = useState();
+
+  const { token, setToken } = useToken();
 
   if (!token) {
     return <Login setToken={setToken} />
@@ -28,22 +30,6 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route
-            path="/signup"
-            element={
-              <Suspense fallback={<Spinner />}>
-                <Signup />
-              </Suspense>
-            }
-          ></Route>
-          <Route
-            path="/login"
-            element={
-              <Suspense fallback={<Spinner />}>
-                <Login />
-              </Suspense>
-            }
-          ></Route>
           <Route
             path="/intro"
             element={
