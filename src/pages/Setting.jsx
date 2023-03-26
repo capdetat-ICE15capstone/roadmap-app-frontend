@@ -1,5 +1,6 @@
 import React, {useState} from 'react'
 import SettingTab from '../components/SettingTab';
+import ToggleSwitch from '../components/ToggleSwitch';
 
 const Setting = () => {
     const [tab, setTab] = useState("profile");
@@ -9,7 +10,12 @@ const Setting = () => {
     const [lastName, setLastName] = useState("");
     const [bio, setBio] = useState("");
     const [link, setLink] = useState("");
-    
+
+    const [notification, setNotification] = useState(true);
+    const [accountPublic, setAccountPublic] = useState(true);
+    const [email, setEmail] = useState("username@gmail.com");
+
+
     return (
         <div className='flex'>
             {console.log("[Debug on submit] \nusername: " + username + "\nfirst name: " + firstName + "\nlast name: " + lastName + "\nbio: " + bio + "\nlink: " + link)}
@@ -19,13 +25,15 @@ const Setting = () => {
                 <hr className='border-8 border-transparent py-3'/>
 
                 {/* Render Setting Content (depending on tab) */}
+                <div className='pl-10'>
                 {tab === "profile" ? 
                 <RenderProfile setUsername={setUsername} setFirstName={setFirstName} setLastName={setLastName} setBio={setBio} setLink={setLink}/> :
                 tab === "account" ? 
-                <p>account</p> :
+                <RenderAccount notification={notification} setNotification={setNotification} accountPublic={accountPublic} setAccountPublic={setAccountPublic} email={email}/> :
                 tab === "appearance" ?? 
                 <p>appearance</p>
                 }
+                </div>
             </div>
         </div>
     )
@@ -49,7 +57,7 @@ const RenderProfile = ({setUsername, setFirstName, setLastName, setBio, setLink}
                 </div>
                 {/* profile pic */}
                 <div className='pl-8'>
-                    <p className="text-gray-800 text-sm mb-1 font-bold">
+                    <p className="text-gray-800 text-sm mb-1 font-bold px-1">
                         Profile Picture
                     </p>
                     <div className='pl-10'>
@@ -124,6 +132,57 @@ const SettingBioField = ({formID, fieldTitle, fieldPlaceHolder, setOnSubmit}) =>
                     </button>
             </label>
         </form>
+    )
+}
+
+const RenderAccount = ({notification, setNotification, accountPublic, setAccountPublic, email}) => {
+    return (
+        <div className='flex flex-col'>
+            {/* notification */}
+            <div className='flex max-w-4xl'>
+                <ToggleSwitch name={"Allow Notifications"} isToggled={notification} setIsToggled={setNotification}/>
+            </div>
+            <hr className='border-1 border-gray-300 max-w-4xl my-5'/>
+
+            {/* account privacy, email */}
+            <div className='flex-col max-w-4xl'>
+                <ToggleSwitch name={"Public Account"} isToggled={accountPublic} setIsToggled={setAccountPublic}/>
+                <hr className='border-8 border-transparent py-1'/>
+                <EmailSettingField name="Email Address" email={email}/>
+            </div>
+            <hr className='border-1 border-gray-300 max-w-4xl my-5'/>
+
+            {/* password */}
+            <div className='flex max-w-4xl'>
+                
+            </div>
+            <hr className='border-1 border-gray-300 max-w-4xl my-5'/>
+
+            {/* delete account */}
+            <div className='flex max-w-4xl'>
+                
+            </div>
+            <hr className='border-1 border-gray-300 max-w-4xl my-5'/>
+        </div>
+    )
+}
+
+const EmailSettingField = ({name, email}) => {
+    return (
+            <div className='flex flex-col max-w-md'>
+                <p className="text-gray-800 text-sm mb-1 font-bold px-1">
+                    {name}
+                </p>
+                <div className='flex gap-0.5'>
+                <textarea
+                    type="text"
+                    className="w-full px-3 py-2 h-10 text-sm text-gray-700 border rounded-lg focus:outline-none resize-none focus:shadow-outline shadow"
+                    placeholder={email}
+                    id="text"
+                    readOnly={true}
+                ></textarea>
+                </div>
+            </div>
     )
 }
 

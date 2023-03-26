@@ -15,6 +15,7 @@ module.exports = {
         "inter": ['Inter', "sans-serif"]
       },
       width: {
+        '18':'4.5rem',
         '128': '32rem',
         '256': '64rem'
       },
