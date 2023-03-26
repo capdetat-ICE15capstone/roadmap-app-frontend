@@ -1,29 +1,34 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
+import PropTypes, { func } from 'prop-types';
 
 import { ReactComponent as Logo } from "../assets/logo-big.svg"
 
-const Login = () => {
+async function loginUser(credentials) {
+    return fetch('http://localhost:5173/login', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(credentials)
+    })
+        .then(data => data.json())
+}
+
+export default function Login({ setToken }) {
     const navigate = useNavigate();
 
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [rememberMe, setRememberMe] = useState(false);
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-
-        console.log(email, password, rememberMe);
-
-        const res = {
-            'email': email,
-            'password': password,
-            'rememberMe': rememberMe,
-        };
-
-        if (rememberMe === true) {
-            localStorage.setItem("login_information", JSON.stringify(res));
-        }
+    const handleSubmit = async e => {
+        e.preventDefault();
+        const token = await loginUser({
+            email,
+            password
+        });
+        setToken(token);
     };
 
     return (
@@ -132,4 +137,6 @@ const Login = () => {
     )
 }
 
-export default Login
+Login.PropTypes = {
+    setToken: PropTypes.func.isRequired
+}
