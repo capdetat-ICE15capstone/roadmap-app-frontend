@@ -73,7 +73,7 @@ function Signup() {
 
   return (
     <>
-      <div className={`flex flex-col h-screen w-screen absolute ${(props.visible) ? 'visible' : 'hidden'}`}>
+      <div className={`flex flex-col h-screen w-screen absolute`}>
         <div className="flex flex-col h-screen bg-black bg-opacity-50">
           <div className="flex bg-white rounded shadow-lg max-w-3xl m-auto">
             <div className="flex flex-col m-8">
