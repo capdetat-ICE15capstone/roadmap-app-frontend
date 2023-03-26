@@ -217,7 +217,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
         onDarkPress={() => setUnSavedModal(false)}
         textField={{
           title: "Unsaved Change",
-          body: "Are you sure you want to discard the change of a roadmap?",
+          body: "Are you sure you want to discard the change of a task?",
           lightButtonText: "Ok",
           darkButtonText: " Cancel",
         }}
@@ -246,8 +246,9 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                 </button>
               </div>
               {/*body*/}
-              {/* <div className="p-4 overflow-auto"> */}
+              
               <div className="flex flex-col lg:flex-row">
+                {/* Left side */}
                 <div className="flex flex-col w-full lg:w-1/2 p-6">
                   <label className="font-nunito-sans font-bold">Name</label>
                   <input
@@ -257,6 +258,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                     placeholder=" Enter task name..."
                     onChange={(e) => handleNameChange(e)}
                   ></input>
+
                   <label className="font-nunito-sans font-bold">
                     Description
                   </label>
@@ -268,6 +270,8 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                     placeholder=" Enter description..."
                     onChange={(e) => handleDescriptionChange(e)}
                   ></textarea>
+
+                  {/* Date Setting */}
                   <div className="flex flex-col my-2 gap-2">
                     <div className="w-full grid grid-cols-10">
                       <label className="self-center font-nunito-sans font-bold">
@@ -282,7 +286,6 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                             setStartDate(date);
                             setDataChange(true);
                           }}
-                          // className="border border-black rounded-md justify-self-end w-full"
                           customInput={<DatePickerButton />}
                         ></DatePicker>
                       </div>
@@ -307,15 +310,10 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                     </div>
                   </div>
 
+                  {/* Node setting */}
                   <div>
                     <label className="font-nunito-sans font-bold">Nodes</label>
                     <div className="flex flex-1 gap-x-1 mt-1 mb-4">
-                      {/* <div className="basis-1/5 bg-gray-100 rounded-lg self-center flex justify-center p-2">
-                          <CustomSVG
-                            type={nodeShape}
-                            className={`${nodeColor.twprop}`}
-                          ></CustomSVG>
-                        </div> */}
                       <div className="bg-gray-100 basis-1/2 rounded-lg grid grid-rows-3 grid-cols-7 gap-2 h-30 border-2 border-gray-300">
                         <p className="font-bold text-gray-400 pl-2">Color</p>
                         <select
@@ -344,13 +342,6 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                               handleNodeShapeChange(event, "circle")
                             }
                           >
-                            {/* <CustomSVG
-                              className={`${nodeColor.twfill} ${
-                                nodeShape === "circle"
-                                  // ? "stroke-black stroke-2"
-                                  // : ""
-                              } self-center`}
-                            /> */}
                             <CustomSVG
                               isStrokeOn={nodeShape === "circle"}
                               className={`${nodeColor.twfill}`}
@@ -363,14 +354,6 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                               handleNodeShapeChange(event, "square")
                             }
                           >
-                            {/* <CustomSVG
-                              className={`${nodeColor.twfill} ${
-                                nodeShape === "square"
-                                  ? "stroke-black stroke-2"
-                                  : ""
-                              } self-center`}
-                              type="square"
-                            /> */}
                             <CustomSVG
                               type="square"
                               isStrokeOn={nodeShape === "square"}
@@ -385,14 +368,6 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                             }
                             value="triangle"
                           >
-                            {/* <CustomSVG
-                              className={`${nodeColor.twfill} ${
-                                nodeShape === "triangle"
-                                  ? "stroke-black stroke-2 "
-                                  : ""
-                              } self-center `}
-                              type="triangle"
-                            /> */}
                             <CustomSVG
                               type="triangle"
                               isStrokeOn={nodeShape === "triangle"}
@@ -489,8 +464,6 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                   </div>
                 </div>
               </div>
-              {/* </div> */}
-              {/*footer*/}
             </div>
           </div>
         </div>

@@ -52,7 +52,7 @@ const RoadmapCreatePage = (props) => {
   const [notiStatus, setNotiStatus] = useState({ on: false });
   const [tags, setTags] = useState([]);
   const [publicModal, setPublicModal] = useState(false);
-  const [leaveModal, setLeaveModal] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   useEffect(() => {
     setUpRoadmap();
@@ -63,9 +63,24 @@ const RoadmapCreatePage = (props) => {
   }, [tasksRef]);
 
   useEffect(() => {
+    // display confirm message when user try to leave the page
+    const handleBeforeUnload = (event) => {
+      if (hasUnsavedChanges) {
+        event.preventDefault();
+        event.returnValue = ''; // required for Chrome
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [hasUnsavedChanges])
+
+  useEffect(() => {
     // this code is excessive
-    // use to call a functiob when the user did not
-    // update RMDesc for 1500 ms
+    // use to call a function when the user did not
+    // update Roadmap Description for 1500 ms
     const timeoutID = setTimeout(() => {
       searchTags();
     }, 1500);
@@ -80,7 +95,7 @@ const RoadmapCreatePage = (props) => {
   };
 
   const setUpRoadmap = async () => {
-    // use to load roadmap pageinto edit or clone page
+    // use to load roadmap page into edit or clone page
     if (mode === "edit" || mode === "clone") {
       // check if state is available
       if (state !== null && state !== undefined) {
@@ -122,19 +137,13 @@ const RoadmapCreatePage = (props) => {
     }
 
     if (mode === "clone") {
-      setupCloneMode();
-    }
-  };
-
-  const setupCloneMode = () => {
-    // in clone mode, reset all the progress of the roadmap,
-    // including the isDone to false and checkbox to unchecked
-    setTasks((tasks) =>
+      setTasks((tasks) =>
       tasks.map((task) => {
         task.isDone = false;
         return task;
       })
     );
+    }
   };
 
   const searchTags = () => {
@@ -181,7 +190,6 @@ const RoadmapCreatePage = (props) => {
         },
       },
     ]);
-    // setEdges([...edges, {from: lastTwo[]}])
   };
 
   const editEdges = () => {
@@ -199,6 +207,7 @@ const RoadmapCreatePage = (props) => {
             // new tasks
             submissionObject.id = getID();
             setTasks([...tasks, submissionObject]);
+            setHasUnsavedChanges(true)
             break;
           default:
             // edit task
@@ -208,6 +217,7 @@ const RoadmapCreatePage = (props) => {
                 task.id === submissionObject.id ? submissionObject : task
               )
             );
+            setHasUnsavedChanges(true)
             break;
         }
         break;
@@ -223,6 +233,7 @@ const RoadmapCreatePage = (props) => {
         setTasksRef((tasksref) =>
           tasksref.filter((tRef) => tRef.id !== submissionObject.id)
         );
+        setHasUnsavedChanges(true)
         break;
       default:
         console.warn("Unexplained default case");
@@ -244,17 +255,20 @@ const RoadmapCreatePage = (props) => {
     if (RMName.length < MAX_RMNAME_LENGTH) {
       setRMName((n) => event.target.value);
     }
+    setHasUnsavedChanges(true)
   };
 
   const handleDescriptionChange = (event) => {
     if (RMDesc.length < MAX_RMDESCRIPTION_LENGTH) {
       setRMDesc((d) => event.target.value);
     }
+    setHasUnsavedChanges(true)
   };
 
   const handlePublicityChange = () => {
     setPublic(!isPublic);
     setPublicModal(false);
+    setHasUnsavedChanges(true)
   };
 
   const handleSubmit = async (e) => {
@@ -271,20 +285,21 @@ const RoadmapCreatePage = (props) => {
     console.log(completeRoadmap);
 
     // Begin the spinner
-    // setLoading(true);
+    setLoading(true);
     await generateNotificationObjects();
 
     // Add a fetch POST request here
     if (mode === "create") {
       if ((await createRoadmap({ completeRoadmap })) === null) {
         alert("CREATE error");
+        setLoading(false);
       }
     } else {
       // for edit or clone mode
     }
 
     setLoading(false);
-    // navigate("/");
+    navigate("/");
   };
 
   const handleNotiSettingChange = (event) => {
@@ -327,6 +342,7 @@ const RoadmapCreatePage = (props) => {
           darkButtonText: "OK",
         }}
       />
+      
       {loading && <Spinner />}
       <div className="px-10 h-full">
         <div className="text-4xl font-inter font-bold mt-10 flex items-center">
@@ -346,7 +362,7 @@ const RoadmapCreatePage = (props) => {
             </div>
           </div>
         </div>
-        {/* <hr className="border-2 border-black"></hr> */}
+
         <form onSubmit={handleSubmit} className="h-full w-full max-w-full">
           <div className="flex mt-4">
             <input
@@ -386,6 +402,7 @@ const RoadmapCreatePage = (props) => {
           </div>
 
           <div className="h-1/2">
+            {/* Notification Setting */}
             <div className="relative">
               <select
                 value={JSON.stringify(notiStatus)}
@@ -418,8 +435,11 @@ const RoadmapCreatePage = (props) => {
                 })}
               </select>
             </div>
+            {/* End of Notification Setting */}
+            {/* Giant task box */}
             <div className="flex flex-col justify-center bg-blue-100 my-4 border-2 shadow-xl border-gray-300 rounded-3xl items-start h-2/3 p-4 pr-16 relative max-w-full w-full overflow-auto">
               <div className="flex items-center">
+                {/* Task list */}
                 {tasks.map((task) => {
                   return (
                     <>
@@ -461,6 +481,8 @@ const RoadmapCreatePage = (props) => {
                     </>
                   );
                 })}
+                {/* End of task list */}
+                {/* Add button */}
                 <div className="">
                   <button
                     type="button"
@@ -472,6 +494,8 @@ const RoadmapCreatePage = (props) => {
                 </div>
               </div>
             </div>
+            {/* End of Task box */}
+            
             <div className="relative">
               <div className="absolute right-0">
                 <button
