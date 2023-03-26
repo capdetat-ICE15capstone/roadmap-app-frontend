@@ -1,62 +1,99 @@
 {
   "roadmaps": [
     {
-      "name": "test roadmap",
-      "description": "this is definition",
-      "tasks": [
-        {
-          "id": 0,
-          "name": "sss",
-          "active": true,
-          "description": "ssssssssssssssss",
-          "startDate": "2023-03-18T14:30:28.910Z",
-          "dueDate": "2023-03-22T14:30:28.000Z",
-          "nodeColor": "green",
-          "nodeShape": "square",
-          "subtasks": [
-            {
-              "id": 0,
-              "detail": "sdasdasdasdaasdadasdasdasdadsa",
-              "status": false
-            }
-          ]
-        },
-        {
-          "id": 1,
-          "name": "sdasda",
-          "active": false,
-          "description": "sdasdasdadasdasdasdasdasdadas",
-          "startDate": "2023-03-18T14:30:46.206Z",
-          "dueDate": "2023-03-18T14:30:46.206Z",
-          "nodeColor": "gray",
-          "nodeShape": "square",
-          "subtasks": [
-            {
-              "id": 0,
-              "detail": "asdadasdasdsadasdasdasd",
-              "status": false
-            },
-            {
-              "id": 1,
-              "detail": "dsadasdsadasdasdas",
-              "status": false
-            }
-          ]
-        },
-        {
-          "id": 2,
-          "name": "dawdscaaaaaaaaaaa",
-          "active": false,
-          "description": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-          "startDate": "2023-04-01T14:30:55.000Z",
-          "dueDate": "2023-04-19T14:30:55.000Z",
-          "nodeColor": "gray",
-          "nodeShape": "circle",
-          "subtasks": []
-        }
+      "title": "Updated",
+      "description": "Test edit",
+      "roadmap_deadline": "2023-03-24T14:49:44",
+      "is_before_start_time": true,
+      "reminder_time": 1,
+      "is_private": false,
+      "id": 1,
+      "views_count": 8,
+      "stars_count": 0,
+      "forks_count": 0,
+      "created_at": "2023-03-24T10:50:00",
+      "edited_at": null,
+      "owner_id": 11,
+      "creator_id": 11,
+      "owner_name": "Matt",
+      "creator_name": "Matt",
+      "next_task": {
+        "title": "string",
+        "description": "string",
+        "start_time": "2023-03-24T03:53:53",
+        "deadline": "2023-03-24T03:53:53",
+        "shape": "string",
+        "color": "string",
+        "tid": 42,
+        "is_done": false,
+        "subtasks": [
+          {
+            "title": "string",
+            "stid": 26,
+            "is_done": false
+          },
+          {
+            "title": "string",
+            "stid": 27,
+            "is_done": false
+          }
+        ]
+      },
+      "tasks_name": [
+        "string",
+        "string"
       ],
-      "publicity": false,
-      "id": 1
+      "tags": [],
+      "task_relation": [
+        42,
+        41
+      ]
+    }
+  ],
+  "tasks": [
+    {
+      "title": "string",
+      "description": "string",
+      "start_time": "2023-03-24T03:53:53",
+      "deadline": "2023-03-24T03:53:53",
+      "shape": "square",
+      "color": "pink",
+      "id": 42,
+      "is_done": false,
+      "subtasks": [
+        {
+          "title": "string",
+          "stid": 26,
+          "is_done": false
+        },
+        {
+          "title": "string",
+          "stid": 27,
+          "is_done": false
+        }
+      ]
+    },
+    {
+      "title": "string2",
+      "description": "string2",
+      "start_time": "2023-03-24T03:53:53",
+      "deadline": "2023-03-24T03:53:53",
+      "shape": "triangle",
+      "color": "red",
+      "id": 41,
+      "is_done": false,
+      "subtasks": [
+        {
+          "title": "string2",
+          "stid": 26,
+          "is_done": false
+        },
+        {
+          "title": "string2",
+          "stid": 27,
+          "is_done": false
+        }
+      ]
     }
   ]
 }
