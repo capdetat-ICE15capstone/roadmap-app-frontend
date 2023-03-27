@@ -22,19 +22,21 @@
         "description": "string",
         "start_time": "2023-03-24T03:53:53",
         "deadline": "2023-03-24T03:53:53",
-        "shape": "string",
-        "color": "string",
+        "shape": "square",
+        "color": "pink",
         "tid": 42,
         "is_done": false,
         "subtasks": [
           {
             "title": "string",
             "stid": 26,
+            "id": 26,
             "is_done": false
           },
           {
             "title": "string",
             "stid": 27,
+            "id": 27,
             "is_done": false
           }
         ]
@@ -42,6 +44,14 @@
       "tasks_name": [
         "string",
         "string"
+      ],
+      "shapes": [
+        "square",
+        "triangle"
+      ],
+      "colors": [
+        "pink",
+        "red"
       ],
       "tags": [],
       "task_relation": [
@@ -59,16 +69,19 @@
       "shape": "square",
       "color": "pink",
       "id": 42,
+      "tid": 42,
       "is_done": false,
       "subtasks": [
         {
           "title": "string",
           "stid": 26,
+          "id": 26,
           "is_done": false
         },
         {
           "title": "string",
           "stid": 27,
+          "id": 27,
           "is_done": false
         }
       ]
@@ -81,16 +94,19 @@
       "shape": "triangle",
       "color": "red",
       "id": 41,
+      "tid": 41,
       "is_done": false,
       "subtasks": [
         {
           "title": "string2",
           "stid": 26,
+          "id": 26,
           "is_done": false
         },
         {
           "title": "string2",
           "stid": 27,
+          "id": 27,
           "is_done": false
         }
       ]

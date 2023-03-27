@@ -115,7 +115,7 @@ const RoadmapCreatePage = (props) => {
         // fetch the roadmap data
         // then set the data to variable
         setLoading(true);
-        const tempRoadmap = await getRoadmap(id);
+        const tempRoadmap = await getRoadmap(id, 10000, false);
         if (tempRoadmap !== null) {
           setRMName(tempRoadmap.name);
           setRMDesc(tempRoadmap.description);

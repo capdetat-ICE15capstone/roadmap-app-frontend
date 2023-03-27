@@ -92,7 +92,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
         setStartDate(oldData.startDate);
         setdueDate(oldData.dueDate);
         let highestID = 0;
-        data.subtasks.forEach((subtask) => {
+        oldData.subtasks.forEach((subtask) => {
           if (subtask.id > highestID) {
             highestID = subtask.id;
           }

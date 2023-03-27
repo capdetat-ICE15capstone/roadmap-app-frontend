@@ -9,44 +9,50 @@ const inboundTaskName = [
   { from: "title", to: "name" },
   { from: "start_time", to: "startDate" },
   { from: "deadline", to: "dueDate" },
-  { from: "color", to: "nodeColor" }, 
+  { from: "color", to: "nodeColor" },
   { from: "shape", to: "nodeShape" },
-  { from: "is_done", to: "isDone" }
+  { from: "is_done", to: "isDone" },
 ];
 
 const inboundSubtaskName = [
   { from: "stid", to: "id" },
   { from: "is_done", to: "isDone" },
-  { from: "title", to: "detail" }
+  { from: "title", to: "detail" },
+];
+
+const inboundRoadmapName = [
+  { from: "title", to: "name" }
 ]
 
-const universalObjRename = (obj=null, renameToObj=null) => {
-  if (obj === null || renameToObj === null) {
-    console.log(obj);
-    console.log(renameToObj);
+const objRename = (obj = null, renameToObj = null) => {
+
+  // Create renameObj (See example such as inboundTaskName)
+  // and use it as function parameter to rename object property name
+
+  if (obj === null || renameToObj === null) 
     throw new Error("Attribute rename error, Please provide both attribute");
-  }
+
+  // Creating new object to prevent side effect
+  const newObj = {...obj};
 
   renameToObj.forEach((cobj) => {
-    obj[cobj.to] = obj[cobj.from];
-    delete obj[cobj.from];
+    newObj[cobj.to] = obj[cobj.from];
+    delete newObj[cobj.from];
   });
 
-  return obj;
+  return newObj;
 };
 
-export const getRoadmap = async (rid, timeout = 1000, fetchAll = true) => {
+export const getRoadmap = async (rid, timeout = 0, fetchAll = true) => {
+  
+  // timeout - number(ms): specify when the function would stop fetching
+  // fetchAll - boolean:
+  //  if TRUE, function would fetch all tasks at once and return all of them
+  //  if FALSE, function would return only the full task detail of the next task
+  //  and the tid of the the unfetched task. The function would also specify the
+  //  `hasFetch` boolean of each task as false
 
-  // This function is used to fetch full roadmap information
-  // rid: roadmap id
-  // timeout: time before fetching terminate and throws an error
-  // fetchAll: the function will continue to fetch all the task
-  //  if not, the function will return the default task object
-  //  but with boolean "hasFetched" to false
-
-  if (rid === undefined || rid === null)
-    return null;
-
+  if (rid === undefined || rid === null) return null;
   const route = `roadmaps/${rid}`;
 
   try {
@@ -57,49 +63,84 @@ export const getRoadmap = async (rid, timeout = 1000, fetchAll = true) => {
         throw new Error("Fetch error");
       });
 
-    const taskLists = await Promise.all(
-      response.tasks = response.task_relation.map((tid) => {
-        // task logic here
-      })
-    )
+    response.tasks = await Promise.all(
+      (response.task_relation.map(async (tid, index) => {
+        if (tid !== response.next_task.tid) {
+          if (fetchAll === true) {
+            return getTask(tid);
+          }
+
+          return {
+            name: response.tasks_name[index],
+            nodeShape: response.shapes[index],
+            nodeColor: response.colors[index],
+            startDate: new Date(),
+            dueDate: new Date(),
+            description: "",
+            id: tid,
+            isDone: false,
+            subtasks: [],
+            hasFetched: false,
+          };
+        }
+
+        response.next_task.hasFetched = true;
+        return reformTask(response.next_task);
+      }))
+    );
     
-    console.log(response)
-  } catch (e) {
-    console.warn(e);
+    return reformRoadmap(response);
+  } catch (error) {
+    console.warn(error);
     return null;
   }
 };
 
 export const getTask = async (tid, timeout = 0) => {
-  if (tid === undefined || tid === null)
-    return null;
-
-  const route = `tasks/${tid}`
+  if (tid === undefined || tid === null) return null;
+  const route = `tasks/${tid}`;
 
   try {
     const response = await axiosInstance
       .get(route, { timeout: timeout })
       .then((res) => res.data)
       .catch((res) => {
-        console.warn(res)
+        console.warn(res);
         throw new Error("Fetch error");
       });
-    
-    response.subtasks = response.subtasks.forEach((subtask) => {
-      return universalObjRename(subtask, inboundSubtaskName)
-    })
 
     response.hasFetched = true;
-    response.start_time = new Date(response.start_time);
-    response.deadline = new Date(response.deadline);
-
-    return universalObjRename(response, inboundTaskName);
-  } catch (e) {
-    console.warn(e);
+    return reformTask(response);
+  } catch (error) {
+    console.warn(error);
     return null;
   }
 };
 
+export const reformTask = (taskObj) => {
+
+  // Create new object to prevent side effect
+  const newTaskObj = {... taskObj}
+
+  newTaskObj.subtasks = taskObj.subtasks.map((subtask) => {
+    return objRename(subtask, inboundSubtaskName);
+  });
+
+  newTaskObj.start_time = new Date(taskObj.start_time);
+  newTaskObj.deadline = new Date(taskObj.deadline);
+
+  return objRename(newTaskObj, inboundTaskName);
+};
+
+export const reformRoadmap = (roadmapObject) => {
+
+  // Create new object to prevent side effect
+  const newRoadmapObj = {...roadmapObject};
+  
+  return objRename(newRoadmapObj, inboundRoadmapName);
+}
+
+// OUTDATED
 export const createRoadmap = async (roadmapObject, timeout = 1000) => {
   // roadmap object: full roadmap object from the page
   if (!roadmapObject) {
