@@ -3,7 +3,7 @@ import PropTypes, { func } from 'prop-types';
 import Signup from './Signup';
 
 async function loginUser(credentials) {
-  return fetch('http://localhost:5173/login', {
+  return fetch('http://localhost:8080/login', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -27,13 +27,17 @@ export default function Login({ setToken }) {
   const [agreement, setAgreement] = useState(false);
 
   const handleSubmit = async e => {
+    if (!(/\S+@\S+\.\S+/.test(email))) {
+      return console.log("invalid email address");
+    }
     e.preventDefault();
+    console.log("test");
     const token = await loginUser({
       email,
       password
     });
     setToken(token);
-  };
+  }
 
   const handleSignupSubmit = (event) => {
     event.preventDefault();
@@ -82,7 +86,7 @@ export default function Login({ setToken }) {
       console.log("agreement must be set to TRUE");
       return;
     }
-  };
+  }
 
   return (
     <>
@@ -114,10 +118,6 @@ export default function Login({ setToken }) {
   )
 }
 
-Login.propTypes = {
-  setToken: PropTypes.func.isRequired
-}
-
 function LoginForm({
   setEmail,
   setPassword,
@@ -133,7 +133,7 @@ function LoginForm({
           <p className="flex justify-center mb-4 text-3xl font-bold text-slate-600">
             User Login
           </p>
-          <form id="login-form" onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit}>
             <div className="flex flex-col space-y-4 mb-4">
               <input
                 type="email"
@@ -334,3 +334,7 @@ function SignupForm({
     </div>
   )
 }
+
+Login.propTypes = {
+  setToken: PropTypes.func.isRequired
+};
