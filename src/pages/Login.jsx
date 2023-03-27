@@ -14,7 +14,6 @@ async function loginUser(credentials) {
 }
 
 export default function Login({ setToken }) {
-  // const navigate = useNavigate();
   const [signupVisibility, setSingupVisibility] = useState(false);
 
   const [email, setEmail] = useState("");
@@ -88,8 +87,28 @@ export default function Login({ setToken }) {
   return (
     <>
       <div className='relative'>
-        <LoginForm setEmail={setEmail} setPassword={setPassword} setRememberMe={setRememberMe} rememberMe={rememberMe} handleSubmit={handleSubmit} signupVisibility={signupVisibility} setSingupVisibility={setSingupVisibility} />
-        <SignupForm setUsername={setUsername} setFirstName={setFirstName} setLastName={setLastName} setEmail={setEmail} setPassword={setPassword} setPasswordConfirm={setPasswordConfirm} setAgreement={setAgreement} agreement={agreement} handleSignupSubmit={handleSignupSubmit} setSingupVisibility={setSingupVisibility} signupVisibility={signupVisibility} />
+        <LoginForm
+          setEmail={setEmail}
+          setPassword={setPassword}
+          setRememberMe={setRememberMe}
+          rememberMe={rememberMe}
+          handleSubmit={handleSubmit}
+          signupVisibility={signupVisibility}
+          setSingupVisibility={setSingupVisibility}
+        />
+        <SignupForm
+          setUsername={setUsername}
+          setFirstName={setFirstName}
+          setLastName={setLastName}
+          setEmail={setEmail}
+          setPassword={setPassword}
+          setPasswordConfirm={setPasswordConfirm}
+          setAgreement={setAgreement}
+          agreement={agreement}
+          handleSignupSubmit={handleSignupSubmit}
+          setSingupVisibility={setSingupVisibility}
+          signupVisibility={signupVisibility}
+        />
       </div>
     </>
   )
@@ -99,7 +118,14 @@ Login.propTypes = {
   setToken: PropTypes.func.isRequired
 }
 
-function LoginForm({ setEmail, setPassword, setRememberMe, rememberMe, handleSubmit, signupVisibility, setSingupVisibility }) {
+function LoginForm({
+  setEmail,
+  setPassword,
+  setRememberMe,
+  rememberMe,
+  handleSubmit,
+  signupVisibility,
+  setSingupVisibility }) {
   return (
     <div className={`flex flex-col h-screen w-screen bg-gray-200 absolute`}>
       <div className="flex bg-white rounded shadow-xl m-auto">
@@ -163,7 +189,18 @@ function LoginForm({ setEmail, setPassword, setRememberMe, rememberMe, handleSub
   )
 }
 
-function SignupForm({ setUsername, setFirstName, setLastName, setEmail, setPassword, setPasswordConfirm, setAgreement, agreement, handleSignupSubmit, setSingupVisibility, signupVisibility }) {
+function SignupForm({
+  setUsername,
+  setFirstName,
+  setLastName,
+  setEmail,
+  setPassword,
+  setPasswordConfirm,
+  setAgreement,
+  agreement,
+  handleSignupSubmit,
+  setSingupVisibility,
+  signupVisibility }) {
   return (
     <div className={`flex flex-col h-screen w-screen absolute ${(signupVisibility) ? 'visible' : 'hidden'}`}>
       <div className="flex flex-col h-screen bg-black bg-opacity-50">
