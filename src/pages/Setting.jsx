@@ -66,7 +66,7 @@ const RenderProfile = ({setUsername, setFirstName, setLastName, setBio, setLink}
                                 <img src="https://preview.redd.it/p2hrqjb7bpaa1.jpg?width=640&crop=smart&auto=webp&v=enabled&s=3a93ad0769038a197421464aa34389e830525baa"></img>
                             </div>
                         </div>
-                        <button className="shadow appearance-none border rounded-lg w-16 py-2 px-3 border-t-4 text-sm text-white bg-blue-900 leading-tight focus:outline-none focus:shadow-outline float-right">
+                        <button className="shadow appearance-none border rounded-lg w-16 py-2 px-3 text-sm text-white bg-blue-900 leading-tight focus:outline-none focus:shadow-outline float-right">
                             Save
                         </button>
                     </div>
@@ -126,7 +126,7 @@ const SettingBioField = ({formID, fieldTitle, fieldPlaceHolder, setOnSubmit}) =>
                     </textarea>
                     <button 
                         type='submit' 
-                        className="shadow appearance-none border rounded-lg w-16 py-2 px-3 border-t-4 text-sm text-white bg-blue-900 leading-tight focus:outline-none focus:shadow-outline ml-auto"
+                        className="shadow appearance-none border rounded-lg w-16 py-2 px-3 mt-1 text-sm text-white bg-blue-900 leading-tight focus:outline-none focus:shadow-outline ml-auto"
                     >
                         Save
                     </button>

@@ -13,9 +13,9 @@ const ToggleSwitch = ({name, isToggled, setIsToggled}) => {
                     checked={isToggled}
                     onChange={() => setIsToggled(!isToggled)}
                 />
-                <div className='w-24 h-8'>
-                    <div className={`absolute top-1/2 -translate-y-1/2 block bg-gray-600 w-full h-6 rounded-full ${isToggled ? 'bg-blue-500' : 'bg-gray-600'}`}></div>
-                    <div className={`absolute top-1/2 -translate-y-1/2 w-8 h-8 rounded-full transition border border-gray-500 ${isToggled ? 'transform translate-x-16 bg-white border-blue-500' : 'bg-white'}`}></div>
+                <div className='w-16 h-6'>
+                    <div className={`absolute top-1/2 -translate-y-1/2 block w-full h-4 rounded-full ${isToggled ? 'bg-blue-500' : 'bg-gray-600'}`}></div>
+                    <div className={`absolute top-1/2 -translate-y-1/2 w-6 h-6 rounded-full transition border ${isToggled ? 'transform translate-x-10 bg-white border-blue-500' : 'bg-white border-gray-500'}`}></div>
                 </div>    
             </div>
         </label>
