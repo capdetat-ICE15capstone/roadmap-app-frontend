@@ -52,7 +52,7 @@ function App() {
             }
           ></Route>
           <Route path="/" element={<Navbar />}>
-            <Route index element={<Feed />} />
+            <Route index element={<Home />} />
             <Route
               path="create"
               element={
