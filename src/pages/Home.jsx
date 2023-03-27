@@ -58,7 +58,7 @@ const Home = () => {
                 </a>                
               </div>    
             </div>
-            <div className="absolute left-[785px] top-[34px] bg-[#FFFFFF] w-[308px] h-[308px] rounded-[308px] z-[20] border border-[#D9D9D9]">
+            <div className="absolute left-[785px] top-[34px] bg-[#FFFFFF] w-[308px] h-[308px] rounded-[308px] border border-[#D9D9D9]">
               <img src={Kurumi} className="rounded-[308px]"/>
             </div>
           </div>
@@ -108,13 +108,16 @@ const Home = () => {
                     edited_at="03/18/2023" 
                     views_counts={177013} />
                     <RoadmapDropdown />
-                  </div>                
-                </div>
+                  </div>                  
+                </div>         
               </div>
             </div>
           </div>
         </div>
       </div>
+      {false && <div className="absolute flex justify-center items-center w-screen h-screen bg-gray-300 bg-opacity-[0.58] z-auto">
+
+      </div>}    
     </>
   );
 };
