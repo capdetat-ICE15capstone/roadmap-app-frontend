@@ -155,23 +155,4 @@
           "id": 2
         }
       ]
-,
-    "multipleRoadmaps":[
-      { "roadmapArray":[
-        { "id": 0, "creator_name": "user13", "owner_name": "user1", "title": "Roadmap 1", "created_at": "3/18/2013", "edited_at": "Today", "views_counts": "1000" },
-        { "id": 1, "creator_name": "user14", "owner_name": "user2", "title": "Roadmap 2", "created_at": "3/18/2013", "edited_at": "Today", "views_counts": "2000" },
-        { "id": 2, "creator_name": "user15", "owner_name": "user3", "title": "Roadmap 3", "created_at": "3/18/2013", "edited_at": "Today", "views_counts": "3000" },
-        { "id": 3, "creator_name": "user16", "owner_name": "user4", "title": "Roadmap 4", "created_at": "3/18/2013", "edited_at": "Today", "views_counts": "4000" },
-        { "id": 4, "creator_name": "user17", "owner_name": "user5", "title": "Roadmap 5", "created_at": "3/18/2013", "edited_at": "Today", "views_counts": "5000" },
-        { "id": 5, "creator_name": "user18", "owner_name": "user6", "title": "Roadmap 6", "created_at": "3/18/2013", "edited_at": "Today", "views_counts": "6000" },
-        { "id": 6, "creator_name": "user19", "owner_name": "user7", "title": "Roadmap 7", "created_at": "3/18/2013", "edited_at": "Today", "views_counts": "7000" },
-        { "id": 7, "creator_name": "user20", "owner_name": "user8", "title": "Roadmap 8", "created_at": "3/18/2013", "edited_at": "Today", "views_counts": "8000" },
-        { "id": 8, "creator_name": "user21", "owner_name": "user9", "title": "Roadmap 9", "created_at": "3/18/2013", "edited_at": "Today", "views_counts": "9000" },
-        { "id": 9, "creator_name": "user22", "owner_name": "user10", "title": "Roadmap 10", "created_at": "3/18/2013", "edited_at": "Today", "views_counts": "10000" },
-        { "id": 10, "creator_name": "user23", "owner_name": "user11", "title": "Roadmap 11", "created_at": "3/18/2013", "edited_at": "Today", "views_counts": "11000" },
-        { "id": 11, "creator_name": "user24", "owner_name": "user12", "title": "Roadmap 12", "created_at": "3/18/2013", "edited_at": "Today", "views_counts": "12000" }
-      ]
-      }
-    ]
 }
-
