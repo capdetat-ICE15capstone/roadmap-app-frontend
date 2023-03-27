@@ -30,7 +30,7 @@ const Home = () => {
               <div className="relative flex items-center justify-start left-[50px] top-[10px] w-fit h-fit my-[10px]">
                 <div className="relative mr-4">
                   <div className="font-inter font-extrabold text-[40px] text-[#09275B] leading-[48px]">
-                    Kurumi
+                    Users
                   </div>
                 </div>
                 <div className="relative flex flex-col justify-center bg-[#034DCF] text-white font-bold w-[223px] h-[57px] rounded-[30px]">
@@ -48,12 +48,12 @@ const Home = () => {
               </div>
               <div className="relative flex flex-col left-[50px] top-[10px] w-[700px] h-fit my-[10px]">
                 <div className="font-inter font-light text-[40px] leading-[48px]">
-                  Kurumi Tokisaki (Codename: Nightmare)
+                  
                 </div>
               </div>
               <div className="relative flex flex-col left-[50px] top-[10px] w-[630px] h-fit my-[10px]">
-                <a href="https://date-a-live.fandom.com/wiki/Kurumi_Tokisaki" className="font-inter font-light text-[#034DCF] text-[25px] leading-[30px]">
-                  https://date-a-live.fandom.com/wiki/Kurumi_Tokisaki
+                <a href="https://www.figma.com/file/sEjOYDptvRdjQRkHrTfdda/ICP-ver-2?node-id=0-1&t=0WJfEWf8NZbrdiUq-0" className="font-inter font-light text-[#034DCF] text-[25px] leading-[30px]">
+                  https://www.figma.com/file/sEjOYDptvRdjQRkHrTfdda/ICP-ver-2?node-id=0-1&t=0WJfEWf8NZbrdiUq-0
                 </a>                
               </div>    
             </div>
