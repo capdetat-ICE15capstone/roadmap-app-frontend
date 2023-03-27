@@ -14,9 +14,9 @@ const NavItem = (props) => {
   // iconClass, navLinkClass, SvgIcon, to, parentDivClass, childDivClass
   return (
     <>
-      <NavLink className={`py-5 flex justify-center content-middle hover:bg-yellow-500 hover:scale-105 transition duration-200 ${props.parentDivClass}`} to={props.to}>
+      <NavLink className={`py-3 flex justify-center content-middle hover:bg-yellow-500 hover:scale-105 transition duration-200 ${props.parentDivClass}`} to={props.to}>
         <div className={`overflow-hidden whitespace-nowrap flex ${props.childDivClass}`}>
-          <props.SvgIcon className={`w-6 h-auto inline ${props.iconClass}`} />
+          <props.SvgIcon className={`w-full h-auto inline ${props.iconClass}`} />
           <div className={`font-nunito-sans text-white font-bold ml-2 justify-self-center ${props.navLinkClass}`} to={props.to}>{props.displayName}</div>
         </div>
       </NavLink>
@@ -29,15 +29,15 @@ const Navbar = () => {
     <>
       <div className="flex fixed h-screen w-screen">
         <div className="md:visible collapse">
-          <div className="flex flex-col h-screen bg-nav-black justify-between w-36">
+          <div className="flex flex-col h-screen bg-nav-blue justify-between">
             <div className="flex flex-col">
-              <Logo className="justify-self-center self-center h-20" />
-              <NavItem SvgIcon={HomeLogo} displayName="Home" to="/" />
-              <NavItem SvgIcon={SettingLogo} displayName="Setting" to="/setting" />
-              <NavItem SvgIcon={CalendarLogo} displayName="Calendar" to="/calendar" />
+              <Logo className="justify-self-center self-center h-12 m-4" />
+              <NavItem SvgIcon={HomeLogo} to="/" />
+              <NavItem SvgIcon={SettingLogo} to="/setting" />
+              <NavItem SvgIcon={CalendarLogo} to="/calendar" />
             </div>
-            <NavItem SvgIcon={UserLogo} displayName="Username" to="/profile"
-              parentDivClass="bg-nav-gray py-7" />
+            <NavItem SvgIcon={UserLogo} to="/profile"
+              parentDivClass="bg-blue-800 py-5" />
           </div>
         </div>
         <div className="flex flex-col grow">
