@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Roadmap from "../components/Roadmap";
-import Kurumi from "../assets/kurumi.jpg";
 import RoadmapCreate from "../components/RoadmapCreate";
 import RoadmapDropdown from "../components/RoadmapDropdown";
 import { ReactComponent as DarkHomeIcon } from "../assets/dark_home_icon.svg";
@@ -59,7 +58,7 @@ const Home = () => {
               </div>    
             </div>
             <div className="absolute left-[785px] top-[34px] bg-[#FFFFFF] w-[308px] h-[308px] rounded-[308px] z-[20] border border-[#D9D9D9]">
-              <img src={Kurumi} className="rounded-[308px]"/>
+
             </div>
           </div>
         </div>
