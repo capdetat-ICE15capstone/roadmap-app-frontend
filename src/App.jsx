@@ -9,6 +9,7 @@ import { lazy, Suspense } from "react";
 const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
 const RoadmapCreatePage = lazy(() => import("./pages/RoadmapCreatePage"));
+const Home = lazy(() => import("./pages/Home"));
 const Setting = lazy(() => import("./pages/Setting"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Introduction = lazy(() => import("./pages/Introduction"));
@@ -53,6 +54,14 @@ function App() {
           ></Route>
           <Route path="/" element={<Navbar />}>
             <Route index element={<Home />} />
+            <Route
+              path="home"
+              element={
+                <Suspense fallback={<Spinner />}>
+                  <Home />
+                </Suspense>
+              }
+            ></Route>
             <Route
               path="create"
               element={
