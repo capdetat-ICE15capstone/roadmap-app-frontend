@@ -20,20 +20,17 @@ const inboundSubtaskName = [
   { from: "title", to: "detail" },
 ];
 
-const inboundRoadmapName = [
-  { from: "title", to: "name" }
-]
+const inboundRoadmapName = [{ from: "title", to: "name" }];
 
 const objRename = (obj = null, renameToObj = null) => {
-
   // Create renameObj (See example such as inboundTaskName)
   // and use it as function parameter to rename object property name
 
-  if (obj === null || renameToObj === null) 
+  if (obj === null || renameToObj === null)
     throw new Error("Attribute rename error, Please provide both attribute");
 
   // Creating new object to prevent side effect
-  const newObj = {...obj};
+  const newObj = { ...obj };
 
   renameToObj.forEach((cobj) => {
     newObj[cobj.to] = obj[cobj.from];
@@ -44,7 +41,6 @@ const objRename = (obj = null, renameToObj = null) => {
 };
 
 export const getRoadmap = async (rid, timeout = 0, fetchAll = true) => {
-  
   // timeout - number(ms): specify when the function would stop fetching
   // fetchAll - boolean:
   //  if TRUE, function would fetch all tasks at once and return all of them
@@ -63,14 +59,17 @@ export const getRoadmap = async (rid, timeout = 0, fetchAll = true) => {
         throw new Error("Fetch error");
       });
 
+    // Get all tasks
     let beforeIsDone = true;
     response.tasks = await Promise.all(
-      (response.task_relation.map(async (tid, index) => {
+      response.task_relation.map(async (tid, index) => {
         if (tid !== response.next_task.tid) {
           if (fetchAll === true) {
             return getTask(tid);
           }
 
+          // If it is not required to fetch that task from the server
+          // the function will generate a default task object
           return {
             name: response.tasks_name[index],
             nodeShape: response.shapes[index],
@@ -82,16 +81,16 @@ export const getRoadmap = async (rid, timeout = 0, fetchAll = true) => {
             isDone: beforeIsDone,
             subtasks: [],
             hasFetched: false,
-            isTempId: false
+            isTempId: false,
           };
         }
 
-        beforeIsDone = false
+        beforeIsDone = false;
         response.next_task.hasFetched = true;
         return reformTask(response.next_task);
-      }))
+      })
     );
-    
+
     return reformRoadmap(response);
   } catch (error) {
     console.warn(error);
@@ -100,6 +99,7 @@ export const getRoadmap = async (rid, timeout = 0, fetchAll = true) => {
 };
 
 export const getTask = async (tid, timeout = 0) => {
+  // Get one task
   if (tid === undefined || tid === null) return null;
   const route = `tasks/${tid}`;
 
@@ -120,10 +120,10 @@ export const getTask = async (tid, timeout = 0) => {
 };
 
 export const reformTask = (taskObj) => {
-
   // Create new object to prevent side effect
-  const newTaskObj = {... taskObj}
+  const newTaskObj = { ...taskObj };
 
+  console.log(newTaskObj);
   newTaskObj.subtasks = taskObj.subtasks.map((subtask) => {
     return objRename(subtask, inboundSubtaskName);
   });
@@ -137,12 +137,11 @@ export const reformTask = (taskObj) => {
 };
 
 export const reformRoadmap = (roadmapObject) => {
-
   // Create new object to prevent side effect
-  const newRoadmapObj = {...roadmapObject};
-  
+  const newRoadmapObj = { ...roadmapObject };
+
   return objRename(newRoadmapObj, inboundRoadmapName);
-}
+};
 
 // OUTDATED
 export const createRoadmap = async (roadmapObject, timeout = 1000) => {

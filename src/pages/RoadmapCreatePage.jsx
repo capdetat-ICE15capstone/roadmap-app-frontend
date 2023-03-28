@@ -7,6 +7,7 @@ import { isUserPremium } from "../functions/userFunction";
 import { CustomSVG, getTWFill } from "../components/CustomSVG";
 import { ReactComponent as AddButton } from "../assets/addButton.svg";
 import TwoButtonModal from "../components/TwoButtonModal";
+import { ReactComponent as Check } from '../assets/check.svg'
 import { motion } from "framer-motion";
 import { ReactComponent as NotiOff } from "../assets/notification/notiOff.svg";
 import { ReactComponent as NotiOn } from "../assets/notification/notiOn.svg";
@@ -66,15 +67,15 @@ const RoadmapCreatePage = (props) => {
     const handleBeforeUnload = (event) => {
       if (hasUnsavedChanges) {
         event.preventDefault();
-        event.returnValue = ''; // required for Chrome
+        event.returnValue = ""; // required for Chrome
       }
     };
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener("beforeunload", handleBeforeUnload);
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [hasUnsavedChanges])
+  }, [hasUnsavedChanges]);
 
   useEffect(() => {
     // this code is excessive
@@ -137,11 +138,11 @@ const RoadmapCreatePage = (props) => {
 
     if (mode === "clone") {
       setTasks((tasks) =>
-      tasks.map((task) => {
-        task.isDone = false;
-        return task;
-      })
-    );
+        tasks.map((task) => {
+          task.isDone = false;
+          return task;
+        })
+      );
     }
   };
 
@@ -206,7 +207,7 @@ const RoadmapCreatePage = (props) => {
             // new tasks
             submissionObject.id = getID();
             setTasks([...tasks, submissionObject]);
-            setHasUnsavedChanges(true)
+            setHasUnsavedChanges(true);
             break;
           default:
             // edit task
@@ -215,7 +216,7 @@ const RoadmapCreatePage = (props) => {
                 task.id === submissionObject.id ? submissionObject : task
               )
             );
-            setHasUnsavedChanges(true)
+            setHasUnsavedChanges(true);
             // maybe keep track of the edited task
             break;
         }
@@ -227,7 +228,7 @@ const RoadmapCreatePage = (props) => {
             task.id === submissionObject.id ? submissionObject : task
           )
         );
-        break
+        break;
       case "failed":
         // user quit modal without saving
         console.log("failed");
@@ -240,7 +241,7 @@ const RoadmapCreatePage = (props) => {
         setTasksRef((tasksref) =>
           tasksref.filter((tRef) => tRef.id !== submissionObject.id)
         );
-        setHasUnsavedChanges(true)
+        setHasUnsavedChanges(true);
         break;
       default:
         console.warn("Unexplained default case");
@@ -262,20 +263,20 @@ const RoadmapCreatePage = (props) => {
     if (RMName.length < MAX_RMNAME_LENGTH) {
       setRMName((n) => event.target.value);
     }
-    setHasUnsavedChanges(true)
+    setHasUnsavedChanges(true);
   };
 
   const handleDescriptionChange = (event) => {
     if (RMDesc.length < MAX_RMDESCRIPTION_LENGTH) {
       setRMDesc((d) => event.target.value);
     }
-    setHasUnsavedChanges(true)
+    setHasUnsavedChanges(true);
   };
 
   const handlePublicityChange = () => {
     setPublic(!isPublic);
     setPublicModal(false);
-    setHasUnsavedChanges(true)
+    setHasUnsavedChanges(true);
   };
 
   const handleSubmit = async (e) => {
@@ -349,20 +350,17 @@ const RoadmapCreatePage = (props) => {
         }}
       />
       {modalState ? (
-          // id -1 is passed as a temp id to let the modal know it's in create mode, otherwise it's in edit mode
-          editTaskID == -1 ? (
-            <TaskModal
-              oldData={{ id: -1 }}
-              editTaskCallBack={editTaskCallBack}
-            />
-          ) : (
-            <TaskModal
-              oldData={tasks.find((task) => task.id === editTaskID)}
-              editTaskCallBack={editTaskCallBack}
-            />
-          )
-        ) : null}
-      
+        // id -1 is passed as a temp id to let the modal know it's in create mode, otherwise it's in edit mode
+        editTaskID == -1 ? (
+          <TaskModal oldData={{ id: -1 }} editTaskCallBack={editTaskCallBack} />
+        ) : (
+          <TaskModal
+            oldData={tasks.find((task) => task.id === editTaskID)}
+            editTaskCallBack={editTaskCallBack}
+          />
+        )
+      ) : null}
+
       {loading && <Spinner />}
       <div className="px-10 h-full">
         <div className="text-4xl font-bold mt-10 flex items-center">
@@ -410,7 +408,9 @@ const RoadmapCreatePage = (props) => {
             </button>
           </div>
 
-          <label className="text-xl font-bold font-nunito-sans">Roadmap Description: </label>
+          <label className="text-xl font-bold font-nunito-sans">
+            Roadmap Description:{" "}
+          </label>
           <div className="my-3">
             <textarea
               className="border rounded-lg border-gray-400 block text-xl p-1 w-full focus:outline-none shadow-lg font-nunito-sans"
@@ -429,28 +429,37 @@ const RoadmapCreatePage = (props) => {
                 onChange={handleNotiSettingChange}
                 className="absolute z-10 right-4 top-4"
               >
-                <option value={JSON.stringify({ on: false })} key={"Nonoti"} className="font-nunito-sans">
+                <option
+                  value={JSON.stringify({ on: false })}
+                  key={"Nonoti"}
+                  className="font-nunito-sans"
+                >
                   No notification
                 </option>
                 {notificationDayOption.map((day) => {
                   return [true, false].map((beforeDueDate) => {
-                    return <option className="font-nunito-sans"
-                      value={JSON.stringify({
-                        on: true,
-                        detail: {
-                          day: day,
-                          beforeDueDate: beforeDueDate,
-                        },
-                      })}
-                      key={JSON.stringify({
-                        detail: {
-                          day: day,
-                          beforeDueDate: beforeDueDate,
-                        },
-                      })}
-                    >
-                      {`${day} days before ${beforeDueDate ? "due" : "start"} date`}
-                    </option>;
+                    return (
+                      <option
+                        className="font-nunito-sans"
+                        value={JSON.stringify({
+                          on: true,
+                          detail: {
+                            day: day,
+                            beforeDueDate: beforeDueDate,
+                          },
+                        })}
+                        key={JSON.stringify({
+                          detail: {
+                            day: day,
+                            beforeDueDate: beforeDueDate,
+                          },
+                        })}
+                      >
+                        {`${day} days before ${
+                          beforeDueDate ? "due" : "start"
+                        } date`}
+                      </option>
+                    );
                   });
                 })}
               </select>
@@ -461,18 +470,12 @@ const RoadmapCreatePage = (props) => {
               <div className="flex items-center">
                 {/* Task list */}
                 {tasks.map((task) => {
-                  console.log(task)
                   return (
-                    <>
-                      <div
-                        key={task.id}
-                        className="flex"
-                        ref={(el) => addRef(task.id, el)}
-                      >
+                    <div key={task.id} className="flex items-center">
+                      <div className="flex" ref={(el) => addRef(task.id, el)}>
                         <div className="flex">
                           <div className="flex flex-col gap-2 items-center">
                             <button
-                              className=""
                               type="button"
                               disabled={task.isDone}
                               onClick={() => {
@@ -480,12 +483,14 @@ const RoadmapCreatePage = (props) => {
                                 setModalState(true);
                               }}
                             >
+                              <Check hidden={!task.isDone} className="absolute"/>
                               <CustomSVG
                                 type={task.nodeShape}
                                 className={`${getTWFill(task.nodeColor)}`}
                                 size={60}
                                 isStrokeOn={true}
                               />
+                              
                             </button>
                             <div className="w-full">
                               <span className="block font-bold mx-auto text-center leading-5 font-nunito-sans">
@@ -498,7 +503,7 @@ const RoadmapCreatePage = (props) => {
                       <div className="h-full flex items-center">
                         <hr className="bg-black h-1 w-20"></hr>
                       </div>
-                    </>
+                    </div>
                   );
                 })}
                 {/* End of task list */}
@@ -515,7 +520,7 @@ const RoadmapCreatePage = (props) => {
               </div>
             </div>
             {/* End of Task box */}
-            
+
             <div className="relative">
               <div className="absolute right-0">
                 <button
