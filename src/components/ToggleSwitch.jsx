@@ -1,11 +1,11 @@
 const ToggleSwitch = ({name, isToggled, setIsToggled}) => {
   return (
     <div className="">
-        <label htmlFor={name} className="flex items-end cursor-pointer justify-between w-72">
-            <p className="text-gray-800 text-sm mb-1 font-bold px-1">
+        <label htmlFor={name} className="flex items-end cursor-pointer justify-between w-64">
+            <p className="text-gray-800 text-sm mb-1 font-bold px-1 py-1">
                 {name}
             </p>
-            <div className="left-5 relative">
+            <div className="left-5 relative py-1">
                 <input
                     id={name}
                     type="checkbox"
