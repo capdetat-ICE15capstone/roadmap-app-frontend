@@ -9,6 +9,7 @@ import DatePicker from "react-datepicker";
 import Spinner from "./Spinner";
 import { CustomSVG, allNodeColor } from "./CustomSVG";
 import TwoButtonModal from "./TwoButtonModal";
+import { getTask } from "../functions/roadmapFunction";
 
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -18,19 +19,6 @@ import "react-datepicker/dist/react-datepicker.css";
 // 11. Node selector overflow in small screen
 // 12. Problems with some mobile device
 // 14. Nodes shape selector arent actually centered
-
-// Fixed isses
-// 1. User can choose whatever start and due date they want, incluing in the past
-// 2. (Untested) No logic to check for the lastID when the roadmap is edited instead of created
-// 3. subtask scrolling
-// 4. Description box size problem (box size tends to varies)
-// 5. Using new Date() will also select the time for you, not only date
-// 6. fixed a lot of styling
-// 7. Datepicker style
-// 8. input box shrink
-// 9. Description text and placeholder starting position (text starts in the middle of the box)
-// 10. Some edges are not rounded
-// 1. CustomSVG is terribly implemented (hard code everywhere)
 
 // data domain
 const MAX_NAME_LENGTH = 24;
@@ -50,6 +38,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
   const [deleteModal, setDeleteModal] = useState(false);
   const [unSavedModal, setUnSavedModal] = useState(false);
   const [dataChange, setDataChange] = useState(false);
+  const [taskWasFetched, setTaskWasFetched] = useState(false)
   const DatePickerButton = forwardRef(({ value, onClick }, ref) => (
     <div className="w-full">
       <button
@@ -78,32 +67,39 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
   useEffect(() => {
     console.log(oldData);
     async function setModalData() {
+      setLoading(true);
       if (oldData.id !== -1) {
-        setLoading(true);
-        setName(oldData.name);
-        setName(oldData.name);
-        setDescription(oldData.description);
-        setDescription(oldData.description);
-        setSubTasks(oldData.subtasks);
-        setNodeColor(
-          allNodeColor.find(({ name }) => name === oldData.nodeColor)
-        );
-        setNodeShape(oldData.nodeShape);
-        setStartDate(oldData.startDate);
-        setdueDate(oldData.dueDate);
-        let highestID = 0;
-        oldData.subtasks.forEach((subtask) => {
-          if (subtask.id > highestID) {
-            highestID = subtask.id;
-          }
-        });
-
-        setLastId((lastId) => highestID + 1);
+        if (oldData.hasFetched === true) {
+          setupTask(oldData);
+        } else {
+          const fetchedData = await getTask(oldData.id);
+          setTaskWasFetched(true);
+          setupTask(fetchedData);
+        }
       }
+      setLoading(false);
     }
+
     setModalData();
-    setLoading(false);
   }, []);
+
+  const setupTask = (taskObj) => {
+    setName(taskObj.name);
+    setDescription(taskObj.description);
+    setSubTasks(taskObj.subtasks);
+    setNodeColor(allNodeColor.find(({ name }) => name === taskObj.nodeColor));
+    setNodeShape(taskObj.nodeShape);
+    setStartDate(taskObj.startDate);
+    setdueDate(taskObj.dueDate);
+    let highestID = 0;
+    taskObj.subtasks.forEach((subtask) => {
+      if (subtask.id > highestID) {
+        highestID = subtask.id;
+      }
+    });
+
+    setLastId((lastId) => highestID + 1);
+  };
 
   const getId = () => {
     // IMPORTANT: only use this function to get an ID
@@ -181,12 +177,12 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
       setUnSavedModal(true);
       return;
     }
-    editTaskCallBack("failed", oldData);
+    editTaskCallBack(taskWasFetched ? "fetch" : "failed", generateTaskData());
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    editTaskCallBack("success", {
+  const generateTaskData = () => {
+    // generate task object when user create or edit task
+    return {
       id: oldData.id,
       name: name,
       description: description,
@@ -195,7 +191,15 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
       nodeColor: nodeColor.name,
       nodeShape: nodeShape,
       subtasks: subtasks,
-    });
+      hasFetched: true,
+      isDone: false,
+      isTempId: oldData.id === -1 || oldData.isTempId === true ? true : false 
+    }
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    editTaskCallBack("success", generateTaskData());
   };
 
   return (
@@ -213,7 +217,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
       />
       <TwoButtonModal
         isOpen={unSavedModal}
-        onLightPress={() => editTaskCallBack("failed", oldData)}
+        onLightPress={() => editTaskCallBack(taskWasFetched ? "fetch" : "failed", generateTaskData())}
         onDarkPress={() => setUnSavedModal(false)}
         textField={{
           title: "Unsaved Change",
@@ -232,7 +236,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
               <div
                 className={`flex items-start justify-between py-4 px-5 lg:py-8 border-b border-solid border-slate-200 rounded-t-2xl ${nodeColor.twbg} transition duration-300 items-center`}
               >
-                <div className={`${ oldData.id === -1 ? "" : "w-[50px]"}`}></div>
+                <div className={`${oldData.id === -1 ? "" : "w-[50px]"}`}></div>
                 <h3 className="text-3xl font-semibold text-white">
                   {oldData.id === -1 ? "Create" : "Edit"} task
                 </h3>
@@ -258,7 +262,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                   <input
                     type="text"
                     value={name}
-                    className="border-2 border-gray-300 rounded-md my-1 placeholder:italic px-1"
+                    className="border-2 border-gray-300 rounded-md my-1 placeholder:italic px-1 font-nunito-sans"
                     placeholder=" Enter task name..."
                     onChange={(e) => handleNameChange(e)}
                   ></input>
@@ -267,7 +271,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                     Description
                   </label>
                   <textarea
-                    className="border-2 border-gray-300 rounded-md my-1 grow placeholder:italic placeholder:justify-start px-1"
+                    className="border-2 border-gray-300 rounded-md my-1 grow placeholder:italic placeholder:justify-start px-1 font-nunito-sans"
                     value={description}
                     cols="50"
                     rows="4"
@@ -397,7 +401,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                               <input
                                 type="checkbox"
                                 checked={subtask.status}
-                                className="w-4 h-4 self-center"
+                                className="w-4 h-4 self-center font-nunito-sans"
                                 onChange={() =>
                                   onSubTaskCheckboxChange(
                                     event.target.checked,
@@ -415,7 +419,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                               </button>
                               <input
                                 type="text"
-                                className="border border-black rounded-md grow"
+                                className="border border-black rounded-md grow font-nunito-sans"
                                 onChange={() =>
                                   onSubtaskTextEdit(
                                     event.target.value,
@@ -479,6 +483,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
 
 TaskModal.propTypes = {
   oldData: PropTypes.shape({
+    id: PropTypes.number.isRequired,
     name: PropTypes.string,
     description: PropTypes.string,
     startDate: PropTypes.instanceOf(Date),
@@ -486,6 +491,9 @@ TaskModal.propTypes = {
     nodeColor: PropTypes.string,
     nodeShape: PropTypes.string,
     subtasks: PropTypes.arrayOf(object),
+    hasFetched: PropTypes.bool,
+    isDone: PropTypes.bool,
+    isTempId: PropTypes.bool
   }),
   editTaskCallBack: PropTypes.func.isRequired,
 };

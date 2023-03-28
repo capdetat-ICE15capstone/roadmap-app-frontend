@@ -18,23 +18,24 @@
       "owner_name": "Matt",
       "creator_name": "Matt",
       "next_task": {
-        "title": "string",
-        "description": "string",
+        "title": "string2",
+        "description": "string2",
         "start_time": "2023-03-24T03:53:53",
         "deadline": "2023-03-24T03:53:53",
-        "shape": "square",
-        "color": "pink",
-        "tid": 42,
+        "shape": "triangle",
+        "color": "red",
+        "id": 41,
+        "tid": 41,
         "is_done": false,
         "subtasks": [
           {
-            "title": "string",
+            "title": "string2",
             "stid": 26,
             "id": 26,
             "is_done": false
           },
           {
-            "title": "string",
+            "title": "string2",
             "stid": 27,
             "id": 27,
             "is_done": false
@@ -70,19 +71,19 @@
       "color": "pink",
       "id": 42,
       "tid": 42,
-      "is_done": false,
+      "is_done": true,
       "subtasks": [
         {
           "title": "string",
           "stid": 26,
           "id": 26,
-          "is_done": false
+          "is_done": true
         },
         {
           "title": "string",
           "stid": 27,
           "id": 27,
-          "is_done": false
+          "is_done": true
         }
       ]
     },

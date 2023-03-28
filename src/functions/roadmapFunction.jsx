@@ -16,7 +16,7 @@ const inboundTaskName = [
 
 const inboundSubtaskName = [
   { from: "stid", to: "id" },
-  { from: "is_done", to: "isDone" },
+  { from: "is_done", to: "status" },
   { from: "title", to: "detail" },
 ];
 
@@ -63,6 +63,7 @@ export const getRoadmap = async (rid, timeout = 0, fetchAll = true) => {
         throw new Error("Fetch error");
       });
 
+    let beforeIsDone = true;
     response.tasks = await Promise.all(
       (response.task_relation.map(async (tid, index) => {
         if (tid !== response.next_task.tid) {
@@ -78,12 +79,14 @@ export const getRoadmap = async (rid, timeout = 0, fetchAll = true) => {
             dueDate: new Date(),
             description: "",
             id: tid,
-            isDone: false,
+            isDone: beforeIsDone,
             subtasks: [],
             hasFetched: false,
+            isTempId: false
           };
         }
 
+        beforeIsDone = false
         response.next_task.hasFetched = true;
         return reformTask(response.next_task);
       }))
@@ -109,7 +112,6 @@ export const getTask = async (tid, timeout = 0) => {
         throw new Error("Fetch error");
       });
 
-    response.hasFetched = true;
     return reformTask(response);
   } catch (error) {
     console.warn(error);
@@ -128,6 +130,8 @@ export const reformTask = (taskObj) => {
 
   newTaskObj.start_time = new Date(taskObj.start_time);
   newTaskObj.deadline = new Date(taskObj.deadline);
+  newTaskObj.isTempId = false;
+  newTaskObj.hasFetched = true;
 
   return objRename(newTaskObj, inboundTaskName);
 };

@@ -14,7 +14,6 @@ import { ReactComponent as NotiOn } from "../assets/notification/notiOn.svg";
 // TODO: put a null check around getRoadmap and createRoadmap pls
 // BUG: spinner does not stop spinning in error
 // TODO: more styling
-// TODO: confirm prompt
 // TODO: zigzag div
 // BUG: notification time
 
@@ -211,16 +210,24 @@ const RoadmapCreatePage = (props) => {
             break;
           default:
             // edit task
-            console.log("editing");
             setTasks(
               tasks.map((task) =>
                 task.id === submissionObject.id ? submissionObject : task
               )
             );
             setHasUnsavedChanges(true)
+            // maybe keep track of the edited task
             break;
         }
         break;
+      case "fetch":
+        // task was fetched but not edited
+        setTasks(
+          tasks.map((task) =>
+            task.id === submissionObject.id ? submissionObject : task
+          )
+        );
+        break
       case "failed":
         // user quit modal without saving
         console.log("failed");
@@ -303,7 +310,6 @@ const RoadmapCreatePage = (props) => {
   };
 
   const handleNotiSettingChange = (event) => {
-    console.log(JSON.parse(event.target.value));
     setNotiStatus(JSON.parse(event.target.value));
   };
 
@@ -359,9 +365,9 @@ const RoadmapCreatePage = (props) => {
       
       {loading && <Spinner />}
       <div className="px-10 h-full">
-        <div className="text-4xl font-inter font-bold mt-10 flex items-center">
+        <div className="text-4xl font-bold mt-10 flex items-center">
           <div className="flex flex-col">
-            <span>
+            <span className="font-inter">
               {mode === "create"
                 ? "Create"
                 : mode === "edit"
@@ -378,9 +384,9 @@ const RoadmapCreatePage = (props) => {
         </div>
 
         <form onSubmit={handleSubmit} className="h-full w-full max-w-full">
-          <div className="flex mt-4">
+          <div className="flex my-4">
             <input
-              className="text-2xl focus:outline-none"
+              className="text-2xl focus:outline-none font-inter"
               type="text"
               value={RMName}
               onChange={handleNameChange}
@@ -390,7 +396,7 @@ const RoadmapCreatePage = (props) => {
               type="button"
               disabled={isPublic}
               onClick={() => setPublicModal(true)}
-              className="bg-white disabled:bg-blue-100 h-10 w-28 text-md p-2 font-bold rounded-l-full border border-black"
+              className="bg-white disabled:bg-blue-100 h-10 w-28 text-md p-2 font-bold rounded-l-full border border-black font-nunito-sans"
             >
               Public
             </button>
@@ -398,16 +404,16 @@ const RoadmapCreatePage = (props) => {
               type="button"
               disabled={!isPublic}
               onClick={() => setPublicModal(true)}
-              className="h-10 w-28 bg-white disabled:bg-blue-100 text-md p-2 font-bold rounded-r-full border-black border-y border-r"
+              className="h-10 w-28 bg-white disabled:bg-blue-100 text-md p-2 font-bold rounded-r-full border-black border-y border-r font-nunito-sans"
             >
               Private
             </button>
           </div>
 
-          <label className="text-xl font-bold">Roadmap Description: </label>
+          <label className="text-xl font-bold font-nunito-sans">Roadmap Description: </label>
           <div className="my-3">
             <textarea
-              className="border rounded-lg border-gray-400 block text-xl p-1 w-full focus:outline-none shadow-lg"
+              className="border rounded-lg border-gray-400 block text-xl p-1 w-full focus:outline-none shadow-lg font-nunito-sans"
               rows="4"
               cols="60"
               value={RMDesc}
@@ -423,12 +429,12 @@ const RoadmapCreatePage = (props) => {
                 onChange={handleNotiSettingChange}
                 className="absolute z-10 right-4 top-4"
               >
-                <option value={JSON.stringify({ on: false })} key={"Nonoti"}>
+                <option value={JSON.stringify({ on: false })} key={"Nonoti"} className="font-nunito-sans">
                   No notification
                 </option>
                 {notificationDayOption.map((day) => {
                   return [true, false].map((beforeDueDate) => {
-                    return <option
+                    return <option className="font-nunito-sans"
                       value={JSON.stringify({
                         on: true,
                         detail: {
@@ -451,10 +457,11 @@ const RoadmapCreatePage = (props) => {
             </div>
             {/* End of Notification Setting */}
             {/* Giant task box */}
-            <div className="flex flex-col justify-center bg-blue-100 my-4 border-2 shadow-xl border-gray-300 rounded-3xl items-start h-2/3 p-4 pr-16 relative max-w-full w-full overflow-auto">
+            <div className="flex flex-col justify-center bg-blue-100 my-4 border-2 shadow-xl border-gray-300 rounded-3xl items-start h-2/3 p-4 pl-8 pr-16 relative max-w-full w-full overflow-auto">
               <div className="flex items-center">
                 {/* Task list */}
                 {tasks.map((task) => {
+                  console.log(task)
                   return (
                     <>
                       <div
@@ -481,7 +488,7 @@ const RoadmapCreatePage = (props) => {
                               />
                             </button>
                             <div className="w-full">
-                              <span className="block font-bold mx-auto text-center leading-5">
+                              <span className="block font-bold mx-auto text-center leading-5 font-nunito-sans">
                                 {task.name}
                               </span>
                             </div>
@@ -512,13 +519,13 @@ const RoadmapCreatePage = (props) => {
             <div className="relative">
               <div className="absolute right-0">
                 <button
-                  className="bg-transparent border-blue-700 font-bold text-blue-700 w-20 h-10 rounded-md border-2 mr-2"
+                  className="bg-transparent border-blue-700 font-bold text-blue-700 w-20 h-10 rounded-md border-2 mr-2 font-nunito-sans"
                   type="button"
                 >
                   Discard
                 </button>
                 <button
-                  className="rounded-md w-20 h-10 bg-blue-700 font-bold text-white"
+                  className="rounded-md w-20 h-10 bg-blue-700 font-bold text-white font-nunito-sans"
                   type="submit"
                 >
                   Save
@@ -527,8 +534,6 @@ const RoadmapCreatePage = (props) => {
             </div>
           </div>
         </form>
-
-        
       </div>
     </>
   );
