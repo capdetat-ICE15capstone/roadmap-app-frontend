@@ -4,15 +4,20 @@ import Kurumi from "../assets/kurumi.jpg";
 import RoadmapCreate from "../components/RoadmapCreate";
 import RoadmapDropdown from "../components/RoadmapDropdown";
 import { ReactComponent as DarkHomeIcon } from "../assets/dark_home_icon.svg";
+import { ReactComponent as BinIcon } from "../assets/Bin.svg" 
 
 const Home = () => {
   const [isRoadmap, setIsRoadmap] = useState(true);
+  const [isDeleteClick, setIsDeleteClick] = useState(false);
 
   const clickRoadmap = () => 
     setIsRoadmap(true)  
 
   const clickArchive = () => 
     setIsRoadmap(false)
+
+  const deleteRoadmap = () => 
+    setIsDeleteClick(!isDeleteClick)
 
   return (
     <>
@@ -97,7 +102,7 @@ const Home = () => {
                     created_at="03/17/2023" 
                     edited_at="today bich" 
                     views_counts={6338098421} />
-                    <RoadmapDropdown />
+                    <RoadmapDropdown onDelete={deleteRoadmap}/>
                   </div>
                   <div className="inline-block">
                     <Roadmap
@@ -107,7 +112,7 @@ const Home = () => {
                     created_at="03/17/2023" 
                     edited_at="03/18/2023" 
                     views_counts={177013} />
-                    <RoadmapDropdown />
+                    <RoadmapDropdown onDelete={deleteRoadmap}/>
                   </div>                  
                 </div>         
               </div>
@@ -115,9 +120,36 @@ const Home = () => {
           </div>
         </div>
       </div>
-      {false && <div className="absolute flex justify-center items-center w-screen h-screen bg-gray-300 bg-opacity-[0.58] z-auto">
-
-      </div>}    
+      {isDeleteClick && 
+      <div className="absolute flex justify-center items-center w-full h-screen bg-gray-300 bg-opacity-[0.58] z-20">
+        <div className="w-[852px] h-[281px]">
+          <div className="relative flex flex-col w-[852px] h-[281px]">
+            <div className="w-full h-[78px] bg-[#00286E] rounded-t-[20px]">
+              <div className="relative flex justify-center items-center left-[23px] top-[10px] w-fit">
+                <BinIcon className="mr-[13px]"/>
+                <div className="font-inter font-extrabold text-[36px] text-[#FFFFFF]">Confirm Deletion</div>
+              </div>
+            </div>
+            <div className="w-full h-[203px] bg-[#F0F3F4] rounded-b-[20px]">
+              <div className="relative top-[33px] left-[48px] w-[732px] h-fit">
+                <div className="font-nunito-sans font-bold text-[32px] text-[#333333] leading-[44px]">Are you sure that you want to permanently delete the selected roadmap?</div>
+                <div className="relative flex left-[490px] w-[293px] h-[43px]">
+                  <button onClick={deleteRoadmap} className="relative flex justify-center items-center mr-[13px] text-[#525252] hover:text-[#FFFFFF] border border-[#525252] rounded-[30px] w-[137px] hover:bg-[#e30b0b] hover:border-none">
+                    <div className="font-nunito-sans font-extrabold text-[20px] leading-[27px]">
+                      Cancel
+                    </div>
+                  </button>
+                  <button onClick={deleteRoadmap} className="relative flex justify-center items-center text-[#FDFDFB] bg-[#00286E] hover:bg-[#038a1c] border rounded-[30px] w-[137px]">
+                    <div className="font-nunito-sans font-extrabold text-[20px] leading-[27px]">
+                      Delete
+                    </div>
+                  </button>
+                </div>       
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>}
     </>
   );
 };

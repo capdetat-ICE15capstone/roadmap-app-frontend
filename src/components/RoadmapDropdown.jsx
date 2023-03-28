@@ -1,15 +1,11 @@
 import React, { useState } from "react"
 import { ReactComponent as DropdownIcon } from "../assets/roadmapDropdown_assets/dropdown_icon.svg"
 
-const RoadmapDropdown = () => {
+const RoadmapDropdown = ({onDelete}) => {
     const [isOpen, setIsOpen] = useState(false);
-    const [isDeleteClick, setIsDeleteClick] = useState(false);
 
     const handleClick = () => 
         setIsOpen(!isOpen);
-
-    const deleteRoadmap = () => 
-        setIsDeleteClick(!isDeleteClick)    
 
     return (
         <>
@@ -29,7 +25,7 @@ const RoadmapDropdown = () => {
                             Edit Roadmap
                         </div>
                     </button>
-                    <button onClick={deleteRoadmap} className="relative flex items-center h-12 rounded-b-xl hover:bg-[#808080]">
+                    <button onClick={onDelete} className="relative flex items-center h-12 rounded-b-xl hover:bg-[#808080]">
                         <div className="relative left-[15px] font-inter font-bold text-[20px] text-[#EF1414] leading-none">
                             Delete Roadmap
                         </div>
