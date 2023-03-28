@@ -342,6 +342,20 @@ const RoadmapCreatePage = (props) => {
           darkButtonText: "OK",
         }}
       />
+      {modalState ? (
+          // id -1 is passed as a temp id to let the modal know it's in create mode, otherwise it's in edit mode
+          editTaskID == -1 ? (
+            <TaskModal
+              oldData={{ id: -1 }}
+              editTaskCallBack={editTaskCallBack}
+            />
+          ) : (
+            <TaskModal
+              oldData={tasks.find((task) => task.id === editTaskID)}
+              editTaskCallBack={editTaskCallBack}
+            />
+          )
+        ) : null}
       
       {loading && <Spinner />}
       <div className="px-10 h-full">
@@ -454,10 +468,9 @@ const RoadmapCreatePage = (props) => {
                               className=""
                               type="button"
                               disabled={task.isDone}
-                              onClick={async () => {
-                                // awaiting a setState does not work lol
-                                await setEditTaskID(task.id);
-                                await setModalState(true);
+                              onClick={() => {
+                                setEditTaskID(task.id);
+                                setModalState(true);
                               }}
                             >
                               <CustomSVG
@@ -515,20 +528,7 @@ const RoadmapCreatePage = (props) => {
           </div>
         </form>
 
-        {modalState ? (
-          // id -1 is passed as a temp id to let the modal know it's in create mode, otherwise it's in edit mode
-          editTaskID == -1 ? (
-            <TaskModal
-              oldData={{ id: -1 }}
-              editTaskCallBack={editTaskCallBack}
-            />
-          ) : (
-            <TaskModal
-              oldData={tasks.find((task) => task.id === editTaskID)}
-              editTaskCallBack={editTaskCallBack}
-            />
-          )
-        ) : null}
+        
       </div>
     </>
   );

@@ -39,7 +39,7 @@ const MAX_DESCRIPTION_LENGTH = 255;
 const TaskModal = ({ oldData, editTaskCallBack }) => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  // DO NOT use these parameter directly, use getID to get an id instead
+  // WARNING: use getId() to get an ID only
   const [lastId, setLastId] = useState(0);
   const [subtasks, setSubTasks] = useState([]);
   const [nodeColor, setNodeColor] = useState(allNodeColor[0]);
@@ -232,21 +232,25 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
               <div
                 className={`flex items-start justify-between py-4 px-5 lg:py-8 border-b border-solid border-slate-200 rounded-t-2xl ${nodeColor.twbg} transition duration-300 items-center`}
               >
+                <div className={`${ oldData.id === -1 ? "" : "w-[50px]"}`}></div>
                 <h3 className="text-3xl font-semibold text-white">
                   {oldData.id === -1 ? "Create" : "Edit"} task
                 </h3>
-                <button
-                  type="button"
-                  className="p-1 ml-auto bg-transparent border-0 text-white float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
-                  onClick={() => setDeleteModal(true)}
-                  hidden={oldData.id === -1}
-                >
-                  {" "}
-                  <TrashIcon className="h-10" />
-                </button>
+                {oldData.id === -1 ? (
+                  <div></div>
+                ) : (
+                  <button
+                    type="button"
+                    // className="p-1 bg-transparent border-0 text-white text-3xl"
+                    onClick={() => setDeleteModal(true)}
+                  >
+                    {" "}
+                    <TrashIcon className="h-10" />
+                  </button>
+                )}
               </div>
               {/*body*/}
-              
+
               <div className="flex flex-col lg:flex-row">
                 {/* Left side */}
                 <div className="flex flex-col w-full lg:w-1/2 p-6">
