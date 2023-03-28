@@ -19,109 +19,111 @@ function App() {
   return (
     <>
       <BrowserRouter>
-        <Routes>
-          <Route
-            path="/signup"
-            element={
-              <Suspense fallback={<Spinner />}>
-                <Signup />
-              </Suspense>
-            }
-          ></Route>
-          <Route
-            path="/login"
-            element={
-              <Suspense fallback={<Spinner />}>
-                <Login />
-              </Suspense>
-            }
-          ></Route>
-          <Route
-            path="/intro"
-            element={
-              <Suspense fallback={<Spinner />}>
-                <Introduction />
-              </Suspense>
-            }
-          ></Route>
-          <Route
-            path="/premium"
-            element={
-              <Suspense fallback={<Spinner />}>
-                <Premium />
-              </Suspense>
-            }
-          ></Route>
-          <Route path="/" element={<Navbar />}>
-            <Route index element={<Home />} />
+        <Suspense fallback={<Spinner />}>
+          <Routes>
             <Route
-              path="home"
+              path="/signup"
               element={
                 <Suspense fallback={<Spinner />}>
-                  <Home />
+                  <Signup />
                 </Suspense>
               }
             ></Route>
             <Route
-              path="create"
+              path="/login"
               element={
                 <Suspense fallback={<Spinner />}>
-                  <RoadmapCreatePage mode="create" />
+                  <Login />
                 </Suspense>
               }
             ></Route>
             <Route
-              path="explore"
+              path="/intro"
               element={
                 <Suspense fallback={<Spinner />}>
-                  <Feed />
+                  <Introduction />
                 </Suspense>
               }
             ></Route>
             <Route
-              path="edit/:id"
+              path="/premium"
               element={
                 <Suspense fallback={<Spinner />}>
-                  <RoadmapCreatePage mode="edit" />
+                  <Premium />
                 </Suspense>
               }
             ></Route>
-            <Route
-              path="clone/:id"
-              element={
-                <Suspense fallback={<Spinner />}>
-                  <RoadmapCreatePage mode="clone" />
-                </Suspense>
-              }
-            ></Route>
-            <Route
-              path="view/:id"
-              element={
-                <Suspense fallback={<Spinner />}>
-                  {/* insert view roadmap element */}
-                </Suspense>
-              }
-            ></Route>
-            <Route
-              path="setting"
-              element={
-                <Suspense fallback={<Spinner />}>
-                  <Setting />{" "}
-                </Suspense>
-              }
-            ></Route>
-            <Route
-              path="profile"
-              element={
-                <Suspense fallback={<Spinner />}>
-                  <Profile />{" "}
-                </Suspense>
-              }
-            />
-            <Route path="/404" element={<NoPage />} />
-            <Route path="*" element={<Navigate replace to="/404" />} />
-          </Route>
-        </Routes>
+            <Route path="/" element={<Navbar />}>
+              <Route index element={<Home />} />
+              <Route
+                path="home"
+                element={
+                  <Suspense fallback={<Spinner />}>
+                    <Home />
+                  </Suspense>
+                }
+              ></Route>
+              <Route
+                path="create"
+                element={
+                  <Suspense fallback={<Spinner />}>
+                    <RoadmapCreatePage mode="create" />
+                  </Suspense>
+                }
+              ></Route>
+              <Route
+                path="explore"
+                element={
+                  <Suspense fallback={<Spinner />}>
+                    <Feed />
+                  </Suspense>
+                }
+              ></Route>
+              <Route
+                path="edit/:id"
+                element={
+                  <Suspense fallback={<Spinner />}>
+                    <RoadmapCreatePage mode="edit" />
+                  </Suspense>
+                }
+              ></Route>
+              <Route
+                path="clone/:id"
+                element={
+                  <Suspense fallback={<Spinner />}>
+                    <RoadmapCreatePage mode="clone" />
+                  </Suspense>
+                }
+              ></Route>
+              <Route
+                path="view/:id"
+                element={
+                  <Suspense fallback={<Spinner />}>
+                    {/* insert view roadmap element */}
+                  </Suspense>
+                }
+              ></Route>
+              <Route
+                path="setting"
+                element={
+                  <Suspense fallback={<Spinner />}>
+                    <Setting />{" "}
+                  </Suspense>
+                }
+              ></Route>
+              <Route
+                path="profile"
+                element={
+                  <Suspense fallback={<Spinner />}>
+                    <Profile />{" "}
+                  </Suspense>
+                }
+              />
+              <Route path="/404" element={<NoPage />} />
+              <Route path="*" element={<Navigate replace to="/404" />} />
+            </Route>
+          </Routes>
+        </Suspense>
       </BrowserRouter>
     </>
   );
