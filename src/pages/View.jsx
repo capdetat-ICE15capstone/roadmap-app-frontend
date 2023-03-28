@@ -61,7 +61,7 @@ export default function View() {
         'description': 'Task descriptions. This is the task for the third milestone.',
         'startDate': '20200120',
         'dueDate': '20200121',
-        'nodeColor': 'yellow',
+        'nodeColor': 'red',
         'nodeShape': 'triangle',
         'subtasks': [
           {
@@ -133,7 +133,7 @@ function RoadmapDetails({ roadmap, detailToggle }) {
 function RoadmapDisplay({ roadmap, current, setCurrent }) {
 
   return (
-    <div className='flex bg-gray-100 rounded-2xl shadow-sm p-4 overflow-x-auto'>
+    <div className='flex flex-col bg-gray-100 rounded-2xl shadow-sm p-4 overflow-x-auto'>
       <div className='flex m-8 space-x-[25px]'>
         {roadmap.tasks.map(task => {
           const subtasks = task.subtasks;
@@ -160,31 +160,44 @@ function RoadmapDisplay({ roadmap, current, setCurrent }) {
           }
           switch (task.nodeColor) {
             case "red":
-              nodeColor = "";
+              nodeColor = "bg-red";
               break;
             case "blue":
-              nodeColor = "";
+              nodeColor = "bg-red";
               break;
             case "green":
-              nodeColor = "";
+              nodeColor = "bg-red";
               break;
             default:
           }
           return (
-            <div key={task.id} className='flex items-center relative'>
-
+            <div key={task.id} className='flex flex-col items-center relative'>
+              <div className='text-sm font-bold text-nav-blue mb-2'>
+                50 xp
+              </div>
               <button
                 className={nodeShape}
                 onClick={() => {
                   setCurrent(task.id);
                 }}
               />
+              <div className='text-sm font-bold text-nav-blue mt-2'>
+                {task.name}
+              </div>
               {(task.id !== '1') && (
-                <hr className="w-[75px] h-1 bg-gray-400 border-0 md:my-10 absolute left-[-50px]" />
+                <hr className="w-[75px] h-1 bg-gray-400 border-0 md:my-10 absolute left-[-50px] top-[10px]" />
               )}
             </div>
           );
         })}
+      </div>
+      <div className='flex justify-between'>
+        <div className='flex text-sm'>
+          0 Views
+        </div>
+        <div className='flex text-sm'>
+          Latest update: 000000
+        </div>
       </div>
     </div>
   );
