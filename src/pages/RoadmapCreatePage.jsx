@@ -33,6 +33,39 @@ const usePreviousState = (value) => {
   return ref.current;
 };
 
+const TaskItem = ({ task, setEditTaskID, setModalState }) => {
+  // Task node Component
+  return (
+    <div className="flex">
+      <div className="flex">
+        <div className="flex flex-col gap-2 items-center">
+          <button
+            type="button"
+            disabled={task.isDone}
+            onClick={() => {
+              setEditTaskID(task.id);
+              setModalState(true);
+            }}
+          >
+            <Check hidden={!task.isDone} className="absolute" />
+            <CustomSVG
+              type={task.nodeShape}
+              className={`${getTWFill(task.nodeColor)}`}
+              size={60}
+              isStrokeOn={true}
+            />
+          </button>
+          <div className="w-full">
+            <span className="block font-bold mx-auto text-center leading-5 font-nunito-sans">
+              {task.name}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const RoadmapCreatePage = (props) => {
   const { mode } = props; // props from parent
   const { state } = useLocation(); // state from previous page, including fetched roadmap data
@@ -447,6 +480,7 @@ const RoadmapCreatePage = (props) => {
                 >
                   No notification
                 </option>
+                {/* List of all notification option */}
                 {notificationDayOption.map((day) => {
                   return [true, false].map((beforeDueDate) => {
                     return (
@@ -488,61 +522,40 @@ const RoadmapCreatePage = (props) => {
                     >
                       {/* Task list */}
                       {tasks.map((task, index) => {
-                        return (
-                          <Draggable
-                            key={task.id}
-                            draggableId={task.id.toString()}
-                            index={index}
-                          >
-                            {(provided) => (
-                              <div
-                                className="flex items-center"
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                                ref={provided.innerRef}
-                              >
+                        {
+                          return task.isDone ? (
+                            <TaskItem
+                              task={task}
+                              key={task.id}
+                              setEditTaskID={setEditTaskID}
+                              setModalState={setModalState}
+                            />
+                          ) : (
+                            <Draggable
+                              key={task.id}
+                              draggableId={task.id.toString()}
+                              index={index}
+                            >
+                              {(provided) => (
                                 <div
-                                  className="flex"
-                                  ref={(el) => addRef(task.id, el)}
+                                  className="flex items-center"
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                  ref={provided.innerRef}
                                 >
-                                  <div className="flex">
-                                    <div className="flex flex-col gap-2 items-center">
-                                      <button
-                                        type="button"
-                                        disabled={task.isDone}
-                                        onClick={() => {
-                                          setEditTaskID(task.id);
-                                          setModalState(true);
-                                        }}
-                                      >
-                                        <Check
-                                          hidden={!task.isDone}
-                                          className="absolute"
-                                        />
-                                        <CustomSVG
-                                          type={task.nodeShape}
-                                          className={`${getTWFill(
-                                            task.nodeColor
-                                          )}`}
-                                          size={60}
-                                          isStrokeOn={true}
-                                        />
-                                      </button>
-                                      <div className="w-full">
-                                        <span className="block font-bold mx-auto text-center leading-5 font-nunito-sans">
-                                          {task.name}
-                                        </span>
-                                      </div>
-                                    </div>
-                                  </div>
+                                  <TaskItem
+                                    task={task}
+                                    setEditTaskID={setEditTaskID}
+                                    setModalState={setModalState}
+                                  />
+                                  {/* <div className="h-full flex items-center">
+                                    <hr className="bg-black h-1 w-20"></hr>
+                                  </div> */}
                                 </div>
-                                {/* <div className="h-full flex items-center">
-                                  <hr className="bg-black h-1 w-20"></hr>
-                                </div> */}
-                              </div>
-                            )}
-                          </Draggable>
-                        );
+                              )}
+                            </Draggable>
+                          );
+                        }
                       })}
                       {provided.placeholder}
                       {/* End of task list */}
