@@ -7,7 +7,9 @@ import { isUserPremium } from "../functions/userFunction";
 import { CustomSVG, getTWFill } from "../components/CustomSVG";
 import { ReactComponent as AddButton } from "../assets/addButton.svg";
 import TwoButtonModal from "../components/TwoButtonModal";
-import { ReactComponent as Check } from '../assets/check.svg'
+import { ReactComponent as Check } from "../assets/check.svg";
+import { DragDropContext, Draggable } from "react-beautiful-dnd";
+import { StrictModeDroppable } from "../components/StrictModeDroppable";
 import { motion } from "framer-motion";
 import { ReactComponent as NotiOff } from "../assets/notification/notiOff.svg";
 import { ReactComponent as NotiOn } from "../assets/notification/notiOn.svg";
@@ -279,6 +281,15 @@ const RoadmapCreatePage = (props) => {
     setHasUnsavedChanges(true);
   };
 
+  const handleOrderSwitch = (result) => {
+    if (result.destination === null) return;
+    const items = Array.from(tasks);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+    setTasks(items);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     await searchTags();
@@ -466,58 +477,89 @@ const RoadmapCreatePage = (props) => {
             </div>
             {/* End of Notification Setting */}
             {/* Giant task box */}
-            <div className="flex flex-col justify-center bg-blue-100 my-4 border-2 shadow-xl border-gray-300 rounded-3xl items-start h-2/3 p-4 pl-8 pr-16 relative max-w-full w-full overflow-auto">
-              <div className="flex items-center">
-                {/* Task list */}
-                {tasks.map((task) => {
-                  return (
-                    <div key={task.id} className="flex items-center">
-                      <div className="flex" ref={(el) => addRef(task.id, el)}>
-                        <div className="flex">
-                          <div className="flex flex-col gap-2 items-center">
-                            <button
-                              type="button"
-                              disabled={task.isDone}
-                              onClick={() => {
-                                setEditTaskID(task.id);
-                                setModalState(true);
-                              }}
-                            >
-                              <Check hidden={!task.isDone} className="absolute"/>
-                              <CustomSVG
-                                type={task.nodeShape}
-                                className={`${getTWFill(task.nodeColor)}`}
-                                size={60}
-                                isStrokeOn={true}
-                              />
-                              
-                            </button>
-                            <div className="w-full">
-                              <span className="block font-bold mx-auto text-center leading-5 font-nunito-sans">
-                                {task.name}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="h-full flex items-center">
-                        <hr className="bg-black h-1 w-20"></hr>
+            <div className="flex overflow-x-auto flex-col justify-center bg-blue-100 my-4 border-2 shadow-xl border-gray-300 rounded-3xl items-start h-2/3 p-4 pl-8 pr-16 relative max-w-full w-full">
+              <DragDropContext onDragEnd={handleOrderSwitch}>
+                <StrictModeDroppable droppableId="tasks" direction="horizontal">
+                  {(provided) => (
+                    <div
+                      className="flex items-center"
+                      {...provided.droppableProps}
+                      ref={provided.innerRef}
+                    >
+                      {/* Task list */}
+                      {tasks.map((task, index) => {
+                        return (
+                          <Draggable
+                            key={task.id}
+                            draggableId={task.id.toString()}
+                            index={index}
+                          >
+                            {(provided) => (
+                              <div
+                                className="flex items-center"
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                                ref={provided.innerRef}
+                              >
+                                <div
+                                  className="flex"
+                                  ref={(el) => addRef(task.id, el)}
+                                >
+                                  <div className="flex">
+                                    <div className="flex flex-col gap-2 items-center">
+                                      <button
+                                        type="button"
+                                        disabled={task.isDone}
+                                        onClick={() => {
+                                          setEditTaskID(task.id);
+                                          setModalState(true);
+                                        }}
+                                      >
+                                        <Check
+                                          hidden={!task.isDone}
+                                          className="absolute"
+                                        />
+                                        <CustomSVG
+                                          type={task.nodeShape}
+                                          className={`${getTWFill(
+                                            task.nodeColor
+                                          )}`}
+                                          size={60}
+                                          isStrokeOn={true}
+                                        />
+                                      </button>
+                                      <div className="w-full">
+                                        <span className="block font-bold mx-auto text-center leading-5 font-nunito-sans">
+                                          {task.name}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                                {/* <div className="h-full flex items-center">
+                                  <hr className="bg-black h-1 w-20"></hr>
+                                </div> */}
+                              </div>
+                            )}
+                          </Draggable>
+                        );
+                      })}
+                      {provided.placeholder}
+                      {/* End of task list */}
+                      {/* Add button */}
+                      <div className="">
+                        <button
+                          type="button"
+                          disabled={isAddButtonDisabled()}
+                          onClick={initializeTaskCreator}
+                        >
+                          <AddButton className="h-10 w-auto" />
+                        </button>
                       </div>
                     </div>
-                  );
-                })}
-                {/* End of task list */}
-                {/* Add button */}
-                <div className="">
-                  <button
-                    type="button"
-                    disabled={isAddButtonDisabled()}
-                    onClick={initializeTaskCreator}
-                  >
-                    <AddButton className="h-10 w-auto" />
-                  </button>
-                </div>
-              </div>
+                  )}
+                </StrictModeDroppable>
+              </DragDropContext>
             </div>
             {/* End of Task box */}
 
