@@ -12,8 +12,8 @@ export default function Signup() {
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [agreement, setAgreement] = useState(false);
 
-  const handleSignupSubmit = (e) => {
-    e.preventDefault();
+  const handleSignupSubmit = (event) => {
+    event.preventDefault();
 
     if (email === "" || firstName === "" || lastName === "" || username === "" || password === "" || passwordConfirm === "") {
       console.log("all form must be filled");
@@ -63,9 +63,14 @@ export default function Signup() {
 
   return (
     <>
-      <div className={`flex flex-col h-screen w-screen absolute`}>
-        <div className="flex m-auto">
-          <div className="flex flex-col m-8">
+      <div className={`flex flex-row h-screen w-screen`}>
+        <div className="flex justify-center w-1/2 bg-gradient-to-b from-cyan-500 to-blue-500">
+          <div className="flex flex-col justify-center m-8">
+
+          </div>
+        </div>
+        <div className="flex justify-center w-1/2">
+          <div className="flex flex-col justify-center m-8">
             <p className="text-center mb-4 text-3xl font-bold text-slate-600">
               Create Account
             </p>

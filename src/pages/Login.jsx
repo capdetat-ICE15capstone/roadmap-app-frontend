@@ -30,9 +30,14 @@ export default function Login() {
 
   return (
     <>
-      <div className={`flex flex-col h-screen w-screen`}>
-        <div className="flex m-auto">
-          <div className="flex flex-col m-6">
+      <div className={`flex flex-row h-screen w-screen`}>
+        <div className="flex justify-center w-1/2 bg-gradient-to-b from-cyan-500 to-blue-500">
+          <div className="flex flex-col justify-center m-8">
+
+          </div>
+        </div>
+        <div className="flex justify-center w-1/2">
+          <div className="flex flex-col justify-center m-6">
             <p className="flex justify-center mb-4 text-3xl font-bold text-slate-600">
               User Login
             </p>
