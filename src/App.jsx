@@ -6,11 +6,7 @@ import NoPage from "./pages/NoPage";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { lazy, Suspense } from "react";
 
-import { useState } from "react";
-import Login from "./pages/Login";
-import useToken from "./components/useToken";
-
-// const Login = lazy(() => import("./pages/Login"));
+const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
 const RoadmapCreatePage = lazy(() => import("./pages/RoadmapCreatePage"));
 const Setting = lazy(() => import("./pages/Setting"));
@@ -19,17 +15,26 @@ const Introduction = lazy(() => import("./pages/Introduction"));
 const Premium = lazy(() => import("./pages/Premium"));
 
 function App() {
-
-  const { token, setToken } = useToken();
-
-  if (!token) {
-    return <Login setToken={setToken} />
-  }
-  
   return (
     <>
       <BrowserRouter>
         <Routes>
+          <Route
+            path="/login"
+            element={
+              <Suspense fallback={<Spinner />}>
+                <Login />
+              </Suspense>
+            }
+          ></Route>
+          <Route
+            path="/signup"
+            element={
+              <Suspense fallback={<Spinner />}>
+                <Signup />
+              </Suspense>
+            }
+          ></Route>
           <Route
             path="/intro"
             element={
