@@ -8,13 +8,17 @@ import { ReactComponent as Triangle } from "../assets/shapes/Triangle.svg"
 export default function View() {
   const navigate = useNavigate();
 
+  const user_id = 133456;
+
   const [current, setCurrent] = useState('1');
+  const [isOwner, setIsOwner] = useState(false);
   const [detailToggle, setCurrentDetailToggle] = useState(true);
 
   const [roadmap, setRoadmap] = useState({
     'name': 'Lorem Ipsum Roadmap',
     'description': 'Morbi facilisis finibus lacus quis aliquam. Vestibulum turpis nibh, imperdiet non gravida quis, pretium vitae est. Phasellus in sollicitudin quam, id lacinia nisl.',
     'publicity': true,
+    'owner-id': 123456,
     'tasks': [
       {
         'id': '1',
@@ -96,12 +100,15 @@ export default function View() {
   }
 
   useEffect(() => {
-    for (var i = 0; i < roadmap.tasks.length; i++) {
-      for (var j = 0; j < roadmap.tasks[i].subtasks.length; j++) {
-        if (roadmap.tasks[i].subtasks[j].status === false) {
-          console.log("current task " + roadmap.tasks[i].id);
-          setCurrent(roadmap.tasks[i].id);
-          return;
+    if (user_id === roadmap['owner-id']) {
+      setIsOwner(true);
+      for (var i = 0; i < roadmap.tasks.length; i++) {
+        for (var j = 0; j < roadmap.tasks[i].subtasks.length; j++) {
+          if (roadmap.tasks[i].subtasks[j].status === false) {
+            console.log("current task " + roadmap.tasks[i].id);
+            setCurrent(roadmap.tasks[i].id);
+            return;
+          }
         }
       }
     }
@@ -115,7 +122,7 @@ export default function View() {
             <div className='text-3xl font-extrabold'>
               {roadmap.name}
             </div>
-            {true && (
+            {isOwner === true && (
               <div className="flex space-x-1">
                 <button onClick={() => console.log("clone!")} className="bg-sub-blue grow text-white px-4 py-2 font-semilight rounded-full text-sm font-bold" type="button">
                   Clone
@@ -128,7 +135,7 @@ export default function View() {
                 </button>
               </div>
             )}
-            {false && (
+            {isOwner === false && (
               <div className="flex space-x-1">
                 <button onClick={() => console.log("clone!")} className="bg-sub-blue grow text-white px-4 py-2 font-semilight rounded-full text-sm font-bold" type="button">
                   Clone
@@ -153,7 +160,7 @@ export default function View() {
             </div>
           </div>
           <div className='flex flex-col bg-gray-100 rounded-2xl shadow-sm p-4 overflow-x-auto'>
-            {true && (
+            {isOwner === true && (
               <div className='flex m-8 space-x-[25px]'>
                 {roadmap.tasks.map((task, index) => {
                   const zIndex = 10 - index;
@@ -162,13 +169,15 @@ export default function View() {
                       <div className="absolute top-1/2 -left-1/4 transform -translate-x-1/2 -translate-y-3/4 -z-10">
                         {(task.id !== '1') && <hr className="w-[75px] h-1 bg-sub-blue border-0" />}
                       </div>
-                      {nodeShapeGenerator(task.nodeShape)}
+                      <button onClick={() => console.log("click node")}>
+                        {nodeShapeGenerator(task.nodeShape)}
+                      </button>
                     </div>
                   );
                 })}
               </div>
             )}
-            {false && (
+            {isOwner === false && (
               <div className='flex m-8 space-x-[25px]'>
                 {roadmap.tasks.map((task, index) => {
                   const zIndex = 10 - index;
@@ -212,7 +221,7 @@ export default function View() {
                   </div>
                 </div>
               </div>
-              {true && (
+              {isOwner === true && (
                 <div className='flex flex-col space-y-2 w-1/2 p-4 bg-gray-50 rounded-r justify-between'>
                   <div className='flex flex-col justify-center space-y-2 text-sm'>
                     {roadmap.tasks[current - 1].subtasks.map(subtask => {
@@ -240,7 +249,7 @@ export default function View() {
                   </div>
                 </div>
               )}
-              {false && (
+              {isOwner === false && (
                 <div className='flex flex-col space-y-2 w-1/2 p-4 bg-gray-50 rounded-r'>
                   <div className='flex flex-col justify-center space-y-2 text-sm'>
                     {roadmap.tasks[current - 1].subtasks.map(subtask => {
@@ -257,6 +266,9 @@ export default function View() {
           </div>
         </div>
       </div>
+      <button onClick={() => setIsOwner(!isOwner)} className="bg-nav-blue text-white px-4 py-2 font-semilight text-sm font-bold" type="button">
+        CHANGE VIEW MODE (FOR DEVELOPMENT)
+      </button>
     </>
   )
 }
