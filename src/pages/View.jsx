@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 
+import { ReactComponent as Circle } from "../assets/shapes/Circle.svg"
+import { ReactComponent as Square } from "../assets/shapes/Square.svg"
+import { ReactComponent as Triangle } from "../assets/shapes/Triangle.svg"
+
 export default function View() {
   const navigate = useNavigate();
 
@@ -171,22 +175,25 @@ function RoadmapDisplay({ roadmap, current, setCurrent }) {
             default:
           }
           return (
-            <div key={task.id} className='flex flex-col items-center relative'>
-              <div className='text-sm font-bold text-nav-blue mb-2'>
+            <div key={task.id} className='flex flex-col items-center'>
+              {/* <div className='text-sm font-bold text-nav-blue mb-2'>
                 50 xp
+              </div> */}
+              <div className="relative">
+                <button
+                  onClick={() => {
+                    setCurrent(task.id);
+                  }}
+                >
+                  {nodeShapeGenerator(task.nodeShape)}
+                </button>
+                <div className="absolute bottom-0 left-0">
+                  <Circle />
+                  {(task.id !== '1') && (
+                    <hr className="w-[75px] h-1 bg-gray-400 border-0 z-10" />
+                  )}
+                </div>
               </div>
-              <button
-                className={nodeShape}
-                onClick={() => {
-                  setCurrent(task.id);
-                }}
-              />
-              <div className='text-sm font-bold text-nav-blue mt-2'>
-                {task.name}
-              </div>
-              {(task.id !== '1') && (
-                <hr className="w-[75px] h-1 bg-gray-400 border-0 md:my-10 absolute left-[-50px] top-[10px]" />
-              )}
             </div>
           );
         })}
@@ -201,6 +208,19 @@ function RoadmapDisplay({ roadmap, current, setCurrent }) {
       </div>
     </div>
   );
+}
+
+function nodeShapeGenerator({ nodeShape }) {
+  switch (nodeShape) {
+    case "square":
+      return (<Square />);
+    case "circle":
+      return (<Circle />);
+    case "triangle":
+      return (<Triangle />);
+    default:
+      return (<Circle />);
+  }
 }
 
 function MilestoneDetails({ roadmap, current }) {
