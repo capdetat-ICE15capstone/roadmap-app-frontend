@@ -1,7 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router";
 
-const featureData = [
+
+const firstRowData = [
   {
     imgSrc: "./src/assets/intro/1.svg",
     title: "Roadmap for planning",
@@ -29,7 +30,7 @@ const featureData = [
   },
 ];
 
-const howItWorkData = [
+const secondRowData = [
   {
     imgSrc: "./src/assets/intro/6.svg",
     title: "Feed",
@@ -57,6 +58,32 @@ const howItWorkData = [
     body: "Earn points for completing the daily quest; point can be exchanged into items",
   },
 ];
+
+const FeatureList = (props) => {
+  const { dataSet } = props
+
+  return dataSet === null ? (
+    <div></div>
+  ) : (
+    <div className="flex flex-col md:flex-row">
+      {dataSet.map((data) => {
+        return (
+          <div className="flex flex-col basis-1/2 gap-2">
+            <div className="flex justify-center">
+              <img
+                src={data.imgSrc}
+                className={`${data.extra ? data.extra : ""} w-32 h-32`}
+              ></img>
+            </div>
+
+            <h1 className="font-bold text-xl text-center">{data.title}</h1>
+            <h1 className="text-center">{data.body}</h1>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
 
 const Introduction = () => {
   const navigate = useNavigate();
@@ -91,8 +118,14 @@ const Introduction = () => {
     <>
       <div className="h-20 w-full sticky flex justify-between items-center">
         <div className="m-4">
-          <img src="./src/assets/intro/logo.svg" className="inline-block mr-2"></img>
-          <img src="./src/assets/intro/MileMap.svg" className="inline-block"></img>
+          <img
+            src="./src/assets/intro/logo.svg"
+            className="inline-block mr-2"
+          ></img>
+          <img
+            src="./src/assets/intro/MileMap.svg"
+            className="inline-block"
+          ></img>
         </div>
         <div className="flex items-center">
           {/* this path is only temporary */}
@@ -139,54 +172,19 @@ const Introduction = () => {
           <img src="./src/assets/intro/0.svg" className="max-w-xl"></img>
         </div>
       </div>
-      <div className="px-10 flex flex-col gap-12 mb-12">
+      <div className="p-10 flex flex-col gap-12">
         <div className="flex flex-col gap-10">
           <div className="flex justify-center">
             <h1 className="font-bold text-xl">How it works</h1>
           </div>
-          <div className="grid grid-cols-5 grid-rows-2 grid-flow-col-dense">
-            {featureData.map((data) => {
-              return (
-                <>
-                  <div className="flex justify-center" >
-                    <img src={data.imgSrc} className={`${data.extra ? data.extra : ""}`}></img>
-                  </div>
-                  <div className="grid grid-rows-3">
-                    <h1 className="text-xl font-bold text-center row-span-1">
-                      {data.title}
-                    </h1>
-                    <h1 className="text-center row-span-2">{data.body}</h1>
-                  </div>
-                </>
-              );
-            })}
-          </div>
+          <FeatureList dataSet={firstRowData} />
         </div>
 
         <div className="flex flex-col gap-10">
           <div className="flex justify-center">
             <h1 className="text-xl font-bold">Other Features</h1>
           </div>
-          <div className="grid grid-cols-5 grid-rows-2 grid-flow-col-dense">
-            {howItWorkData.map((data) => {
-              return (
-                <>
-                  <div className="flex justify-center">
-                    <img
-                      src={data.imgSrc}
-                      className={`${data.extra ? data.extra : ""}`}
-                    ></img>
-                  </div>
-                  <div className="grid grid-rows-3">
-                    <h1 className="font-bold text-xl text-center row-span-1">
-                      {data.title}
-                    </h1>
-                    <h1 className="text-center row-span-2">{data.body}</h1>
-                  </div>
-                </>
-              );
-            })}
-          </div>
+          <FeatureList dataSet={secondRowData} />
         </div>
       </div>
 
