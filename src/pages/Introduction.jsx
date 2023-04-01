@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router";
-
+import { motion } from "framer-motion";
 
 const firstRowData = [
   {
@@ -60,7 +60,7 @@ const secondRowData = [
 ];
 
 const FeatureList = (props) => {
-  const { dataSet } = props
+  const { dataSet } = props;
 
   return dataSet === null ? (
     <div></div>
@@ -68,7 +68,12 @@ const FeatureList = (props) => {
     <div className="flex flex-col md:flex-row">
       {dataSet.map((data) => {
         return (
-          <div className="flex flex-col basis-1/2 gap-2">
+          <motion.div
+            key={data.imgSrc}
+            className="flex flex-col basis-1/2 gap-2"
+            initial={{ opacity: 0}}
+            whileInView={{ opacity: 1}}
+          >
             <div className="flex justify-center">
               <img
                 src={data.imgSrc}
@@ -78,7 +83,7 @@ const FeatureList = (props) => {
 
             <h1 className="font-bold text-xl text-center">{data.title}</h1>
             <h1 className="text-center">{data.body}</h1>
-          </div>
+          </motion.div>
         );
       })}
     </div>
