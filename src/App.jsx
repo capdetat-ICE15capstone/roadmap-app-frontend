@@ -8,6 +8,7 @@ import { lazy, Suspense } from "react";
 
 const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
+const View = lazy(() => import("./pages/View"));
 const RoadmapCreatePage = lazy(() => import("./pages/RoadmapCreatePage"));
 const Home = lazy(() => import("./pages/Home"));
 const Setting = lazy(() => import("./pages/Setting"));
