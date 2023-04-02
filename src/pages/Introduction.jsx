@@ -1,7 +1,9 @@
 import React from "react";
 import { useNavigate } from "react-router";
+import { motion } from "framer-motion";
+import Roadmap from "../components/Roadmap";
 
-const featureData = [
+const firstRowData = [
   {
     imgSrc: "./src/assets/intro/1.svg",
     title: "Roadmap for planning",
@@ -29,7 +31,7 @@ const featureData = [
   },
 ];
 
-const howItWorkData = [
+const secondRowData = [
   {
     imgSrc: "./src/assets/intro/6.svg",
     title: "Feed",
@@ -58,41 +60,130 @@ const howItWorkData = [
   },
 ];
 
-const Introduction = () => {
-  const navigate = useNavigate();
+const RecommendedRoadmap = React.forwardRef((props, ref) => {
+  // component for displaying 4 roadmap at the footer
 
-  const getRoadmap = () => {
-    // this function return 4 roadmap panel
+  // get 4 roadmap data
+  // fake data
+  const RMdata = [
+    {
+      owner_id: 1,
+      creator_id: 2,
+      owner_name: "Taiwan",
+      creator_name: "China",
+      rid: 4,
+      views_count: 200,
+      stars_count: 600,
+      forks_count: 400,
+      created_at: "ssssssssss",
+      edited_at: "SSSSSSSSS",
+      title: "How to not suck",
+    },
+    {
+      owner_id: 1,
+      creator_id: 2,
+      owner_name: "Taiwan",
+      creator_name: "China",
+      rid: 5,
+      views_count: 200,
+      stars_count: 600,
+      forks_count: 400,
+      created_at: "ssssssssss",
+      edited_at: "SSSSSSSSS",
+      title: "How to not suck",
+    },
+    {
+      owner_id: 1,
+      creator_id: 2,
+      owner_name: "Taiwan",
+      creator_name: "China",
+      rid: 6,
+      views_count: 200,
+      stars_count: 600,
+      forks_count: 400,
+      created_at: "ssssssssss",
+      edited_at: "SSSSSSSSS",
+      title: "How to not suck",
+    },
+    {
+      owner_id: 1,
+      creator_id: 2,
+      owner_name: "Taiwan",
+      creator_name: "China",
+      rid: 7,
+      views_count: 200,
+      stars_count: 600,
+      forks_count: 400,
+      created_at: "ssssssssss",
+      edited_at: "SSSSSSSSS",
+      title: "How to not suck",
+    },
+  ];
 
-    // temporary img to used for placeholder
-    const pictureLink = [
-      "https://i2.wp.com/gi-builds.sfo3.digitaloceanspaces.com/characters/hu_tao/header_image.png?strip=all&quality=10&w=900",
-      "https://i2.wp.com/gi-builds.sfo3.digitaloceanspaces.com/characters/hu_tao/header_image.png?strip=all&quality=10&w=900",
-      "https://i2.wp.com/gi-builds.sfo3.digitaloceanspaces.com/characters/hu_tao/header_image.png?strip=all&quality=10&w=900",
-      "https://i2.wp.com/gi-builds.sfo3.digitaloceanspaces.com/characters/hu_tao/header_image.png?strip=all&quality=10&w=900",
-    ];
-
-    return (
-      <>
-        <div className="flex px-10">
-          {pictureLink.map((rm) => {
-            return (
-              <div className="h-20 w-auto">
-                <img src={rm}></img>
-              </div>
-            );
+  return (
+    <div className="flex flex-col justify-center bg-nav-blue" ref={ref}>
+      <div className="text-white font-bold flex text-2xl justify-center my-10">
+        Recommended Roadmap
+      </div>
+      <div>
+        <div className="flex gap-4 justify-center flex-wrap ">
+          {RMdata.map((roadmap) => {
+            return <Roadmap key={roadmap.rid} {...roadmap} />;
           })}
         </div>
-      </>
-    );
-  };
+      </div>
+    </div>
+  );
+});
+
+const MotionRecommendedRoadmap = motion(RecommendedRoadmap)
+
+const FeatureList = (props) => {
+  const { dataSet } = props;
+
+  return dataSet === null ? (
+    <div></div>
+  ) : (
+    <div className="flex flex-col gap-8 md:flex-row md:gap-0">
+      {dataSet.map((data) => {
+        return (
+          <motion.div
+            key={data.imgSrc}
+            className="flex flex-col basis-1/2 gap-2"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+          >
+            <div className="flex justify-center">
+              <img
+                src={data.imgSrc}
+                className={`${data.extra ? data.extra : ""} w-32 h-32`}
+              ></img>
+            </div>
+
+            <h1 className="font-bold text-xl text-center">{data.title}</h1>
+            <h1 className="text-center">{data.body}</h1>
+          </motion.div>
+        );
+      })}
+    </div>
+  );
+};
+
+const Introduction = () => {
+  const navigate = useNavigate();
 
   return (
     <>
       <div className="h-20 w-full sticky flex justify-between items-center">
         <div className="m-4">
-          <img src="./src/assets/intro/logo.svg" className="inline-block mr-2"></img>
-          <img src="./src/assets/intro/MileMap.svg" className="inline-block"></img>
+          <img
+            src="./src/assets/intro/logo.svg"
+            className="inline-block mr-2"
+          ></img>
+          <img
+            src="./src/assets/intro/MileMap.svg"
+            className="inline-block"
+          ></img>
         </div>
         <div className="flex items-center">
           {/* this path is only temporary */}
@@ -139,58 +230,26 @@ const Introduction = () => {
           <img src="./src/assets/intro/0.svg" className="max-w-xl"></img>
         </div>
       </div>
-      <div className="px-10 flex flex-col gap-12 mb-12">
+      <div className="p-10 flex flex-col gap-12">
         <div className="flex flex-col gap-10">
           <div className="flex justify-center">
             <h1 className="font-bold text-xl">How it works</h1>
           </div>
-          <div className="grid grid-cols-5 grid-rows-2 grid-flow-col-dense">
-            {featureData.map((data) => {
-              return (
-                <>
-                  <div className="flex justify-center" >
-                    <img src={data.imgSrc} className={`${data.extra ? data.extra : ""}`}></img>
-                  </div>
-                  <div className="grid grid-rows-3">
-                    <h1 className="text-xl font-bold text-center row-span-1">
-                      {data.title}
-                    </h1>
-                    <h1 className="text-center row-span-2">{data.body}</h1>
-                  </div>
-                </>
-              );
-            })}
-          </div>
+          <FeatureList dataSet={firstRowData} />
         </div>
 
         <div className="flex flex-col gap-10">
           <div className="flex justify-center">
             <h1 className="text-xl font-bold">Other Features</h1>
           </div>
-          <div className="grid grid-cols-5 grid-rows-2 grid-flow-col-dense">
-            {howItWorkData.map((data) => {
-              return (
-                <>
-                  <div className="flex justify-center">
-                    <img
-                      src={data.imgSrc}
-                      className={`${data.extra ? data.extra : ""}`}
-                    ></img>
-                  </div>
-                  <div className="grid grid-rows-3">
-                    <h1 className="font-bold text-xl text-center row-span-1">
-                      {data.title}
-                    </h1>
-                    <h1 className="text-center row-span-2">{data.body}</h1>
-                  </div>
-                </>
-              );
-            })}
-          </div>
+          <FeatureList dataSet={secondRowData} />
         </div>
       </div>
 
-      <div className="bg-blue-900 h-40 flex">{getRoadmap()}</div>
+      {/* <div className="bg-blue-900 h-40 flex">
+        <RecommendedRoadmap/>
+      </div> */}
+      <MotionRecommendedRoadmap initial={{opacity: 0}} whileInView={{opacity:1}}/>
     </>
   );
 };
