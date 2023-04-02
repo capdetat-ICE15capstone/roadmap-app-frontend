@@ -41,8 +41,11 @@ const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_co
             star : {stars_count}
           </h6>
           <h1 className="absolute top-10 left-2">
-            Owner: <Link to={`/home/${owner_id}`} className="z-10 hover:text-blue-600">{owner_name}</Link>
+            Owner : 
           </h1>
+          <Link to={`/home/${owner_id}`} className="z-10 absolute top-10 left-[70px] hover:text-blue-600">
+            {owner_name}
+          </Link>
           <h1 className="absolute top-10 right-2 text-gray-600">
             Created : {created_at}
           </h1>

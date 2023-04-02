@@ -17,7 +17,7 @@ const Feed = () => {
     setPage(1);
     fetchData();
     setSearch(document.getElementById("InputSearch").value);
-    console.log("search: " + document.getElementById("InputSearch").value);
+    console.log("search: " + document.getElementById("InputSearch").value + "Page: " + page);
   };
 
   //fetch roadmap data from API
@@ -26,7 +26,7 @@ const Feed = () => {
     setIsFetching(true); // set isFetching to true to indicate a fetch is starting
     try {
       console.log("fetch")
-      const response = await fetch(`http://localhost:3000/multipleRoadmaps`); //`http://localhost:3000/multipleRoadmaps=${page}`
+      const response = await fetch(`http://localhost:3000/multipleRoadmaps`); 
       const data = await response.json();
       let newArray = [];
       data.forEach((data) => {
@@ -98,30 +98,3 @@ const Feed = () => {
 
 export default Feed;
 //npx json-server --watch json_server_test/db.json
-
-//infinite scroll functionality
-  /*
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.innerHeight + document.documentElement.scrollTop !== document.documentElement.offsetHeight) return;
-      setPage(prevPage => prevPage + 1);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-  */
-
-  /*
-  useEffect(() => {
-    const handleScroll = () => {
-      const container = containerRef.current;
-      if (container.scrollTop + container.clientHeight >= container.scrollHeight) return;
-      setPage(prevPage => prevPage + 1);
-      console.log('Scrolled to bottom');
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-  */
