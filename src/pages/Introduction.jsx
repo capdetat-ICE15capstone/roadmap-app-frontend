@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router";
 import { motion } from "framer-motion";
+import Roadmap from "../components/Roadmap";
 
 const firstRowData = [
   {
@@ -59,20 +60,98 @@ const secondRowData = [
   },
 ];
 
+const RecommendedRoadmap = React.forwardRef((props, ref) => {
+  // component for displaying 4 roadmap at the footer
+
+  // get 4 roadmap data
+  // fake data
+  const RMdata = [
+    {
+      owner_id: 1,
+      creator_id: 2,
+      owner_name: "Taiwan",
+      creator_name: "China",
+      rid: 4,
+      views_count: 200,
+      stars_count: 600,
+      forks_count: 400,
+      created_at: "ssssssssss",
+      edited_at: "SSSSSSSSS",
+      title: "How to not suck",
+    },
+    {
+      owner_id: 1,
+      creator_id: 2,
+      owner_name: "Taiwan",
+      creator_name: "China",
+      rid: 5,
+      views_count: 200,
+      stars_count: 600,
+      forks_count: 400,
+      created_at: "ssssssssss",
+      edited_at: "SSSSSSSSS",
+      title: "How to not suck",
+    },
+    {
+      owner_id: 1,
+      creator_id: 2,
+      owner_name: "Taiwan",
+      creator_name: "China",
+      rid: 6,
+      views_count: 200,
+      stars_count: 600,
+      forks_count: 400,
+      created_at: "ssssssssss",
+      edited_at: "SSSSSSSSS",
+      title: "How to not suck",
+    },
+    {
+      owner_id: 1,
+      creator_id: 2,
+      owner_name: "Taiwan",
+      creator_name: "China",
+      rid: 7,
+      views_count: 200,
+      stars_count: 600,
+      forks_count: 400,
+      created_at: "ssssssssss",
+      edited_at: "SSSSSSSSS",
+      title: "How to not suck",
+    },
+  ];
+
+  return (
+    <div className="flex flex-col justify-center bg-nav-blue" ref={ref}>
+      <div className="text-white font-bold flex text-2xl justify-center my-10">
+        Recommended Roadmap
+      </div>
+      <div>
+        <div className="flex gap-4 justify-center flex-wrap ">
+          {RMdata.map((roadmap) => {
+            return <Roadmap key={roadmap.rid} {...roadmap} />;
+          })}
+        </div>
+      </div>
+    </div>
+  );
+});
+
+const MotionRecommendedRoadmap = motion(RecommendedRoadmap)
+
 const FeatureList = (props) => {
   const { dataSet } = props;
 
   return dataSet === null ? (
     <div></div>
   ) : (
-    <div className="flex flex-col md:flex-row">
+    <div className="flex flex-col gap-8 md:flex-row md:gap-0">
       {dataSet.map((data) => {
         return (
           <motion.div
             key={data.imgSrc}
             className="flex flex-col basis-1/2 gap-2"
-            initial={{ opacity: 0}}
-            whileInView={{ opacity: 1}}
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
           >
             <div className="flex justify-center">
               <img
@@ -92,32 +171,6 @@ const FeatureList = (props) => {
 
 const Introduction = () => {
   const navigate = useNavigate();
-
-  const getRoadmap = () => {
-    // this function return 4 roadmap panel
-
-    // temporary img to used for placeholder
-    const pictureLink = [
-      "https://i2.wp.com/gi-builds.sfo3.digitaloceanspaces.com/characters/hu_tao/header_image.png?strip=all&quality=10&w=900",
-      "https://i2.wp.com/gi-builds.sfo3.digitaloceanspaces.com/characters/hu_tao/header_image.png?strip=all&quality=10&w=900",
-      "https://i2.wp.com/gi-builds.sfo3.digitaloceanspaces.com/characters/hu_tao/header_image.png?strip=all&quality=10&w=900",
-      "https://i2.wp.com/gi-builds.sfo3.digitaloceanspaces.com/characters/hu_tao/header_image.png?strip=all&quality=10&w=900",
-    ];
-
-    return (
-      <>
-        <div className="flex px-10">
-          {pictureLink.map((rm) => {
-            return (
-              <div className="h-20 w-auto">
-                <img src={rm}></img>
-              </div>
-            );
-          })}
-        </div>
-      </>
-    );
-  };
 
   return (
     <>
@@ -193,7 +246,10 @@ const Introduction = () => {
         </div>
       </div>
 
-      <div className="bg-blue-900 h-40 flex">{getRoadmap()}</div>
+      {/* <div className="bg-blue-900 h-40 flex">
+        <RecommendedRoadmap/>
+      </div> */}
+      <MotionRecommendedRoadmap initial={{opacity: 0}} whileInView={{opacity:1}}/>
     </>
   );
 };
