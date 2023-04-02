@@ -22,7 +22,7 @@ const Setting = () => {
   const handleNotiSubscription = () => {
     console.log("function handlenotisub")
     if (notiOn === true) return;
-    console.log(sub);
+
     navigator.serviceWorker.ready.then((serviceWorkerRegistration) => {
       const options = {
         userVisibleOnly: true,
@@ -39,9 +39,10 @@ const Setting = () => {
             console.log(error);
           }
         )
-        .then(() => setNotiOn(true));
+        .then(() => setNotiOn(true))
+        .catch(() => console.log("Subscription error"))
     }).catch(() => {
-        consolee.log("service worker not ready")
+        console.log("service worker not ready")
     });
   };
 
