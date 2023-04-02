@@ -3,6 +3,7 @@ import { Outlet, NavLink } from 'react-router-dom';
 
 // Image/Logo SVG
 import { ReactComponent as Logo } from "../assets/logo.svg"
+import { ReactComponent as FeedLogo } from "../assets/navbar_assets/feed_icon.svg"
 import { ReactComponent as HomeLogo } from "../assets/navbar_assets/home_icon.svg"
 import { ReactComponent as CalendarLogo } from "../assets/navbar_assets/calendar_icon.svg"
 import { ReactComponent as SettingLogo } from "../assets/navbar_assets/setting_icon.svg"
@@ -14,10 +15,11 @@ const NavItem = (props) => {
   // iconClass, navLinkClass, SvgIcon, to, parentDivClass, childDivClass
   return (
     <>
-      <NavLink className={`py-3 flex justify-center content-middle hover:bg-yellow-500 hover:scale-105 transition duration-200 ${props.parentDivClass}`} to={props.to}>
+      <NavLink className={`py-3 flex justify-center content-middle hover:bg-yellow-500 hover:scale-105 transition group duration-200 ${props.parentDivClass}`} to={props.to}>
         <div className={`overflow-hidden whitespace-nowrap flex ${props.childDivClass}`}>
           <props.SvgIcon className={`w-full h-auto inline ${props.iconClass}`} />
-          <div className={`font-nunito-sans text-white font-bold ml-2 justify-self-center ${props.navLinkClass}`} to={props.to}>{props.displayName}</div>
+          {/* <div className={`left-20 font-nunito-sans text-white font-bold ml-2 justify-self-center ${props.navLinkClass}`} to={props.to}>{props.displayName}</div> */}
+          <span className="left-20 w-auto py-2 px-3 ml-3 rounded-md transition-all duration-100 scale-0 origin-left bg-nav-blue absolute text-white font-bold group-hover:scale-100">{props.displayName}</span>
         </div>
       </NavLink>
     </>
@@ -28,15 +30,15 @@ const Navbar = () => {
   return (
     <>
       <div className="flex fixed h-screen w-screen">
-        <div className="md:visible collapse">
-          <div className="flex flex-col h-screen bg-nav-blue justify-between">
+        <div className="">
+          <div className="md:flex hidden flex-col h-screen bg-nav-blue justify-between">
             <div className="flex flex-col">
               <Logo className="justify-self-center self-center h-12 m-4" />
-              <NavItem SvgIcon={HomeLogo} to="/" />
-              <NavItem SvgIcon={SettingLogo} to="/setting" />
-              <NavItem SvgIcon={CalendarLogo} to="/calendar" />
+              <NavItem SvgIcon={HomeLogo} displayName="Home" to="/" />
+              <NavItem SvgIcon={FeedLogo} displayName="Feed" to="/feed" />
+              <NavItem SvgIcon={SettingLogo} displayName="Setting" to="/setting" />
             </div>
-            <NavItem SvgIcon={UserLogo} to="/profile"
+            <NavItem SvgIcon={UserLogo} to="/profile" displayName="Profile"
               parentDivClass="bg-blue-800 py-5" />
           </div>
         </div>
