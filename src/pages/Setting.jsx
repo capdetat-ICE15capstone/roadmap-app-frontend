@@ -21,8 +21,9 @@ const Setting = () => {
     const RenderProfile = () => {
         return (
             <div className='flex flex-col'>
+                <SettingTitle text='Profile'/>
                 {/* username, first name, last name, profile pic */}
-                <div className='flex gap-2 justify-between max-w-4xl'>
+                <div className='flex gap-2 justify-between max-w-4xl pl-4'>
                     {/* username, first name, last name */}
                     <div className='flex flex-col flex-grow pl-4'>
                         {/* username */}
@@ -47,9 +48,8 @@ const Setting = () => {
                         </div>
                     </div>
                 </div>
-                <SettingTopic text="Social"/>
                 {/* bio, links */}
-                <div className='flex flex-col max-w-4xl pl-4'>
+                <div className='flex flex-col max-w-4xl pl-8'>
                     {/* bio */}
                     <SettingBioField formID={"bio-form"} fieldTitle={"Bio"} fieldPlaceHolder={"This is the life of Hitori Gotou, a.k.a. bocchi za rokku"} setOnSubmit={setBio}/>
                     {/* links */}
@@ -62,8 +62,9 @@ const Setting = () => {
     const RenderAccount = () => {
         return (
             <div className='flex flex-col'>
+                <SettingTitle text='Account'/>
                 {/* account privacy, email */}
-                <div className='flex-col max-w-4xl pl-4'>
+                <div className='flex-col max-w-4xl pl-8'>
                     <ToggleSwitch name={"Public Account"} isToggled={accountPublic} setIsToggled={setAccountPublic}/>
                     <hr className='border-2 border-transparent'/>
                     <EmailSettingField name="Email Address" email={email}/>
@@ -71,13 +72,13 @@ const Setting = () => {
     
                 {/* password */}
                 <SettingTopic text="Password"/>
-                <div className='flex max-w-4xl pl-4'>
+                <div className='flex max-w-4xl pl-8'>
                     <PasswordSettingField currentPassword={currentPassword} setCurrentPassword={setCurrentPassword} newPassword={setNewPassword} setNewPassword={setNewPassword}/>
                 </div>
     
                 {/* delete account */}
                 <SettingTopicRed text="Delete Account"/>
-                <div className='flex-col max-w-4xl pl-4'>
+                <div className='flex-col max-w-4xl pl-8'>
                     <p className='text-sm text-gray-500 mb-3'>
                         Once you delete your account, there is no going back. Please be certain.
                     </p>
@@ -90,10 +91,11 @@ const Setting = () => {
                 </div>
     
                 {/* notification */}
-                <SettingTopic text="Notifications"/>
-                <div className='flex max-w-4xl pl-4'>
+                <SettingTitle text="Notifications"/>
+                <div className='flex max-w-4xl pl-8'>
                     <ToggleSwitch name={"Allow Notifications"} isToggled={notification} setIsToggled={setNotification}/>
                 </div>
+                <div className='h-36'></div>
             </div>
         )
     }
@@ -106,24 +108,33 @@ const Setting = () => {
         )
     }
 
-    return (
-        <div className='flex'>
-            {console.log("[Debug on submit] \nusername: " + username + "\nfirst name: " + firstName + "\nlast name: " + lastName + "\nbio: " + bio + "\nlink: " + link)}
-            <div className='flex flex-col h-max px-12 pt-8 flex-grow'>
-                {/* Render Setting Tab */}
-                <SettingTab tab={tab} setTab={setTab}/>
-                <hr className='border-8 border-transparent py-3'/>
+    // return (
+    //     <div className='flex'>
+    //         {console.log("[Debug on submit] \nusername: " + username + "\nfirst name: " + firstName + "\nlast name: " + lastName + "\nbio: " + bio + "\nlink: " + link)}
+    //         <div className='flex flex-col h-max px-12 pt-8 flex-grow'>
+    //             {/* Render Setting Tab */}
+    //             <SettingTab tab={tab} setTab={setTab}/>
+    //             <hr className='border-8 border-transparent py-3'/>
 
-                {/* Render Setting Content (depending on tab) */}
-                <div className='pl-10'>
-                    {tab === "profile" ? 
-                    <RenderProfile/> :
-                    tab === "account" ? 
-                    <RenderAccount notification={notification} setNotification={setNotification} accountPublic={accountPublic} setAccountPublic={setAccountPublic} email={email}/> :
-                    tab === "appearance" ?? 
-                    <Appearance/>
-                    }
-                </div>
+    //             {/* Render Setting Content (depending on tab) */}
+    //             <div className='pl-10'>
+    //                 {tab === "profile" ? 
+    //                 <RenderProfile/> :
+    //                 tab === "account" ? 
+    //                 <RenderAccount notification={notification} setNotification={setNotification} accountPublic={accountPublic} setAccountPublic={setAccountPublic} email={email}/> :
+    //                 tab === "appearance" ?? 
+    //                 <Appearance/>
+    //                 }
+    //             </div>
+    //         </div>
+    //     </div>
+    // )
+
+    return (
+        <div className='flex-col h-screen overflow-y-scroll'>
+            <div className='max-w-3xl mx-auto'>
+                <RenderProfile/>
+                <RenderAccount/>
             </div>
         </div>
     )
@@ -139,7 +150,7 @@ const SettingField = ({formID, fieldTitle, fieldPlaceHolder, setOnSubmit}) => {
                 <div className='flex gap-0.5'>
                     <input 
                         type="username"
-                        className="flex-grow shadow appearance-none border rounded-lg w-max py-2 px-3 text-sm text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        className="flex-grow shadow appearance-none border rounded-lg w-max py-2 px-3 text-sm text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-100"
                         placeholder={fieldPlaceHolder}
                         id="text"
                     />
@@ -162,7 +173,7 @@ const SettingBioField = ({formID, fieldTitle, fieldPlaceHolder, setOnSubmit}) =>
                 <SettingText text={fieldTitle}/>
                     <textarea
                         type="text"
-                        className="w-full h-32 px-3 py-2 text-sm text-gray-700 border rounded-lg focus:outline-none resize-none focus:shadow-outline shadow"
+                        className="w-full h-32 px-3 py-2 text-sm text-gray-700 border rounded-lg focus:outline-none resize-none focus:shadow-outline shadow bg-gray-100"
                         placeholder={fieldPlaceHolder}
                         id="text"
                     >
@@ -187,7 +198,7 @@ const EmailSettingField = ({name, email}) => {
             <div className='flex gap-0.5'>
                 <textarea
                 type="text"
-                className="w-72 px-3 py-2 h-10 text-sm text-gray-700 border rounded-lg focus:outline-none resize-none focus:shadow-outline shadow"
+                className="w-72 px-3 py-2 h-10 text-sm text-gray-700 border rounded-lg focus:outline-none resize-none focus:shadow-outline shadow bg-gray-100"
                 placeholder={email}
                 id="text"
                 readOnly={true}
@@ -206,7 +217,7 @@ const PasswordSettingField = ({currentPassword, setCurrentPassword, newPassword,
                     <SettingText text="Current Password"/>
                     <textarea
                     type="text"
-                    className="w-72 px-3 py-2 h-10 text-sm text-gray-700 border rounded-lg focus:outline-none resize-none focus:shadow-outline shadow"
+                    className="w-72 px-3 py-2 h-10 text-sm text-gray-700 border rounded-lg focus:outline-none resize-none focus:shadow-outline shadow bg-gray-100"
                     placeholder={'********'}
                     id="currentPassword"
                     ></textarea>
@@ -221,7 +232,7 @@ const PasswordSettingField = ({currentPassword, setCurrentPassword, newPassword,
                     <SettingText text="New Password"/>
                     <textarea
                     type="text"
-                    className="w-72 px-3 py-2 h-10 text-sm text-gray-700 border rounded-lg focus:outline-none resize-none focus:shadow-outline shadow"
+                    className="w-72 px-3 py-2 h-10 text-sm text-gray-700 border rounded-lg focus:outline-none resize-none focus:shadow-outline shadow bg-gray-100"
                     placeholder={'********'}
                     id="newPassword"
                     ></textarea>
@@ -230,7 +241,7 @@ const PasswordSettingField = ({currentPassword, setCurrentPassword, newPassword,
                     <SettingText text="Confirm New Password"/>
                     <textarea
                     type="text"
-                    className="w-72 px-3 py-2 h-10 text-sm text-gray-700 border rounded-lg focus:outline-none resize-none focus:shadow-outline shadow"
+                    className="w-72 px-3 py-2 h-10 text-sm text-gray-700 border rounded-lg focus:outline-none resize-none focus:shadow-outline shadow bg-gray-100"
                     placeholder={'********'}
                     id="confirmNewPassword"
                     ></textarea>
@@ -270,10 +281,10 @@ const SettingText = ({text}) => {
 const SettingTopic = ({text}) => {
     return (
         <>
-            <p className="text-gray-800 text-base mt-8 font-bold px-1">
+            <p className="text-gray-800 text-sm mt-8 font-bold px-1 pl-8">
                 {text}
             </p>
-            <hr className='border-1 border-gray-300 max-w-4xl mb-3'/>
+            <hr className='border-1 border-gray-300 max-w-4xl mb-3 ml-3'/>
         </>
     )
 }
@@ -281,10 +292,21 @@ const SettingTopic = ({text}) => {
 const SettingTopicRed = ({text}) => {
     return (
         <>
-            <p className="text-red-600 text-base mt-8 font-bold px-1">
+            <p className="text-red-600 text-sm mt-8 font-bold px-1 pl-8">
                 {text}
             </p>
-            <hr className='border-1 border-gray-300 max-w-4xl mb-3'/>
+            <hr className='border-1 border-gray-300 max-w-4xl mb-3 ml-3'/>
+        </>
+    )
+}
+
+const SettingTitle = ({text}) => {
+    return (
+        <>
+            <p className="text-gray-800 text-2xl mt-8 font-bold px-1">
+                {text}
+            </p>
+            <hr className='border-1 border-gray-400 max-w-4xl mb-3'/>
         </>
     )
 }
