@@ -10,12 +10,17 @@ import { ReactComponent as BinIcon } from "../assets/Bin.svg"
 const Home = () => {
   const [isRoadmap, setIsRoadmap] = useState(true);
   const [isDeleteClick, setIsDeleteClick] = useState(false);
+  const [isActive, setIsActive] = useState(true);
 
-  const clickRoadmap = () => 
-    setIsRoadmap(true)  
+  const clickRoadmap = () => {
+    setIsRoadmap(true)
+    setIsActive(true)  
+  }
 
-  const clickArchive = () => 
+  const clickArchive = () => {
     setIsRoadmap(false)
+    setIsActive(false)
+  }
 
   const deleteRoadmap = () => 
     setIsDeleteClick(!isDeleteClick)
@@ -86,7 +91,8 @@ const Home = () => {
                     title="React skill issue" 
                     created_at="03/17/2023" 
                     edited_at="today bich" 
-                    views_counts={6338098421} />
+                    views_counts={6338098421}
+                    isActive={isActive} />
                     <RoadmapDropdown onDelete={deleteRoadmap}/>
                   </div>
                   <div className="inline-block">
@@ -96,7 +102,8 @@ const Home = () => {
                     title="Dying From Capstone" 
                     created_at="03/17/2023" 
                     edited_at="03/18/2023" 
-                    views_counts={177013} />
+                    views_counts={177013}
+                    isActive={isActive} />
                     <RoadmapDropdown onDelete={deleteRoadmap}/>
                   </div>                  
                 </div>         
@@ -140,6 +147,3 @@ const Home = () => {
 };
 
 export default Home;
-
-/*import Kurumi from "../assets/kurumi.jpg";
-<img src={Kurumi} className="rounded-[308px]"/>*/

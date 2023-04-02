@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import placeholderImage from "../assets/roadmap_assets/Placeholder_Image.png"
 import { ReactComponent as EyeIcon } from "../assets/roadmap_assets/eye_Icon.svg"
 
-const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_counts, stars_count, forks_count, created_at, edited_at, title }) => {
+const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_counts, stars_count, forks_count, created_at, edited_at, title, isActive}) => {
   Roadmap.propTypes = {
     owner_id: PropTypes.number,
     creator_id: PropTypes.number,
@@ -20,6 +20,11 @@ const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_co
   return (
     <div className="relative inline-block rounded-[48px] bg-white border-gray-300 border-2 shadow-md w-80 h-80 m-8">
       <div className="relative container rounded-3xl h-3/5 w-auto m-2">
+        {isActive && <div className='absolute left-[14px] top-[14px] flex w-[70px] h-[24px] rounded-[30px] justify-center items-center bg-[#034DCF] z-[1]'>
+          <div className="font-nunito-sans font-extrabold text-[15px] text-[#FFFFFF] leading-[14px]">
+            Active
+          </div>          
+        </div>}
         <img src={placeholderImage} className="relative object-cover rounded-[48px] h-full w-full" />
         <h3 className="absolute text-black bottom-2 left-6">
           {creator_name}
