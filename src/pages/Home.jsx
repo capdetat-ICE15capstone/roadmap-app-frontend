@@ -3,6 +3,7 @@ import Roadmap from "../components/Roadmap";
 import Kurumi from "../assets/kurumi.jpg";
 import RoadmapCreate from "../components/RoadmapCreate";
 import RoadmapDropdown from "../components/RoadmapDropdown";
+import RoadmapToggle from "../components/RoadmapToggle"
 import { ReactComponent as DarkHomeIcon } from "../assets/dark_home_icon.svg";
 import { ReactComponent as BinIcon } from "../assets/Bin.svg" 
 
@@ -68,23 +69,7 @@ const Home = () => {
             </div>
           </div>
         </div>
-        <div className="relative flex top-[200px] justify-center items-start h-fit">
-          <div className="relative flex left-[-320px] justify-center items-center w-[455px]">
-            <button onClick={clickRoadmap} className="absolute flex left-[0px] justify-start items-center">
-              <div className="font-inter font-extrabold text-[32px] leading-[39px]">
-                Roadmap
-              </div>            
-            </button>
-            <button onClick={clickArchive} className="absolute flex justify-end right-[0px] items-center">
-              <div className="font-inter font-extrabold text-[32px] leading-[39px]">
-                Archive
-              </div>    
-            </button>
-            <div className="absolute flex top-[23px] left-[0px] bg-[#D9D9D9] w-[491px] h-[7px] rounded-[15px]">
-              {isRoadmap ? <div className="absolute bg-[#09275B] w-[159px] h-[7px] rounded-[15px]"></div> : <div className="absolute right-0 bg-[#09275B] w-[159px] h-[7px] rounded-[15px]"></div>}
-            </div>
-          </div>
-        </div>      
+        <RoadmapToggle showRoadmap={clickRoadmap} showArchive={clickArchive} isRoadmap={isRoadmap}/>
         {/*Roadmaps*/}
         <div className="relative flex left-[0px] top-[250px] justify-center items-start">
           <div className="relative w-[1152px] h-fit">
@@ -121,7 +106,7 @@ const Home = () => {
         </div>
       </div>
       {isDeleteClick && 
-      <div className="absolute flex justify-center items-center w-full h-screen bg-gray-300 bg-opacity-[0.58] z-20">
+      <div className="absolute flex left-0 justify-center items-center w-full h-screen bg-gray-300 bg-opacity-[0.58] z-10">
         <div className="w-[852px] h-[281px]">
           <div className="relative flex flex-col w-[852px] h-[281px]">
             <div className="w-full h-[78px] bg-[#00286E] rounded-t-[20px]">
