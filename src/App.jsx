@@ -65,6 +65,14 @@ function App() {
                 }
               ></Route>
               <Route
+                path="view"
+                element={
+                  <Suspense fallback={<Spinner />}>
+                    <View />
+                  </Suspense>
+                }
+              ></Route>
+              <Route
                 path="create"
                 element={
                   <Suspense fallback={<Spinner />}>
