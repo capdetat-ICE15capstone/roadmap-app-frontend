@@ -1,10 +1,14 @@
-import { precacheAndRoute } from "workbox-precaching";
+import { precacheAndRoute, cleanupOutdatedCaches } from "workbox-precaching";
+import { clientsClaim } from "workbox-core"
+
+cleanupOutdatedCaches()
+clientsClaim()
 
 const myCache = self.__WB_MANIFEST;
-console.log(myCache);
 precacheAndRoute(myCache);
 console.warn("Service worker is now operable");
 
+// listen for push notification
 self.addEventListener("push", (event) => {
   // listen for push notification
   const data = event.data.json();
@@ -14,3 +18,20 @@ self.addEventListener("push", (event) => {
     icon: "android-chrome-192x192.png",
   });
 });
+
+// use cache for offline event
+self.addEventListener("fetch", (event) => {
+  console.log(event);
+  if (!navigator.onLine) { // This is not good, if the server is down but internet online this would fail
+    console.log("offline");
+    event.respondWith(
+      caches.match(event.request).then((response) => {
+        if (response) return response;
+      })
+    );
+  }
+});
+
+self.addEventListener("fetch", (event) => {
+  
+})
