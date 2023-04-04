@@ -14,6 +14,7 @@ const Profile = lazy(() => import("./pages/Profile"));
 const Calendar = lazy(() => import("./pages/Calendar"));
 const FeedPage = lazy(() => import("./pages/Feed"));
 const Home = lazy(() => import("./pages/Home"))
+const SearchPage = lazy(() => import("./pages/SearchPage"));
 
 function App() {
   return (
@@ -86,6 +87,14 @@ function App() {
                 </Suspense>
               }
             />
+            <Route
+              path="search"
+              element={
+                <Suspense fallback={<Spinner />}>
+                  <SearchPage />
+                </Suspense>
+              }
+            ></Route>
           </Route>
         </Routes>
       </BrowserRouter>
