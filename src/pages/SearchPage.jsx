@@ -66,10 +66,9 @@ const SearchPage = () => {
                     </button>
                 </div>
             </form>
-            <p className="mx-auto">{searchValue}</p>
-            <button>
-                Click
-            </button>
+            <p className="mx-auto">search: {searchValue}</p>
+            <p className="mx-auto">vvv Search result vvv</p>
+
         </>
     );
 };

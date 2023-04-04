@@ -15,7 +15,7 @@ const Setting = lazy(() => import("./pages/Setting"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Introduction = lazy(() => import("./pages/Introduction"));
 const Premium = lazy(() => import("./pages/Premium"));
-const SearchPage = lazy(() => import(".pages/SearchPage"))
+const SearchPage = lazy(() => import("./pages/SearchPage"));
 
 function App() {
   return (
