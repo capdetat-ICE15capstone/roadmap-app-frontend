@@ -42,78 +42,126 @@ export default function View() {
   // When request forking, check if roadmap has more than 16 nodes... if roadmap has more than 16 nodes, check if the user has premium. If not, prompt clone failure.\
   // Also check for roadmaps.length?
 
-  const [roadmap, setRoadmap] = useState({
-    'name': 'Lorem Ipsum Roadmap',
-    'description': 'Morbi facilisis finibus lacus quis aliquam. Vestibulum turpis nibh, imperdiet non gravida quis, pretium vitae est. Phasellus in sollicitudin quam, id lacinia nisl.',
-    'publicity': true,
-    'owner-id': 123456,
-    'like': 99,
-    'tasks': [
-      {
-        'id': '1',
-        'name': 'First Task',
-        'description': 'Task descriptions. This is the task for the first milestone.',
-        'startDate': '20200110',
-        'dueDate': '20200115',
-        'nodeColor': '#7DC5E3',
-        'nodeShape': 'circle',
-        'subtasks': [
-          {
-            'id': '1',
-            'detail': 'Morbi Uno finibus lacus quis aliquam.',
-            'status': true,
-          },
-          {
-            'id': '2',
-            'detail': 'Vestibulum turpis nibh.',
-            'status': true,
-          }
-        ]
+  const [roadmap, setRoadmap] = useState(
+    {
+      "title": "Alpha male training",
+      "description": "What is your Buggati color",
+      "roadmap_deadline": "2023-04-03T02:45:24.100000",
+      "is_before_start_time": true,
+      "reminder_time": 0,
+      "is_private": false,
+      "rid": 17,
+      "views_count": 0,
+      "stars_count": 0,
+      "forks_count": 0,
+      "edited_at": "2023-04-03T03:06:47",
+      "owner_id": 19,
+      "creator_id": 19,
+      "owner_name": null,
+      "creator_name": null,
+      "owner_profile_picture_id": null,
+      "creator_profile_picture_id": null,
+      "next_task": {
+        "title": "Convert to Islam",
+        "description": "Allah",
+        "start_time": "2023-04-03T03:01:42.600000",
+        "deadline": "2023-04-03T03:01:42.600000",
+        "shape": "triangle",
+        "color": "blue",
+        "tid": 52,
+        "is_done": false,
+        "subtasks": []
       },
-      {
-        'id': '2',
-        'name': 'Second Task',
-        'description': 'Task descriptions. This is the task for the second milestone.',
-        'startDate': '20200115',
-        'dueDate': '20200120',
-        'nodeColor': '#E4688D',
-        'nodeShape': 'square',
-        'subtasks': [
-          {
-            'id': '1',
-            'detail': 'Morbi facilisis finibus lacus quis aliquam.',
-            'status': true,
-          },
-          {
-            'id': '2',
-            'detail': 'Vestibulum turpis nibh.',
-            'status': false,
-          }
-        ]
-      },
-      {
-        'id': '3',
-        'name': 'Third Task',
-        'description': 'Task descriptions. This is the task for the third milestone.',
-        'startDate': '20200120',
-        'dueDate': '20200121',
-        'nodeColor': '#F3B21A',
-        'nodeShape': 'triangle',
-        'subtasks': [
-          {
-            'id': '1',
-            'detail': 'Morbi Trio finibus lacus quis aliquam.',
-            'status': false,
-          },
-          {
-            'id': '2',
-            'detail': 'Vestibulum turpis nibh.',
-            'status': false,
-          }
-        ]
-      }
-    ]
-  });
+      "tasks_name": [
+        "Convert to Islam"
+      ],
+      "shapes": [
+        "triangle"
+      ],
+      "colors": [
+        "blue"
+      ],
+      "tags": [],
+      "task_relation": [
+        52
+      ],
+      "archive_date": null,
+      "exp": 0
+    }
+  );
+
+  // const [roadmap, setRoadmap] = useState({
+  //   'name': 'Lorem Ipsum Roadmap',
+  //   'description': 'Morbi facilisis finibus lacus quis aliquam. Vestibulum turpis nibh, imperdiet non gravida quis, pretium vitae est. Phasellus in sollicitudin quam, id lacinia nisl.',
+  //   'publicity': true,
+  //   'owner-id': 123456,
+  //   'like': 99,
+  //   'tasks': [
+  //     {
+  //       'id': '1',
+  //       'name': 'First Task',
+  //       'description': 'Task descriptions. This is the task for the first milestone.',
+  //       'startDate': '20200110',
+  //       'dueDate': '20200115',
+  //       'nodeColor': '#7DC5E3',
+  //       'nodeShape': 'circle',
+  //       'subtasks': [
+  //         {
+  //           'id': '1',
+  //           'detail': 'Morbi Uno finibus lacus quis aliquam.',
+  //           'status': true,
+  //         },
+  //         {
+  //           'id': '2',
+  //           'detail': 'Vestibulum turpis nibh.',
+  //           'status': true,
+  //         }
+  //       ]
+  //     },
+  //     {
+  //       'id': '2',
+  //       'name': 'Second Task',
+  //       'description': 'Task descriptions. This is the task for the second milestone.',
+  //       'startDate': '20200115',
+  //       'dueDate': '20200120',
+  //       'nodeColor': '#E4688D',
+  //       'nodeShape': 'square',
+  //       'subtasks': [
+  //         {
+  //           'id': '1',
+  //           'detail': 'Morbi facilisis finibus lacus quis aliquam.',
+  //           'status': true,
+  //         },
+  //         {
+  //           'id': '2',
+  //           'detail': 'Vestibulum turpis nibh.',
+  //           'status': false,
+  //         }
+  //       ]
+  //     },
+  //     {
+  //       'id': '3',
+  //       'name': 'Third Task',
+  //       'description': 'Task descriptions. This is the task for the third milestone.',
+  //       'startDate': '20200120',
+  //       'dueDate': '20200121',
+  //       'nodeColor': '#F3B21A',
+  //       'nodeShape': 'triangle',
+  //       'subtasks': [
+  //         {
+  //           'id': '1',
+  //           'detail': 'Morbi Trio finibus lacus quis aliquam.',
+  //           'status': false,
+  //         },
+  //         {
+  //           'id': '2',
+  //           'detail': 'Vestibulum turpis nibh.',
+  //           'status': false,
+  //         }
+  //       ]
+  //     }
+  //   ]
+  // });
 
   function likeRoadmap() {
     let res = {...roadmap};
