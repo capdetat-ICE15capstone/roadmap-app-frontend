@@ -1,73 +1,99 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-import { ReactComponent as Logo } from "../assets/logo-big.svg"
+export default function Signup() {
+  const navigate = useNavigate();
 
-const Signup = () => {
-
-  const specialChars = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [agreement, setAgreement] = useState(false);
 
-  const handleSubmit = (event) => {
+  const handleSignupSubmit = (event) => {
     event.preventDefault();
-    if (firstName === "" || lastName === "" || username === "" || password === "" || passwordConfirm === "") {
+
+    if (email === "" || firstName === "" || lastName === "" || username === "" || password === "" || passwordConfirm === "") {
       console.log("all form must be filled");
       return;
     }
     if (specialChars.test(firstName)) {
-      console.log("invalid first name")
+      console.log("invalid first name");
       return;
     }
     if (specialChars.test(lastName)) {
-      console.log("invalid last name")
+      console.log("invalid last name");
+      return;
+    }
+    if (firstName.length > 255) {
+      console.log("Please shorten your first name");
+      return;
+    }
+    if (lastName.length > 255) {
+      console.log("Please shorten your last name");
       return;
     }
     if (specialChars.test(username)) {
-      console.log("invalid username")
+      console.log("invalid username");
+      return;
+    }
+    if (username.length > 24) {
+      console.log("username is too long");
       return;
     }
     if (password.length < 8) {
-      console.log("password too short")
+      console.log("password too short");
       return;
     }
     if (password.length > 24) {
-      console.log("password too long")
+      console.log("password too long");
       return;
     }
     if (password !== passwordConfirm) {
-      console.log("password does not match")
+      console.log("password does not match");
       return;
     }
     if (!agreement) {
-      console.log("agreement must be set to TRUE")
+      console.log("agreement must be set to TRUE");
       return;
     }
-    console.log(firstName, lastName, username, password, passwordConfirm, agreement);
-    document.getElementById("register-form").reset();
-    setFirstName("");
-    setLastName("");
-    setUsername("");
-    setPassword("");
-    setPasswordConfirm("");
-    setAgreement(false);
-  };
+  }
 
   return (
     <>
-      <div className="m-auto">
-        <div className="flex bg-white rounded shadow-lg max-w-3xl">
-          <div className="flex flex-col m-6">
-            <p className="text-center mb-2 text-3xl font-bold text-slate-600">
+      <div className={`flex flex-row h-screen w-screen`}>
+        <div className="flex justify-center w-1/2 bg-gradient-to-b from-cyan-500 to-blue-500">
+          <div className="flex flex-col justify-center m-8">
+
+          </div>
+        </div>
+        <div className="flex justify-center w-1/2">
+          <div className="flex flex-col justify-center m-8">
+            <p className="text-center mb-4 text-3xl font-bold text-slate-600">
               Create Account
             </p>
-            <form id="register-form" onSubmit={handleSubmit}>
+            <form id="register-form" onSubmit={handleSignupSubmit}>
               <div className="flex flex-col space-y-2 mb-4">
+                <div className="flex flex-col">
+                  <label>
+                    <p className="text-gray-600 text-xs mb-1">
+                      Email Address
+                    </p>
+                    <input
+                      type="email"
+                      className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-sm text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      id="InputEmail"
+                      placeholder="Email Address"
+                      onChange={(event) =>
+                        setEmail(event.target.value)
+                      }
+                    />
+                  </label>
+                </div>
                 <div className="flex flex-row justify-between space-x-4">
+
                   <label>
                     <p className="text-gray-600 text-xs mb-1">
                       First Name
@@ -144,7 +170,7 @@ const Signup = () => {
                   </label>
                 </div>
               </div>
-              <div className="flex flex-col space-y-2">
+              <div className="flex flex-col space-y-4">
                 <label className="ml-2 text-xs font-medium text-gray-400">
                   <input
                     type="checkbox"
@@ -157,38 +183,15 @@ const Signup = () => {
                     ayayayayayaya
                   </a>
                 </label>
-                <button type="submit" className="bg-blue-900 text-white shadow font-bold py-2 grow rounded-3xl focus:outline-none focus:shadow-outline">
+                <button type="submit" className="bg-red-500 text-white shadow font-bold py-2 grow rounded-3xl focus:outline-none focus:shadow-outline">
                   Sign Up
                 </button>
               </div>
-
             </form>
-            <div className="flex justify-center m-4">
-              <p className="text-xs font-light text-gray-400">
-                --------- OR sign up with ---------
-              </p>
-            </div>
-            <div className="flex justify-between mb-2 mx-8 space-x-2">
-              <div className="flex flex-auto">
-                <button className="bg-transparent grow text-gray-600 border border-grey-500 py-2 font-semilight rounded-3xl text-sm" type="button">
-                  Google
-                </button>
-              </div>
-              <div className="flex flex-auto">
-                <button className="bg-transparent grow text-gray-600 border border-grey-500 py-2 font-semilight rounded-3xl text-sm" type="button">
-                  Facebook
-                </button>
-              </div>
-              <div className="flex flex-auto">
-                <button className="bg-transparent grow text-gray-600 border border-grey-500 py-2 font-semilight rounded-3xl text-sm" type="button">
-                  Email
-                </button>
-              </div>
-            </div>
-          </div>
-          <div className="flex flex-col bg-gradient-to-b from-teal-300 to-amber-100 rounded">
-            <div className="flex flex-col grow justify-center my-4 mx-12">
-              <Logo className="justify-center self-center" />
+            <div className="flex justify-center mt-4">
+              <button type="button" className="text-xs font-light text-gray-400" onClick={() => navigate("/login", { state: { firstLogin: true } })}>
+                Alrady have an account?
+              </button>
             </div>
           </div>
         </div>
@@ -196,6 +199,3 @@ const Signup = () => {
     </>
   )
 }
-
-
-export default Signup

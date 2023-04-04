@@ -1,38 +1,29 @@
 import "./App.css";
 import Navbar from "./components/Navbar";
 import Feed from "./pages/Feed";
-import Spinner from './components/Spinner'
+import Spinner from "./components/Spinner";
 import NoPage from "./pages/NoPage";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { lazy, Suspense } from "react";
 
 const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
+const View = lazy(() => import("./pages/View"));
 const RoadmapCreatePage = lazy(() => import("./pages/RoadmapCreatePage"));
+const Home = lazy(() => import("./pages/Home"));
 const Setting = lazy(() => import("./pages/Setting"));
 const Profile = lazy(() => import("./pages/Profile"));
-const Calendar = lazy(() => import("./pages/Calendar"));
-const FeedPage = lazy(() => import("./pages/Feed"));
-const Home = lazy(() => import("./pages/Home"))
-const SearchPage = lazy(() => import("./pages/SearchPage"));
+const Introduction = lazy(() => import("./pages/Introduction"));
+const Premium = lazy(() => import("./pages/Premium"));
 
 function App() {
   return (
     <>
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Navbar />}>
-            <Route index element={<Home />} />
+        <Suspense fallback={<Spinner />}>
+          <Routes>
             <Route
-              path="createRoadMap"
-              element={
-                <Suspense fallback={<Spinner />}>
-                  <RoadmapCreatePage />
-                </Suspense>
-              }
-            ></Route>
-            <Route
-              path="signup"
+              path="/signup"
               element={
                 <Suspense fallback={<Spinner />}>
                   <Signup />
@@ -40,7 +31,7 @@ function App() {
               }
             ></Route>
             <Route
-              path="login"
+              path="/login"
               element={
                 <Suspense fallback={<Spinner />}>
                   <Login />
@@ -48,55 +39,100 @@ function App() {
               }
             ></Route>
             <Route
-              path="setting"
+              path="/intro"
               element={
                 <Suspense fallback={<Spinner />}>
-                  <Setting />{" "}
+                  <Introduction />
                 </Suspense>
               }
             ></Route>
             <Route
-              path="profile"
+              path="/premium"
               element={
                 <Suspense fallback={<Spinner />}>
-                  <Profile />{" "}
-                </Suspense>
-              }
-            />
-            <Route
-              path="calendar"
-              element={
-                <Suspense fallback={<Spinner />}>
-                  <Calendar />{" "}
-                </Suspense>
-              }
-            />
-            <Route
-              path="feed"
-              element={
-                <Suspense fallback={<Spinner />}>
-                  <FeedPage />{" "}
-                </Suspense>
-              }
-            />
-            <Route
-              path="home"
-              element={
-                <Suspense fallback={<Spinner />}>
-                  <Home />{" "}
-                </Suspense>
-              }
-            />
-            <Route
-              path="search"
-              element={
-                <Suspense fallback={<Spinner />}>
-                  <SearchPage />
+                  <Premium />
                 </Suspense>
               }
             ></Route>
-          </Route>
-        </Routes>
+            <Route path="/" element={<Navbar />}>
+              <Route index element={<Home />} />
+              <Route
+                path="home"
+                element={
+                  <Suspense fallback={<Spinner />}>
+                    <Home />
+                  </Suspense>
+                }
+              ></Route>
+              <Route
+                path="view"
+                element={
+                  <Suspense fallback={<Spinner />}>
+                    <View />
+                  </Suspense>
+                }
+              ></Route>
+              <Route
+                path="create"
+                element={
+                  <Suspense fallback={<Spinner />}>
+                    <RoadmapCreatePage mode="create" />
+                  </Suspense>
+                }
+              ></Route>
+              <Route
+                path="explore"
+                element={
+                  <Suspense fallback={<Spinner />}>
+                    <Feed />
+                  </Suspense>
+                }
+              ></Route>
+              <Route
+                path="edit/:id"
+                element={
+                  <Suspense fallback={<Spinner />}>
+                    <RoadmapCreatePage mode="edit" />
+                  </Suspense>
+                }
+              ></Route>
+              <Route
+                path="clone/:id"
+                element={
+                  <Suspense fallback={<Spinner />}>
+                    <RoadmapCreatePage mode="clone" />
+                  </Suspense>
+                }
+              ></Route>
+              <Route
+                path="view/:id"
+                element={
+                  <Suspense fallback={<Spinner />}>
+                    {/* insert view roadmap element */}
+                  </Suspense>
+                }
+              ></Route>
+              <Route
+                path="setting"
+                element={
+                  <Suspense fallback={<Spinner />}>
+                    <Setting />{" "}
+                  </Suspense>
+                }
+              ></Route>
+              <Route
+                path="profile"
+                element={
+                  <Suspense fallback={<Spinner />}>
+                    <Profile />{" "}
+                  </Suspense>
+                }
+              />
+              <Route path="/404" element={<NoPage />} />
+              <Route path="*" element={<Navigate replace to="/404" />} />
+            </Route>
+          </Routes>
+        </Suspense>
       </BrowserRouter>
     </>
   );

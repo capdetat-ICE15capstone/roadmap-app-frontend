@@ -15,10 +15,11 @@ const NavItem = (props) => {
   // iconClass, navLinkClass, SvgIcon, to, parentDivClass, childDivClass
   return (
     <>
-      <NavLink className={`py-5 flex justify-center content-middle hover:bg-yellow-500 hover:scale-105 transition duration-200 ${props.parentDivClass}`} to={props.to}>
+      <NavLink className={`py-3 flex justify-center content-middle hover:bg-yellow-500 hover:scale-105 transition group duration-200 ${props.parentDivClass}`} to={props.to}>
         <div className={`overflow-hidden whitespace-nowrap flex ${props.childDivClass}`}>
-          <props.SvgIcon className={`w-6 h-auto inline ${props.iconClass}`} />
-          <div className={`font-nunito-sans text-white font-bold ml-2 justify-self-center ${props.navLinkClass}`} to={props.to}>{props.displayName}</div>
+          <props.SvgIcon className={`w-full h-auto inline ${props.iconClass}`} />
+          {/* <div className={`left-20 font-nunito-sans text-white font-bold ml-2 justify-self-center ${props.navLinkClass}`} to={props.to}>{props.displayName}</div> */}
+          <span className="left-20 w-auto py-2 px-3 ml-3 rounded-md transition-all duration-100 scale-0 origin-left bg-nav-blue absolute text-white font-bold group-hover:scale-100">{props.displayName}</span>
         </div>
       </NavLink>
     </>
@@ -29,24 +30,19 @@ const Navbar = () => {
   return (
     <>
       <div className="flex fixed h-screen w-screen">
-        <div className="flex flex-col h-screen bg-nav-black justify-between w-0 md:w-36">
-          <div className="flex flex-col">
-            <Logo className="justify-self-center self-center h-20" />
-            <NavItem SvgIcon={HomeLogo} displayName="Home" to="/" />
-            <NavItem SvgIcon={FeedLogo} displayName="Feed" to="/feed" />
-            <NavItem SvgIcon={SettingLogo} displayName="Setting" to="/setting" />
-            <NavItem SvgIcon={CalendarLogo} displayName="Calendar" to="/calendar" />
+        <div className="">
+          <div className="md:flex hidden flex-col h-screen bg-nav-blue justify-between">
+            <div className="flex flex-col">
+              <Logo className="justify-self-center self-center h-12 m-4" />
+              <NavItem SvgIcon={HomeLogo} displayName="Home" to="/" />
+              <NavItem SvgIcon={FeedLogo} displayName="Feed" to="/feed" />
+              <NavItem SvgIcon={SettingLogo} displayName="Setting" to="/setting" />
+            </div>
+            <NavItem SvgIcon={UserLogo} to="/profile" displayName="Profile"
+              parentDivClass="bg-blue-800 py-5" />
           </div>
-          <NavItem SvgIcon={UserLogo} displayName="Username" to="/profile"
-            parentDivClass="bg-nav-gray py-7" />
         </div>
         <div className="flex flex-col grow">
-          <div className="sticky top-0 left-0 h-20 bg-nav-gray p-4 flex justify-end">
-            <div className="flex">
-              <BellIcon className="self-center w-10 px-2 hover:scale-110 transition duration-300" />
-              <BookIcon className="self-center px-2 w-10 hover:scale-110 transition duration-300" />
-            </div>
-          </div>
           <Outlet />
         </div>
       </div>
