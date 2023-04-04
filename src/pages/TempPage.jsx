@@ -12,11 +12,11 @@ const SearchPage = (props) => {
   const [isFetching, setIsFetching] = useState(false);
 
   const handleSubmit = (event) => {
-    setSearch(document.getElementById("InputSearch").value);
     event.preventDefault();
     setRoadmapArray([]);
     setPage(1);
     fetchData();
+    setSearch(document.getElementById("InputSearch").value);
     console.log("search: " + document.getElementById("InputSearch").value + "Page: " + page);
   };
 
