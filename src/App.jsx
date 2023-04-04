@@ -5,12 +5,14 @@ import Spinner from "./components/Spinner";
 import NoPage from "./pages/NoPage";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { lazy, Suspense } from "react";
+import HomeOtherUser from "./pages/HomeOtherUser";
 
 const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
 const View = lazy(() => import("./pages/View"));
 const RoadmapCreatePage = lazy(() => import("./pages/RoadmapCreatePage"));
 const Home = lazy(() => import("./pages/Home"));
+const FriendHome = lazy(() => import("./pages/HomeOtherUser"));
 const Setting = lazy(() => import("./pages/Setting"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Introduction = lazy(() => import("./pages/Introduction"));
@@ -61,6 +63,14 @@ function App() {
                 element={
                   <Suspense fallback={<Spinner />}>
                     <Home />
+                  </Suspense>
+                }
+              ></Route>
+              <Route
+                path="friend_home"
+                element={
+                  <Suspense fallback={<Spinner />}>
+                    <HomeOtherUser />
                   </Suspense>
                 }
               ></Route>
