@@ -1,32 +1,26 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Roadmap from "../components/Roadmap";
 import UserBanner from "../components/UserBanner";
 import SearchBar from "../components/SearchBar";
-import { useNavigate } from "react-router-dom";
-
 
 const SearchPage = () => {
-    const [searchTerm, setSearchTerm] = useState('');
+    const [search, setSearch] = useState('');
     const location = useLocation();
+    const navigate = useNavigate();
     const searchValue = location.state?.userSearch || '';
+
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        setRoadmapArray([]);
-        setPage(1);
-        fetchData();
+        //setRoadmapArray([]);
+        //setPage(1);
+        //fetchData();
         setSearch(document.getElementById("InputSearch").value);
-        console.log("search: " + document.getElementById("InputSearch").value + "Page: " + page);
+        const searchValue = document.getElementById("InputSearch").value;
+        navigate('/search', { state: { userSearch: searchValue } });
+        console.log("search: " + document.getElementById("InputSearch").value);
     };
-
-    function handleSearch(event) {
-        event.preventDefault();
-        // Build the URL with the search query parameter
-        const url = `/Search?search=${encodeURIComponent(searchTerm)}`;
-        // Navigate to the results page using the Link component
-        return <Link to={url}>Search</Link>;
-    }
 
     //fetch roadmap data from API
     const fetchData = async () => {
@@ -46,11 +40,6 @@ const SearchPage = () => {
         }
         setIsFetching(false); // set isFetching to false to indicate a fetch is complete
     };
-
-    function handleInputChange(event) {
-
-        setSearchTerm(event.target.value);
-    }
 
     return (
         <>

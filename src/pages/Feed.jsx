@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Roadmap from "../components/Roadmap";
 import SearchBar from "../components/SearchBar";
 import { useNavigate } from "react-router-dom";
+import { ReactComponent as SearchIcon } from "../assets/searchIcon.svg";
 
 const Feed = () => {
 
@@ -52,6 +53,16 @@ const Feed = () => {
 
   return (
     <>
+  <div className='flex flex-col relative h-full bg-white overflow-y-scroll py-8'>
+    {/*Top (title & search bar)*/}
+    <div className='sticky top-0 z-50'>
+      {/*Feed Title*/}
+      <div className='flex items-center text-3xl font-bold'>
+        <SearchIcon className="flex h-8 w-8 mr-2 mt-2 fill-[#09275B]" />
+        <div className='flex text-[#09275B]'>
+          Feed
+        </div>
+      </div>
       {/*Search bar*/}
       <form className="mx-auto" id="searchForm" onSubmit={handleSubmit}>
         <div
@@ -64,8 +75,10 @@ const Feed = () => {
           </button>
         </div>
       </form>
+    </div>
+    <div className="w-5/6 flex-col m-auto space-y-6">
       {/*Search Result*/}
-      <div className="relative flex flex-wrap mx-4 overflow-y-scroll ">
+      <div className="relative flex flex-wrap mx-4">
         {roadmapArray.map((roadmap, index) => (
           <div key={index} className="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 p-2">
             <Roadmap
@@ -84,7 +97,10 @@ const Feed = () => {
           </div>
         ))}
       </div>
-    </>
+    </div>
+  </div>
+</>
+
   );
 };
 
