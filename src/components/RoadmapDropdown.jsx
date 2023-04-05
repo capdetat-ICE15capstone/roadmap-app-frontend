@@ -9,12 +9,12 @@ const RoadmapDropdown = ({onDelete}) => {
 
     return (
         <>
-            <div className="absolute flex justify-center">
-                <button onClick={handleClick} className="relative flex justify-center items-center top-[-70px] left-[310px] w-[20px] h-[20px] rounded-[20px] hover:bg-[rgb(238,234,234)]">                
+            <div className="absolute flex flex-col justify-center">
+                <button onClick={handleClick} className="flex justify-center items-center w-[20px] h-[20px] mb-4 rounded-[20px] hover:bg-[rgb(238,234,234)]">                
                     <DropdownIcon/>
                 </button>
                 {isOpen && 
-                <div className="absolute flex flex-col top-[-30px] left-[200px] mb-4 bg-[#FFFFFF] font-bold appearance-none border rounded-xl leading-tight w-60 h-36">
+                <div className="flex flex-col -ml-28 bg-[#FFFFFF] font-bold appearance-none border rounded-xl leading-tight w-60 h-36 z-10">
                     <button className="relative flex items-center h-12 rounded-t-xl hover:bg-[#808080]">
                         <div className="relative left-[15px] font-inter font-bold text-[20px] leading-none">
                             View Roadmap

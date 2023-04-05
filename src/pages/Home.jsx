@@ -27,8 +27,87 @@ const Home = () => {
 
   return (
     <>
-      <div className="h-screen overflow-x-hidden">
-        <div className="relative flex top-[59px] left-[38px] w-fit h-fit">
+      <div className="flex h-screen overflow-scroll overflow-x-hidden">
+        <div className="flex flex-col m-auto mt-[133px]">
+          <div className="flex flex-wrap-reverse justify-center border border-[#D9D9D9] w-fit h-fit rounded-[30px] mb-8">
+            <div className="flex flex-col justify-start w-fit">
+              <div className="flex items-center ml-[50px] mr-[25px] justify-start w-fit h-fit my-[20px]">
+                <div className="relative mr-4">
+                  <div className="font-inter font-extrabold text-[40px] text-[#09275B] leading-[48px]">
+                    Kurumi
+                  </div>
+                </div>
+                <div className="flex flex-wrap justify-between bg-[#034DCF] text-white font-bold w-full h-fit rounded-[30px]">
+                  <div className="flex ml-[20px] mr-[20px] justify-start items-center">
+                    <div className="font-inter font-bold text-[30px] text-[#FFFFFF] leading-[57px]">
+                      Level:
+                    </div>
+                  </div>     
+                  <div className="flex ml-[20px] mr-[20px] justify-start items-center">
+                    <div className="font-inter font-bold text-[30px] text-[#FFFFFF] leading-[57px]">
+                      10
+                    </div>
+                  </div>               
+                </div>
+              </div>
+              <div className="h-fit ml-[50px] mr-[25px] mt-[10px] mb-[20px]">
+                <div className="font-inter font-light text-[40px] leading-[48px]">
+                  Kurumi Tokisaki (Codename: Nightmare)
+                </div>
+              </div>
+              <div className="w-fit h-fit ml-[50px] mr-[25px] mt-[10px]">
+                <a href="https://date-a-live.fandom.com/wiki/Kurumi_Tokisaki" className="font-inter font-light text-[#034DCF] text-[25px] leading-[30px]">
+                  https://date-a-live.fandom.com/wiki/Kurumi_Tokisaki
+                </a>                
+              </div>            
+            </div>
+            <div className="mr-[25px] bg-[#FFFFFF] w-[308px] h-[308px] rounded-[308px] border border-[#ababab]">
+              <img src={Kurumi} className="rounded-[308px]"/>
+            </div>
+          </div>
+          <RoadmapToggle showRoadmap={clickRoadmap} showArchive={clickArchive} isRoadmap={isRoadmap}/>
+          <div className="flex flex-wrap justify-start w-fit max-w-[1152px] h-fit">
+            {isRoadmap && 
+            <div>
+              <RoadmapCreate />
+            </div>}
+            <div>
+              <Roadmap 
+              creator_name="Thanapat" 
+              owner_name="Tripipat" 
+              title="React skill issue" 
+              created_at="03/17/2023" 
+              edited_at="today bich" 
+              views_counts={1}
+              isActive={isActive}
+              deleteFunction={deleteRoadmap} />
+            </div>
+            <div>
+              <Roadmap
+              creator_name="FingTheMan" 
+              owner_name="Wuttikorn" 
+              title="Dying From Capstone" 
+              created_at="03/17/2023" 
+              edited_at="03/18/2023" 
+              views_counts={2}
+              isActive={isActive}
+              deleteFunction={deleteRoadmap} />            </div>
+            
+          </div>
+        </div>
+      </div>
+      <div>
+        
+      </div>
+    </>
+  );
+};
+
+export default Home;
+
+/*
+<div className="flex flex-col justify-center items-center h-screen">
+        <div className="relative flex w-fit h-fit">
           <div className="mr-[13px]">
             <DarkHomeIcon/>
           </div>          
@@ -36,9 +115,9 @@ const Home = () => {
             Home
           </div>
         </div>
-        <div className="relative flex top-[133px] justify-center items-center h-[266px]">
+        <div className="relative flex justify-center items-center w-4/5 h-[266px]">
           <div className="relative inline-block my-4">
-            <div className="relative flex flex-col bg-[#FFFFFF] w-[1118px] h-[266px] pb-[20px] font-bold appearance-none border border-[#D9D9D9] rounded-[30px] overflow-x-hidden">
+            <div className="relative flex flex-col bg-[#FFFFFF] w-full h-[266px] pb-[20px] font-bold appearance-none border border-[#D9D9D9] rounded-[30px] overflow-x-hidden">
               <div className="relative flex items-center justify-start left-[50px] top-[10px] w-fit h-fit my-[10px]">
                 <div className="relative mr-4">
                   <div className="font-inter font-extrabold text-[40px] text-[#09275B] leading-[48px]">
@@ -75,7 +154,7 @@ const Home = () => {
           </div>
         </div>
         <RoadmapToggle showRoadmap={clickRoadmap} showArchive={clickArchive} isRoadmap={isRoadmap}/>
-        {/*Roadmaps*/}
+
         <div className="relative flex left-[0px] top-[250px] justify-center items-start">
           <div className="relative w-[1152px] h-fit">
             <div className="relative flex justify-start items-start">
@@ -141,9 +220,4 @@ const Home = () => {
             </div>
           </div>
         </div>
-      </div>}
-    </>
-  );
-};
-
-export default Home;
+      </div>} */
