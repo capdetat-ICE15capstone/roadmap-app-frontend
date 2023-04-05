@@ -30,7 +30,7 @@ const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_co
 
   return (
     <Link to={`/view/${owner_id}`}>
-      <div className="relative inline-block rounded-[48px] bg-white border-gray-300 border-2 shadow-md w-80 h-80 m-8 hover:transform hover:scale-110 transition duration-300">
+      <div className="relative inline-block rounded-[48px] bg-white border-gray-300 border-2 shadow-md w-[300px] h-[300px] hover:transform hover:scale-110 transition duration-150">
         <div className="relative container rounded-3xl h-3/5 w-auto m-2">
           <img src={placeholderImage} className="relative object-cover rounded-[48px] h-full w-full" />
           <h3 className="absolute text-black bottom-2 left-6">
