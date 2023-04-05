@@ -55,7 +55,7 @@ const Feed = () => {
     <>
       <div className='flex flex-col h-full w-full bg-white overflow-y-auto relative'>
         {/*Top (title & search bar)*/}
-        <div className='flex justify-center sticky top-0 z-50 bg-white p-4'>
+        <div className='flex justify-center sticky top-0 z-50 bg-white pt-8 pb-2'>
           <div className='flex w-3/4 justify-center'>
             {/*Feed Title*/}
             <div className='flex items-center text-3xl font-bold'>
@@ -80,29 +80,27 @@ const Feed = () => {
         </div>
         {/*Search Result*/}
         <div className='flex justify-center'>
-          <div className='flex flex-wrap justify-center w-3/4'>
+          <div className='flex flex-wrap items-start w-3/4 gap-12'>
             {roadmapArray.map((roadmap, index) => (
-              <div key={index}>
-                <Roadmap
-                  owner_id={roadmap.owner_id}
-                  creator_id={roadmap.creator_id}
-                  owner_name={roadmap.owner_name}
-                  creator_name={roadmap.creator_name}
-                  rid={roadmap.rid}
-                  views_count={roadmap.views_count}
-                  stars_count={roadmap.stars_count}
-                  forks_count={roadmap.forks_count}
-                  created_at={roadmap.created_at}
-                  edited_at={roadmap.edited_at}
-                  title={roadmap.title}
-                />
-              </div>
+              <Roadmap
+                key={index}
+                owner_id={roadmap.owner_id}
+                creator_id={roadmap.creator_id}
+                owner_name={roadmap.owner_name}
+                creator_name={roadmap.creator_name}
+                rid={roadmap.rid}
+                views_count={roadmap.views_count}
+                stars_count={roadmap.stars_count}
+                forks_count={roadmap.forks_count}
+                created_at={roadmap.created_at}
+                edited_at={roadmap.edited_at}
+                title={roadmap.title}
+              />
             ))}
           </div>
         </div>
       </div>
     </>
-
   );
 };
 
