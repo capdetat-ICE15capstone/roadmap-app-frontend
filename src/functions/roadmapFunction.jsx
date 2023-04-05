@@ -115,12 +115,21 @@ export const getTask = async (tid, timeout = 0) => {
   }
 };
 
+export const updateRoadmap = () => {
+
+}
+
+export const createRoadmap = () => {
+  
+}
+
 export const reformTask = (taskObj) => {
   // Create new object to prevent side effect
   const newTaskObj = { ...taskObj };
 
   console.log(newTaskObj);
   newTaskObj.subtasks = taskObj.subtasks.map((subtask) => {
+    subtask.isTempId = false;
     return objRename(subtask, inboundSubtaskName);
   });
 
@@ -140,32 +149,32 @@ export const reformRoadmap = (roadmapObject) => {
 };
 
 // OUTDATED
-export const createRoadmap = async (roadmapObject, timeout = 1000) => {
-  // roadmap object: full roadmap object from the page
-  if (!roadmapObject) {
-    return null;
-  }
+// export const createRoadmap = async (roadmapObject, timeout = 1000) => {
+//   // roadmap object: full roadmap object from the page
+//   if (!roadmapObject) {
+//     return null;
+//   }
 
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeout);
+//   const controller = new AbortController();
+//   const timeoutId = setTimeout(() => controller.abort(), timeout);
 
-  const response = await fetch("http://localhost:3000/roadmaps/", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(roadmapObject),
-    timeout: timeout,
-    signal: controller.signal,
-  });
+//   const response = await fetch("http://localhost:3000/roadmaps/", {
+//     method: "POST",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//     body: JSON.stringify(roadmapObject),
+//     timeout: timeout,
+//     signal: controller.signal,
+//   });
 
-  clearTimeout(timeoutId);
+//   clearTimeout(timeoutId);
 
-  if (!response.ok) {
-    console.log("fetch error " + response.status);
-    return null;
-  }
+//   if (!response.ok) {
+//     console.log("fetch error " + response.status);
+//     return null;
+//   }
 
-  const result = await response.json();
-  return result;
-};
+//   const result = await response.json();
+//   return result;
+// };

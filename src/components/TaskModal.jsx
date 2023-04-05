@@ -25,6 +25,7 @@ const MAX_NAME_LENGTH = 24;
 const MAX_DESCRIPTION_LENGTH = 255;
 
 const TaskModal = ({ oldData, editTaskCallBack }) => {
+  const initialState = useRef({ ...oldData });
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   // WARNING: use getId() to get an ID only
@@ -38,7 +39,8 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
   const [deleteModal, setDeleteModal] = useState(false);
   const [unSavedModal, setUnSavedModal] = useState(false);
   const [dataChange, setDataChange] = useState(false);
-  const [taskWasFetched, setTaskWasFetched] = useState(false)
+  const [changedData, setChangedData] = useState({});
+  const [taskWasFetched, setTaskWasFetched] = useState(false);
   const DatePickerButton = forwardRef(({ value, onClick }, ref) => (
     <div className="w-full">
       <button
@@ -65,7 +67,6 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
   ));
 
   useEffect(() => {
-    console.log(oldData);
     async function setModalData() {
       setLoading(true);
       if (oldData.id !== -1) {
@@ -73,6 +74,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
           setupTask(oldData);
         } else {
           const fetchedData = await getTask(oldData.id);
+          initialState.current = fetchedData;
           setTaskWasFetched(true);
           setupTask(fetchedData);
         }
@@ -82,6 +84,14 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
 
     setModalData();
   }, []);
+
+  // useEffect(() => {
+  //   console.log(changedData);
+  // }, [changedData]);
+
+  // useEffect(() => {
+  //   console.log(oldData);
+  // }, []);
 
   const setupTask = (taskObj) => {
     setName(taskObj.name);
@@ -109,28 +119,89 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
     return id;
   };
 
+  const trackDataChangeObject = (attrName, newAttr) => {
+    setChangedData((previousData) => {
+      if (
+        // User change the data back to original state
+        newAttr === initialState.current[attrName] &&
+        previousData[attrName] !== null &&
+        previousData[attrName] !== undefined
+      ) {
+        // Delete that change in change object
+        const stateCopy = previousData;
+        delete stateCopy[attrName];
+        return stateCopy;
+      } else if (newAttr !== initialState.current[attrName]) {
+        // Change that is not in init state
+        // Add the change to change object
+        return { ...previousData, [attrName]: newAttr };
+      }
+      return previousData;
+    });
+  };
+
   const handleNameChange = (event) => {
     if (name.length < MAX_NAME_LENGTH) {
-      setName(event.target.value);
-      setDataChange(true);
+      setName((prevData) => {
+        if (prevData !== event.target.value) {
+          // trackDataChangeObject("name", event.target.value)
+          return event.target.value;
+        }
+        return prevData;
+      });
     }
   };
 
   const handleDescriptionChange = (event) => {
     if (description.length < MAX_DESCRIPTION_LENGTH) {
-      setDescription(event.target.value);
-      setDataChange(true);
+      setDescription((prevData) => {
+        if (prevData !== event.target.value) {
+          // trackDataChangeObject("description", event.target.value)
+          return event.target.value;
+        }
+        return prevData;
+      });
+    }
+  };
+
+  const handleDateChange = (mode, date) => {
+    if (mode === "startDate") {
+      setStartDate((prevData) => {
+        if (prevData.getTime() !== date.getTime()) {
+          // trackDataChangeObject("startDate", date);
+          return date;
+        }
+        return prevData;
+      });
+    } else if (mode === "dueDate") {
+      setdueDate((prevData) => {
+        if (prevData.getTime() !== date.getTime()) {
+          // trackDataChangeObject("startDate", date);
+          return date;
+        }
+        return prevData;
+      });
     }
   };
 
   const handleNodeColorChange = (event) => {
-    setNodeColor(allNodeColor.find(({ name }) => name === event.target.value));
-    setDataChange(true);
+    setNodeColor((prevData) => {
+      if (prevData.name !== event.target.value) {
+        // trackDataChangeObject("nodeColor", event.target.value);
+        return allNodeColor.find(({ name }) => name === event.target.value);
+      }
+      return prevData;
+    });
   };
 
   const handleNodeShapeChange = (event, shapeType) => {
-    setNodeShape(shapeType);
-    setDataChange(true);
+    setNodeShape((prevData) => {
+      if (prevData !== shapeType) {
+        // trackDataChangeObject("nodeShape", shapeType)
+        return shapeType;
+      }
+      return prevData;
+    });
   };
 
   const addSubTask = (event) => {
@@ -142,6 +213,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
         id: getId(),
         detail: "",
         status: false,
+        isTempId: true,
       },
     ]);
   };
@@ -169,11 +241,61 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
     );
   };
 
-  const handleTaskChange = () => {
+  const checkTaskChange = () => {
+    // compare previous data (may not be first) with latest data
+    if (
+      initialState.current.name !== name ||
+      initialState.current.description !== description ||
+      initialState.current.nodeColor !== nodeColor.name ||
+      initialState.current.nodeShape !== nodeShape ||
+      initialState.current.startDate.getTime() !== startDate.getTime() ||
+      initialState.current.dueDate.getTime() !== dueDate.getTime()
+    ) {
+      return true;
+    }
+
+    return false;
+  };
+
+  const checkSubtaskChange = () => {
+    let subtaskChange = { add: [], edit: [], delete: [] };
+    subtasks.forEach((subtask) => {
+      if (subtask.isTempId === true) {
+        // new subtask
+        subtaskChange.add.push(subtask.id);
+        return;
+      }
+
+      const taskIntersection =
+        initialState.current.subtasks.find(
+          (initsubtask) => subtask.id === initsubtask.id
+        ) === undefined;
+      if (taskIntersection) {
+        // deleted subtask
+        subtaskChange.delete.push(subtask.id);
+        return;
+      } else if (
+        subtask.detail !== taskIntersection.detail ||
+        subtask.status !== taskIntersection.detail
+      ) {
+        // edited task
+        subtaskChange.edit.push(subtask.id);
+        return;
+      }
+    });
+    return subtaskChange;
+  };
+
+  const handleDetectChangeBeforeClose = () => {
     // use to check whether the task has changed
     // if change is detected but user press close
     // set the display unsaved change modal to true
-    if (dataChange === true) {
+    const check = checkSubtaskChange();
+    const subtaskChange =
+      check.add.length === 0 &&
+      check.edit.length === 0 &&
+      check.delete.length === 0;
+    if (checkTaskChange() || subtaskChange) {
       setUnSavedModal(true);
       return;
     }
@@ -193,9 +315,9 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
       subtasks: subtasks,
       hasFetched: true,
       isDone: false,
-      isTempId: oldData.id === -1 || oldData.isTempId === true ? true : false 
-    }
-  }
+      isTempId: oldData.id === -1 || oldData.isTempId === true ? true : false,
+    };
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -217,7 +339,12 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
       />
       <TwoButtonModal
         isOpen={unSavedModal}
-        onLightPress={() => editTaskCallBack(taskWasFetched ? "fetch" : "failed", generateTaskData())}
+        onLightPress={() =>
+          editTaskCallBack(
+            taskWasFetched ? "fetch" : "failed",
+            generateTaskData()
+          )
+        }
         onDarkPress={() => setUnSavedModal(false)}
         textField={{
           title: "Unsaved Change",
@@ -226,6 +353,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
           darkButtonText: " Cancel",
         }}
       />
+
       <form onSubmit={handleSubmit}>
         <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-20 outline-none focus:outline-none">
           <div className="relative w-11/12 md:w-5/6 my-6 mx-auto xl:w-2/3 2xl:w-1/2 max-h-screen">
@@ -291,8 +419,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                           showTimeSelect
                           minDate={Date.now()}
                           onChange={(date) => {
-                            setStartDate(date);
-                            setDataChange(true);
+                            handleDateChange("startDate", date);
                           }}
                           customInput={<DatePickerButton />}
                         ></DatePicker>
@@ -308,8 +435,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                           showTimeSelect
                           minDate={Date.now()}
                           onChange={(date) => {
-                            setdueDate(date);
-                            setDataChange(true);
+                            handleDateChange("dueDate", date);
                           }}
                           // className="border border-black rounded-md justify-self-end w-full"
                           customInput={<DatePickerButton />}
@@ -458,7 +584,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                       <button
                         className="text-black border border-black rounded-md background-transparent font-bold uppercase px-6 py-3 text-sm outline-none focus:outline-none ease-linear transition-all duration-150"
                         type="button"
-                        onClick={handleTaskChange}
+                        onClick={handleDetectChangeBeforeClose}
                       >
                         Close
                       </button>
@@ -493,7 +619,7 @@ TaskModal.propTypes = {
     subtasks: PropTypes.arrayOf(object),
     hasFetched: PropTypes.bool,
     isDone: PropTypes.bool,
-    isTempId: PropTypes.bool
+    isTempId: PropTypes.bool,
   }),
   editTaskCallBack: PropTypes.func.isRequired,
 };

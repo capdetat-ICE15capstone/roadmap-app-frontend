@@ -67,6 +67,8 @@ const TaskItem = ({ task, setEditTaskID, setModalState }) => {
 };
 
 const RoadmapCreatePage = (props) => {
+  const navigate = useNavigate();
+  const initialState = useRef();
   const { mode } = props; // props from parent
   const { state } = useLocation(); // state from previous page, including fetched roadmap data
   const { id } = useParams(); // param from react router placeholder (/edit/:id)
@@ -74,20 +76,27 @@ const RoadmapCreatePage = (props) => {
   const [RMDesc, setRMDesc] = useState("");
   const [tasks, setTasks] = useState([]);
   const [modalState, setModalState] = useState(false);
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [editTaskID, setEditTaskID] = useState(0);
   const [lastId, setLastId] = useState(0);
   const [isPublic, setPublic] = useState(true);
   const [edges, setEdges] = useState([]);
-  // [{from: rid1, to: rid2}]
-  const [tasksRef, setTasksRef] = useState([]);
-  // [{rid: string, ref: Ref}]
-  const previousValue = usePreviousState(tasksRef);
+  const [tasksRef, setTasksRef] = useState([]); // [{from: rid1, to: rid2}]
+  const previousValue = usePreviousState(tasksRef); // [{rid: string, ref: Ref}]
   const [notiStatus, setNotiStatus] = useState({ on: false });
   const [tags, setTags] = useState([]);
   const [publicModal, setPublicModal] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [changedTask, setChangedTask] = useState({
+    add: [],
+    edit: [],
+    delete: [],
+  });
+  const [changedSubtask, setChangedSubtask] = useState({
+    add: [],
+    edit: [],
+    delete: [],
+  });
 
   useEffect(() => {
     setUpRoadmap();
@@ -96,6 +105,10 @@ const RoadmapCreatePage = (props) => {
   useEffect(() => {
     addEdges();
   }, [tasksRef]);
+
+  useEffect(() => {
+    console.log(tasks);
+  }, [tasks]);
 
   useEffect(() => {
     // display confirm message when user try to leave the page
@@ -139,6 +152,11 @@ const RoadmapCreatePage = (props) => {
         setRMDesc(state.roadmap.description);
         setTasks(state.roadmap.tasks);
         setPublic(state.roadmap.publicity);
+        initialState.current = {
+          name: state.roadmap.name,
+          description: state.roadmap.description,
+          public: state.roadmap.publicity,
+        };
         let highestID = 0;
         state.roadmap.tasks.forEach((task) => {
           if (task.id > highestID) {
@@ -156,6 +174,11 @@ const RoadmapCreatePage = (props) => {
           setRMDesc(tempRoadmap.description);
           setTasks(tempRoadmap.tasks);
           setPublic(tempRoadmap.publicity);
+          initialState.current = {
+            name: tempRoadmap.name,
+            description: tempRoadmap.description,
+            public: tempRoadmap.publicity,
+          };
           let highestID = 0;
           tempRoadmap.tasks.forEach((task) => {
             if (task.id > highestID) {
@@ -178,6 +201,14 @@ const RoadmapCreatePage = (props) => {
           return task;
         })
       );
+    }
+
+    if (mode === "create") {
+      initialState.current = {
+        name: "",
+        description: "",
+        public: true,
+      };
     }
   };
 
@@ -242,7 +273,6 @@ const RoadmapCreatePage = (props) => {
             // new tasks
             submissionObject.id = getID();
             setTasks([...tasks, submissionObject]);
-            setHasUnsavedChanges(true);
             break;
           default:
             // edit task
@@ -251,8 +281,6 @@ const RoadmapCreatePage = (props) => {
                 task.id === submissionObject.id ? submissionObject : task
               )
             );
-            setHasUnsavedChanges(true);
-            // maybe keep track of the edited task
             break;
         }
         break;
@@ -263,6 +291,9 @@ const RoadmapCreatePage = (props) => {
             task.id === submissionObject.id ? submissionObject : task
           )
         );
+        initialState.current.tasks.forEach((task) => {
+          if (task.id === submissionObject.id) task = submissionObject;
+        });
         break;
       case "failed":
         // user quit modal without saving
@@ -323,9 +354,97 @@ const RoadmapCreatePage = (props) => {
     setTasks(items);
   };
 
+  const checkRoadmapChange = () => {
+    // return bool
+    if (
+      RMName !== initialState.name ||
+      RMDesc !== initialState.description ||
+      isPublic !== initialState.public
+    )
+      return false;
+  };
+
+  const compareTaskChange = (initState, newState) => {
+    // compare first data and latest data
+    // initState, newState: task array
+    let taskChange = { add: [], edit: [], delete: [] };
+    newState.forEach((task) => {
+      if (task.isTempId === true) {
+        // new subtask
+        taskChange.add.push(task.id);
+        return;
+      }
+
+      const taskIntersection =
+        initState.find((inittask) => task.id === inittask.id) === undefined;
+      if (taskIntersection) {
+        // deleted subtask
+        taskChange.delete.push(subtask.id);
+        return;
+      } else if ( taskIntersection.hasFetched === true
+        (task.name !== taskIntersection.name ||
+        task.description !== taskIntersection.description ||
+        task.nodeColor !== taskIntersection.name ||
+        task.nodeShape !== taskIntersection.nodeShape ||
+        task.startDate.getTime() !== taskIntersection.startDate.getTime() ||
+        task.dueDate.getTime() !== taskIntersection.dueDate.getTime())
+      ) {
+        // edited task
+        taskChange.edit.push(subtask.id);
+        return;
+      }
+    });
+    return taskChange;
+  };
+
+  const compareSubtaskChange = (initState, newState) => {
+    // compare first data and latest data
+    // initState, newState: subtask array
+    let subtaskChange = { add: [], edit: [], delete: [] };
+    newState.forEach((subtask) => {
+      if (subtask.isTempId === true) {
+        // new subtask
+        subtaskChange.add.push(subtask.id);
+        return;
+      }
+
+      const taskIntersection =
+        initState.find((initsubtask) => subtask.id === initsubtask.id) ===
+        undefined;
+      if (taskIntersection) {
+        // deleted subtask
+        subtaskChange.delete.push(subtask.id);
+        return;
+      } else if (
+        subtask.detail !== taskIntersection.detail ||
+        subtask.status !== taskIntersection.detail
+      ) {
+        // edited task
+        subtaskChange.edit.push(subtask.id);
+        return;
+      }
+    });
+    return subtaskChange;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     await searchTags();
+
+    let taskChange = { add: [], edit: [], delete: [] };
+    let subTaskChange = { add: [], edit: [], delete: [] };
+
+    // check for change
+    console.log(initialState.current);
+    taskChange = compareTaskChange(initialState.current.tasks, tasks);
+    console.log(taskChange);
+    tasks.forEach((task) => {
+      const initTask = initialState.current.tasks.find((t) => t.id === task.id)
+      if (initTask === undefined) return;
+      const comparison = compareSubtaskChange(initTask.subtasks, tasks.subtasks)
+      console.log(comparison);
+    })
+
     const completeRoadmap = {
       name: RMName,
       description: RMDesc,
@@ -341,14 +460,14 @@ const RoadmapCreatePage = (props) => {
     await generateNotificationObjects();
 
     // Add a fetch POST request here
-    if (mode === "create") {
-      if ((await createRoadmap({ completeRoadmap })) === null) {
-        alert("CREATE error");
-        setLoading(false);
-      }
-    } else {
-      // for edit or clone mode
-    }
+    // if (mode === "create") {
+    //   if ((await createRoadmap({ completeRoadmap })) === null) {
+    //     alert("CREATE error");
+    //     setLoading(false);
+    //   }
+    // } else {
+    //   // for edit or clone mode
+    // }
 
     setLoading(false);
     navigate("/");
