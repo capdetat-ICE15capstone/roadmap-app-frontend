@@ -5,24 +5,46 @@ import { useNavigate } from "react-router-dom";
 import { ReactComponent as SearchIcon } from "../assets/searchIcon.svg";
 
 const Feed = () => {
-
   const [search, setSearch] = useState("");
   const [roadmapArray, setRoadmapArray] = useState([]);
   const isMountedRef = useRef(false);
   const [isFetching, setIsFetching] = useState(false);
   const navigate = useNavigate();
 
+  // classify user input (roadmap(""), user("@""), tag("#""))
+  const classifyInput = (input) => {
+    // User search
+    if (input.charAt(0) === "@") {
+      const username = input.substring(1);
+      const type = "user"
+      console.log(`Searching for user ${username}`);
+      return type
+    // Tag search  
+    } else if (input.charAt(0) === "#") {
+      const tag = input.substring(1);
+      const type = "tag"
+      console.log(`Searching for tag ${tag}`);
+      return type
+    // Roadmap search
+    } else {
+      const type = "roadmap"
+      console.log(`Searching for roadmap ${input}`);
+      return type
+    }
+  }
+
+  // naviage the user to SearchPage
   const handleSubmit = (event) => {
     event.preventDefault();
     setRoadmapArray([]);
-    //fetchData();
     setSearch(document.getElementById("InputSearch").value);
     const searchValue = document.getElementById("InputSearch").value;
-    navigate('/search', { state: { userSearch: searchValue } });
-    console.log("search: " + document.getElementById("InputSearch").value);
+    const searchType = classifyInput(searchValue);
+    navigate('/search', { state: { userSearch: searchValue, searchType: searchType} });
+    //console.log("search: " + document.getElementById("InputSearch").value);
   };
 
-  //fetch roadmap data from API
+  // fetch roadmap data from API
   const fetchData = async () => {
     if (isFetching) return; // return if a fetch is already in progress
     setIsFetching(true); // set isFetching to true to indicate a fetch is starting
@@ -48,6 +70,7 @@ const Feed = () => {
       isMountedRef.current = true;
       return;
     }
+    setRoadmapArray([]);
     fetchData();
   }, []);
 
