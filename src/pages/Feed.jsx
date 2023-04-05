@@ -53,53 +53,55 @@ const Feed = () => {
 
   return (
     <>
-  <div className='flex flex-col relative h-full bg-white overflow-y-scroll py-8'>
-    {/*Top (title & search bar)*/}
-    <div className='sticky top-0 z-50'>
-      {/*Feed Title*/}
-      <div className='flex items-center text-3xl font-bold'>
-        <SearchIcon className="flex h-8 w-8 mr-2 mt-2 fill-[#09275B]" />
-        <div className='flex text-[#09275B]'>
-          Feed
-        </div>
-      </div>
-      {/*Search bar*/}
-      <form className="mx-auto" id="searchForm" onSubmit={handleSubmit}>
-        <div
-          className="relative inline-block my-4"
-          onSubmit={handleSubmit}
-        >
-          <SearchBar />
-          <button type="submit" className="bg-[#00286E] hover:bg-[#011C4B] text-white font-bold appearance-none border rounded-3xl px-12 py-4 ml-2 leading-tight focus:outline-none focus:shadow-outline">
-            Search
-          </button>
-        </div>
-      </form>
-    </div>
-    <div className="w-5/6 flex-col m-auto space-y-6">
-      {/*Search Result*/}
-      <div className="relative flex flex-wrap mx-4">
-        {roadmapArray.map((roadmap, index) => (
-          <div key={index} className="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 p-2">
-            <Roadmap
-              owner_id={roadmap.owner_id}
-              creator_id={roadmap.creator_id}
-              owner_name={roadmap.owner_name}
-              creator_name={roadmap.creator_name}
-              rid={roadmap.rid}
-              views_count={roadmap.views_count}
-              stars_count={roadmap.stars_count}
-              forks_count={roadmap.forks_count}
-              created_at={roadmap.created_at}
-              edited_at={roadmap.edited_at}
-              title={roadmap.title}
-            />
+      <div className='flex flex-col h-full w-full bg-white overflow-y-auto relative'>
+        {/*Top (title & search bar)*/}
+        <div className='flex justify-center sticky top-0 z-50 bg-white p-4'>
+          <div className='flex w-3/4 justify-center'>
+            {/*Feed Title*/}
+            <div className='flex items-center text-3xl font-bold'>
+              <SearchIcon className="flex h-8 w-8 mr-2 mt-2 fill-[#09275B]" />
+              <div className='flex text-[#09275B]'>
+                Feed
+              </div>
+            </div>
+            {/*Search bar*/}
+            <form className="mx-auto" id="searchForm" onSubmit={handleSubmit}>
+              <div
+                className="relative inline-block my-4"
+                onSubmit={handleSubmit}
+              >
+                <SearchBar />
+                <button type="submit" className="bg-[#00286E] hover:bg-[#011C4B] text-white font-bold appearance-none border rounded-3xl px-12 py-4 ml-2 leading-tight focus:outline-none focus:shadow-outline">
+                  Search
+                </button>
+              </div>
+            </form>
           </div>
-        ))}
+        </div>
+        {/*Search Result*/}
+        <div className='flex justify-center'>
+          <div className='flex flex-wrap justify-center w-3/4'>
+            {roadmapArray.map((roadmap, index) => (
+              <div key={index}>
+                <Roadmap
+                  owner_id={roadmap.owner_id}
+                  creator_id={roadmap.creator_id}
+                  owner_name={roadmap.owner_name}
+                  creator_name={roadmap.creator_name}
+                  rid={roadmap.rid}
+                  views_count={roadmap.views_count}
+                  stars_count={roadmap.stars_count}
+                  forks_count={roadmap.forks_count}
+                  created_at={roadmap.created_at}
+                  edited_at={roadmap.edited_at}
+                  title={roadmap.title}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</>
+    </>
 
   );
 };
