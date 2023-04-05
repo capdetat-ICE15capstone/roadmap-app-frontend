@@ -1,50 +1,73 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Roadmap from "../components/Roadmap";
 import SearchBar from "../components/SearchBar";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { ReactComponent as SearchIcon } from "../assets/searchIcon.svg";
+import UserBanner from "../components/UserBanner";
 
-const Feed = () => {
-  const [search, setSearch] = useState("");
-  const [roadmapArray, setRoadmapArray] = useState([]);
-  const isMountedRef = useRef(false);
-  const [isFetching, setIsFetching] = useState(false);
+const SearchPage = () => {
+  const [showRoadmapResult, setShowRoadmapResult] = useState(false);
+  const [showUserResult, setShowUserResult] = useState(false);
+  const [search, setSearch] = useState('');
+  const location = useLocation();
   const navigate = useNavigate();
+  const searchValue = location.state?.userSearch || '';
+  const searchType = location.state?.searchType || '';
 
   // classify user input (roadmap(""), user("@""), tag("#""))
   const classifyInput = (input) => {
     // User search
     if (input.charAt(0) === "@") {
       const username = input.substring(1);
-      const type = "user"
+      const type = "user";
+      setShowRoadmapResult(false);
+      setShowUserResult(true);
       console.log(`Searching for user ${username}`);
-      return type
-    // Tag search  
+      return type;
+      // Tag search  
     } else if (input.charAt(0) === "#") {
       const tag = input.substring(1);
-      const type = "tag"
+      const type = "tag";
+      setShowUserResult(false);
+      setShowRoadmapResult(true);
       console.log(`Searching for tag ${tag}`);
-      return type
-    // Roadmap search
+      return type;
+      // Roadmap search
     } else {
-      const type = "roadmap"
+      const type = "roadmap";
+      setShowUserResult(false);
+      setShowRoadmapResult(true);
       console.log(`Searching for roadmap ${input}`);
-      return type
+      return type;
     }
   }
 
-  // naviage the user to SearchPage
+  useEffect(() => {
+    // Run your function here
+    console.log("SearchPage mounted");
+    if (searchType === "roadmap") {
+      setShowUserResult(false);
+      setShowRoadmapResult(true);
+    } else if (searchType === "user") {
+      setShowRoadmapResult(false);
+      setShowUserResult(true);
+    }
+
+  }, []);
+
+  // search
   const handleSubmit = (event) => {
     event.preventDefault();
-    setRoadmapArray([]);
+    //setRoadmapArray([]);
+    //setPage(1);
+    //fetchData();
     setSearch(document.getElementById("InputSearch").value);
     const searchValue = document.getElementById("InputSearch").value;
-    const searchType = classifyInput(searchValue);
-    navigate('/search', { state: { userSearch: searchValue, searchType: searchType} });
-    //console.log("search: " + document.getElementById("InputSearch").value);
+    classifyInput(searchValue);
+    navigate('/search', { state: { userSearch: searchValue } });
   };
 
-  // fetch roadmap data from API
+  // fetch roadmap data
   const fetchData = async () => {
     if (isFetching) return; // return if a fetch is already in progress
     setIsFetching(true); // set isFetching to true to indicate a fetch is starting
@@ -62,17 +85,6 @@ const Feed = () => {
     }
     setIsFetching(false); // set isFetching to false to indicate a fetch is complete
   };
-
-  // fetch data when page is changed and when feed is reloaded
-  useEffect(() => {
-    // use to stop fetching twice when feed page is reloaded
-    if (!isMountedRef.current) {
-      isMountedRef.current = true;
-      return;
-    }
-    setRoadmapArray([]);
-    fetchData();
-  }, []);
 
   return (
     <>
@@ -101,31 +113,26 @@ const Feed = () => {
             </form>
           </div>
         </div>
-        {/*Search Result*/}
-        <div className='flex justify-center'>
-          <div className='flex flex-wrap items-start w-3/4 gap-12'>
-            {roadmapArray.map((roadmap, index) => (
-              <Roadmap
-                key={index}
-                owner_id={roadmap.owner_id}
-                creator_id={roadmap.creator_id}
-                owner_name={roadmap.owner_name}
-                creator_name={roadmap.creator_name}
-                rid={roadmap.rid}
-                views_count={roadmap.views_count}
-                stars_count={roadmap.stars_count}
-                forks_count={roadmap.forks_count}
-                created_at={roadmap.created_at}
-                edited_at={roadmap.edited_at}
-                title={roadmap.title}
-              />
-            ))}
+        {showRoadmapResult && (
+          <div>
+            <h1>Roadmap Result</h1>
+            <p>This is the content for Roadmap Result.</p>
           </div>
-        </div>
+        )}
+        {showUserResult && (
+          <div>
+            <h1>User Result</h1>
+            <p>This is the content for User Result.</p>
+          </div>
+        )}
       </div>
     </>
   );
 };
 
-export default Feed;
-//                         npx json-server --watch json_server_test/db.json
+export default SearchPage;
+
+
+
+
+
