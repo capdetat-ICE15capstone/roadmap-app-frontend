@@ -70,7 +70,7 @@ function App() {
                 path="friend_home"
                 element={
                   <Suspense fallback={<Spinner />}>
-                    <HomeOtherUser />
+                    <FriendHome />
                   </Suspense>
                 }
               ></Route>
@@ -110,7 +110,7 @@ function App() {
                 path="view/:id"
                 element={
                   <Suspense fallback={<Spinner />}>
-                    {/* insert view roadmap element */}
+                    <View />
                   </Suspense>
                 }
               ></Route>
