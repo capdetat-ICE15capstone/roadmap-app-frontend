@@ -91,7 +91,8 @@ const Home = () => {
               edited_at="03/18/2023" 
               views_counts={2}
               isActive={isActive}
-              deleteFunction={deleteRoadmap} />            </div>
+              deleteFunction={deleteRoadmap} />
+            </div>
             
           </div>
         </div>
