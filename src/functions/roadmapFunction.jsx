@@ -1,6 +1,6 @@
 import { axiosInstance } from "./axiosInstance";
 
-// PRIVATE method will NOT deal with errors, it will throw 
+// PRIVATE method will NOT deal with errors, it will throw
 // error, the parent function should deal with them
 
 const inboundTaskName = [
@@ -19,7 +19,10 @@ const inboundSubtaskName = [
   { from: "title", to: "detail" },
 ];
 
-const inboundRoadmapName = [{ from: "title", to: "name" }];
+const inboundRoadmapName = [
+  { from: "title", to: "name" },
+  { from: "is_private", to: "isPublic" },
+];
 
 const objRename = (obj = null, renameToObj = null) => {
   // Create renameObj (See example such as inboundTaskName)
@@ -110,44 +113,139 @@ export const getTask = async (tid, timeout = 0) => {
   }
 };
 
-export const updateRoadmap = async (roadmapObject, timeout = 0) => {};
+export const editRoadmap = async (
+  rid,
+  roadmapChange,
+  taskChange,
+  subtaskChange,
+  relationChange,
+  timeout = 0
+) => {
+  console.log(roadmapChange);
+  console.log(taskChange);
+  console.log(subtaskChange);
+  console.log(relationChange);
+  try {
+    // edit roadmap
+    if (roadmapChange !== null) {
+      await PRIVATE_updateRoadmap(roadmapChange);
+    }
+
+    const [taskAdd, subTaskAdd, taskRelation] = await PRIVATE_addAndReassign(
+      rid,
+      taskChange.add,
+      subtaskChange.add,
+      relationChange
+    )
+
+    await PRIVATE_editTask(taskChange.edit);
+    await PRIVATE_deleteTask(taskChange.delete);
+    await PRIVATE_editSubtask(subtaskChange.edit);
+    await PRIVATE_deleteSubtask(subtaskChange.delete)
+
+    console.log(taskRelation);
+
+    if (taskRelation !== null & taskRelation !== undefined) {
+      let taskRelationResponse = await PRIVATE_updateRelation(
+        rid,
+        taskRelation
+      );
+    }
+    
+
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
 
 export const createRoadmap = async (
   roadmapChange, // null (No Change) or roadmapAttr (For create mode always has roadmapAttr)
   taskChange, // taskChange object {add:[], edit:[], delete:[]}
   subtaskChange, // subtaskChange object {add:[], edit:[], delete:[]
-  relationChange, // null or [1, 2, 3] 
   timeout = 1000
 ) => {
-
   try {
     // create Roadmap
     let response = await PRIVATE_createRoadmap(roadmapChange);
-    let taskResponse = await PRIVATE_createTask(response.rid, taskChange.add)
+    let oldTaskRelation = taskChange.add.map((tChange) => tChange.id);
+    const [taskAdd, subTaskAdd, taskRelation] = await PRIVATE_addAndReassign(
+      response.rid,
+      taskChange.add,
+      subtaskChange.add,
+      oldTaskRelation
+    );
 
-    subtaskChange.add.forEach((stChange) => {
-      const newIdIndex = taskChange.add.findIndex((oldTask) => oldTask.id === stChange.tid)
-      stChange.tid = taskResponse[newIdIndex];
-    })
+    let taskRelationResponse = await PRIVATE_updateRelation(
+      response.rid,
+      taskRelation
+    );
 
-    let subtaskResponse = await PRIVATE_createSubtask(subtaskChange.add);
-
-    taskChange.add.forEach((tChange, index) => {
-      console.log(tChange);
-      tChange.id = taskResponse[index]
-    })
-    subtaskChange.add.forEach((stChange, index) => {
-      stChange.id = subtaskResponse[index]
-    })
-
-    console.log(roadmapChange);
-    console.log(taskChange);
-    console.log(subtaskChange);
-    return response
-    
+    console.log(response.rid);
+    console.log(taskAdd);
+    console.log(subTaskAdd);
+    console.log(taskRelation);
+    return response;
   } catch (error) {
     console.error(error);
     return null;
+  }
+};
+
+const PRIVATE_addAndReassign = async (
+  rid,
+  taskAdd,
+  subTaskAdd,
+  taskRelation
+) => {
+  // call add api and reassign id to task and subtask
+  // taskChange.add and subtaskChange.add
+  console.log(rid),
+  console.log(taskAdd),
+  console.log(subTaskAdd),
+  console.log(taskRelation)
+  
+
+  try {
+    let taskResponse = await PRIVATE_createTask(rid, taskAdd); 
+
+    subTaskAdd.forEach((stChange) => {
+      const newIdIndex = taskAdd.findIndex(
+        (oldTask) => oldTask.id === stChange.tid
+      );
+      if (newIdIndex !== -1) 
+        stChange.tid = taskResponse[newIdIndex];
+    });
+
+    let subtaskResponse = await PRIVATE_createSubtask(subTaskAdd);
+    let tempIdMapping = {};
+
+    taskAdd.forEach((tChange, index) => {
+      tempIdMapping[tChange.id] = taskResponse[index];
+      tChange.id = taskResponse[index];
+    });
+
+    subTaskAdd.forEach((stChange, index) => {
+      stChange.id = subtaskResponse[index];
+    });
+
+    console.log(tempIdMapping);
+    if (taskRelation !== null && taskRelation !== undefined) {
+      taskRelation = taskRelation.map((tid) => {
+        if (tempIdMapping[tid] !== undefined && tempIdMapping[tid] !== null) {
+          console.log(tempIdMapping[tid]);
+          return tempIdMapping[tid]
+        }
+        return tid;
+      });
+    }
+
+    console.log(taskRelation)
+
+    return [taskAdd, subTaskAdd, taskRelation];
+  } catch (error) {
+    console.error(error);
+    throw new Error("add and reassign error");
   }
 };
 
@@ -159,7 +257,7 @@ const PRIVATE_createRoadmap = async (roadmap, timeout = 0) => {
     roadmap_deadline: "2023-04-05T18:27:49.875",
     is_before_start_time: true,
     reminder_time: 0,
-    is_private: roadmap.publicity,
+    is_private: !roadmap.isPublic,
   };
 
   try {
@@ -174,31 +272,50 @@ const PRIVATE_createRoadmap = async (roadmap, timeout = 0) => {
 };
 
 const PRIVATE_updateRoadmap = async (roadmap, timeout = 0) => {
+  console.log(roadmap);
+  if (roadmap === null || roadmap.id === null)
+    throw new Error("roadmap/roadmap id is null");
   const route = `/roadmap/`;
   const reqBody = {
+    rid: roadmap.id,
     title: roadmap.name,
     description: roadmap.description,
-    roadmap_deadline: "2023-04-06T04:57:41.691Z",
+    roadmap_deadline: "2023-04-06T04:57:41.691",
     is_before_start_time: true,
     reminder_time: 0,
-    is_private: !roadmap.publicity,
-    rid: roadmap.id,
+    is_private: !roadmap.isPublic,
   };
   try {
-    let response = await axiosInstance.push(route, {
-      // Update Roadmap
+    let response = await axiosInstance.put(route, reqBody, {
       timeout: timeout,
-      data: reqBody,
+    });
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Roadmap create axios error");
+  }
+};
+
+const PRIVATE_updateRelation = async (rid, relation, timeout = 0) => {
+  const route = `/roadmap/relation?rid=${rid}`;
+  const reqBody = relation;
+  console.log(relation);
+  try {
+    let response = await axiosInstance.put(route, reqBody, {
+      timeout: timeout,
     });
 
     return response.data;
   } catch (error) {
+    console.error(error);
     throw new Error("Roadmap create axios error");
   }
 };
 
 const PRIVATE_createTask = async (rid, tasks, timeout = 0) => {
   // always return array of tid
+  console.log(rid);
+  console.log(tasks);
   if (!Array.isArray(tasks)) tasks = [tasks];
   if (tasks.length === 0) return null;
 
@@ -235,15 +352,14 @@ const PRIVATE_createTask = async (rid, tasks, timeout = 0) => {
     let response = await axiosInstance.post(route, reqBody, {
       timeout: timeout,
     });
-    
+
     if (tasks.length > 1) {
       return response.data.tids.map((tidObj) => {
-        return tidObj.tid
-      })
+        return tidObj.tid;
+      });
     } else if (tasks.length === 1) {
-      return [response.data.tid]
+      return [response.data.tid];
     }
-
   } catch (error) {
     console.error(error);
     throw new Error("Roadmap create axios error");
@@ -265,7 +381,7 @@ const PRIVATE_editTask = async (tasks, timeout = 0) => {
       deadline: tasks[0].dueDate,
       shape: tasks[0].nodeShape,
       color: tasks[0].nodeColor,
-      tid: tasks[0].id,
+      tid: tasks[0].id
     };
   } else if (tasks.length > 1) {
     route = `/task/tasks`;
@@ -277,16 +393,12 @@ const PRIVATE_editTask = async (tasks, timeout = 0) => {
         deadline: task.dueDate,
         shape: task.nodeShape,
         color: task.nodeColor,
-        tid: task.id,
+        tid: task.id
       };
     });
   }
   try {
-    let response = await axiosInstance.push(route, {
-      // Update Roadmap
-      timeout: timeout,
-      data: reqBody,
-    });
+    let response = await axiosInstance.push(route, reqBody, {timeout:timeout});
 
     return response.data;
   } catch (error) {
@@ -294,13 +406,17 @@ const PRIVATE_editTask = async (tasks, timeout = 0) => {
   }
 };
 
-const PRIVATE_deleteTask = async (tid, timeout = 0) => {
-  if (tid === undefined || tid === null) return null;
+const PRIVATE_deleteTask = async (tids, timeout = 0) => {
+  if (tids=== undefined || tids === null) return null;
+  if (!Array.isArray(tids)) tids = [tids]
 
-  let route = `/task/${tid}`;
   try {
-    let response = await axiosInstance.delete(route, { timeout: timeout });
-    return response.data;
+    const response = Promise.all(tids.map(async (tid) => {
+      let route = `/task/${tid}`;
+      await axiosInstance.delete(route, { timeout: timeout });
+    }))
+
+    return response;
   } catch (error) {
     throw new Error("Roadmap create axios error");
   }
@@ -318,27 +434,29 @@ const PRIVATE_createSubtask = async (subtasks, timeout = 0) => {
     route = `/subtask/`;
     reqBody = {
       title: subtasks[0].detail,
-      tid: subtasks[0].tid
+      tid: subtasks[0].tid,
     };
   } else if (subtasks.length > 1) {
     route = `/subtask/subtasks/`;
     reqBody = subtasks.map((subtask) => {
       return {
         title: subtask.detail,
-        tid: subtask.tid
+        tid: subtask.tid,
       };
     });
   }
-  console.log(reqBody)
+  console.log(reqBody);
   try {
-    let response = await axiosInstance.post(route, reqBody, { timeout: timeout });
+    let response = await axiosInstance.post(route, reqBody, {
+      timeout: timeout,
+    });
 
     if (subtasks.length > 1) {
       return response.data.stids.map((tidObj) => {
-        return tidObj.stid
-      })
+        return tidObj.stid;
+      });
     } else if (subtasks.length === 1) {
-      return [response.data.stid]
+      return [response.data.stid];
     }
   } catch (error) {
     console.error(error);
@@ -346,8 +464,10 @@ const PRIVATE_createSubtask = async (subtasks, timeout = 0) => {
   }
 };
 
-const PRIVATE_editSubtask = async (subtask, timeout = 0) => {
+const PRIVATE_editSubtask = async (subtasks, timeout = 0) => {
   if (subtasks.length === 0) return null;
+
+  console.log(subtasks);
 
   let route = "";
   let reqBody = {};
@@ -356,37 +476,41 @@ const PRIVATE_editSubtask = async (subtask, timeout = 0) => {
     route = `/subtask/`;
     reqBody = {
       title: subtasks[0].detail,
-      tid: tid
+      stid: subtasks[0].id,
+      is_done: subtasks[0].status
     };
-  } else if (subtask.length > 1) {
+  } else if (subtasks.length > 1) {
     route = `/subtask/subtasks/`;
     reqBody = subtasks.map((subtask) => {
       return {
         title: subtask.detail,
-        tid: tid
+        tid: subtask.id,
+        is_done: subtask.status
       };
     });
   }
   try {
-    let response = await axiosInstance.push(route, {
-      timeout: timeout,
-      data: reqBody,
-    });
+    let response = await axiosInstance.put(route, reqBody, {timeout:timeout});
     return response.data;
   } catch (error) {
-    console.error(error)
+    console.error(error);
     throw new Error("Roadmap create axios error");
   }
 };
 
-const PRIVATE_deleteSubtask = async (stid, timeout = 0) => {
-  if (stid === undefined || stid === null) return null;
+const PRIVATE_deleteSubtask = async (stids, timeout = 0) => {
+  if (stids === undefined || stids === null) return null;
+  if (!Array.isArray(stids)) stids = [stids];
 
-  let route = `/subtask/${stid}`;
   try {
-    let response = await axiosInstance.delete(route, { timeout: timeout });
-    return response.data;
+    const response = Promise.all(stids.map(async (stid) => {
+      let route = `/subtask/${stid}`;
+      await axiosInstance.delete(route, { timeout: timeout });
+    }))
+    
+    return response;
   } catch (error) {
+    console.error(error)
     throw new Error("Roadmap create axios error");
   }
 };
