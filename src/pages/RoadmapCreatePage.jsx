@@ -158,6 +158,7 @@ const RoadmapCreatePage = (props) => {
             name: state.roadmap.name,
             description: state.roadmap.description,
             public: state.roadmap.publicity,
+            tasks: state.roadmap.tasks,
           };
         }
         let highestID = 0;
@@ -182,6 +183,7 @@ const RoadmapCreatePage = (props) => {
               name: tempRoadmap.name,
               description: tempRoadmap.description,
               public: tempRoadmap.publicity,
+              tasks: tempRoadmap.tasks,
             };
           }
           let highestID = 0;
@@ -203,7 +205,7 @@ const RoadmapCreatePage = (props) => {
       }
     }
 
-    // 
+    //
     if (mode === "clone") {
       setTasks((tasks) =>
         tasks.map((task) => {
@@ -212,7 +214,7 @@ const RoadmapCreatePage = (props) => {
           task.subtasks.map((subtask) => {
             subtask.isTempId = true;
             return subtask;
-          })
+          });
           return task;
         })
       );
@@ -374,24 +376,24 @@ const RoadmapCreatePage = (props) => {
   const compareTaskChange = (initState, newState) => {
     // compare first data and latest data
     // initState, newState: task array
-    initState = initState ?? []
+    initState = initState ?? [];
     let taskChange = { add: [], edit: [], delete: [] };
     newState.forEach((task) => {
       if (task.isTempId === true) {
-        // new subtask
-        taskChange.add.push(task.id);
+        // new task
+        taskChange.add.push(task);
         return;
       }
 
       const taskIntersection =
         initState.find((inittask) => task.id === inittask.id) === undefined;
       if (taskIntersection) {
-        // deleted subtask
-        taskChange.delete.push(subtask.id);
+        // deleted task
+        taskChange.delete.push(task);
         return;
       } else if (
-        taskIntersection.hasFetched === true
-        (
+        taskIntersection.hasFetched ===
+        true(
           task.name !== taskIntersection.name ||
             task.description !== taskIntersection.description ||
             task.nodeColor !== taskIntersection.name ||
@@ -401,7 +403,7 @@ const RoadmapCreatePage = (props) => {
         )
       ) {
         // edited task
-        taskChange.edit.push(subtask.id);
+        taskChange.edit.push(task);
         return;
       }
     });
@@ -411,12 +413,12 @@ const RoadmapCreatePage = (props) => {
   const compareSubtaskChange = (initState, newState) => {
     // compare first data and latest data
     // initState, newState: subtask array
-    initState = initState ?? []
+    initState = initState ?? [];
     let subtaskChange = { add: [], edit: [], delete: [] };
     newState.forEach((subtask) => {
       if (subtask.isTempId === true) {
         // new subtask
-        subtaskChange.add.push(subtask.id);
+        subtaskChange.add.push(subtask);
         return;
       }
 
@@ -425,18 +427,38 @@ const RoadmapCreatePage = (props) => {
         undefined;
       if (taskIntersection) {
         // deleted subtask
-        subtaskChange.delete.push(subtask.id);
+        subtaskChange.delete.push(subtask);
         return;
       } else if (
         subtask.detail !== taskIntersection.detail ||
         subtask.status !== taskIntersection.detail
       ) {
         // edited task
-        subtaskChange.edit.push(subtask.id);
+        subtaskChange.edit.push(subtask);
         return;
       }
     });
     return subtaskChange;
+  };
+
+  const handleSendingApi = (
+    roadmapObject,
+    taskChange,
+    subtaskChange,
+    relationChange
+  ) => {
+    // if (mode === "create") {
+    //   createRoadmap()
+    // } else if (mode === "edit") {
+
+    // } else if (mode === "clone") {
+
+    // }
+    if (
+      !createRoadmap(roadmapObject, taskChange, subtaskChange, relationChange)
+    ) {
+      alert("seenderror");
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -452,24 +474,36 @@ const RoadmapCreatePage = (props) => {
 
     // check for subtask change
     tasks.forEach((task) => {
+      console.log(initialState.current);
       const initTask = initialState.current.tasks.find(
         (t) => t.id === task.id
       ) ?? { subtasks: [] };
       const comparison = compareSubtaskChange(initTask.subtasks, task.subtasks);
       subTaskChange.add.push(
-        ...comparison.add.map((stid) => ({ tid: task.id, stid: stid }))
+        ...comparison.add.map((subtask) => {
+          subtask.tid = task.id;
+          return subtask;
+        })
       );
       subTaskChange.edit.push(
-        ...comparison.edit.map((stid) => ({ tid: task.id, stid: stid }))
+        ...comparison.edit.map((subtask) => {
+          subtask.tid = task.id;
+          return subtask;
+        })
       );
       subTaskChange.delete.push(
-        ...comparison.delete.map((stid) => ({ tid: task.id, stid: stid }))
+        ...comparison.delete.map((subtask) => {
+          subtask.tid = task.id;
+          return subtask;
+        })
       );
     });
 
     // check for task relation change
-    const newTaskRelation = tasks.map((task) => task.id)
-    taskRelationChange = initialState.current.tasks.map((task) => task.id).toString() !== newTaskRelation.toString()
+    const newTaskRelation = tasks.map((task) => task.id);
+    taskRelationChange =
+      initialState.current.tasks.map((task) => task.id).toString() !==
+      newTaskRelation.toString();
 
     console.log("task");
     console.log(taskChange);
@@ -483,6 +517,7 @@ const RoadmapCreatePage = (props) => {
       description: RMDesc,
       tasks: tasks,
       publicity: isPublic,
+      notificationInfo: notiStatus,
       tags: tags,
     };
 
@@ -491,19 +526,14 @@ const RoadmapCreatePage = (props) => {
     // Begin the spinner
     setLoading(true);
     await generateNotificationObjects();
-
-    // Add a fetch POST request here
-    if (mode === "create") {
-      if ((await createRoadmap({ completeRoadmap })) === null) {
-        alert("CREATE error");
-        setLoading(false);
-      }
-    } else {
-      // for edit or clone mode
-    }
-
+    handleSendingApi(
+      completeRoadmap,
+      taskChange,
+      subTaskChange,
+      taskRelationChange
+    );
     setLoading(false);
-    navigate("/");
+    // navigate("/");
   };
 
   const handleNotiSettingChange = (event) => {
