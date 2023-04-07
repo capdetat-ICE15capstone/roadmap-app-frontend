@@ -121,14 +121,21 @@ export const editRoadmap = async (
   relationChange,
   timeout = 0
 ) => {
-  console.log(roadmapChange);
-  console.log(taskChange);
-  console.log(subtaskChange);
-  console.log(relationChange);
+
+  console.log("request")
+  console.log({
+    rid: rid,
+    roadmapChang: roadmapChange,
+    taskChange: taskChange,
+    subtaskChange: subtaskChange,
+    relationChange: relationChange,
+  })
+
+  const response = {}
+
   try {
-    // edit roadmap
     if (roadmapChange !== null) {
-      await PRIVATE_updateRoadmap(roadmapChange);
+      response.roadmapChange = await PRIVATE_updateRoadmap(roadmapChange);
     }
 
     const [taskAdd, subTaskAdd, taskRelation] = await PRIVATE_addAndReassign(
@@ -138,21 +145,21 @@ export const editRoadmap = async (
       relationChange
     )
 
-    await PRIVATE_editTask(taskChange.edit);
-    await PRIVATE_deleteTask(taskChange.delete);
-    await PRIVATE_editSubtask(subtaskChange.edit);
-    await PRIVATE_deleteSubtask(subtaskChange.delete)
-
-    console.log(taskRelation);
+    response.editTaskChange = await PRIVATE_editTask(taskChange.edit);
+    response.deleteTaskChange = await PRIVATE_deleteTask(taskChange.delete);
+    response.editSubTaskChange = await PRIVATE_editSubtask(subtaskChange.edit);
+    response.editDeleteChange = await PRIVATE_deleteSubtask(subtaskChange.delete)
 
     if (taskRelation !== null & taskRelation !== undefined) {
-      let taskRelationResponse = await PRIVATE_updateRelation(
+      response.taskRelationChange = await PRIVATE_updateRelation(
         rid,
         taskRelation
       );
     }
     
-
+    console.log("response")
+    console.log(response);
+    return response;
   } catch (error) {
     console.error(error);
     return null;
@@ -165,6 +172,13 @@ export const createRoadmap = async (
   subtaskChange, // subtaskChange object {add:[], edit:[], delete:[]
   timeout = 1000
 ) => {
+
+  console.log("initial create roadmap")
+  console.log({
+    roadmapChange: roadmapChange,
+    taskChange: taskChange,
+    subtaskChange: subtaskChange
+  })
   try {
     // create Roadmap
     let response = await PRIVATE_createRoadmap(roadmapChange);
@@ -180,11 +194,14 @@ export const createRoadmap = async (
       response.rid,
       taskRelation
     );
-
-    console.log(response.rid);
-    console.log(taskAdd);
-    console.log(subTaskAdd);
-    console.log(taskRelation);
+    
+    console.log("final create roadmap")
+    console.log({
+      rid: response.rid,
+      taskAdd: taskAdd,
+      subTaskAdd: subTaskAdd,
+      taskRelation: taskRelation
+    })
     return response;
   } catch (error) {
     console.error(error);
@@ -204,7 +221,6 @@ const PRIVATE_addAndReassign = async (
   console.log(taskAdd),
   console.log(subTaskAdd),
   console.log(taskRelation)
-  
 
   try {
     let taskResponse = await PRIVATE_createTask(rid, taskAdd); 
@@ -229,7 +245,6 @@ const PRIVATE_addAndReassign = async (
       stChange.id = subtaskResponse[index];
     });
 
-    console.log(tempIdMapping);
     if (taskRelation !== null && taskRelation !== undefined) {
       taskRelation = taskRelation.map((tid) => {
         if (tempIdMapping[tid] !== undefined && tempIdMapping[tid] !== null) {
@@ -377,8 +392,8 @@ const PRIVATE_editTask = async (tasks, timeout = 0) => {
     reqBody = {
       title: tasks[0].name,
       description: tasks[0].description,
-      start_time: tasks[0].startDate,
-      deadline: tasks[0].dueDate,
+      start_time: "2023-04-05T18:27:49.875",
+      deadline: "2023-04-05T18:27:49.875",
       shape: tasks[0].nodeShape,
       color: tasks[0].nodeColor,
       tid: tasks[0].id
@@ -389,8 +404,8 @@ const PRIVATE_editTask = async (tasks, timeout = 0) => {
       return {
         title: task.name,
         description: task.description,
-        start_time: task.startDate,
-        deadline: task.dueDate,
+        start_time: "2023-04-05T18:27:49.875",
+        deadline: "2023-04-05T18:27:49.875",
         shape: task.nodeShape,
         color: task.nodeColor,
         tid: task.id
@@ -398,10 +413,11 @@ const PRIVATE_editTask = async (tasks, timeout = 0) => {
     });
   }
   try {
-    let response = await axiosInstance.push(route, reqBody, {timeout:timeout});
+    let response = await axiosInstance.put(route, reqBody, {timeout:timeout});
 
     return response.data;
   } catch (error) {
+    console.error(error);
     throw new Error("Roadmap create axios error");
   }
 };
@@ -418,6 +434,7 @@ const PRIVATE_deleteTask = async (tids, timeout = 0) => {
 
     return response;
   } catch (error) {
+    console.error(error)
     throw new Error("Roadmap create axios error");
   }
 };

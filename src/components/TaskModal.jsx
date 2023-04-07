@@ -21,7 +21,7 @@ import "react-datepicker/dist/react-datepicker.css";
 // 14. Nodes shape selector arent actually centered
 
 // data domain
-const MAX_NAME_LENGTH = 24;
+const MAX_NAME_LENGTH = 30;
 const MAX_DESCRIPTION_LENGTH = 255;
 
 const TaskModal = ({ oldData, editTaskCallBack }) => {

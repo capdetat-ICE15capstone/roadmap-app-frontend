@@ -25,7 +25,7 @@ import { ReactComponent as NotiOn } from "../assets/notification/notiOn.svg";
 // BUG: notification time
 
 const MAX_TASKS_NONPREMIUM = 16;
-const MAX_RMNAME_LENGTH = 100;
+const MAX_RMNAME_LENGTH = 30;
 const MAX_RMDESCRIPTION_LENGTH = 255;
 const notificationDayOption = [1, 3, 5, 7, 14];
 
@@ -460,27 +460,30 @@ const RoadmapCreatePage = (props) => {
     return subtaskChange;
   };
 
-  const handleSendingApi = (
+  const handleSendingApi = async (
     roadmapObject,
     taskChange,
     subtaskChange,
     relationChange
   ) => {
-    if (mode === "create") {
+    if (mode === "create" || mode === "clone") {
       if (
-        !createRoadmap(roadmapObject, taskChange, subtaskChange)
+        (await createRoadmap(roadmapObject, taskChange, subtaskChange) === null)
       ) {
         alert("Send error");
+      } else {
+        console.log("send succeeded");
       }
     } else if (mode === "edit") {
       relationChange = relationChange ? roadmapObject.tasks.map((task) => task.id) : null
       if (
-        !editRoadmap(id, roadmapObject, taskChange, subtaskChange, relationChange)
+       (await editRoadmap(id, roadmapObject, taskChange, subtaskChange, relationChange) === null)
       ) {
         alert("Send error");
+      } else {
+        console.log("send succeeded");
       }
-    } else if (mode === "clone") {
-    }
+    } 
   };
 
   const handleSubmit = async (e) => {
@@ -514,10 +517,7 @@ const RoadmapCreatePage = (props) => {
         })
       );
       subTaskChange.delete.push(
-        ...comparison.delete.map((subtask) => {
-          subtask.tid = task.id;
-          return subtask;
-        })
+        ...comparison.delete
       );
     });
 
@@ -544,19 +544,17 @@ const RoadmapCreatePage = (props) => {
       tags: tags,
     };
 
-    if (mode !== "create") console.log(completeRoadmap);
-
     // Begin the spinner
     setLoading(true);
     await generateNotificationObjects();
-    handleSendingApi(
+    await handleSendingApi(
       completeRoadmap,
       taskChange,
       subTaskChange,
       taskRelationChange
     );
     setLoading(false);
-    // navigate("/");
+    navigate("/");
   };
 
   const handleNotiSettingChange = (event) => {
