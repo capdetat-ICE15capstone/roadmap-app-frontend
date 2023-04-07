@@ -103,7 +103,7 @@ const Feed = () => {
           </div>
         </div>
         {/*Search Result*/}
-        <div className='flex justify-center mt-8'>
+        <div className='flex justify-center my-8'>
           <div className='flex flex-wrap items-start w-3/4 gap-20'>
             {roadmapArray.map((roadmap, index) => (
               <RoadmapNeo
