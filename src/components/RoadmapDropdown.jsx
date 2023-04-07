@@ -9,24 +9,24 @@ const RoadmapDropdown = ({onDelete}) => {
 
     return (
         <>
-            <div className="absolute flex flex-col justify-center">
+            <div className="flex flex-col justify-center">
                 <button onClick={handleClick} className="flex justify-center items-center w-[20px] h-[20px] mb-4 rounded-[20px] hover:bg-[rgb(238,234,234)]">                
                     <DropdownIcon/>
                 </button>
                 {isOpen && 
-                <div className="flex flex-col -ml-28 bg-[#FFFFFF] font-bold appearance-none border rounded-xl leading-tight w-60 h-36 z-10">
+                <div className="flex flex-col mb-8 -ml-28 bg-[#FFFFFF] font-bold appearance-none border rounded-xl leading-tight w-60 h-36 z-10">
                     <button className="relative flex items-center h-12 rounded-t-xl hover:bg-[#808080]">
-                        <div className="relative left-[15px] font-inter font-bold text-[20px] leading-none">
+                        <div className="relative left-[15px] font-inter text-lg">
                             View Roadmap
                         </div>
                     </button>
                     <button className="relative flex items-center h-12 hover:bg-[#808080]">
-                        <div className="relative left-[15px] font-inter font-bold text-[20px] leading-none">
+                        <div className="relative left-[15px] font-inter text-lg">
                             Edit Roadmap
                         </div>
                     </button>
                     <button onClick={onDelete} className="relative flex items-center h-12 rounded-b-xl hover:bg-[#808080]">
-                        <div className="relative left-[15px] font-inter font-bold text-[20px] text-[#EF1414] leading-none">
+                        <div className="relative left-[15px] font-inter text-lg text-[#EF1414]">
                             Delete Roadmap
                         </div>
                     </button>
