@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Roadmap from "../components/Roadmap";
-import SearchBar from "../components/SearchBar";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ReactComponent as SearchIcon } from "../assets/searchIcon.svg";
+import Roadmap from "../components/Roadmap";
+import RoadmapNeo from "../components/Roadmap_neo";
+import SearchBar from "../components/SearchBar";
 import UserBanner from "../components/UserBanner";
 
 const SearchPage = () => {
@@ -13,6 +14,10 @@ const SearchPage = () => {
   const navigate = useNavigate();
   const searchValue = location.state?.userSearch || '';
   const searchType = location.state?.searchType || '';
+  const [isFetching, setIsFetching] = useState(false);
+  const isMountedRef = useRef(false);
+  const [roadmapArray, setRoadmapArray] = useState([]);
+  const [userArray, setUserArray] = useState([]);
 
   // classify user input (roadmap(""), user("@""), tag("#""))
   const classifyInput = (input) => {
@@ -42,54 +47,86 @@ const SearchPage = () => {
     }
   }
 
-  useEffect(() => {
-    // Run your function here
-    console.log("SearchPage mounted");
-    if (searchType === "roadmap") {
-      setShowUserResult(false);
-      setShowRoadmapResult(true);
-    } else if (searchType === "user") {
-      setShowRoadmapResult(false);
-      setShowUserResult(true);
-    }
-
-  }, []);
-
   // search
   const handleSubmit = (event) => {
     event.preventDefault();
-    //setRoadmapArray([]);
-    //setPage(1);
-    //fetchData();
+    setRoadmapArray([]);
+    setUserArray([]);
     setSearch(document.getElementById("InputSearch").value);
     const searchValue = document.getElementById("InputSearch").value;
-    classifyInput(searchValue);
-    navigate('/search', { state: { userSearch: searchValue } });
+    const searchType = classifyInput(searchValue);
+    fetchData(searchType);
+    //navigate('/search', { state: { userSearch: searchValue } });
   };
 
-  // fetch roadmap data
-  const fetchData = async () => {
+  // fetch data (roadmap or user)
+  const fetchData = async (type) => {
     if (isFetching) return; // return if a fetch is already in progress
     setIsFetching(true); // set isFetching to true to indicate a fetch is starting
     try {
-      console.log("fetch")
-      const response = await fetch(`http://localhost:3000/multipleRoadmaps`);
-      const data = await response.json();
-      let newArray = [];
-      data.forEach((data) => {
-        newArray = newArray.concat(data.roadmapArray);
-      });
-      setRoadmapArray(prevArray => [...prevArray, ...newArray]);
+      // search roadmap case
+      if (searchType === "roadmap") {
+        console.log("fetch")
+        const response = await fetch(`http://localhost:3000/multipleRoadmaps`);
+        const data = await response.json();
+        let newArray = [];
+        data.forEach((data) => {
+          newArray = newArray.concat(data.roadmapArray);
+        });
+        setRoadmapArray(prevArray => [...prevArray, ...newArray]);
+        // search tag case
+      } else if (searchType === "tag") {
+        console.log("fetch")
+        const response = await fetch(`http://localhost:3000/multipleRoadmaps`);
+        const data = await response.json();
+        let newArray = [];
+        data.forEach((data) => {
+          newArray = newArray.concat(data.roadmapArray);
+        });
+        setRoadmapArray(prevArray => [...prevArray, ...newArray]);
+        // search user case
+      } else if (searchType === "user") {
+        console.log("fetch")
+        const response = await fetch(`http://localhost:3000/searchUsers`);
+        const data = await response.json();
+        let newArray = [];
+        data.forEach((data) => {
+          newArray = newArray.concat(data.userArray);
+        });
+        setUserArray(prevArray => [...prevArray, ...newArray]);
+      }
     } catch (error) {
       console.log(error);
     }
     setIsFetching(false); // set isFetching to false to indicate a fetch is complete
   };
 
+  // Run when enter search page 
+  useEffect(() => {
+    console.log("SearchPage mounted");
+    if (!isMountedRef.current) {
+      isMountedRef.current = true;
+      return;
+    }
+    if (searchType === "roadmap") {
+      setRoadmapArray([]);
+      fetchData(searchType);
+      setShowUserResult(false);
+      setShowRoadmapResult(true);
+    } else if (searchType === "user") {
+      setUserArray([]);
+      fetchData(searchType);
+      setShowRoadmapResult(false);
+      setShowUserResult(true);
+      return;
+    }
+    return;
+  }, []);
+
   return (
     <>
       <div className='flex flex-col h-full w-full bg-white overflow-y-auto relative'>
-        {/*Top (title & search bar)*/}
+        {/* Top (title & search bar)*/}
         <div className='flex justify-center sticky top-0 z-50 bg-white pt-8 pb-2'>
           <div className='flex w-3/4 justify-center'>
             {/*Feed Title*/}
@@ -113,16 +150,48 @@ const SearchPage = () => {
             </form>
           </div>
         </div>
+        {/* Bottom (show roadmap or user banner)*/}
+        {/* roadmaps */}
         {showRoadmapResult && (
           <div>
-            <h1>Roadmap Result</h1>
-            <p>This is the content for Roadmap Result.</p>
+            <div className='flex justify-center my-8'>
+              <div className='flex flex-wrap items-start w-3/4 gap-20'>
+                {roadmapArray.map((roadmap, index) => (
+                  <RoadmapNeo
+                    key={index}
+                    owner_id={roadmap.owner_id}
+                    creator_id={roadmap.creator_id}
+                    owner_name={roadmap.owner_name}
+                    creator_name={roadmap.creator_name}
+                    rid={roadmap.rid}
+                    views_count={roadmap.views_count}
+                    stars_count={roadmap.stars_count}
+                    forks_count={roadmap.forks_count}
+                    created_at={roadmap.created_at}
+                    edited_at={roadmap.edited_at}
+                    title={roadmap.title}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
         )}
+        {/* user banners */}
         {showUserResult && (
           <div>
-            <h1>User Result</h1>
-            <p>This is the content for User Result.</p>
+            <div className=''>
+              <div className=''>
+                {userArray.map((user, index) => (
+                  <UserBanner
+                    key={index}
+                    owner_id={user.owner_id}
+                    owner_name={user.owner_name}
+                    user_exp={user.user_exp}
+                    avatar_id={user.avatar_id}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
         )}
       </div>

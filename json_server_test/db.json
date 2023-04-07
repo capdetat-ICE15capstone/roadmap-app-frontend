@@ -177,21 +177,21 @@
     ]
     ,
     "searchUsers":[
-      { "roadmapArray":[
-        { "id": 0, "owner_id" : 1111, "creator_name": "user13", "owner_name": "user1", "title": "Roadmap 1", "created_at": "3/18/2013", "edited_at": "Today", "user_exp": 1000 },
-        { "id": 1, "owner_id" : 2222, "creator_name": "user14", "owner_name": "user2", "title": "Roadmap 2", "created_at": "3/18/2013", "edited_at": "Today", "user_exp": 2000 },
-        { "id": 2, "owner_id" : 3333, "creator_name": "user15", "owner_name": "user3", "title": "Roadmap 3", "created_at": "3/18/2013", "edited_at": "Today", "user_exp": 3000 },
-        { "id": 3, "owner_id" : 4444, "creator_name": "user16", "owner_name": "user4", "title": "Roadmap 4", "created_at": "3/18/2013", "edited_at": "Today", "user_exp": 4000 },
-        { "id": 4, "owner_id" : 5555, "creator_name": "user17", "owner_name": "user5", "title": "Roadmap 5", "created_at": "3/18/2013", "edited_at": "Today", "user_exp": 5000 },
-        { "id": 5, "owner_id" : 6666, "creator_name": "user18", "owner_name": "user6", "title": "Roadmap 6", "created_at": "3/18/2013", "edited_at": "Today", "user_exp": 6000 },
-        { "id": 6, "owner_id" : 7777, "creator_name": "user19", "owner_name": "user7", "title": "Roadmap 7", "created_at": "3/18/2013", "edited_at": "Today", "user_exp": 7000 },
-        { "id": 7, "owner_id" : 8888, "creator_name": "user20", "owner_name": "user8", "title": "Roadmap 8", "created_at": "3/18/2013", "edited_at": "Today", "user_exp": 8000 },
-        { "id": 8, "owner_id" : 9999, "creator_name": "user21", "owner_name": "user9", "title": "Roadmap 9", "created_at": "3/18/2013", "edited_at": "Today", "user_exp": 9000 },
-        { "id": 9, "owner_id" : 10101010, "creator_name": "user22", "owner_name": "user10", "title": "Roadmap 10", "created_at": "3/18/2013", "edited_at": "Today", "user_exp": 10000 },
-        { "id": 10, "owner_id" : 11111111, "creator_name": "user23", "owner_name": "user11", "title": "Roadmap 11", "created_at": "3/18/2013", "edited_at": "Today", "user_exp": 11000 },
-        { "id": 11, "owner_id" : 12121212, "creator_name": "user24", "owner_name": "user12", "title": "Roadmap 12", "created_at": "3/18/2013", "edited_at": "Today", "user_exp": 12000 },
-        { "id": 12, "owner_id" : 13131313, "creator_name": "user25", "owner_name": "user13", "title": "Roadmap 13", "created_at": "3/18/2013", "edited_at": "Today", "user_exp": 13000 },
-        { "id": 13, "owner_id" : 14141414, "creator_name": "user26", "owner_name": "user14", "title": "Roadmap 14", "created_at": "3/18/2013", "edited_at": "Today", "user_exp": 14000 }
+      { "userArray":[
+        { "id": 0, "owner_id" : 1111, "creator_name": "user13", "owner_name": "user1", "user_exp": 1000 , "avatar_id": 10 },
+        { "id": 1, "owner_id" : 2222, "creator_name": "user14", "owner_name": "user2", "user_exp": 2000 , "avatar_id": 20},
+        { "id": 2, "owner_id" : 3333, "creator_name": "user15", "owner_name": "user3", "user_exp": 3000 , "avatar_id": 30},
+        { "id": 3, "owner_id" : 4444, "creator_name": "user16", "owner_name": "user4", "user_exp": 4000 , "avatar_id": 40},
+        { "id": 4, "owner_id" : 5555, "creator_name": "user17", "owner_name": "user5", "user_exp": 5000 , "avatar_id": 50},
+        { "id": 5, "owner_id" : 6666, "creator_name": "user18", "owner_name": "user6", "user_exp": 6000 , "avatar_id": 60},
+        { "id": 6, "owner_id" : 7777, "creator_name": "user19", "owner_name": "user7", "user_exp": 7000 , "avatar_id": 70},
+        { "id": 7, "owner_id" : 8888, "creator_name": "user20", "owner_name": "user8", "user_exp": 8000 , "avatar_id": 80},
+        { "id": 8, "owner_id" : 9999, "creator_name": "user21", "owner_name": "user9", "user_exp": 9000 , "avatar_id": 90},
+        { "id": 9, "owner_id" : 10101010, "creator_name": "user22", "owner_name": "user10", "user_exp": 10000 , "avatar_id": 100},
+        { "id": 10, "owner_id" : 11111111, "creator_name": "user23", "owner_name": "user11", "user_exp": 11000 , "avatar_id": 110},
+        { "id": 11, "owner_id" : 12121212, "creator_name": "user24", "owner_name": "user12", "user_exp": 12000 , "avatar_id": 120},
+        { "id": 12, "owner_id" : 13131313, "creator_name": "user25", "owner_name": "user13", "user_exp": 13000 , "avatar_id": 130},
+        { "id": 13, "owner_id" : 14141414, "creator_name": "user26", "owner_name": "user14", "user_exp": 14000 , "avatar_id": 140}
       ]
       }
     ]
