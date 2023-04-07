@@ -342,8 +342,8 @@ const PRIVATE_createTask = async (rid, tasks, timeout = 0) => {
     reqBody = {
       title: tasks[0].name,
       description: tasks[0].description,
-      start_time: "2023-04-05T18:27:49.875",
-      deadline: "2023-04-05T18:27:49.875",
+      start_time: tasks[0].startDate.toISOString().slice(0, -5),
+      deadline: tasks[0].dueDate.toISOString().slice(0, -5),
       shape: tasks[0].nodeShape,
       color: tasks[0].nodeColor,
       rid: rid,
@@ -354,8 +354,8 @@ const PRIVATE_createTask = async (rid, tasks, timeout = 0) => {
       return {
         title: task.name,
         description: task.description,
-        start_time: "2023-04-05T18:27:49.875",
-        deadline: "2023-04-05T18:27:49.875",
+        start_time: task.startDate.toISOString().slice(0, -5),
+        deadline: task.dueDate.toISOString().slice(0, -5),
         shape: task.nodeShape,
         color: task.nodeColor,
         rid: rid,
@@ -392,8 +392,8 @@ const PRIVATE_editTask = async (tasks, timeout = 0) => {
     reqBody = {
       title: tasks[0].name,
       description: tasks[0].description,
-      start_time: "2023-04-05T18:27:49.875",
-      deadline: "2023-04-05T18:27:49.875",
+      start_time: tasks[0].startDate.toISOString().slice(0, -5),
+      deadline: tasks[0].dueDate.toISOString().slice(0,-5),
       shape: tasks[0].nodeShape,
       color: tasks[0].nodeColor,
       tid: tasks[0].id
@@ -404,8 +404,8 @@ const PRIVATE_editTask = async (tasks, timeout = 0) => {
       return {
         title: task.name,
         description: task.description,
-        start_time: "2023-04-05T18:27:49.875",
-        deadline: "2023-04-05T18:27:49.875",
+        start_time: task.startDate.toISOString().slice(0, -5), 
+        deadline: task.dueDate.toISOString().slice(0, -5),
         shape: task.nodeShape,
         color: task.nodeColor,
         tid: task.id
