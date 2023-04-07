@@ -23,7 +23,7 @@ const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_co
 
   return (
     <>
-      <div className='flex flex-col bg-white rounded-3xl shadow-md w-[200px] h-[220px] m-8 p-2 space-y-1'>
+      <div className='flex flex-col bg-white rounded-3xl shadow-md w-[200px] h-[220px] mr-16 my-8 p-2 space-y-1'>
         <Link to={'/view/:id'} className='relative'>
           <img src={placeholderImage} className="rounded-2xl h-full w-full" />
           <div className='absolute bottom-[5%] left-[5%] text-xs'>
