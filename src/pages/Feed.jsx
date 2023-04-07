@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Roadmap from "../components/Roadmap";
+import RoadmapNeo from "../components/Roadmap_neo";
 import SearchBar from "../components/SearchBar";
 import { useNavigate } from "react-router-dom";
 import { ReactComponent as SearchIcon } from "../assets/searchIcon.svg";
@@ -102,10 +103,10 @@ const Feed = () => {
           </div>
         </div>
         {/*Search Result*/}
-        <div className='flex justify-center'>
-          <div className='flex flex-wrap items-start w-3/4 gap-12'>
+        <div className='flex justify-center mt-8'>
+          <div className='flex flex-wrap items-start w-3/4 gap-20'>
             {roadmapArray.map((roadmap, index) => (
-              <Roadmap
+              <RoadmapNeo
                 key={index}
                 owner_id={roadmap.owner_id}
                 creator_id={roadmap.creator_id}
