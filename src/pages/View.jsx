@@ -92,10 +92,10 @@ export default function View() {
       const response = await axiosInstance
         .put(route, {
           rid: roadmap.rid,
-        }, { timeout: timeout })
+        }, { timeout: 0 })
         .then((res) => res.data)
         .catch(() => {
-          throw new Error("Fetch error");
+          throw new Error("error");
         });
       console.log(response);
     } catch (error) {
@@ -152,9 +152,9 @@ export default function View() {
   }
 
   async function fetchRoadmap(rid) {
-    console.log(rid);
     try {
       const res = await getRoadmap(rid);
+      console.log(res.rid);
       setRoadmap(res);
     } catch (error) {
       console.error(error);
@@ -176,26 +176,6 @@ export default function View() {
       });
   }
 
-  async function createRoadmap() {
-    const route = `/roadmap/`;
-    axiosInstance.post(route, {
-      "title": "string",
-      "description": "string",
-      "roadmap_deadline": "2023-04-08T13:01:44.172Z",
-      "is_before_start_time": true,
-      "reminder_time": 0,
-      "is_private": false,
-      "creator_id": 0,
-      "fork_rid": 0
-    })
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
-
   // now gotta modify this code to update per node (task/milestone) to save resources. 
 
   function saveRoadmap() {
@@ -207,7 +187,27 @@ export default function View() {
     // otherwise, send completion to server.
   }
 
-  function completeRoadmap() {
+  async function updateSubtask(subtask) {
+    const route = `/subtask/`;
+
+    try {
+      const response = await axiosInstance
+        .put(route, subtask, { timeout: 0 })
+        .then((res) => res.data)
+        .catch(() => {
+          throw new Error("error");
+        });
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+function updateSubtasks() {
+    roadmap.next_task.subtasks.map((element) => {
+      console.log(element);
+      updateSubtask(element);
+    });
   }
 
   function shortenString(str, maxLength) {
@@ -266,9 +266,9 @@ export default function View() {
             </div>
           </div>
           <div className='flex flex-col relative bg-white drop-shadow-[0_2px_3px_rgba(0,0,0,0.15)] rounded-2xl p-8'>
-            {isOwner ===  true && (
+            {isOwner === true && (
               <div className='z-50'>
-                <Bell className='absolute right-[3%] top-[7%]'/>
+                <Bell className='absolute right-[3%] top-[7%]' />
                 <div className='absolute left-[3%] bottom-[7%] text-sm'>
                   Views: {roadmap.views_count}
                 </div>
@@ -281,7 +281,6 @@ export default function View() {
               <div className='flex px-8 pt-4 pb-12 space-x-[25px] overflow-x-auto'>
                 {roadmap.tasks.map((task, index) => {
                   const zIndex = 10 - index;
-                  console.log(task);
                   return (
                     <div key={index} className="relative" style={{ zIndex }}>
                       <div className="absolute top-1/2 -left-1/4 transform -translate-x-1/2 -translate-y-3/4 -z-10">
@@ -334,8 +333,13 @@ export default function View() {
                           <input
                             type="checkbox"
                             className="w-4 h-4 mr-2 bg-gray-100 border-gray-300 rounded"
-                            checked={subtask.is_done}
+                            defaultChecked={subtask.is_done}
                             onChange={() => {
+                              console.log(subtask.is_done);
+                              let res = {...roadmap};
+                              console.log(res.next_task.subtasks[index].is_done);
+                              res.next_task.subtasks[index].is_done = !res.next_task.subtasks[index].is_done;
+                              setRoadmap(res);
                             }}
                           />
                           {subtask.title}
@@ -344,13 +348,15 @@ export default function View() {
                     })}
                   </div>
                   {(true) && (
-                    <div className='flex justify-end space-x-2'>
-                      <button onClick={() => console.log("activate 'saveRoadmap'")} className="bg-gray-400 w-1/2 text-white px-4 py-2 font-semilight rounded-full text-sm font-bold" type="button">
+                    <div className='flex flex-col md:flex-row md:justify-end gap-2'>
+                      <button onClick={() => updateSubtasks()} className="bg-main-blue md:w-1/4 text-white px-4 py-2 font-semilight rounded-full text-sm font-bold" type="button">
                         Save
                       </button>
-                      <button onClick={() => console.log("activate 'completeRoadmap' and check for completion first.")} className="bg-gray-400 w-1/2 text-white px-4 py-2 font-semilight rounded-full text-sm font-bold" type="button">
-                        Complete
-                      </button>
+                      {(false) && (
+                        <button onClick={() => console.log("activate 'completeRoadmap' and check for completion first.")} className="bg-gray-400 md:w-1/2 text-white px-4 py-2 font-semilight rounded-full text-sm font-bold" type="button">
+                          Complete
+                        </button>
+                      )}
                     </div>
                   )}
                 </div>
