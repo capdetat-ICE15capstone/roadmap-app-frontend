@@ -1,6 +1,5 @@
 import "./App.css";
 import Navbar from "./components/Navbar";
-import Feed from "./pages/Feed";
 import Spinner from "./components/Spinner";
 import NoPage from "./pages/NoPage";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
@@ -11,10 +10,13 @@ const Signup = lazy(() => import("./pages/Signup"));
 const View = lazy(() => import("./pages/View"));
 const RoadmapCreatePage = lazy(() => import("./pages/RoadmapCreatePage"));
 const Home = lazy(() => import("./pages/Home"));
+const Feed = lazy(() => import("./pages/Feed"))
 const Setting = lazy(() => import("./pages/Setting"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Introduction = lazy(() => import("./pages/Introduction"));
 const Premium = lazy(() => import("./pages/Premium"));
+const Activity = lazy(() => import("./pages/Activity"));
+const SearchPage = lazy(() => import("./pages/SearchPage"));
 
 function App() {
   return (
@@ -65,6 +67,14 @@ function App() {
                 }
               ></Route>
               <Route
+                path="view"
+                element={
+                  <Suspense fallback={<Spinner />}>
+                    <View />
+                  </Suspense>
+                }
+              ></Route>
+              <Route
                 path="create"
                 element={
                   <Suspense fallback={<Spinner />}>
@@ -73,10 +83,18 @@ function App() {
                 }
               ></Route>
               <Route
-                path="explore"
+                path="feed"
                 element={
                   <Suspense fallback={<Spinner />}>
                     <Feed />
+                  </Suspense>
+                }
+              ></Route>
+              <Route
+                path="search"
+                element={
+                  <Suspense fallback={<Spinner />}>
+                    <SearchPage />
                   </Suspense>
                 }
               ></Route>
@@ -117,6 +135,13 @@ function App() {
                 element={
                   <Suspense fallback={<Spinner />}>
                     <Profile />{" "}
+                  </Suspense>
+                }
+              /><Route
+                path="activity"
+                element={
+                  <Suspense fallback={<Spinner />}>
+                    <Activity />{" "}
                   </Suspense>
                 }
               />
