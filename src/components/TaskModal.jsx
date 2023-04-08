@@ -76,6 +76,17 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
           setTaskWasFetched(true);
           setupTask(fetchedData);
         }
+      } else {
+        initialState.current = {
+          id: oldData.id,
+          name: name,
+          description: description,
+          nodeColor: nodeColor,
+          nodeShape: nodeShape,
+          startDate: startDate,
+          dueDate: dueDate, 
+          subtasks: subtasks
+        }
       }
       setLoading(false);
     }
@@ -175,7 +186,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
     if (
       initialState.current.name !== name ||
       initialState.current.description !== description ||
-      initialState.current.nodeColor !== nodeColor.name ||
+      initialState.current.nodeColor.name !== nodeColor.name ||
       initialState.current.nodeShape !== nodeShape ||
       initialState.current.startDate.getTime() !== startDate.getTime() ||
       initialState.current.dueDate.getTime() !== dueDate.getTime()
@@ -188,6 +199,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
 
   const checkSubtaskChange = () => {
     let subtaskChange = { add: [], edit: [], delete: [] };
+    initialState.current.subtasks = initialState.current.subtasks ?? [] 
 
     initialState.current.subtasks.forEach((initsubtask) => {
       const intersection = subtasks.find(
@@ -230,6 +242,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
       setUnSavedModal(true);
       return;
     }
+    
     editTaskCallBack(taskWasFetched ? "fetch" : "failed", generateTaskData());
   };
 
