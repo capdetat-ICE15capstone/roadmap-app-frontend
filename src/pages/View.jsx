@@ -42,7 +42,7 @@ export default function View() {
 
   const [roadmap, setRoadmap] = useState(
     {
-      "title": "Title",
+      "name": "Title",
       "description": "Description",
       "roadmap_deadline": "",
       "is_before_start_time": null,
@@ -234,7 +234,7 @@ export default function View() {
         <div className="w-5/6 flex-col m-auto space-y-6">
           <div className='flex justify-between items-center'>
             <div className='text-3xl font-extrabold'>
-              {roadmap.title}
+              {roadmap.name}
             </div>
             {isOwner === true && (
               <div className="flex space-x-1">
@@ -307,7 +307,7 @@ export default function View() {
               </div>
             )}
           </div>
-          {isOwner === true && (
+          {isOwner === true && roadmap.next_task !== null && (
             <div className='flex flex-col bg-white rounded-2xl drop-shadow-[0_2px_3px_rgba(0,0,0,0.15)] space-y-4'>
               <div className='flex flex-row space-x-4 justify-between'>
                 <div className='flex flex-col space-y-2 w-1/2 p-4'>
