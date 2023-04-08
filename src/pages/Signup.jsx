@@ -1,16 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const Signup = () => {
+export default function Signup() {
   const navigate = useNavigate();
 
-  const specialChars = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [agreement, setAgreement] = useState(false);
 
@@ -52,17 +50,7 @@ const Signup = () => {
       console.log(validatePasswordConfirm());
       return;
     }
-    
-    const res = {
-      'email': email,
-      'password': password,
-      'firstname': firstName,
-      'lastname': lastName,
-      'username': username,
-    };
-
-    console.log(res);
-  };
+  }
 
   function validateEmail () {
     if (!email.includes("@")) return "invalid email"
@@ -100,15 +88,20 @@ const Signup = () => {
 
   return (
     <>
-      <div className="flex flex-col h-screen bg-gray-200">
-        <div className="flex bg-white rounded shadow-lg max-w-3xl m-auto">
-          <div className="flex flex-col m-8">
+      <div className={`flex flex-row h-screen w-screen`}>
+        <div className="flex justify-center w-1/2 bg-gradient-to-b from-cyan-500 to-blue-500">
+          <div className="flex flex-col justify-center m-8">
+
+          </div>
+        </div>
+        <div className="flex justify-center w-1/2">
+          <div className="flex flex-col justify-center m-8">
             <p className="text-center mb-4 text-3xl font-bold text-slate-600">
               Create Account
             </p>
-            <form id="register-form" onSubmit={handleSubmit}>
+            <form id="register-form" onSubmit={handleSignupSubmit}>
               <div className="flex flex-col space-y-2 mb-4">
-              <div className="flex flex-col">
+                <div className="flex flex-col">
                   <label>
                     <p className="text-gray-600 text-xs mb-1">
                       Email Address
@@ -129,7 +122,7 @@ const Signup = () => {
                   </label>
                 </div>
                 <div className="flex flex-row justify-between space-x-4">
-                  
+
                   <label>
                     <p className="text-gray-600 text-xs mb-1">
                       First Name
@@ -245,47 +238,13 @@ const Signup = () => {
               </div>
             </form>
             <div className="flex justify-center mt-4">
-              <button className="text-xs font-light text-gray-400" onClick={() => navigate("/login")}>
+              <button type="button" className="text-xs font-light text-gray-400" onClick={() => navigate("/login", { state: { firstLogin: true } })}>
                 Alrady have an account?
               </button>
             </div>
-            {/* <div className="flex justify-between mb-2 mx-8 space-x-2">
-              <div className="flex flex-auto">
-                <button className="bg-transparent grow text-gray-600 border border-grey-500 py-2 font-semilight rounded-3xl text-sm" type="button">
-                  <div className="flex justify-center items-center space-x-2">
-                    <img src={google} alt="google" className="w-4 h-4"></img>
-                    <span>Google</span>
-                  </div>
-                </button>
-              </div>
-              <div className="flex flex-auto">
-                <button className="bg-transparent grow text-gray-600 border border-grey-500 py-2 font-semilight rounded-3xl text-sm" type="button">
-                  <div className="flex justify-center items-center space-x-2">
-                    <img src={facebook} alt="google" className="w-4 h-4"></img>
-                    <span>Facebook</span>
-                  </div>
-                </button>
-              </div>
-              <div className="flex flex-auto">
-                <button className="bg-transparent grow text-gray-600 border border-grey-500 py-2 font-semilight rounded-3xl text-sm" type="button">
-                  <div className="flex justify-center items-center space-x-2">
-                    <img src={email} alt="google" className="w-4 h-4"></img>
-                    <span>Email</span>
-                  </div>
-                </button>
-              </div>
-            </div> */}
           </div>
-          {/* <div className="flex flex-col bg-gradient-to-b from-teal-300 to-amber-100 rounded">
-            <div className="flex flex-col grow justify-center my-4 mx-12">
-              <Logo className="justify-center self-center" />
-            </div>
-          </div> */}
         </div>
       </div>
     </>
   )
 }
-
-
-export default Signup
