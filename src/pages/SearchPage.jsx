@@ -50,13 +50,15 @@ const SearchPage = () => {
   // search
   const handleSubmit = (event) => {
     event.preventDefault();
-    setRoadmapArray([]);
-    setUserArray([]);
+    //setRoadmapArray([]);
+    //setUserArray([]);
     setSearch(document.getElementById("InputSearch").value);
     const searchValue = document.getElementById("InputSearch").value;
     const searchType = classifyInput(searchValue);
-    fetchData(searchType);
-    //navigate('/search', { state: { userSearch: searchValue } });
+    //fetchData(searchType);
+    console.log("navigate activated" + searchValue + searchType);
+    navigate('/search', { state: { userSearch: searchValue, searchType: searchType} });
+    
   };
 
   // fetch data (roadmap or user)
@@ -65,7 +67,7 @@ const SearchPage = () => {
     setIsFetching(true); // set isFetching to true to indicate a fetch is starting
     try {
       // search roadmap case
-      if (searchType === "roadmap") {
+      if (type === "roadmap") {
         console.log("fetch")
         const response = await fetch(`http://localhost:3000/multipleRoadmaps`);
         const data = await response.json();
@@ -75,7 +77,7 @@ const SearchPage = () => {
         });
         setRoadmapArray(prevArray => [...prevArray, ...newArray]);
         // search tag case
-      } else if (searchType === "tag") {
+      } else if (type === "tag") {
         console.log("fetch")
         const response = await fetch(`http://localhost:3000/multipleRoadmaps`);
         const data = await response.json();
@@ -85,7 +87,7 @@ const SearchPage = () => {
         });
         setRoadmapArray(prevArray => [...prevArray, ...newArray]);
         // search user case
-      } else if (searchType === "user") {
+      } else if (type === "user") {
         console.log("fetch")
         const response = await fetch(`http://localhost:3000/searchUsers`);
         const data = await response.json();
@@ -111,17 +113,27 @@ const SearchPage = () => {
     if (searchType === "roadmap") {
       setRoadmapArray([]);
       fetchData(searchType);
+      console.log("USEEFFECT roadmap")
       setShowUserResult(false);
       setShowRoadmapResult(true);
+      return;
+    } else if (searchType === "tag") {
+      setRoadmapArray([]);
+      fetchData(searchType);
+      console.log("USEEFFECT tag")
+      setShowUserResult(false);
+      setShowRoadmapResult(true);
+      return;
     } else if (searchType === "user") {
       setUserArray([]);
       fetchData(searchType);
+      console.log("USEEFFECT user")
       setShowRoadmapResult(false);
       setShowUserResult(true);
       return;
     }
     return;
-  }, []);
+  }, [search]);
 
   return (
     <>
@@ -179,7 +191,7 @@ const SearchPage = () => {
         {/* user banners */}
         {showUserResult && (
           <div>
-            <div className=''>
+            <div className='my-8'>
               <div className=''>
                 {userArray.map((user, index) => (
                   <UserBanner
