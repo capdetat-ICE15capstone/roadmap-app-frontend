@@ -1,8 +1,12 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { axiosInstance } from '../functions/axiosInstance';
 
 export default function Signup() {
   const navigate = useNavigate();
+
+  const specialChars = /^[a-zA-Z0-9]+(?:[_-][a-zA-Z0-9]+)*$/;
+  const emailValidation = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -10,80 +14,96 @@ export default function Signup() {
   const [lastName, setLastName] = useState("");
   const [username, setUsername] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
+
   const [agreement, setAgreement] = useState(false);
 
-  const [clickEmail, setClickEmail] = useState(false);
-  const [clickFirstName, setClickFirstName] = useState(false);
-  const [clickLastName, setClickLastName] = useState(false);
-  const [clickUsername, setClickUsername] = useState(false);
-  const [clickPassword, setClickPassword] = useState(false);
-  const [clickPasswordConfirm, setClickPasswordConfirm] = useState(false);
+  const [validEmail, setValidEmail] = useState(false);
+  const [validFirstName, setValidFirstName] = useState(false);
+  const [validLastName, setValidLastName] = useState(false);
+  const [validUsername, setValidUsername] = useState(false);
+  const [validPassword, setValidPassword] = useState(false);
+  const [validPasswordConfirm, setValidPasswordConfirm] = useState(false);
 
-  const handleSubmit = (event) => {
+  function handleSignupSubmit(event) {
     event.preventDefault();
-
-    if (email === "" || firstName === "" || lastName === "" || username === "" || password === "" || passwordConfirm === "") {
-      console.log("all form must be filled");
-      return;
-    }
-    if (validateEmail() !== "") {
-      console.log(validateEmail());
-      return;
-    }
-    if (validateFirstName() !== "") {
-      console.log(validateFirstName());
-      return;
-    }
-    if (validateLastName() !== "") {
-      console.log(validateLastName());
-      return;
-    }
-    if (validateUsername() !== "") {
-      console.log(validateUsername());
-      return;
-    }
-    if (validatePassword() !== "") {
-      console.log(validatePassword());
-      return;
-    }
-    if (validatePasswordConfirm() !== "") {
-      console.log(validatePasswordConfirm());
-      return;
+    if (validEmail && validFirstName && validLastName && validPassword && validPasswordConfirm && validUsername && agreement) {
+      const submission = {
+        "email": email,
+        "username": username,
+        "password": password,
+        "first_name": firstName,
+        "last_name": lastName
+      }
+      submitForm(submission);
     }
   }
 
-  function validateEmail () {
-    if (!email.includes("@")) return "invalid email"
-    return ""
-  }
+  // "First name, Last name, and Username must not contain special characters."
+  // "First name and Last name must not exceed 255 characters."
+  // "Username must not exceed 24 characters."
+  // "Email address must not contain special characters"
+  // "Password must be longer than 8 charaters and not exceed 24 characters"
+  // "Password must match"
 
-  function validateFirstName() {
-    if (specialChars.test(firstName)) return "First name must not contain special characters."
-    if (firstName.length > 255) return "First name must not exceed 255 characters."
-    return ""
-  }
+  useEffect(() => {
+    if (!emailValidation.test(email)) {
+      setValidEmail(false);
+    } else {
+      setValidEmail(true);
+    }
+  }, [email])
 
-  function validateLastName() {
-    if (specialChars.test(lastName)) return "Last name must not contain special characters."
-    if (lastName.length > 255) return "Last name must not exceed 255 characters."
-    return ""
-  }
+  useEffect(() => {
+    if (!specialChars.test(firstName) || firstName.length > 255 || firstName.length === 0) {
+      setValidFirstName(false);
+    } else {
+      setValidFirstName(true);
+    }
+  }, [firstName])
 
-  function validateUsername() {
-    if (specialChars.test(username)) return "Username must not contain special characters."
-    if (username.length > 24) return "Username must not exceed 24 characters."
-    // if (username is taken) return "Username is taken"
-    return ""
-  }
+  useEffect(() => {
+    if (!specialChars.test(lastName) || lastName.length > 255 || lastName.length === 0) {
+      setValidLastName(false);
+    } else {
+      setValidLastName(true);
+    }
+  }, [lastName])
 
-  function validatePassword() {
-    if (password.length < 8 || password.length > 24) return "Password must be between 8 and 24 characters"
-    return ""
-  }
+  useEffect(() => {
+    if (!specialChars.test(username) || username.length > 24 || username.length === 0) {
+      setValidUsername(false);
+    } else {
+      setValidUsername(true);
+    }
+  }, [username])
 
-  function validatePasswordConfirm() {
-    if (password !== passwordConfirm) return "Confirm password must match password"
-    return ""
+  useEffect(() => {
+    if (password.length < 8 || password.length > 24) {
+      setValidPassword(false);
+    } else {
+      setValidPassword(true);
+    }
+  }, [password])
+
+  useEffect(() => {
+    if (password !== passwordConfirm) {
+      setValidPasswordConfirm(false);
+    } else {
+      setValidPasswordConfirm(true);
+    }
+  }, [passwordConfirm])
+
+
+  async function submitForm(form) {
+    const route = `/user/register`;
+    axiosInstance.post(route, form)
+      .then((response) => {
+        console.log(response.data);
+        localStorage.setItem('token', response.data.token);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   return (
@@ -100,12 +120,12 @@ export default function Signup() {
               Create Account
             </p>
             <form id="register-form" onSubmit={handleSignupSubmit}>
-              <div className="flex flex-col space-y-2 mb-4">
+              <div className="flex flex-col space-y-1 mb-4">
                 <div className="flex flex-col">
                   <label>
-                    <p className="text-gray-600 text-xs mb-1">
+                    <div className="text-gray-600 text-xs">
                       Email Address
-                    </p>
+                    </div>
                     <input
                       type="email"
                       className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-sm text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -114,19 +134,17 @@ export default function Signup() {
                       onChange={(event) =>
                         setEmail(event.target.value)
                       }
-                      onClick={(event) =>
-                        setClickEmail(true)
-                      }
                     />
-                    {validateEmail() !== "" && clickEmail ? <p className="text-red-500 text-xs mb-1">{validateEmail()}</p> : ""}
+                    <div className={`${(validEmail) ? 'invisible' : 'visible'} text-red-500 text-xs mb-1`}>
+                      invalid email
+                    </div>
                   </label>
                 </div>
                 <div className="flex flex-row justify-between space-x-4">
-
-                  <label>
-                    <p className="text-gray-600 text-xs mb-1">
+                  <label className='w-1/2'>
+                    <div className="text-gray-600 text-xs">
                       First Name
-                    </p>
+                    </div>
                     <input
                       type="firstname"
                       className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-sm text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -135,16 +153,15 @@ export default function Signup() {
                       onChange={(event) =>
                         setFirstName(event.target.value)
                       }
-                      onClick={(event) =>
-                        setClickFirstName(true)
-                      }
                     />
-                    {validateFirstName() !== "" && clickFirstName ? <p className="text-red-500 text-xs mb-1">{validateFirstName()}</p> : ""}
+                    <div className={`${(validFirstName) ? 'invisible' : 'visible'} text-red-500 text-xs mb-1`}>
+                      invalid first name
+                    </div>
                   </label>
-                  <label>
-                    <p className="text-gray-600 text-xs mb-1">
+                  <label className='w-1/2'>
+                    <div className="text-gray-600 text-xs">
                       Last Name
-                    </p>
+                    </div>
                     <input
                       type="lastname"
                       className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-sm text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -153,18 +170,17 @@ export default function Signup() {
                       onChange={(event) =>
                         setLastName(event.target.value)
                       }
-                      onClick={(event) =>
-                        setClickLastName(true)
-                      }
                     />
-                    {validateLastName() !== "" && clickLastName ? <p className="text-red-500 text-xs mb-1">{validateLastName()}</p> : ""}
+                    <div className={`${(validLastName) ? 'invisible' : 'visible'} text-red-500 text-xs mb-1`}>
+                      invalid last name
+                    </div>
                   </label>
                 </div>
                 <div className="flex flex-col">
                   <label>
-                    <p className="text-gray-600 text-xs mb-1">
+                    <div className="text-gray-600 text-xs">
                       Username
-                    </p>
+                    </div>
                     <input
                       type="username"
                       className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-sm text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -173,18 +189,17 @@ export default function Signup() {
                       onChange={(event) =>
                         setUsername(event.target.value)
                       }
-                      onClick={(event) =>
-                        setClickUsername(true)
-                      }
                     />
-                    {validateUsername() !== "" && clickUsername ? <p className="text-red-500 text-xs mb-1">{validateUsername()}</p> : ""}
+                    <div className={`${(validUsername) ? 'invisible' : 'visible'} text-red-500 text-xs mb-1`}>
+                      invalid username
+                    </div>
                   </label>
                 </div>
                 <div className="flex flex-row justify-between space-x-4">
-                  <label>
-                    <p className="text-gray-600 text-xs mb-1">
+                  <label className='w-1/2'>
+                    <div className="text-gray-600 text-xs">
                       Password
-                    </p>
+                    </div>
                     <input
                       type="password"
                       className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-sm text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -193,16 +208,15 @@ export default function Signup() {
                       onChange={(event) =>
                         setPassword(event.target.value)
                       }
-                      onClick={(event) =>
-                        setClickPassword(true)
-                      }
                     />
-                    {validatePassword() !== "" && clickPassword ? <p className="text-red-500 text-xs mb-1">{validatePassword()}</p> : ""}
+                    <div className={`${(validPassword) ? 'invisible' : 'visible'} text-red-500 text-xs mb-1`}>
+                      invalid password
+                    </div>
                   </label>
-                  <label>
-                    <p className="text-gray-600 text-xs mb-1">
+                  <label className='w-1/2'>
+                    <div className="text-gray-600 text-xs">
                       Confirm Password
-                    </p>
+                    </div>
                     <input
                       type="password"
                       className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-sm text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -211,11 +225,10 @@ export default function Signup() {
                       onChange={(event) =>
                         setPasswordConfirm(event.target.value)
                       }
-                      onClick={(event) =>
-                        setClickPasswordConfirm(true)
-                      }
                     />
-                    {validatePasswordConfirm() !== "" && clickPasswordConfirm ? <p className="text-red-500 text-xs mb-1">{validatePasswordConfirm()}</p> : ""}
+                    <div className={`${(validPasswordConfirm) ? 'invisible' : 'visible'} text-red-500 text-xs mb-1`}>
+                      password mismatch
+                    </div>
                   </label>
                 </div>
               </div>
@@ -229,7 +242,7 @@ export default function Signup() {
                   />
                   I have agreed to
                   <a href="#" className="ml-1 text-xs font-bold text-gray-400">
-                    ayayayayayaya
+                    ...
                   </a>
                 </label>
                 <button type="submit" className="bg-red-500 text-white shadow font-bold py-2 grow rounded-3xl focus:outline-none focus:shadow-outline">
