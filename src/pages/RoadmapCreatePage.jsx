@@ -40,7 +40,8 @@ const usePreviousState = (value) => {
 const TaskItem = ({ task, setEditTaskID, setModalState }) => {
   // Task node Component
   return (
-    <div className="flex">
+    <div className="relative break-words w-32">
+    <div className="flex after:h-1 after:w-full after:bg-black after:absolute after:top-[30px] after:-z-10 justify-center">
       <div className="flex">
         <div className="flex flex-col gap-2 items-center">
           <button
@@ -59,13 +60,14 @@ const TaskItem = ({ task, setEditTaskID, setModalState }) => {
               isStrokeOn={true}
             />
           </button>
-          <div className="w-full">
+          <div className="w-4/5 absolute bottom-0 translate-y-[calc(100%_+_10px)]">
             <span className="block font-bold mx-auto text-center leading-5 font-nunito-sans">
-              {task.name}
+              {task.name === "" ? "MileStone" : task.name}
             </span>
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 };
@@ -91,21 +93,10 @@ const RoadmapCreatePage = (props) => {
   const [isPublic, setPublic] = useState(true);
   const [edges, setEdges] = useState([]);
   const [tasksRef, setTasksRef] = useState([]); // [{from: rid1, to: rid2}]
-  const previousValue = usePreviousState(tasksRef); // [{rid: string, ref: Ref}]
   const [notiStatus, setNotiStatus] = useState({ on: false });
   const [tags, setTags] = useState([]);
   const [publicModal, setPublicModal] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  const [changedTask, setChangedTask] = useState({
-    add: [],
-    edit: [],
-    delete: [],
-  });
-  const [changedSubtask, setChangedSubtask] = useState({
-    add: [],
-    edit: [],
-    delete: [],
-  });
 
   useEffect(() => {
     setUpRoadmap();
@@ -304,7 +295,8 @@ const RoadmapCreatePage = (props) => {
             task.id === submissionObject.id ? submissionObject : task
           )
         );
-        initialState.current.tasks.forEach((task) => { // THIS DO NOT WORK
+        initialState.current.tasks.forEach((task) => {
+          // THIS DO NOT WORK
           if (task.id === submissionObject.id) task = submissionObject;
         });
         break;
@@ -339,14 +331,14 @@ const RoadmapCreatePage = (props) => {
   };
 
   const handleNameChange = (event) => {
-    if (RMName.length < MAX_RMNAME_LENGTH) {
+    if (event.target.value.length <= MAX_RMNAME_LENGTH) {
       setRMName((n) => event.target.value);
     }
     setHasUnsavedChanges(true);
   };
 
   const handleDescriptionChange = (event) => {
-    if (RMDesc.length < MAX_RMDESCRIPTION_LENGTH) {
+    if (event.target.value.length <= MAX_RMDESCRIPTION_LENGTH) {
       setRMDesc((d) => event.target.value);
     }
     setHasUnsavedChanges(true);
@@ -432,12 +424,13 @@ const RoadmapCreatePage = (props) => {
     let subtaskChange = { add: [], edit: [], delete: [] };
     initState.forEach((initsubtask) => {
       if (
-        newState.find((newsubtask) => newsubtask.id === initsubtask.id) === undefined
+        newState.find((newsubtask) => newsubtask.id === initsubtask.id) ===
+        undefined
       ) {
         subtaskChange.delete.push(initsubtask.id);
       }
     });
-    
+
     newState.forEach((subtask) => {
       if (subtask.isTempId === true) {
         // new subtask
@@ -468,22 +461,30 @@ const RoadmapCreatePage = (props) => {
   ) => {
     if (mode === "create" || mode === "clone") {
       if (
-        (await createRoadmap(roadmapObject, taskChange, subtaskChange) === null)
+        (await createRoadmap(roadmapObject, taskChange, subtaskChange)) === null
       ) {
         alert("Send error");
       } else {
         console.log("send succeeded");
       }
     } else if (mode === "edit") {
-      relationChange = relationChange ? roadmapObject.tasks.map((task) => task.id) : null
+      relationChange = relationChange
+        ? roadmapObject.tasks.map((task) => task.id)
+        : null;
       if (
-       (await editRoadmap(id, roadmapObject, taskChange, subtaskChange, relationChange) === null)
+        (await editRoadmap(
+          id,
+          roadmapObject,
+          taskChange,
+          subtaskChange,
+          relationChange
+        )) === null
       ) {
         alert("Send error");
       } else {
         console.log("send succeeded");
       }
-    } 
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -516,9 +517,7 @@ const RoadmapCreatePage = (props) => {
           return subtask;
         })
       );
-      subTaskChange.delete.push(
-        ...comparison.delete
-      );
+      subTaskChange.delete.push(...comparison.delete);
     });
 
     // check for task relation change
@@ -609,50 +608,52 @@ const RoadmapCreatePage = (props) => {
       ) : null}
 
       {loading && <Spinner />}
-      <div className="px-10 h-full">
-        <div className="text-4xl font-bold mt-10 flex items-center">
-          <div className="flex flex-col">
-            <span className="font-inter">
-              {mode === "create"
-                ? "Create"
-                : mode === "edit"
-                ? "Edit"
-                : mode === "clone"
-                ? "Clone"
-                : null}{" "}
-              roadmap
-            </span>
-            <div className="h-2">
-              <hr className="h-1 bg-blue-600"></hr>
-            </div>
+      <div className="text-4xl font-bold mt-10 mx-10 flex items-center">
+        <div className="flex flex-col">
+          <span className="font-inter">
+            {mode === "create"
+              ? "Create"
+              : mode === "edit"
+              ? "Edit"
+              : mode === "clone"
+              ? "Clone"
+              : null}{" "}
+            roadmap
+          </span>
+          <div className="h-2">
+            <hr className="h-0.5 bg-blue-600"></hr>
           </div>
         </div>
-
-        <form onSubmit={handleSubmit} className="h-full w-full max-w-full">
-          <div className="flex my-4">
+      </div>
+      <div className="h-full w-full flex justify-center">
+        <form onSubmit={handleSubmit} className="h-full w-4/5 max-w-4xl">
+          <div className="flex my-4 justify-between">
             <input
               className="text-2xl focus:outline-none font-inter"
               type="text"
               value={RMName}
               onChange={handleNameChange}
               placeholder="UNTITLED"
+              size={MAX_RMNAME_LENGTH}
             />
-            <button
-              type="button"
-              disabled={isPublic}
-              onClick={() => setPublicModal(true)}
-              className="bg-white disabled:bg-blue-100 h-10 w-28 text-md p-2 font-bold rounded-l-full border border-black font-nunito-sans"
-            >
-              Public
-            </button>
-            <button
-              type="button"
-              disabled={!isPublic}
-              onClick={() => setPublicModal(true)}
-              className="h-10 w-28 bg-white disabled:bg-blue-100 text-md p-2 font-bold rounded-r-full border-black border-y border-r font-nunito-sans"
-            >
-              Private
-            </button>
+            <div className="flex">
+              <button
+                type="button"
+                disabled={isPublic}
+                onClick={() => setPublicModal(true)}
+                className="bg-white disabled:bg-blue-100 h-10 w-28 text-md p-2 font-bold rounded-l-full border border-black font-nunito-sans"
+              >
+                Public
+              </button>
+              <button
+                type="button"
+                disabled={!isPublic}
+                onClick={() => setPublicModal(true)}
+                className="h-10 w-28 bg-white disabled:bg-blue-100 text-md p-2 font-bold rounded-r-full border-black border-y border-r font-nunito-sans"
+              >
+                Private
+              </button>
+            </div>
           </div>
 
           <label className="text-xl font-bold font-nunito-sans">
@@ -714,7 +715,7 @@ const RoadmapCreatePage = (props) => {
             </div>
             {/* End of Notification Setting */}
             {/* Giant task box */}
-            <div className="flex overflow-x-auto flex-col justify-center bg-blue-100 my-4 border-2 shadow-xl border-gray-300 rounded-3xl items-start h-2/3 p-4 pl-8 pr-16 relative max-w-full w-full">
+            <div className="flex overflow-x-auto flex-col justify-center bg-blue-100 my-4 border-2 shadow-xl border-gray-300 rounded-3xl items-start h-2/3 p-4 pl-8 pr-16 relative max-w-full w-full z-0">
               <DragDropContext onDragEnd={handleOrderSwitch}>
                 <StrictModeDroppable droppableId="tasks" direction="horizontal">
                   {(provided) => (
@@ -751,9 +752,6 @@ const RoadmapCreatePage = (props) => {
                                     setEditTaskID={setEditTaskID}
                                     setModalState={setModalState}
                                   />
-                                  {/* <div className="h-full flex items-center">
-                                    <hr className="bg-black h-1 w-20"></hr>
-                                  </div> */}
                                 </div>
                               )}
                             </Draggable>

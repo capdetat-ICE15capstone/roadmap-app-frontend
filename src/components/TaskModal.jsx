@@ -38,8 +38,6 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
   const [loading, setLoading] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   const [unSavedModal, setUnSavedModal] = useState(false);
-  const [dataChange, setDataChange] = useState(false);
-  const [changedData, setChangedData] = useState({});
   const [taskWasFetched, setTaskWasFetched] = useState(false);
   const DatePickerButton = forwardRef(({ value, onClick }, ref) => (
     <div className="w-full">
@@ -78,20 +76,23 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
           setTaskWasFetched(true);
           setupTask(fetchedData);
         }
+      } else {
+        initialState.current = {
+          id: oldData.id,
+          name: name,
+          description: description,
+          nodeColor: nodeColor,
+          nodeShape: nodeShape,
+          startDate: startDate,
+          dueDate: dueDate, 
+          subtasks: subtasks
+        }
       }
       setLoading(false);
     }
 
     setModalData();
   }, []);
-
-  // useEffect(() => {
-  //   console.log(changedData);
-  // }, [changedData]);
-
-  // useEffect(() => {
-  //   console.log(oldData);
-  // }, []);
 
   const setupTask = (taskObj) => {
     setName(taskObj.name);
@@ -119,94 +120,36 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
     return id;
   };
 
-  const trackDataChangeObject = (attrName, newAttr) => {
-    setChangedData((previousData) => {
-      if (
-        // User change the data back to original state
-        newAttr === initialState.current[attrName] &&
-        previousData[attrName] !== null &&
-        previousData[attrName] !== undefined
-      ) {
-        // Delete that change in change object
-        const stateCopy = previousData;
-        delete stateCopy[attrName];
-        return stateCopy;
-      } else if (newAttr !== initialState.current[attrName]) {
-        // Change that is not in init state
-        // Add the change to change object
-        return { ...previousData, [attrName]: newAttr };
-      }
-      return previousData;
-    });
-  };
-
   const handleNameChange = (event) => {
-    if (name.length < MAX_NAME_LENGTH) {
-      setName((prevData) => {
-        if (prevData !== event.target.value) {
-          // trackDataChangeObject("name", event.target.value)
-          return event.target.value;
-        }
-        return prevData;
-      });
+    if (event.target.value.length < MAX_NAME_LENGTH) {
+      setName(event.target.value);
     }
   };
 
   const handleDescriptionChange = (event) => {
-    if (description.length < MAX_DESCRIPTION_LENGTH) {
-      setDescription((prevData) => {
-        if (prevData !== event.target.value) {
-          // trackDataChangeObject("description", event.target.value)
-          return event.target.value;
-        }
-        return prevData;
-      });
+    if (event.target.value.length < MAX_DESCRIPTION_LENGTH) {
+      setDescription(event.target.valuee);
     }
   };
 
   const handleDateChange = (mode, date) => {
     if (mode === "startDate") {
-      setStartDate((prevData) => {
-        if (prevData.getTime() !== date.getTime()) {
-          // trackDataChangeObject("startDate", date);
-          return date;
-        }
-        return prevData;
-      });
+      setStartDate(date);
     } else if (mode === "dueDate") {
-      setdueDate((prevData) => {
-        if (prevData.getTime() !== date.getTime()) {
-          // trackDataChangeObject("startDate", date);
-          return date;
-        }
-        return prevData;
-      });
+      setdueDate(date);
     }
   };
 
   const handleNodeColorChange = (event) => {
-    setNodeColor((prevData) => {
-      if (prevData.name !== event.target.value) {
-        // trackDataChangeObject("nodeColor", event.target.value);
-        return allNodeColor.find(({ name }) => name === event.target.value);
-      }
-      return prevData;
-    });
+    setNodeColor(allNodeColor.find(({ name }) => name === event.target.value));
   };
 
   const handleNodeShapeChange = (event, shapeType) => {
-    setNodeShape((prevData) => {
-      if (prevData !== shapeType) {
-        // trackDataChangeObject("nodeShape", shapeType)
-        return shapeType;
-      }
-      return prevData;
-    });
+    setNodeShape(shapeType);
   };
 
   const addSubTask = (event) => {
     event.preventDefault();
-    setDataChange(true);
     setSubTasks([
       ...subtasks,
       {
@@ -219,12 +162,10 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
   };
 
   const deleteSubTask = (event, id) => {
-    setDataChange(true);
     setSubTasks((subtasks) => subtasks.filter((subtask) => subtask.id !== id));
   };
 
   const onSubtaskTextEdit = (newValue, id) => {
-    setDataChange(true);
     setSubTasks(
       subtasks.map((subtask) =>
         subtask.id === id ? { ...subtask, detail: newValue } : { ...subtask }
@@ -233,7 +174,6 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
   };
 
   const onSubTaskCheckboxChange = (newValue, id) => {
-    setDataChange(true);
     setSubTasks(
       subtasks.map((subtask) =>
         subtask.id === id ? { ...subtask, status: newValue } : { ...subtask }
@@ -246,7 +186,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
     if (
       initialState.current.name !== name ||
       initialState.current.description !== description ||
-      initialState.current.nodeColor !== nodeColor.name ||
+      initialState.current.nodeColor.name !== nodeColor.name ||
       initialState.current.nodeShape !== nodeShape ||
       initialState.current.startDate.getTime() !== startDate.getTime() ||
       initialState.current.dueDate.getTime() !== dueDate.getTime()
@@ -259,28 +199,30 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
 
   const checkSubtaskChange = () => {
     let subtaskChange = { add: [], edit: [], delete: [] };
-    subtasks.forEach((subtask) => {
-      if (subtask.isTempId === true) {
-        // new subtask
-        subtaskChange.add.push(subtask.id);
+    initialState.current.subtasks = initialState.current.subtasks ?? [] 
+
+    initialState.current.subtasks.forEach((initsubtask) => {
+      const intersection = subtasks.find(
+        (newsubtask) => newsubtask.id === initsubtask.id
+      );
+      if (intersection === undefined) {
+        // deleted subtask
+        subtaskChange.delete.push(initsubtask.id);
+      } else if (
+        initsubtask.detail !== intersection.detail ||
+        initsubtask.status !== intersection.status
+      ) {
+        // edited subtask
+        subtaskChange.edit.push(initsubtask.id);
         return;
       }
+    });
 
-      const taskIntersection =
-        initialState.current.subtasks.find(
-          (initsubtask) => subtask.id === initsubtask.id
-        ) === undefined;
-      if (taskIntersection) {
-        // deleted subtask
-        subtaskChange.delete.push(subtask.id);
-        return;
-      } else if (
-        subtask.detail !== taskIntersection.detail ||
-        subtask.status !== taskIntersection.detail
-      ) {
-        // edited task
-        subtaskChange.edit.push(subtask.id);
-        return;
+    subtasks.forEach((subtask) => {
+      const intersection = initialState.current.subtasks.find((initsubtask) => initsubtask.id === subtask.id)
+      if (intersection === undefined) {
+        // added subtask
+        subtaskChange.add.push(subtask.id);
       }
     });
     return subtaskChange;
@@ -292,13 +234,15 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
     // set the display unsaved change modal to true
     const check = checkSubtaskChange();
     const subtaskChange =
-      check.add.length === 0 &&
-      check.edit.length === 0 &&
-      check.delete.length === 0;
+      check.add.length !== 0 ||
+      check.edit.length !== 0 ||
+      check.delete.length !== 0;
+
     if (checkTaskChange() || subtaskChange) {
       setUnSavedModal(true);
       return;
     }
+    
     editTaskCallBack(taskWasFetched ? "fetch" : "failed", generateTaskData());
   };
 
@@ -362,11 +306,11 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
             <div className=" rounded-2xl shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
               {/*header*/}
               <div
-                className={`flex items-start justify-between py-4 px-5 lg:py-8 border-b border-solid border-slate-200 rounded-t-2xl ${nodeColor.twbg} transition duration-300 items-center`}
+                className={`flex justify-between py-4 px-5 lg:py-8 border-b border-solid border-slate-200 rounded-t-2xl transition duration-300 items-center bg-white`}
               >
                 <div className={`${oldData.id === -1 ? "" : "w-[50px]"}`}></div>
-                <h3 className="text-3xl font-semibold text-white">
-                  {oldData.id === -1 ? "Create" : "Edit"} task
+                <h3 className="text-4xl font-semibold text-black">
+                  {oldData.id === -1 ? "Create" : "Edit"} TASK
                 </h3>
                 {oldData.id === -1 ? (
                   <div></div>
@@ -582,14 +526,14 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                     </div>
                     <div className="flex items-center justify-end p-4 rounded-b gap-3">
                       <button
-                        className="text-black border border-black rounded-md background-transparent font-bold uppercase px-6 py-3 text-sm outline-none focus:outline-none ease-linear transition-all duration-150"
+                        className="text-black border border-black background-transparent rounded-full font-bold uppercase text-sm h-10 w-24 "
                         type="button"
                         onClick={handleDetectChangeBeforeClose}
                       >
                         Close
                       </button>
                       <button
-                        className="bg-blue-700 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150"
+                        className="bg-nav-blue text-white font-bold uppercase text-sm rounded-full shadow hover:shadow-lg h-10 w-24"
                         type="submit"
                       >
                         Save
