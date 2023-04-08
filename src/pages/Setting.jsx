@@ -3,6 +3,9 @@ import SettingTab from '../components/SettingTab';
 import ToggleSwitch from '../components/ToggleSwitch';
 
 import { ReactComponent as GearIcon } from "../assets/setting_assets/gear.svg";
+import { ReactComponent as ProfileIcon } from "../assets/setting_assets/profile.svg";
+import { ReactComponent as AccountIcon } from "../assets/setting_assets/account.svg";
+import { ReactComponent as NotificationIcon } from "../assets/setting_assets/notification.svg";
 
 const Setting = () => {
     const [tab, setTab] = useState("profile");
@@ -23,7 +26,7 @@ const Setting = () => {
     const RenderProfile = () => {
         return (
             <div className='flex flex-col'>
-                <SettingTitle text='Profile'/>
+                <SettingTitle text='Profile' Icon={ProfileIcon}/>
                 {/* username, first name, last name, profile pic */}
                 <div className='flex gap-2 justify-between max-w-4xl pl-4'>
                     {/* username, first name, last name */}
@@ -64,7 +67,7 @@ const Setting = () => {
     const RenderAccount = () => {
         return (
             <div className='flex flex-col'>
-                <SettingTitle text='Account'/>
+                <SettingTitle text='Account' Icon={AccountIcon}/>
                 {/* account privacy, email */}
                 <div className='flex-col max-w-4xl pl-8'>
                     <ToggleSwitch name={"Public Account"} isToggled={accountPublic} setIsToggled={setAccountPublic}/>
@@ -93,7 +96,7 @@ const Setting = () => {
                 </div>
     
                 {/* notification */}
-                <SettingTitle text="Notifications"/>
+                <SettingTitle text="Notifications" Icon={NotificationIcon}/>
                 <div className='flex max-w-4xl pl-8'>
                     <ToggleSwitch name={"Allow Notifications"} isToggled={notification} setIsToggled={setNotification}/>
                 </div>
@@ -142,7 +145,7 @@ const Setting = () => {
                 Setting
                 </div>
             </div>
-            <div className='max-w-3xl mx-auto'>
+            <div className='w-3/4 max-w-4xl mx-auto'>
                 <RenderProfile/>
                 <RenderAccount/>
             </div>
@@ -310,12 +313,15 @@ const SettingTopicRed = ({text}) => {
     )
 }
 
-const SettingTitle = ({text}) => {
+const SettingTitle = ({text, Icon}) => {
     return (
         <>
-            <p className="text-gray-800 text-2xl mt-8 font-bold px-1">
-                {text}
-            </p>
+            <div className='flex mt-8 '>
+                <Icon className="h-8 w-auto"/>
+                <p className="text-gray-800 text-2xl font-bold px-1">
+                    {text}
+                </p>
+            </div>
             <hr className='border-1 border-gray-400 max-w-4xl mb-3'/>
         </>
     )
