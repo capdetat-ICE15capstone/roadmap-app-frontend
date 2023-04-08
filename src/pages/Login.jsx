@@ -16,7 +16,7 @@ export default function Login() {
 
   function handleSubmit(event) {
     event.preventDefault();
-    axios.post('http://localhost:8080/login', { email, password })
+    axios.post('http://localhost:8080/user/login', { email, password })
       .then(response => {
         localStorage.setItem('token', response.data.token);
         if (isFirst) {

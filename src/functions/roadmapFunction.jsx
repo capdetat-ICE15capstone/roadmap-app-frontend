@@ -42,7 +42,7 @@ const objRename = (obj = null, renameToObj = null) => {
   return newObj;
 };
 
-export const getRoadmap = async (rid, timeout = 0, fetchAll = true) => {
+export const getRoadmap = async (rid, timeout = 0, fetchAll = true, rename=true) => {
   // timeout - number(ms): specify when the function would stop fetching
   // fetchAll - boolean:
   //  if TRUE, function would fetch all tasks at once and return all of them
@@ -91,7 +91,7 @@ export const getRoadmap = async (rid, timeout = 0, fetchAll = true) => {
       })
     );
 
-    return reformRoadmap(response);
+    return rename ? reformRoadmap(response) : response;
   } catch (error) {
     console.warn(error);
     return null;
@@ -121,17 +121,16 @@ export const editRoadmap = async (
   relationChange,
   timeout = 0
 ) => {
-
-  console.log("request")
+  console.log("request");
   console.log({
     rid: rid,
     roadmapChang: roadmapChange,
     taskChange: taskChange,
     subtaskChange: subtaskChange,
     relationChange: relationChange,
-  })
+  });
 
-  const response = {}
+  const response = {};
 
   try {
     if (roadmapChange !== null) {
@@ -143,21 +142,23 @@ export const editRoadmap = async (
       taskChange.add,
       subtaskChange.add,
       relationChange
-    )
+    );
 
     response.editTaskChange = await PRIVATE_editTask(taskChange.edit);
     response.deleteTaskChange = await PRIVATE_deleteTask(taskChange.delete);
     response.editSubTaskChange = await PRIVATE_editSubtask(subtaskChange.edit);
-    response.editDeleteChange = await PRIVATE_deleteSubtask(subtaskChange.delete)
+    response.editDeleteChange = await PRIVATE_deleteSubtask(
+      subtaskChange.delete
+    );
 
-    if (taskRelation !== null & taskRelation !== undefined) {
+    if ((taskRelation !== null) & (taskRelation !== undefined)) {
       response.taskRelationChange = await PRIVATE_updateRelation(
         rid,
         taskRelation
       );
     }
-    
-    console.log("response")
+
+    console.log("response");
     console.log(response);
     return response;
   } catch (error) {
@@ -172,13 +173,12 @@ export const createRoadmap = async (
   subtaskChange, // subtaskChange object {add:[], edit:[], delete:[]
   timeout = 1000
 ) => {
-
-  console.log("initial create roadmap")
+  console.log("initial create roadmap");
   console.log({
     roadmapChange: roadmapChange,
     taskChange: taskChange,
-    subtaskChange: subtaskChange
-  })
+    subtaskChange: subtaskChange,
+  });
   try {
     // create Roadmap
     let response = await PRIVATE_createRoadmap(roadmapChange);
@@ -194,14 +194,56 @@ export const createRoadmap = async (
       response.rid,
       taskRelation
     );
-    
-    console.log("final create roadmap")
+
+    console.log("final create roadmap");
     console.log({
       rid: response.rid,
       taskAdd: taskAdd,
       subTaskAdd: subTaskAdd,
-      taskRelation: taskRelation
-    })
+      taskRelation: taskRelation,
+    });
+    return response;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
+
+export const addTags = async (rid, tags, timeout = 1000) => {
+  if (rid === undefined || rid === null) return null;
+  let route = "/tag/";
+
+  try {
+    const response = Promise.all(
+      tags.map((tag) => {
+        const reqBody = {
+          rid: rid,
+          name: tag,
+        };
+        return axiosInstance.post(route, reqBody, { timeout: timeout });
+      })
+    );
+    return response;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+};
+
+export const deleteTags = async (rid, tags, timeout = 1000) => {
+  if (rid === undefined || rid === null) return null;
+  let route = "/tag/";
+
+  try {
+    const response = Promise.all(
+      tags.map((tag) => {
+        const reqBody = {
+          rid: rid,
+          name: tag,
+        };
+        return axiosInstance.delete(route, reqBody, { timeout: timeout });
+      })
+    );
     return response;
   } catch (error) {
     console.error(error);
@@ -218,19 +260,18 @@ const PRIVATE_addAndReassign = async (
   // call add api and reassign id to task and subtask
   // taskChange.add and subtaskChange.add
   console.log(rid),
-  console.log(taskAdd),
-  console.log(subTaskAdd),
-  console.log(taskRelation)
+    console.log(taskAdd),
+    console.log(subTaskAdd),
+    console.log(taskRelation);
 
   try {
-    let taskResponse = await PRIVATE_createTask(rid, taskAdd); 
+    let taskResponse = await PRIVATE_createTask(rid, taskAdd);
 
     subTaskAdd.forEach((stChange) => {
       const newIdIndex = taskAdd.findIndex(
         (oldTask) => oldTask.id === stChange.tid
       );
-      if (newIdIndex !== -1) 
-        stChange.tid = taskResponse[newIdIndex];
+      if (newIdIndex !== -1) stChange.tid = taskResponse[newIdIndex];
     });
 
     let subtaskResponse = await PRIVATE_createSubtask(subTaskAdd);
@@ -249,13 +290,13 @@ const PRIVATE_addAndReassign = async (
       taskRelation = taskRelation.map((tid) => {
         if (tempIdMapping[tid] !== undefined && tempIdMapping[tid] !== null) {
           console.log(tempIdMapping[tid]);
-          return tempIdMapping[tid]
+          return tempIdMapping[tid];
         }
         return tid;
       });
     }
 
-    console.log(taskRelation)
+    console.log(taskRelation);
 
     return [taskAdd, subTaskAdd, taskRelation];
   } catch (error) {
@@ -393,10 +434,10 @@ const PRIVATE_editTask = async (tasks, timeout = 0) => {
       title: tasks[0].name,
       description: tasks[0].description,
       start_time: tasks[0].startDate.toISOString().slice(0, -5),
-      deadline: tasks[0].dueDate.toISOString().slice(0,-5),
+      deadline: tasks[0].dueDate.toISOString().slice(0, -5),
       shape: tasks[0].nodeShape,
       color: tasks[0].nodeColor,
-      tid: tasks[0].id
+      tid: tasks[0].id,
     };
   } else if (tasks.length > 1) {
     route = `/task/tasks`;
@@ -404,16 +445,18 @@ const PRIVATE_editTask = async (tasks, timeout = 0) => {
       return {
         title: task.name,
         description: task.description,
-        start_time: task.startDate.toISOString().slice(0, -5), 
+        start_time: task.startDate.toISOString().slice(0, -5),
         deadline: task.dueDate.toISOString().slice(0, -5),
         shape: task.nodeShape,
         color: task.nodeColor,
-        tid: task.id
+        tid: task.id,
       };
     });
   }
   try {
-    let response = await axiosInstance.put(route, reqBody, {timeout:timeout});
+    let response = await axiosInstance.put(route, reqBody, {
+      timeout: timeout,
+    });
 
     return response.data;
   } catch (error) {
@@ -423,18 +466,20 @@ const PRIVATE_editTask = async (tasks, timeout = 0) => {
 };
 
 const PRIVATE_deleteTask = async (tids, timeout = 0) => {
-  if (tids=== undefined || tids === null) return null;
-  if (!Array.isArray(tids)) tids = [tids]
+  if (tids === undefined || tids === null) return null;
+  if (!Array.isArray(tids)) tids = [tids];
 
   try {
-    const response = Promise.all(tids.map(async (tid) => {
-      let route = `/task/${tid}`;
-      await axiosInstance.delete(route, { timeout: timeout });
-    }))
+    const response = Promise.all(
+      tids.map(async (tid) => {
+        let route = `/task/${tid}`;
+        await axiosInstance.delete(route, { timeout: timeout });
+      })
+    );
 
     return response;
   } catch (error) {
-    console.error(error)
+    console.error(error);
     throw new Error("Roadmap create axios error");
   }
 };
@@ -494,7 +539,7 @@ const PRIVATE_editSubtask = async (subtasks, timeout = 0) => {
     reqBody = {
       title: subtasks[0].detail,
       stid: subtasks[0].id,
-      is_done: subtasks[0].status
+      is_done: subtasks[0].status,
     };
   } else if (subtasks.length > 1) {
     route = `/subtask/subtasks/`;
@@ -502,12 +547,14 @@ const PRIVATE_editSubtask = async (subtasks, timeout = 0) => {
       return {
         title: subtask.detail,
         tid: subtask.id,
-        is_done: subtask.status
+        is_done: subtask.status,
       };
     });
   }
   try {
-    let response = await axiosInstance.put(route, reqBody, {timeout:timeout});
+    let response = await axiosInstance.put(route, reqBody, {
+      timeout: timeout,
+    });
     return response.data;
   } catch (error) {
     console.error(error);
@@ -520,14 +567,16 @@ const PRIVATE_deleteSubtask = async (stids, timeout = 0) => {
   if (!Array.isArray(stids)) stids = [stids];
 
   try {
-    const response = Promise.all(stids.map(async (stid) => {
-      let route = `/subtask/${stid}`;
-      await axiosInstance.delete(route, { timeout: timeout });
-    }))
-    
+    const response = Promise.all(
+      stids.map(async (stid) => {
+        let route = `/subtask/${stid}`;
+        await axiosInstance.delete(route, { timeout: timeout });
+      })
+    );
+
     return response;
   } catch (error) {
-    console.error(error)
+    console.error(error);
     throw new Error("Roadmap create axios error");
   }
 };
