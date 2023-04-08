@@ -188,28 +188,29 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
 
   const checkSubtaskChange = () => {
     let subtaskChange = { add: [], edit: [], delete: [] };
-    subtasks.forEach((subtask) => {
-      if (subtask.isTempId === true) {
-        // new subtask
-        subtaskChange.add.push(subtask.id);
+
+    initialState.current.subtasks.forEach((initsubtask) => {
+      const intersection = subtasks.find(
+        (newsubtask) => newsubtask.id === initsubtask.id
+      );
+      if (intersection === undefined) {
+        // deleted subtask
+        subtaskChange.delete.push(initsubtask.id);
+      } else if (
+        initsubtask.detail !== intersection.detail ||
+        initsubtask.status !== intersection.status
+      ) {
+        // edited subtask
+        subtaskChange.edit.push(initsubtask.id);
         return;
       }
+    });
 
-      const taskIntersection =
-        initialState.current.subtasks.find(
-          (initsubtask) => subtask.id === initsubtask.id
-        ) === undefined;
-      if (taskIntersection) {
-        // deleted subtask
-        subtaskChange.delete.push(subtask.id);
-        return;
-      } else if (
-        subtask.detail !== taskIntersection.detail ||
-        subtask.status !== taskIntersection.detail
-      ) {
-        // edited task
-        subtaskChange.edit.push(subtask.id);
-        return;
+    subtasks.forEach((subtask) => {
+      const intersection = initialState.current.subtasks.find((initsubtask) => initsubtask.id === subtask.id)
+      if (intersection === undefined) {
+        // added subtask
+        subtaskChange.add.push(subtask.id);
       }
     });
     return subtaskChange;
@@ -221,9 +222,10 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
     // set the display unsaved change modal to true
     const check = checkSubtaskChange();
     const subtaskChange =
-      check.add.length === 0 &&
-      check.edit.length === 0 &&
-      check.delete.length === 0;
+      check.add.length !== 0 ||
+      check.edit.length !== 0 ||
+      check.delete.length !== 0;
+
     if (checkTaskChange() || subtaskChange) {
       setUnSavedModal(true);
       return;

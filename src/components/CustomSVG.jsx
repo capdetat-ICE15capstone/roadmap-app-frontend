@@ -1,39 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { AnimatePresence, motion, useAnimate } from "framer-motion";
 
-// Old CustomSVG, delete after testing is completed
-// export const CustomSVG = ({
-//     height = 42,
-//     width = 42,
-//     radius = 20,
-//     className = "",
-//     type = "circle",
-//   }) => {
-//     let cx = Math.ceil(width / 2);
-//     let cy = Math.ceil(height / 2);
-//     return (
-//       <svg height={height} width={width} className={className}>
-//         {type === "circle" ? (
-//           <circle cx={cx} cy={cy} r={radius} className={className} />
-//         ) : null}
-//         {type === "square" ? (
-//           <rect
-//             height={height - 2}
-//             width={width - 2}
-//             x={1}
-//             y={1}
-//             className={className}
-//           />
-//         ) : null}
-//         {type === "triangle" ? (
-//           <polygon
-//             points={`${cx},2 ${width - 2},${height - 1} 2,${height - 1}`}
-//             className={className}
-//           />
-//         ) : null}
-//       </svg>
-//     );
-//   };
 
 const draw = {
   hidden: { pathLength: 0, opacity: 0 },
@@ -141,7 +108,7 @@ export const CustomSVG = ({
           width={size}
           initial="hidden"
           animate="visible"
-          whileHover={{ scale: 1.2 }}
+          whileHover={{scale:1.2}}
           key={type}
         >
           <motion.circle {...shapeAttr} className={className} variants={draw} />
@@ -152,7 +119,7 @@ export const CustomSVG = ({
           width={size}
           initial="hidden"
           animate="visible"
-          whileHover={{ scale: 1.2 }}
+          whileHover={{scale:1.2}}
           key={type}
         >
           <motion.rect {...shapeAttr} className={className} variants={draw} />
@@ -163,7 +130,7 @@ export const CustomSVG = ({
           width={size}
           initial="hidden"
           animate="visible"
-          whileHover={{ scale: 1.2 }}
+          whileHover={{scale:1.2}}
           key={type}
         >
           <motion.polygon

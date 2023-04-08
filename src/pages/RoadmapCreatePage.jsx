@@ -40,10 +40,10 @@ const usePreviousState = (value) => {
 const TaskItem = ({ task, setEditTaskID, setModalState }) => {
   // Task node Component
   return (
-    <div className="relative px-2">
-    <div className="flex after:h-1 after:w-full after:bg-black after:absolute after:top-[30px] after:-z-10">
-      <div className="flex relative">
-        <div className="flex flex-col gap-2 items-center ">
+    <div className="relative break-words w-32">
+    <div className="flex after:h-1 after:w-full after:bg-black after:absolute after:top-[30px] after:-z-10 justify-center">
+      <div className="flex">
+        <div className="flex flex-col gap-2 items-center">
           <button
             type="button"
             disabled={task.isDone}
@@ -60,7 +60,7 @@ const TaskItem = ({ task, setEditTaskID, setModalState }) => {
               isStrokeOn={true}
             />
           </button>
-          <div className="w-full">
+          <div className="w-4/5 absolute bottom-0 translate-y-[calc(100%_+_10px)]">
             <span className="block font-bold mx-auto text-center leading-5 font-nunito-sans">
               {task.name === "" ? "MileStone" : task.name}
             </span>
