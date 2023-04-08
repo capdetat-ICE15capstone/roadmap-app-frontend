@@ -57,8 +57,8 @@ const SearchPage = () => {
     const searchType = classifyInput(searchValue);
     //fetchData(searchType);
     console.log("navigate activated" + searchValue + searchType);
-    navigate('/search', { state: { userSearch: searchValue, searchType: searchType} });
-    
+    navigate('/search', { state: { userSearch: searchValue, searchType: searchType } });
+
   };
 
   // fetch data (roadmap or user)
@@ -139,8 +139,9 @@ const SearchPage = () => {
     <>
       <div className='flex flex-col h-full w-full bg-white overflow-y-auto relative'>
         {/* Top (title & search bar)*/}
-        <div className='flex justify-center sticky top-0 z-50 bg-white pt-8 pb-2'>
-          <div className='flex w-3/4 justify-center'>
+
+        <div className='flex justify-center sticky top-0 z-50 bg-white pt-8 pb-2 flex-wrap'>
+          <div className='flex w-full md:w-3/4 justify-between'>
             {/*Feed Title*/}
             <div className='flex items-center text-3xl font-bold'>
               <SearchIcon className="flex h-8 w-8 mr-2 mt-2 fill-[#09275B]" />
@@ -151,11 +152,11 @@ const SearchPage = () => {
             {/*Search bar*/}
             <form className="mx-auto" id="searchForm" onSubmit={handleSubmit}>
               <div
-                className="relative inline-block my-4"
+                className="flex items-center my-4"
                 onSubmit={handleSubmit}
               >
                 <SearchBar />
-                <button type="submit" className="bg-[#00286E] hover:bg-[#011C4B] text-white font-bold appearance-none border rounded-3xl px-12 py-4 ml-2 leading-tight focus:outline-none focus:shadow-outline">
+                <button type="submit" className="bg-[#00286E] hover:bg-[#011C4B] text-white font-bold appearance-none border rounded-3xl px-6 py-4 ml-2 leading-tight focus:outline-none focus:shadow-outline">
                   Search
                 </button>
               </div>
