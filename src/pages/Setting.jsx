@@ -2,6 +2,8 @@ import React, {useState} from 'react'
 import SettingTab from '../components/SettingTab';
 import ToggleSwitch from '../components/ToggleSwitch';
 
+import { ReactComponent as GearIcon } from "../assets/setting_assets/gear.svg";
+
 const Setting = () => {
     const [tab, setTab] = useState("profile");
 
@@ -132,6 +134,14 @@ const Setting = () => {
 
     return (
         <div className='flex-col h-screen overflow-y-scroll'>
+            <div className="relative flex top-[59px] left-[38px] w-fit h-fit mb-24">
+                <div className="mr-[13px]">
+                <GearIcon/>
+                </div>          
+                <div className="font-inter font-extrabold text-[40px] text-[#09275B] leading-[48px]">
+                Setting
+                </div>
+            </div>
             <div className='max-w-3xl mx-auto'>
                 <RenderProfile/>
                 <RenderAccount/>
