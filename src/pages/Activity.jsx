@@ -4,6 +4,7 @@ import Roadmap from "../components/Roadmap";
 import DuoSubpageSelector from "../components/DuoSubPageSelector";
 
 import { ReactComponent as TriangleIcon } from "../assets/activity_assets/triangle.svg";
+import { ReactComponent as BookIcon } from "../assets/activity_assets/book.svg";
 
 const Activity = () => {
     const [currentTab, setCurrentTab] = useState("1");
@@ -11,17 +12,17 @@ const Activity = () => {
     return (
         <div className="flex-col">
             {/* page title */}
-            <div className="flex m-[38px] mt-[59px]">
+            <div className="flex m-[38px] mt-[59px] items-center">
                 <div className="">
-                    <TriangleIcon/>
+                    <BookIcon/>
                 </div>          
-                <div className="font-inter font-extrabold text-3xl text-[#09275B] leading-[48px]">
+                <div className="font-inter font-extrabold text-3xl text-[#09275B] leading-[48px] px-3">
                     Activity
                 </div>
             </div>
 
             {/* duo sub page selector */}
-            <div className='w-3/4 max-w-4xl ml-52'>
+            <div className='w-3/4 max-w-4xl mx-auto -translate-x-8'>
                 <DuoSubpageSelector tab1Name="Task" tab2Name="Quest" setCurrentTab={setCurrentTab} currentTab={currentTab}/>
             </div>
             
@@ -74,7 +75,7 @@ const RenderTask = () => {
                             </div>
                             {/* xp */}
                             <div className="min-w-[64px] my-auto">
-                                <p className="bg-red-500 rounded-full w-full py-1 text-center text-white text-sm">{"xp: " + task.xp}</p>
+                                <p className="bg-red-500 rounded-full w-full py-1 text-center text-white text-sm px-3">{"xp: " + task.xp}</p>
                             </div>
                             <div className="w-10 my-auto">
                                 <TriangleIcon className="ml-[30%]"/>
@@ -124,7 +125,7 @@ const RenderQuest = () => {
                             </div>
                             {/* xp */}
                             <div className="min-w-[64px] my-auto">
-                                <p className="bg-yellow-400 rounded-full w-full py-1 text-center text-white text-sm">{"xp: " + quest.point}</p>
+                                <p className="bg-yellow-400 rounded-full w-full py-1 text-center text-white text-sm px-3">{"point: " + quest.point}</p>
                             </div>
                             <div className="w-10 my-auto">
                                 <TriangleIcon className="ml-[30%]"/>
