@@ -49,17 +49,17 @@ const Feed = () => {
   async function getRecommendRoadmap() {
     const route = "/feed/recommendation";
     try {
+      const startTime = performance.now(); // get the start time
       const response = await axiosInstance.get(route);
-      //console.log("Below is RESPONSE DATA");
-      //console.log(response.data);
+      const endTime = performance.now(); // get the end time
+      const elapsedTime = endTime - startTime; // calculate the elapsed time in milliseconds
+      console.log(`Time elapsed: ${elapsedTime} ms`); // log the elapsed time
       return response.data;
     } catch (error) {
       console.log(error);
       return null;
     }
   }
-
-
 
   // fetch roadmap data
   const fetchData = async () => {
@@ -68,16 +68,8 @@ const Feed = () => {
     try {
       console.log("fetch");
       const response = await getRecommendRoadmap();
-      //console.log("Below is RESPONSE");
-      //console.log(response);
-      const data = await response;
-      console.log("Below is DATA");
-      console.log(data);
-      const newArray = [...data];
+      const newArray = [...response];
       setRoadmapArray(prevArray => [...prevArray, ...newArray]);
-      console.log("Below is ROADMAP ARRAY");
-      console.log(roadmapArray);
-
     } catch (error) {
       console.log(error);
     }
