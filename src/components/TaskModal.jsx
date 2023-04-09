@@ -187,7 +187,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
     if (
       initialState.current.name !== name ||
       initialState.current.description !== description ||
-      initialState.current.nodeColor.name !== nodeColor.name ||
+      initialState.current.nodeColor !== nodeColor.name ||
       initialState.current.nodeShape !== nodeShape ||
       initialState.current.startDate.getTime() !== startDate.getTime() ||
       initialState.current.dueDate.getTime() !== dueDate.getTime()
