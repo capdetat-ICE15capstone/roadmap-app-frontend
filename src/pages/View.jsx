@@ -261,7 +261,7 @@ export default function View() {
 
   return (
     <>
-      <div className='flex h-screen bg-white overflow-y-scroll py-8'>
+      <div className='flex h-full bg-white overflow-y-scroll py-8'>
         <div className="w-5/6 flex-col m-auto space-y-6">
           <div className='flex justify-between items-center'>
             <div className='text-3xl font-extrabold'>
