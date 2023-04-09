@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { axiosInstance } from "../functions/axiosInstance";
 
 const publicVAPIDKey =
   "BEStV6D5Z4rWtMK0X2hXP8X4Zj9CKrOyHej3i1JQOZhk_FRCF3-dv3s7B97WNvIPoe_Pg7zX2CFwPF4_LMsf7ag";
 
-const route = "http://localhost:8888/subscribe";
+const route = "http://localhost:8080/subscription";
 
 function urlBase64ToUint8Array(base64String) {
   var padding = "=".repeat((4 - (base64String.length % 4)) % 4);
@@ -33,12 +34,10 @@ const Setting = () => {
         // TELL THE USER THEY DONT HAVE NOTIFICATION AVAILABLE
         throw new Error("Notification Not supported");
       } else if (Notification.permission === "granted") {
-        console.log("Permission granted");
+        console.log("Permission granted"); // move on
       } else if (Notification.permission !== "denied") {
         Notification.requestPermission().then((permission) => {
-          if (permission === "granted") {
-            console.log("Permission granted");
-          } else {
+          if (permission !== "granted") {
             console.error("Notification Permission: Denied");
             // TELL THE USER NOTIFICATION PERMISSION IS DENIED
             throw new Error("Notification Permission: Denied");
@@ -62,7 +61,7 @@ const Setting = () => {
             .then(
               (pushSubscription) => {
                 console.log(pushSubscription);
-                axios.post(route, pushSubscription)
+                axiosInstance.post(route, pushSubscription)
                     .catch(handleNotiUnsubscription)
               },
               (error) => {
@@ -76,11 +75,13 @@ const Setting = () => {
             .catch((error) => {
               console.error("Subscription error");
               console.error(error);
+              throw new Error("Subscription fail")
             });
         })
         .catch((error) => {
           console.error("service worker not ready");
           console.error(error);
+          throw new Error("Service Worker not ready")
         });
     } catch (error) {
       console.error("setup error");
@@ -93,7 +94,8 @@ const Setting = () => {
     navigator.serviceWorker.ready.then((reg) => {
       reg.pushManager.getSubscription().then((subscription) => {
         // Tell the server unsub
-        console.log(subscription);
+        let unsubRoute = `/subscription/?endpoint=${subscription.endpoint}`
+        axiosInstance.delete(unsubRoute);
         subscription
           .unsubscribe()
           .then((successful) => {
