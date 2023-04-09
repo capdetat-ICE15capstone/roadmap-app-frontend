@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import Roadmap from "../components/Roadmap";
 import Kurumi from "../assets/kurumi.jpg";
-import RoadmapCreate from "../components/RoadmapCreate";
 import RoadmapToggle from "../components/RoadmapToggle"
 import { ReactComponent as DarkHomeIcon } from "../assets/dark_home_icon.svg";
 import { ReactComponent as BinIcon } from "../assets/Bin.svg"
@@ -81,7 +80,7 @@ const HomeOtherUser = () => {
                     </a>                
                   </div>            
                 </div>:
-                <div className="flex items-center mb-[20px]">
+                <div className="flex justify-center items-center mb-[20px]">
                   <div className="flex justify-center items-center w-[75px] min-w-[75px] h-[75px] rounded-[75px] border-[3px] border-[#000000] scale-50">
                     <LockIcon />
                   </div>
