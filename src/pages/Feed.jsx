@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import { ReactComponent as SearchIcon } from "../assets/searchIcon.svg";
 import { axiosInstance } from '../functions/axiosInstance';
 
-
 const Feed = () => {
   const [search, setSearch] = useState("");
   const [roadmapArray, setRoadmapArray] = useState([]);
@@ -22,13 +21,13 @@ const Feed = () => {
       const type = "user"
       console.log(`Searching for user ${username}`);
       return type
-    // Search for TAG case  
+      // Search for TAG case  
     } else if (input.charAt(0) === "#") {
       const tag = input.substring(1);
       const type = "tag"
       console.log(`Searching for tag ${tag}`);
       return type
-    // Search for ROADMAP case
+      // Search for ROADMAP case
     } else {
       const type = "roadmap"
       console.log(`Searching for roadmap ${input}`);
@@ -43,37 +42,42 @@ const Feed = () => {
     setSearch(document.getElementById("InputSearch").value);
     const searchValue = document.getElementById("InputSearch").value;
     const searchType = classifyInput(searchValue);
-    navigate('/search', { state: { userSearch: searchValue, searchType: searchType} });
+    navigate('/search', { state: { userSearch: searchValue, searchType: searchType } });
     //console.log("search: " + document.getElementById("InputSearch").value);
   };
 
   async function getRecommendRoadmap() {
     const route = "/feed/recommendation";
-    axiosInstance.get(route)
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-}
+    try {
+      const response = await axiosInstance.get(route);
+      //console.log("Below is RESPONSE DATA");
+      //console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
+
 
   // fetch roadmap data
   const fetchData = async () => {
     if (isFetching) return; // return if a fetch is already in progress
     setIsFetching(true); // set isFetching to true to indicate a fetch is starting
     try {
-      console.log("fetch")
-      //const response = await fetch(`http://localhost:3000/multipleRoadmaps`);
-      const response = getRecommendRoadmap();
-      /*
-      const data = await response.json();
-      let newArray = [];
-      data.forEach((data) => {
-        newArray = newArray.concat(data.roadmapArray);
-      });
+      console.log("fetch");
+      const response = await getRecommendRoadmap();
+      //console.log("Below is RESPONSE");
+      //console.log(response);
+      const data = await response;
+      console.log("Below is DATA");
+      console.log(data);
+      const newArray = [...data];
       setRoadmapArray(prevArray => [...prevArray, ...newArray]);
-      */
+      console.log("Below is ROADMAP ARRAY");
+      console.log(roadmapArray);
+
     } catch (error) {
       console.log(error);
     }
