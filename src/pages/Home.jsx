@@ -11,7 +11,7 @@ const Home = () => {
   const [isRoadmap, setIsRoadmap] = useState(true);
   const [isDeleteClick, setIsDeleteClick] = useState(false);
   const [isActive, setIsActive] = useState(true);
-  const [noOfRoadmap, setNoOfRoadmap] = useState(0);
+  const [noOfRoadmap, setNoOfRoadmap] = useState(3);
   const [showPremium, setShowPremium] = useState(false);
   const [isLimit, setIsLimit] = useState(false);
 
