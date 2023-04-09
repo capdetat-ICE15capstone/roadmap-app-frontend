@@ -15,6 +15,7 @@ const Setting = lazy(() => import("./pages/Setting"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Introduction = lazy(() => import("./pages/Introduction"));
 const Premium = lazy(() => import("./pages/Premium"));
+const Activity = lazy(() => import("./pages/Activity"));
 const SearchPage = lazy(() => import("./pages/SearchPage"));
 
 function App() {
@@ -134,6 +135,13 @@ function App() {
                 element={
                   <Suspense fallback={<Spinner />}>
                     <Profile />{" "}
+                  </Suspense>
+                }
+              /><Route
+                path="activity"
+                element={
+                  <Suspense fallback={<Spinner />}>
+                    <Activity />{" "}
                   </Suspense>
                 }
               />
