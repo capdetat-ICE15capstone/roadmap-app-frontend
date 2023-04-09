@@ -119,6 +119,7 @@ export const editRoadmap = async (
   taskChange,
   subtaskChange,
   relationChange,
+  tagChanges,
   timeout = 0
 ) => {
   console.log("request");
@@ -128,6 +129,7 @@ export const editRoadmap = async (
     taskChange: taskChange,
     subtaskChange: subtaskChange,
     relationChange: relationChange,
+    tagChanges: tagChanges
   });
 
   const response = {};
@@ -151,12 +153,15 @@ export const editRoadmap = async (
       subtaskChange.delete
     );
 
-    if ((taskRelation !== null) & (taskRelation !== undefined)) {
+    if ((taskRelation !== null) && (taskRelation !== undefined)) {
       response.taskRelationChange = await PRIVATE_updateRelation(
         rid,
         taskRelation
       );
     }
+
+    response.addTagChange = await addTags(rid, tagChanges.add);
+    response.deleteTagChange = await deleteTags(rid, tagChanges.delete);
 
     console.log("response");
     console.log(response);
@@ -171,7 +176,7 @@ export const createRoadmap = async (
   roadmapChange, // null (No Change) or roadmapAttr (For create mode always has roadmapAttr)
   taskChange, // taskChange object {add:[], edit:[], delete:[]}
   subtaskChange, // subtaskChange object {add:[], edit:[], delete:[]
-  timeout = 1000
+  timeout = 0
 ) => {
   console.log("initial create roadmap");
   console.log({
@@ -209,7 +214,7 @@ export const createRoadmap = async (
   }
 };
 
-export const addTags = async (rid, tags, timeout = 1000) => {
+export const addTags = async (rid, tags, timeout = 0) => {
   if (rid === undefined || rid === null) return null;
   let route = "/tag/";
 
@@ -241,7 +246,7 @@ export const deleteTags = async (rid, tags, timeout = 1000) => {
           rid: rid,
           name: tag,
         };
-        return axiosInstance.delete(route, reqBody, { timeout: timeout });
+        return axiosInstance.delete(route, { data: reqBody, timeout: timeout });
       })
     );
     return response;
@@ -259,10 +264,6 @@ const PRIVATE_addAndReassign = async (
 ) => {
   // call add api and reassign id to task and subtask
   // taskChange.add and subtaskChange.add
-  console.log(rid),
-    console.log(taskAdd),
-    console.log(subTaskAdd),
-    console.log(taskRelation);
 
   try {
     let taskResponse = await PRIVATE_createTask(rid, taskAdd);
@@ -306,13 +307,15 @@ const PRIVATE_addAndReassign = async (
 };
 
 const PRIVATE_createRoadmap = async (roadmap, timeout = 0) => {
+  if (roadmap === null || roadmap === undefined)
+    throw new Error("roadmap/roadmap id is null");
   const route = `/roadmap/`;
   const reqBody = {
     title: roadmap.name,
     description: roadmap.description,
-    roadmap_deadline: "2023-04-05T18:27:49.875",
-    is_before_start_time: true,
-    reminder_time: 0,
+    roadmap_deadline: "2023-04-06T04:57:41.691",
+    is_before_start_time: !roadmap.notiStatus.detail.beforeDueDate,
+    reminder_time: roadmap.notiStatus.detail.day,
     is_private: !roadmap.isPublic,
   };
 
@@ -337,8 +340,8 @@ const PRIVATE_updateRoadmap = async (roadmap, timeout = 0) => {
     title: roadmap.name,
     description: roadmap.description,
     roadmap_deadline: "2023-04-06T04:57:41.691",
-    is_before_start_time: true,
-    reminder_time: 0,
+    is_before_start_time: !roadmap.notiStatus.detail.beforeDueDate,
+    reminder_time: roadmap.notiStatus.detail.day,
     is_private: !roadmap.isPublic,
   };
   try {

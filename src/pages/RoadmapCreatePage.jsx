@@ -7,7 +7,7 @@ import {
   editRoadmap,
 } from "../functions/roadmapFunction.jsx";
 import Spinner from "../components/Spinner";
-import { isUserPremium } from "../functions/userFunction";
+import { isUserLoggedIn, isUserPremium } from "../functions/userFunction";
 import { CustomSVG, getTWFill } from "../components/CustomSVG";
 import { ReactComponent as AddButton } from "../assets/addButton.svg";
 import TwoButtonModal from "../components/TwoButtonModal";
@@ -28,7 +28,10 @@ const MAX_TASKS_NONPREMIUM = 16;
 const MAX_RMNAME_LENGTH = 30;
 const MAX_RMDESCRIPTION_LENGTH = 255;
 const notificationDayOption = [1, 3, 5, 7, 14];
-const notificationOption = {options: ["No notification"], optionValues: [{on: false}]}
+const notificationOption = {
+  options: ["No notification"],
+  optionValues: [{ on: false }],
+};
 
 notificationDayOption.forEach((day) => {
   return [true, false].forEach((beforeDueDate) => {
@@ -40,12 +43,10 @@ notificationDayOption.forEach((day) => {
       },
     });
     notificationOption.options.push(
-      `${day} days before ${
-        beforeDueDate ? "due" : "start"
-      } date`
-    )
+      `${day} days before ${beforeDueDate ? "due" : "start"} date`
+    );
   });
-})
+});
 
 const TaskItem = ({ task, setEditTaskID, setModalState }) => {
   // Task node Component
@@ -87,6 +88,7 @@ const DropDownMenu = ({
   optionValues,
   currentOption,
   setOption,
+  optionComparer,
   Icon,
   className,
 }) => {
@@ -95,6 +97,11 @@ const DropDownMenu = ({
   useEffect(() => {
     optionValues = optionValues ?? options;
   }, []);
+
+  useEffect(() => {
+    console.log(currentOption);
+  }),
+    [currentOption];
 
   const handleMenuShowUnshow = (event) => {
     event.preventDefault();
@@ -108,33 +115,37 @@ const DropDownMenu = ({
   };
 
   return (
-    
     <div className={className}>
       <button onClick={handleMenuShowUnshow} type="button">
-        <Icon/>
+        <Icon />
       </button>
       {isMenuShowing ? (
         <AnimatePresence>
-        <motion.div
-          className="absolute bg-white border rounded-md flex flex-col right-0"
-          initial={{ y:"-50%",  opacity: 0, scale: 0 }}
-          animate={{ y:"0%", opacity: 1, scale: 1 }}
-          exit={{ y:"-50%", opacity: 0, scale: 0 }}
-          
-        >
-          {options.map((option, index) => {
-            return (
-              <button
-                onClick={(event) => handleSetOption(event, optionValues[index])}
-                className={`font-bold whitespace-nowrap inline-block p-2 justify-center border hover:scale-125 duration-200 transition hover:bg-yellow-300 justify-self-center ${JSON.stringify(optionValues[index]) === JSON.stringify(currentOption)  ? "bg-gray-300" : "bg-white"}`}
-                type="button"
-                key={JSON.stringify(optionValues[index])}
-              >
-                {option}
-              </button>
-            );
-          })}
-        </motion.div>
+          <motion.div
+            className="absolute bg-white border rounded-md flex flex-col right-0"
+            initial={{ y: "-50%", opacity: 0, scale: 0 }}
+            animate={{ y: "0%", opacity: 1, scale: 1 }}
+            exit={{ y: "-50%", opacity: 0, scale: 0 }}
+          >
+            {options.map((option, index) => {
+              return (
+                <button
+                  onClick={(event) =>
+                    handleSetOption(event, optionValues[index])
+                  }
+                  className={`font-bold whitespace-nowrap inline-block p-2 justify-center border hover:scale-125 duration-200 transition hover:bg-yellow-300 justify-self-center ${
+                    optionComparer(optionValues[index], currentOption) === true
+                      ? "bg-gray-300"
+                      : "bg-white"
+                  }`}
+                  type="button"
+                  key={JSON.stringify(optionValues[index])}
+                >
+                  {option}
+                </button>
+              );
+            })}
+          </motion.div>
         </AnimatePresence>
       ) : null}
     </div>
@@ -148,6 +159,7 @@ const RoadmapCreatePage = (props) => {
     description: "",
     isPublic: true,
     tasks: [],
+    tags: [],
   });
   const { mode } = props; // props from parent
   const { state } = useLocation(); // state from previous page, including fetched roadmap data
@@ -201,19 +213,39 @@ const RoadmapCreatePage = (props) => {
     return x;
   };
 
+  const setUpNotification = (roadmap) => {
+    console.log(roadmap);
+    if (roadmap.reminder_time === 0) {
+      return { on: false };
+    }
+    return {
+      on: true,
+      detail: {
+        beforeDueDate: !roadmap.is_before_start_time,
+        day: roadmap.reminder_time,
+      },
+    };
+  };
+
   const setUpRoadmap = async () => {
     // use to load roadmap page into edit or clone page
     if (mode === "edit" || mode === "clone") {
+      // check whether the user could view this page
+      if (!isUserLoggedIn) {
+        alert("unauthorized")
+      }
       // check if state is available
       if (state !== null && state !== undefined) {
         // set up the data to variable
+        const notificationObject = setUpNotification(state.roadmap);
         if (mode === "edit") {
           initialState.current = {
             name: state.roadmap.name,
             description: state.roadmap.description,
             isPublic: state.roadmap.isPublic,
             tasks: state.roadmap.tasks,
-            tags: state.roadmap.tags
+            tags: state.roadmap.tags,
+            notiStatus: notificationObject,
           };
         }
         let highestID = 0;
@@ -226,13 +258,21 @@ const RoadmapCreatePage = (props) => {
         setRMDesc(state.roadmap.description);
         setTasks(state.roadmap.tasks);
         setPublic(state.roadmap.isPublic);
-        setTags(state.roadmap.tags)
-        setLastId((lastId) => highestID + 1);
+        setTags(state.roadmap.tags);
+        setNotiStatus(notificationObject);
+        setLastId(highestID + 1);
+        // setLastId((lastId) => highestID + 1);
       } else {
         // fetch the roadmap data
         // then set the data to variable
         setLoading(true);
         const tempRoadmap = await getRoadmap(id, 10000, false);
+        if (tempRoadmap === null) {
+          setLoading(false);
+          alert("error");
+          navigate("/");
+        }
+        const notificationObject = setUpNotification(tempRoadmap);
         if (tempRoadmap !== null) {
           if (mode === "edit") {
             initialState.current = {
@@ -240,7 +280,8 @@ const RoadmapCreatePage = (props) => {
               description: tempRoadmap.description,
               isPublic: tempRoadmap.isPublic,
               tasks: tempRoadmap.tasks,
-              tags: tempRoadmap.tags
+              tags: tempRoadmap.tags,
+              notiStatus: notificationObject,
             };
           }
           let highestID = 0;
@@ -253,8 +294,10 @@ const RoadmapCreatePage = (props) => {
           setRMDesc(tempRoadmap.description);
           setTasks(tempRoadmap.tasks);
           setPublic(tempRoadmap.isPublic);
-          setTags(tempRoadmap.tags)
-          setLastId((lastId) => highestID + 1);
+          setTags(tempRoadmap.tags);
+          setNotiStatus(notificationObject);
+          setLastId(highestID + 1);
+          // setLastId((lastId) => highestID + 1);
         } else {
           alert("GET error");
           navigate("/");
@@ -263,7 +306,6 @@ const RoadmapCreatePage = (props) => {
       }
     }
 
-    //
     if (mode === "clone") {
       setTasks((tasks) =>
         tasks.map((task) => {
@@ -288,6 +330,7 @@ const RoadmapCreatePage = (props) => {
       }
     });
 
+    console.log(allTags);
     setTags(allTags);
   };
 
@@ -381,15 +424,27 @@ const RoadmapCreatePage = (props) => {
     setTasks(items);
   };
 
-  const checkRoadmapChange = () => {
-    // return bool
+  const compareRoadmapChange = () => {
+    // compare name, desc, public, notisetting
+    // If detect change, return full object
+    // if no change, return null;
     if (
       RMName !== initialState.current.name ||
       RMDesc !== initialState.current.description ||
-      isPublic !== initialState.current.isPublic
+      isPublic !== initialState.current.isPublic ||
+      JSON.stringify(notiStatus) !==
+        JSON.stringify(initialState.current.notiStatus) ||
+      mode === "create" ||
+      mode === "clone"
     )
-      return true;
-    return false
+      return {
+        id: id ?? null,
+        name: RMName,
+        description: RMDesc,
+        isPublic: isPublic,
+        notiStatus: notiStatus,
+      };
+    return null;
   };
 
   const compareTaskChange = (initState, newState) => {
@@ -418,12 +473,11 @@ const RoadmapCreatePage = (props) => {
       const taskIntersection = initState.find(
         (inittask) => task.id === inittask.id
       );
+      console.log(taskIntersection)
 
-      if (!taskIntersection) {
-        // deleted subtask
-        subtaskChange.delete.push(subtask);
-        return;
-      } else if (
+      // if (taskIntersection === undefined) return;
+
+      if (
         taskIntersection.hasFetched === true &&
         (task.name !== taskIntersection.name ||
           task.description !== taskIntersection.description ||
@@ -464,6 +518,8 @@ const RoadmapCreatePage = (props) => {
       const taskIntersection = initState.find(
         (initsubtask) => subtask.id === initsubtask.id
       );
+
+      if (taskIntersection === undefined) return;
       if (
         subtask.detail !== taskIntersection.detail ||
         subtask.status !== taskIntersection.status
@@ -476,50 +532,63 @@ const RoadmapCreatePage = (props) => {
     return subtaskChange;
   };
 
-  const compareTagChange = async () => {
-    searchTags();
-    let tagChanges = {add:[], delete:[]}
+  const compareTagChange = () => {
+    console.log(searchTags())
+    let tagChanges = { add: [], delete: [] };
     initialState.current.tags.forEach((inittag) => {
       if (tags.find((tag) => inittag === tag) === undefined)
-        tagChanges.delete.push(inittag)
-    })
+        tagChanges.delete.push(inittag);
+    });
 
     tags.forEach((tag) => {
-      if (initialState.current.tags.find((inittag) => inittag === tag) === undefined)
-        tagChanges.add.push(tag)
-    })
+      if (
+        initialState.current.tags.find((inittag) => inittag === tag) ===
+        undefined
+      )
+        tagChanges.add.push(tag);
+    });
 
     return tagChanges;
-  }
+  };
+
+  const compareNotificationChange = (noti1, noti2) => {
+    if (noti1.on !== noti2.on) return false;
+    if (noti1.on === false && noti2.on === false) return true;
+    if (
+      noti1.detail.beforeDueDate !== noti2.detail.beforeDueDate ||
+      noti1.detail.day !== noti2.detail.day
+    )
+      return false;
+    return true;
+  };
 
   const handleSendingApi = async (
     roadmapObject,
     taskChange,
     subtaskChange,
-    relationChange
+    relationChange,
+    tagChanges
   ) => {
     if (mode === "create" || mode === "clone") {
       if (
         (await createRoadmap(roadmapObject, taskChange, subtaskChange)) === null
       ) {
         return false;
-      } 
+      }
       return true;
     } else if (mode === "edit") {
-      relationChange = relationChange
-        ? roadmapObject.tasks.map((task) => task.id)
-        : null;
       if (
         (await editRoadmap(
           id,
           roadmapObject,
           taskChange,
           subtaskChange,
-          relationChange
+          relationChange,
+          tagChanges
         )) === null
       ) {
         return false;
-      } 
+      }
       return true;
     }
   };
@@ -527,12 +596,15 @@ const RoadmapCreatePage = (props) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    let taskChange = { add: [], edit: [], delete: [] };
+    // let taskChange = { add: [], edit: [], delete: [] };
     let subTaskChange = { add: [], edit: [], delete: [] };
-    let taskRelationChange = false;
+    let taskRelationChange = null;
+
+    // check for rm name, description, publicity change
+    let roadmapChange = compareRoadmapChange();
 
     // check for task change
-    taskChange = compareTaskChange(initialState.current.tasks, tasks);
+    let taskChange = compareTaskChange(initialState.current.tasks, tasks);
 
     // check for subtask change
     tasks.forEach((task) => {
@@ -560,11 +632,23 @@ const RoadmapCreatePage = (props) => {
     const newTaskRelation = tasks.map((task) => task.id);
     taskRelationChange =
       initialState.current.tasks.map((task) => task.id).toString() !==
-      newTaskRelation.toString();
+      newTaskRelation.toString()
+        ? newTaskRelation
+        : null;
 
+    const completeRoadmap = {
+      id: id ?? null,
+      name: RMName,
+      description: RMDesc,
+      // tasks: tasks,
+      isPublic: isPublic,
+      notificationInfo: notiStatus,
+    };
 
-    console.log('roadmap change');
-    console.log(compareRoadmapChange);
+    const tagChanges = compareTagChange();
+
+    console.log("roadmap change");
+    console.log(roadmapChange);
     console.log("task");
     console.log(taskChange);
     console.log("subtask");
@@ -572,34 +656,23 @@ const RoadmapCreatePage = (props) => {
     console.log("relation change");
     console.log(taskRelationChange);
     console.log("tag change");
-    console.log(compareTagChange());
-
-    const completeRoadmap = {
-      id: id ?? null,
-      name: RMName,
-      description: RMDesc,
-      tasks: tasks,
-      isPublic: isPublic,
-      notificationInfo: notiStatus,
-    };
+    console.log(tagChanges);
 
     // Begin the spinner
     setLoading(true);
     await generateNotificationObjects();
-    await handleSendingApi(
-      compareRoadmapChange() ? completeRoadmap : null,
+    if (await handleSendingApi(
+      roadmapChange,
       taskChange,
       subTaskChange,
       taskRelationChange,
       tagChanges
-    );
+    )) navigate("/")
     setLoading(false);
-    navigate("/");
+    // navigate("/");
   };
 
-  const handleDiscard = () => {
-
-  }
+  const handleDiscard = () => {};
 
   const handleNotiSettingChange = (event) => {
     setNotiStatus(JSON.parse(event.target.value));
@@ -723,6 +796,7 @@ const RoadmapCreatePage = (props) => {
                 options={notificationOption.options}
                 currentOption={notiStatus}
                 setOption={setNotiStatus}
+                optionComparer={compareNotificationChange}
                 Icon={notiStatus.on === true ? NotiOn : NotiOff}
                 className="absolute z-10 right-6 top-6"
               />
