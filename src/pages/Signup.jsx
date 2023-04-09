@@ -24,6 +24,9 @@ export default function Signup() {
   const [validPassword, setValidPassword] = useState(false);
   const [validPasswordConfirm, setValidPasswordConfirm] = useState(false);
 
+  // const location = useLocation();
+  // const isFirst = location.state?.state || false;
+
   function handleSignupSubmit(event) {
     event.preventDefault();
     if (validEmail && validFirstName && validLastName && validPassword && validPasswordConfirm && validUsername && agreement) {
@@ -100,6 +103,7 @@ export default function Signup() {
       .then((response) => {
         console.log(response.data);
         localStorage.setItem('token', response.data.token);
+        navigate("/home", {"state": {"firstLogin": true}});
       })
       .catch((error) => {
         console.log(error);
