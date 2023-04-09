@@ -309,6 +309,12 @@ const PRIVATE_addAndReassign = async (
 const PRIVATE_createRoadmap = async (roadmap, timeout = 0) => {
   if (roadmap === null || roadmap === undefined)
     throw new Error("roadmap/roadmap id is null");
+  if (roadmap.notiStatus.on === false) {
+    roadmap.notiStatus.detail = {
+      beforeDueDate: false,
+      day: 0
+    }
+  }
   const route = `/roadmap/`;
   const reqBody = {
     title: roadmap.name,
@@ -331,9 +337,14 @@ const PRIVATE_createRoadmap = async (roadmap, timeout = 0) => {
 };
 
 const PRIVATE_updateRoadmap = async (roadmap, timeout = 0) => {
-  console.log(roadmap);
   if (roadmap === null || roadmap.id === null)
     throw new Error("roadmap/roadmap id is null");
+    if (roadmap.notiStatus.on === false) {
+      roadmap.notiStatus.detail = {
+        beforeDueDate: false,
+        day: 0
+      }
+    }
   const route = `/roadmap/`;
   const reqBody = {
     rid: roadmap.id,
