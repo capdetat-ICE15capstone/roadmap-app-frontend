@@ -1,17 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
 import { axiosInstance } from '../functions/axiosInstance';
 
 export default function Login() {
   const navigate = useNavigate();
-  const location = useLocation();
-  const isFirst = location.state?.state || false;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
 
+  // Check if there is a saved login information on first render.
   useEffect(() => {
     if (localStorage.getItem('saved_email') !== null && localStorage.getItem('saved_password') !== null) {
       const submission = {
@@ -21,7 +19,6 @@ export default function Login() {
       submitForm(submission);
     }
   }, [])
-
 
   function handleSubmit(event) {
     event.preventDefault();
@@ -42,7 +39,7 @@ export default function Login() {
       .then((response) => {
         console.log(response.data);
         localStorage.setItem('token', response.data.token);
-        navigate('/home', {"state": {"firstLogin": isFirst}});
+        navigate('/home');
       })
       .catch((error) => {
         console.log(error);
