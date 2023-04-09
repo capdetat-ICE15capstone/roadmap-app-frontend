@@ -95,18 +95,23 @@ const Setting = () => {
       reg.pushManager.getSubscription().then((subscription) => {
         // Tell the server unsub
         let unsubRoute = `/subscription/?endpoint=${subscription.endpoint}`
-        axiosInstance.delete(unsubRoute);
-        subscription
-          .unsubscribe()
-          .then((successful) => {
-            // You've successfully unsubscribed
-            console.log(successful);
-            setNotiOn(false);
-          })
-          .catch((e) => {
-            // Unsubscribing failed
-            console.error(e);
-          });
+        try {
+          axiosInstance.delete(unsubRoute)
+          subscription
+            .unsubscribe()
+            .then((successful) => {
+              // You've successfully unsubscribed
+              console.log(successful);
+              setNotiOn(false);
+            })
+            .catch((e) => {
+              // Unsubscribing failed
+              console.error(e);
+            });
+        } catch (error) {
+          console.error(error);
+        }
+        
       });
     });
   };
