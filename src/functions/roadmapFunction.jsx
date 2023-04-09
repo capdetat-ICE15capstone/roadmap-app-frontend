@@ -1,8 +1,4 @@
-import axios from "axios";
-
-const axiosInstance = axios.create({
-  baseURL: `http://localhost:3000/`,
-});
+import { axiosInstance } from "./axiosInstance";
 
 const inboundTaskName = [
   { from: "tid", to: "id" },
@@ -49,7 +45,7 @@ export const getRoadmap = async (rid, timeout = 0, fetchAll = true) => {
   //  `hasFetch` boolean of each task as false
 
   if (rid === undefined || rid === null) return null;
-  const route = `roadmaps/${rid}`;
+  const route = `/roadmap/${rid}`;
 
   try {
     const response = await axiosInstance
@@ -101,7 +97,7 @@ export const getRoadmap = async (rid, timeout = 0, fetchAll = true) => {
 export const getTask = async (tid, timeout = 0) => {
   // Get one task
   if (tid === undefined || tid === null) return null;
-  const route = `tasks/${tid}`;
+  const route = `/task/${tid}`;
 
   try {
     const response = await axiosInstance
