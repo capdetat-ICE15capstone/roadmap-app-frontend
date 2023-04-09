@@ -4,6 +4,8 @@ import RoadmapNeo from "../components/Roadmap_neo";
 import SearchBar from "../components/SearchBar";
 import { useNavigate } from "react-router-dom";
 import { ReactComponent as SearchIcon } from "../assets/searchIcon.svg";
+import { axiosInstance } from '../functions/axiosInstance';
+
 
 const Feed = () => {
   const [search, setSearch] = useState("");
@@ -14,19 +16,19 @@ const Feed = () => {
 
   // classify user input (roadmap(""), user("@""), tag("#""))
   const classifyInput = (input) => {
-    // User search
+    // Search for USER case
     if (input.charAt(0) === "@") {
       const username = input.substring(1);
       const type = "user"
       console.log(`Searching for user ${username}`);
       return type
-    // Tag search  
+    // Search for TAG case  
     } else if (input.charAt(0) === "#") {
       const tag = input.substring(1);
       const type = "tag"
       console.log(`Searching for tag ${tag}`);
       return type
-    // Roadmap search
+    // Search for ROADMAP case
     } else {
       const type = "roadmap"
       console.log(`Searching for roadmap ${input}`);
@@ -45,19 +47,33 @@ const Feed = () => {
     //console.log("search: " + document.getElementById("InputSearch").value);
   };
 
-  // fetch roadmap data from API
+  async function getRecommendRoadmap() {
+    const route = "/feed/recommendation";
+    axiosInstance.get(route)
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+}
+
+  // fetch roadmap data
   const fetchData = async () => {
     if (isFetching) return; // return if a fetch is already in progress
     setIsFetching(true); // set isFetching to true to indicate a fetch is starting
     try {
       console.log("fetch")
-      const response = await fetch(`http://localhost:3000/multipleRoadmaps`);
+      //const response = await fetch(`http://localhost:3000/multipleRoadmaps`);
+      const response = getRecommendRoadmap();
+      /*
       const data = await response.json();
       let newArray = [];
       data.forEach((data) => {
         newArray = newArray.concat(data.roadmapArray);
       });
       setRoadmapArray(prevArray => [...prevArray, ...newArray]);
+      */
     } catch (error) {
       console.log(error);
     }

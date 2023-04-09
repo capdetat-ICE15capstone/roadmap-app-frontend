@@ -21,7 +21,7 @@ const SearchPage = () => {
 
   // classify user input (roadmap(""), user("@""), tag("#""))
   const classifyInput = (input) => {
-    // User search
+    // Search for USER case
     if (input.charAt(0) === "@") {
       const username = input.substring(1);
       const type = "user";
@@ -29,7 +29,7 @@ const SearchPage = () => {
       setShowUserResult(true);
       console.log(`Searching for user ${username}`);
       return type;
-      // Tag search  
+      // Search for TAG case 
     } else if (input.charAt(0) === "#") {
       const tag = input.substring(1);
       const type = "tag";
@@ -37,7 +37,7 @@ const SearchPage = () => {
       setShowRoadmapResult(true);
       console.log(`Searching for tag ${tag}`);
       return type;
-      // Roadmap search
+      // Search for ROADMAP case
     } else {
       const type = "roadmap";
       setShowUserResult(false);
