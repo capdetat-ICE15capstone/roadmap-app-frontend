@@ -23,19 +23,21 @@ const Setting = () => {
     const [notification, setNotification] = useState(true);
     const [accountPublic, setAccountPublic] = useState(true);
     const [email, setEmail] = useState("username@gmail.com");
-    const [currentRealPassword, setCurrentRealPassword] = useState("username@gmail.com");
-    const [currentPassword, setCurrentPassword] = useState("");
+    const [oldPassword, setOldPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
+    const [newPasswordConform, setNewPasswordConfirm] = useState();
 
     useEffect (() => {
         const fetchData = async () => {
             const response = await getSetting();
-            console.log("Fetched data: " + response.data.username);
+            console.log("Fetched data: ");
+            console.log(response.data);
             setData(response.data);
             setUsername(response.data.username);
             setFirstName(response.data.first_name);
             setLastName(response.data.last_name);
             setBio(response.data.bio);
+            setAccountPublic(!response.data.is_private);
         }
         fetchData();
     }, []);
@@ -91,7 +93,7 @@ const Setting = () => {
                 <SettingTitle text='Account' Icon={AccountIcon}/>
                 {/* account privacy, email */}
                 <div className='flex-col max-w-4xl pl-8'>
-                    <ToggleSwitch name={"Public Account"} isToggled={accountPublic} setIsToggled={setAccountPublic}/>
+                    <ToggleSwitch name={"Public Account"} isToggled={accountPublic} setIsToggled={setAccountPublic} callOnChanged={updatePrivacy}/>
                     <hr className='border-2 border-transparent'/>
                     <EmailSettingField name="Email Address" email={email}/>
                 </div>
@@ -99,7 +101,7 @@ const Setting = () => {
                 {/* password */}
                 <SettingTopic text="Password"/>
                 <div className='flex max-w-4xl pl-8'>
-                    <PasswordSettingField currentPassword={currentPassword} setCurrentPassword={setCurrentPassword} newPassword={setNewPassword} setNewPassword={setNewPassword}/>
+                    <PasswordSettingField oldPassword={oldPassword} setOldPassword={setOldPassword} newPassword={setNewPassword} setNewPassword={setNewPassword}/>
                 </div>
     
                 {/* delete account */}
@@ -110,7 +112,7 @@ const Setting = () => {
                     </p>
                     <button 
                         className="shadow appearance-none border rounded-lg py-2 px-6 text-sm text-red-500 bg-white leading-tight focus:outline-none focus:shadow-outline font-bold"
-                        onClick={() => {console.log("delete account")}}
+                        onClick={() => deleteAccount()}
                     >
                         Delete your account
                     </button>
@@ -226,7 +228,7 @@ const Setting = () => {
         )
     }
     
-    const PasswordSettingField = ({currentPassword, setCurrentPassword, newPassword, setNewPassword}) => {
+    const PasswordSettingField = () => {
         return (
             <form id="passwordSetting" onSubmit={handlePasswordSubmit} className='flex-col justify-between pt-1'>
                 {/* current password */}
@@ -237,7 +239,7 @@ const Setting = () => {
                         type="text"
                         className="w-72 px-3 py-2 h-10 text-sm text-gray-700 border rounded-lg focus:outline-none resize-none focus:shadow-outline shadow bg-gray-100"
                         placeholder={'********'}
-                        id="currentPassword"
+                        id="oldPassword"
                         ></textarea>
                     </div>
                     <div className='flex-grow'>
@@ -281,7 +283,10 @@ const Setting = () => {
     const handlePasswordSubmit = (event) => {
         event.preventDefault();
         if (event.target.newPassword.value === event.target.confirmNewPassword.value) {
-            console.log("Confirm new password matched");
+            // password matched
+            setNewPassword(event.target.newPassword.value);
+            console.log({ ...data, "old_password": event.target.oldPassword.value, "new_password": event.target.newPassword.value});
+            updateSetting("/user/password/", { ...data, "old_password": event.target.oldPassword.value, "new_password": event.target.newPassword.value});
         } else {
             console.log("Confirm new password does NOT match");
         }
@@ -342,6 +347,16 @@ const Setting = () => {
         updateSetting("/user/" + name + "/", { ...data, [name]: value});
     }
 
+    const deleteAccount = () => {
+        console.log("delete account");
+        updateSetting("/account/deactivate");
+    }
+
+    const updatePrivacy = () => {
+        console.log({ ...data, "is_private": accountPublic});
+        updateSetting("/user/privacy/", { ...data, "is_private": accountPublic});
+    }
+
     return (
         <div className='flex-col h-screen overflow-y-scroll'>
             <div className="relative flex top-[59px] left-[38px] w-fit h-fit mb-24">
@@ -374,7 +389,7 @@ export const getSetting = async (timeout = 0) => {
     }
 }
 
-export const updateSetting = async (route, body, timeout = 1000) => {
+export const updateSetting = async (route, body, timeout = 10000) => {
     try {
         let response = await axiosInstance.put(route, body, { timeout: timeout });
         console.log(response);
