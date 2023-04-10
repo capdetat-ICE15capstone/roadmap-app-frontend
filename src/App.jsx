@@ -77,7 +77,7 @@ function App() {
                 }
               ></Route>
               <Route
-                path="view"
+                path="view/:roadmap_id"
                 element={
                   <Suspense fallback={<Spinner />}>
                     <View />
