@@ -1,12 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link, useNavigate } from "react-router-dom";
 import placeholderImage from "../assets/roadmap_assets/Placeholder_Image.png"
+import RoadmapDropdown from './RoadmapDropdown';
 import { ReactComponent as EyeIcon } from "../assets/roadmap_assets/eye_Icon.svg"
 
-const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_count, stars_count, forks_count, created_at, edited_at, title }) => {
-
-  //parameters of roadmap
+const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_count, stars_count, forks_count, created_at, edited_at, title, isActive, isOwner, deleteFunction}) => {
   Roadmap.propTypes = {
     owner_id: PropTypes.number,
     creator_id: PropTypes.number,
@@ -66,9 +65,8 @@ const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_co
             : {views_count} views
           </h1>
         </div>
-      </div>
+      </div>    
     </Link>
-
   );
 };
 

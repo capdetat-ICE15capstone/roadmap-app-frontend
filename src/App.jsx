@@ -4,13 +4,15 @@ import Spinner from "./components/Spinner";
 import NoPage from "./pages/NoPage";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { lazy, Suspense } from "react";
+import HomeOtherUser from "./pages/HomeOtherUser";
 
 const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
 const View = lazy(() => import("./pages/View"));
 const RoadmapCreatePage = lazy(() => import("./pages/RoadmapCreatePage"));
 const Home = lazy(() => import("./pages/Home"));
-const Feed = lazy(() => import("./pages/Feed"))
+const FriendHome = lazy(() => import("./pages/HomeOtherUser"));
+const Feed = lazy(() => import("./pages/Feed"));
 const Setting = lazy(() => import("./pages/Setting"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Introduction = lazy(() => import("./pages/Introduction"));
@@ -59,7 +61,7 @@ function App() {
             <Route path="/" element={<Navbar />}>
               <Route index element={<Home />} />
               <Route
-                path="home"
+                path=""
                 element={
                   <Suspense fallback={<Spinner />}>
                     <Home />
@@ -67,7 +69,15 @@ function App() {
                 }
               ></Route>
               <Route
-                path="view"
+                path="friend_home"
+                element={
+                  <Suspense fallback={<Spinner />}>
+                    <FriendHome />             
+                  </Suspense>
+                }
+              ></Route>
+              <Route
+                path="view/:roadmap_id"
                 element={
                   <Suspense fallback={<Spinner />}>
                     <View />
@@ -118,7 +128,7 @@ function App() {
                 path="view/:id"
                 element={
                   <Suspense fallback={<Spinner />}>
-                    {/* insert view roadmap element */}
+                    <View />
                   </Suspense>
                 }
               ></Route>
