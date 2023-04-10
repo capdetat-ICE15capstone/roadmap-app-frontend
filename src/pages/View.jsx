@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 import { axiosInstance } from "../functions/axiosInstance";
-import { getRoadmap } from "../functions/roadmapFunction"
+import { getRoadmap } from '../functions/roadmapFunction';
+import { shortenString, convertDateTimeString } from '../functions/formatFunction';
 
 import { ReactComponent as Circle } from "../assets/shapes/circle.svg";
 import { ReactComponent as Square } from "../assets/shapes/square.svg";
@@ -12,13 +13,6 @@ export default function View() {
   const navigate = useNavigate();
   const { roadmap_id } = useParams();
 
-  const user_id = 123456;
-
-  // check owner profile picture == null?
-  // server check if the user that request this roadmap is the owner. If not, some of the field returned e.g. prof-pic, exp will return with either null or none.
-
-  const [current, setCurrent] = useState('0');
-  const [currentViewNode, setcurrentViewNode] = useState('-1');
   const [isOwner, setIsOwner] = useState(true);
   const [detailToggle, setDetailToggle] = useState(true);
   const [saveToggle, setSaveToggle] = useState(false);
@@ -28,66 +22,126 @@ export default function View() {
 
   const [currentTask, setCurrentTask] = useState(
     {
-      "name": "",
-      "description": "",
-      "startDate": "",
-      "dueDate": "",
-      "nodeShape": "",
-      "nodeColor": "",
-      "id": null,
-      "isDone": null,
-      "subtasks": []
+      "title": "string",
+      "description": "string",
+      "start_time": "2023-04-09T11:38:12.380Z",
+      "deadline": "2023-04-09T11:38:12.380Z",
+      "shape": "string",
+      "color": "string",
+      "tid": 0,
+      "is_done": true,
+      "subtasks": [
+        {
+          "title": "string",
+          "stid": 0,
+          "is_done": true
+        }
+      ]
+    }
+  );
+
+  const [tasks, setTasks] = useState(
+    {
+      "currentTask": '0',
+      "taskList": [
+        {
+          "title": "string",
+          "description": "string",
+          "start_time": "2023-04-09T11:38:12.380Z",
+          "deadline": "2023-04-09T11:38:12.380Z",
+          "shape": "string",
+          "color": "string",
+          "tid": 0,
+          "is_done": true,
+          "subtasks": [
+            {
+              "title": "string",
+              "stid": 0,
+              "is_done": true
+            }
+          ]
+        }
+      ]
     }
   );
 
   const [roadmap, setRoadmap] = useState(
     {
-      "name": "Title",
-      "description": "Description",
-      "roadmap_deadline": "",
-      "is_before_start_time": null,
+      "title": "string",
+      "description": "string",
+      "roadmap_deadline": "2023-04-09T11:01:10.188Z",
+      "is_before_start_time": true,
       "reminder_time": 0,
-      "is_private": null,
-      "rid": null,
+      "is_private": true,
+      "rid": 0,
       "views_count": 0,
       "stars_count": 0,
       "forks_count": 0,
-      "edited_at": "",
-      "owner_id": null,
-      "creator_id": null,
-      "owner_name": null,
-      "creator_name": null,
-      "owner_profile_picture_id": null,
-      "creator_profile_picture_id": null,
+      "edited_at": "2023-04-09T11:01:10.188Z",
+      "owner_id": 0,
+      "creator_id": 0,
+      "owner_name": "string",
+      "creator_name": "string",
+      "owner_profile_picture_id": 0,
+      "creator_profile_picture_id": 0,
       "next_task": {
-        "title": "",
-        "description": "",
-        "start_time": "",
-        "deadline": "",
-        "shape": "",
-        "color": "",
-        "tid": null,
-        "is_done": null,
-        "subtasks": []
+        "title": "string",
+        "description": "string",
+        "start_time": "2023-04-09T11:01:10.188Z",
+        "deadline": "2023-04-09T11:01:10.188Z",
+        "shape": "string",
+        "color": "string",
+        "tid": 0,
+        "is_done": true,
+        "subtasks": [
+          {
+            "title": "string",
+            "stid": 0,
+            "is_done": true
+          }
+        ]
       },
       "tasks_name": [
+        "string"
       ],
       "shapes": [
+        "string"
       ],
       "colors": [
+        "string"
       ],
-      "tags": [],
+      "tags": [
+        "string"
+      ],
       "task_relation": [
+        0
       ],
-      "archive_date": null,
-      "exp": 0,
-      "tasks": []
+      "tasks": [
+        {
+          "title": "string",
+          "description": "string",
+          "start_time": "2023-04-09T11:01:10.188Z",
+          "deadline": "2023-04-09T11:01:10.188Z",
+          "shape": "string",
+          "color": "string",
+          "tid": 0,
+          "is_done": true,
+          "subtasks": [
+            {
+              "title": "string",
+              "stid": 0,
+              "is_done": true
+            }
+          ]
+        }
+      ],
+      "archive_date": "2023-04-09T11:01:10.190Z",
+      "exp": 0
     }
   );
 
   async function likeRoadmap() {
     const route = `/roadmaps/like`;
-
     try {
       const response = await axiosInstance
         .put(route, {
@@ -103,25 +157,21 @@ export default function View() {
     }
   }
 
-  function completeRoadmap() {
-    let res = { ...roadmap };
-    res['is-active'] = false;
-    setRoadmap(res);
-    setCompleteButton(false);
-  }
-
-  function nodeShapeGenerator(nodeShape, nodeColor, node_id) {
+  function nodeShapeGenerator(nodeShape, nodeColor, status) {
     let currentNodeColor = "";
-    if (node_id !== null && roadmap['is-active'] === true) {
-      if (node_id < current) {
-        currentNodeColor = "#707070";
-      } else if (node_id > current) {
-        currentNodeColor = "#A0A0A0"
-      } else {
-        currentNodeColor = nodeColor;
-      }
-    } else {
-      currentNodeColor = nodeColor;
+    switch (status) {
+      case "complete":
+        currentNodeColor = "";
+        break;
+      case "onGoing":
+        currentNodeColor = "";
+        break;
+      case "onComing":
+        currentNodeColor = "";
+        break;
+      default:
+        currentNodeColor = "blue";
+        break;
     }
     switch (nodeShape) {
       case "square":
@@ -152,29 +202,75 @@ export default function View() {
   }
 
   async function fetchRoadmap(rid) {
-    try {
-      const res = await getRoadmap(rid);
-      console.log(res.rid);
-      setRoadmap(res);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  useEffect(() => {
-    fetchRoadmap(roadmap_id);
-  }, []);
-
-  async function getUserID() {
-    const route = `/user/user`;
+    const route = `/roadmap/${rid}`;
     axiosInstance.get(route)
       .then((response) => {
-        console.log(response.data);
+        const fetchedRoadmap = response.data;
+        const taskList = [];
+        const current_tid = response.data.next_task.tid;
+
+        setRoadmap(response.data);
+
+        fetchedRoadmap['task_relation'].forEach((tid) => {
+          const route = `/task/${tid}`;
+          axiosInstance.get(route)
+            .then((response) => {
+              taskList.push(response.data);
+              setTasks({
+                "currentTask": current_tid,
+                "taskList": taskList,
+              })
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+        });
       })
       .catch((error) => {
         console.log(error);
       });
   }
+
+  async function checkUserAccess(owner_id) {
+    const route = `/user/user`;
+    axiosInstance.get(route)
+      .then((response) => {
+        const user_id = response.data.uid;
+        (user_id === owner_id) ? setIsOwner(true) : setIsOwner(true);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  useEffect(() => {
+    // fetchRoadmap(roadmap_id);
+    getRoadmap(roadmap_id)
+      .then((response) => {
+        setRoadmap(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, []);
+
+  useEffect(() => {
+    checkUserAccess(roadmap.owner_id);
+    console.log(roadmap);
+    if ("tasks" in roadmap) {
+      const currentNodeID = roadmap.next_task.tid;
+      roadmap.tasks.forEach((task) => {
+        if (task.id === currentNodeID) {
+          console.log(task.id, "equals", currentNodeID);
+          setCurrentTask(task);
+        }
+      });
+    }
+  }, [roadmap]);
+
+  useEffect(() => {
+    console.log(currentTask);
+  }, [currentTask]);
 
   // now gotta modify this code to update per node (task/milestone) to save resources. 
 
@@ -203,30 +299,22 @@ export default function View() {
     }
   }
 
-function updateSubtasks() {
-    roadmap.next_task.subtasks.map((element) => {
-      console.log(element);
-      updateSubtask(element);
+  async function updateSubtasks() {
+    const route = `/subtask/`;
+    currentTask.subtasks.forEach((subtask) => {
+      axiosInstance.put(route, {
+        "title": subtask.detail,
+        "stid": subtask.id,
+        "is_done": subtask.status
+      })
+        .then((response) => {
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     });
   }
-
-  function shortenString(str, maxLength) {
-    if (str.length > maxLength) {
-      // Shorten the string to the maximum length
-      str = str.slice(0, maxLength) + '...';
-    }
-    return str;
-  }
-
-  function convertDateTimeString(str) {
-    const dateObj = new Date(str);
-    const formattedDateTime = dateObj.toLocaleString();
-    return formattedDateTime;
-  }
-
-  // save logic: push save and then reload page?
-  // if that is the case, then we need to implement a button that can only 
-  // be activated when subtasks are all checked... (new dedicated useState to store subtasks?)
 
   return (
     <>
@@ -254,7 +342,7 @@ function updateSubtasks() {
             <div className='flex flex-col rounded-2xl text-sm space-y-2'>
               <div className='flex space-x-2'>
                 <div className='border-solid border-[1px] rounded-full px-2 py-1 text-xs border-gray-300'>
-                  {!roadmap.is_private ? "Public" : "Private"}
+                  {!roadmap.isPublic ? "Public" : "Private"}
                 </div>
                 <div className='border-solid border-[1px] rounded-full px-2 py-1 text-xs border-gray-300'>
                   Tags
@@ -290,8 +378,6 @@ function updateSubtasks() {
                         {shortenString(task.name, 14)}
                       </div>
                       <button onClick={() => {
-                        setcurrentViewNode(index);
-                        setNodeViewToggle(!nodeViewToggle);
                       }}>
                         {(task.isDone) && (
                           <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[60%] text-3xl text-center select-none'>
@@ -327,22 +413,20 @@ function updateSubtasks() {
                 </div>
                 <div className='flex flex-col space-y-2 w-1/2 p-4 bg-gray-50 rounded-r-2xl justify-between'>
                   <div className='flex flex-col justify-center space-y-2 text-sm'>
-                    {roadmap.next_task.subtasks.map((subtask, index) => {
+                    {currentTask.subtasks.map((subtask, index) => {
                       return (
                         <label key={index}>
                           <input
                             type="checkbox"
                             className="w-4 h-4 mr-2 bg-gray-100 border-gray-300 rounded"
-                            defaultChecked={subtask.is_done}
+                            defaultChecked={subtask.status}
                             onChange={() => {
-                              console.log(subtask.is_done);
-                              let res = {...roadmap};
-                              console.log(res.next_task.subtasks[index].is_done);
-                              res.next_task.subtasks[index].is_done = !res.next_task.subtasks[index].is_done;
-                              setRoadmap(res);
+                              let updatedTask = { ...currentTask };
+                              updatedTask.subtasks[index].status = !updatedTask.subtasks[index].status;
+                              setCurrentTask(updatedTask);
                             }}
                           />
-                          {subtask.title}
+                          {subtask.detail}
                         </label>
                       )
                     })}
