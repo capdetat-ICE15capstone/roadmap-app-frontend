@@ -111,8 +111,8 @@ const Home = () => {
                 <div>
                   <RoadmapCreate isLimit={isLimit} onClick={promptPremium} />
                 </div>}
-                  <Roadmap isOwner={true} deleteFunction={deleteRoadmap}/>
-                  <Roadmap isOwner={true} deleteFunction={deleteRoadmap}/>
+                  <Roadmap isActive={isActive} isOwner={true} deleteFunction={deleteRoadmap}/>
+                  <Roadmap isActive={isActive} isOwner={true} deleteFunction={deleteRoadmap}/>
               </div>
             </div>
           </div>

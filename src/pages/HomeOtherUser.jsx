@@ -103,28 +103,8 @@ const HomeOtherUser = () => {
             {isPublic? 
             <div className="flex w-3/4 justify-start">
               <div className="flex flex-wrap justify-start items-start w-fit max-w-[1152px] h-fit m-0">                
-                <div>
-                  <Roadmap 
-                  creator_name="Thanapat" 
-                  owner_name="Tripipat" 
-                  title="React skill issue" 
-                  created_at="03/17/2023" 
-                  edited_at="today bich" 
-                  views_counts={1}
-                  isActive={isActive}
-                  deleteFunction={deleteRoadmap} />
-                </div>
-                <div>
-                  <Roadmap
-                  creator_name="FingTheMan" 
-                  owner_name="Wuttikorn" 
-                  title="Dying From Capstone" 
-                  created_at="03/17/2023" 
-                  edited_at="03/18/2023" 
-                  views_counts={2}
-                  isActive={isActive}
-                  deleteFunction={deleteRoadmap} />
-                </div>            
+                <Roadmap isActive={isActive}/>
+                <Roadmap isActive={isActive}/>
               </div>
             </div>:
             <div className="flex flex-col w-3/4 min-w-[260px] rounded-[30px] mt-8 justify-center items-center bg-[#F0F3F4] h-[462px] mb-[20px]">
