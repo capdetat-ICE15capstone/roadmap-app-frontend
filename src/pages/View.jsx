@@ -5,6 +5,7 @@ import { getRoadmap } from '../functions/roadmapFunction';
 import { shortenString, convertDateTimeString } from '../functions/formatFunction';
 import { likeRoadmap, unlikeRoadmap } from '../functions/viewFunction';
 import RoadmapViewer from '../components/RoadmapViewer';
+import Spinner from '../components/Spinner';
 
 export default function View() {
   const navigate = useNavigate();
@@ -12,7 +13,8 @@ export default function View() {
 
   const [hasFetched, setHasFetched] = useState(false);
 
-  const [isOwner, setIsOwner] = useState(true);
+  const [isOwner, setIsOwner] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
   const [detailToggle, setDetailToggle] = useState(true);
   const [saveToggle, setSaveToggle] = useState(false);
   const [nodeViewToggle, setNodeViewToggle] = useState(false);
@@ -31,20 +33,28 @@ export default function View() {
     getRoadmap(roadmap_id)
       .then((response) => {
         setRoadmap(response);
-        const currentNodeID = response.next_task.tid;
-        response.tasks.forEach((task) => {
-          if (task.id === currentNodeID) {
-            setCurrentTask(task);
-            console.log(task);
-            let isReadyToComplete = true;
-            task.subtasks.forEach((subtask) => {
-              if (!subtask.status) {
-                isReadyToComplete = false;
-              }
-            });
-            setCompleteButton(isReadyToComplete);
-          }
-        });
+        if (response.next_task === null) {
+          setIsCompleted(true);
+          setCurrentTask(
+            { 'id': -1 }
+          );
+        } else {
+          const currentNodeID = response.next_task.tid;
+          response.tasks.forEach((task) => {
+            if (task.id === currentNodeID) {
+              setCurrentTask(task);
+              console.log(task);
+              let isReadyToComplete = true;
+              task.subtasks.forEach((subtask) => {
+                if (!subtask.status) {
+                  isReadyToComplete = false;
+                }
+              });
+              setCompleteButton(isReadyToComplete);
+            }
+          });
+        }
+
         setLikeCount(response.stars_count);
         checkUserAccess(response.owner_id);
       })
@@ -147,7 +157,7 @@ export default function View() {
                     <div className="bg-gray-700 grow text-white px-4 py-2 font-semilight rounded-full text-sm font-bold  pointer-events-none">
                       {likeCount} Like
                     </div>
-                    <button onClick={() => navigate(`/edit/${roadmap_id}`)} className="bg-sub-blue grow text-white px-4 py-2 font-semilight rounded-full text-sm font-bold" type="button">
+                    <button onClick={() => navigate(`/edit/${roadmap_id}`)} className={`${(isCompleted) ? 'bg-gray-700 pointer-events-none' : 'bg-sub-blue'} grow text-white px-4 py-2 font-semilight rounded-full text-sm font-bold`} type="button">
                       Edit
                     </button>
                   </>
@@ -188,7 +198,7 @@ export default function View() {
             <div className='flex flex-col bg-gray-100 drop-shadow-[0_2px_3px_rgba(0,0,0,0.15)] rounded-2xl p-8'>
               <RoadmapViewer tasks={roadmap.tasks} currentTaskID={currentTask.id} />
             </div>
-            {(currentTask !== null) && (
+            {(!isCompleted) && (
               <div className='flex flex-col bg-white rounded-2xl drop-shadow-[0_2px_3px_rgba(0,0,0,0.15)] space-y-4'>
                 <div className='flex flex-row space-x-4 justify-between'>
                   <div className='flex flex-col space-y-2 w-1/2 p-4'>
@@ -208,7 +218,7 @@ export default function View() {
                     </div>
                   </div>
                   <div className='flex flex-col space-y-2 w-1/2 p-4 bg-gray-50 rounded-r-2xl justify-between'>
-                    <div className='flex flex-col justify-center space-y-2 text-sm'>
+                    <div className='flex flex-col justify-center space-y-2 text-sm break-all'>
                       {currentTask.subtasks.map((subtask, index) => {
                         return (
                           <label key={index}>
@@ -222,6 +232,14 @@ export default function View() {
                                   updatedTask.subtasks[index].status = !updatedTask.subtasks[index].status;
                                   setCurrentTask(updatedTask);
                                 }}
+                              />
+                            )}
+                            {(!isOwner) && (
+                              <input
+                                type="checkbox"
+                                disabled="true"
+                                className="w-4 h-4 mr-2 bg-gray-100 border-gray-300 accent-slate-500 rounded pointer-events-none"
+                                defaultChecked={subtask.status}
                               />
                             )}
                             {subtask.detail}
@@ -283,6 +301,7 @@ export default function View() {
   } else {
     return (
       <>
+        <Spinner />
       </>
     )
   }
