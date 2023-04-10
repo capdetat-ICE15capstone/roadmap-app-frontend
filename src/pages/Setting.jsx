@@ -4,6 +4,8 @@ import { axiosInstance } from "../functions/axiosInstance";
 import SettingTab from '../components/SettingTab';
 import ToggleSwitch from '../components/ToggleSwitch';
 
+import Spinner from "../components/Spinner";
+
 import { ReactComponent as GearIcon } from "../assets/setting_assets/gear.svg";
 import { ReactComponent as ProfileIcon } from "../assets/setting_assets/profile.svg";
 import { ReactComponent as AccountIcon } from "../assets/setting_assets/account.svg";
@@ -81,7 +83,9 @@ const Setting = () => {
                     {/* bio */}
                     <SettingBioField formID={"bio-form"} fieldTitle={"Bio"} fieldDataName={"bio"} fieldPlaceHolder={bio} setOnSubmit={setBio}/>
                     {/* links */}
+                    {/*}
                     <SettingField formID={"links-form"} fieldTitle={"Links"} fieldDataName={"link"} fieldPlaceHolder={link} setOnSubmit={setLink}/>
+                    {*/}
                 </div>
             </div>
         )
@@ -157,10 +161,6 @@ const Setting = () => {
     //         </div>
     //     </div>
     // )
-
-    if (!data) {
-        return <div>Loading...</div>;
-    }
 
     const SettingField = ({formID, fieldTitle, fieldDataName, fieldPlaceHolder, setOnSubmit}) => {
         return (
@@ -355,6 +355,10 @@ const Setting = () => {
     const updatePrivacy = () => {
         console.log({ ...data, "is_private": accountPublic});
         updateSetting("/user/privacy/", { ...data, "is_private": accountPublic});
+    }
+
+    if (!data) {
+        return <Spinner/>;
     }
 
     return (
