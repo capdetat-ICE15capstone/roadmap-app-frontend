@@ -1,6 +1,7 @@
 import React from "react";
+import { ReactComponent as Question } from "../assets/taskmodal/questionMark.svg"
 
-function TwoButtonModal({ isOpen, onLightPress, onDarkPress, textField }) {
+function TwoButtonModal({ isOpen, onLightPress, onDarkPress, textField, Icon=Question }) {
   return (
     <div
       className={`fixed z-30 inset-0 overflow-y-auto ${isOpen ? "" : "hidden"}`}
@@ -10,13 +11,14 @@ function TwoButtonModal({ isOpen, onLightPress, onDarkPress, textField }) {
 
         <div></div>
         <div className="bg-white rounded-2xl w-2/5 z-40">
-          <div className="w-full bg-blue-900 h-2/5 p-4 rounded-t-2xl">
+          <div className="w-full bg-blue-900 h-2/5 p-4 rounded-t-2xl flex gap-3">
+            <Icon className="w-8 h-8"/>
             <span className="font-bold text-white text-2xl">{textField.title ?? "Default Modal title"}</span>
           </div>
-          <h3 className="text-lg font-medium my-6 mx-4">
+          <h3 className="text-lg font-medium my-6 mx-9">
             {textField.body ?? "Default Modal body"}
           </h3>
-          <div className="flex justify-end m-4">
+          <div className="flex justify-end m-8">
             <button
               className="transparent border border-blue-900 text-blue-900 font-semibold px-4 py-2 rounded mr-4"
               onClick={onLightPress}

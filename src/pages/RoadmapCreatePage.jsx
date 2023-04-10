@@ -1,4 +1,4 @@
-import React, { useState, useEffect, createRef, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import TaskModal from "../components/TaskModal";
 import { useLocation, useNavigate, useParams } from "react-router";
 import {
@@ -98,10 +98,10 @@ const DropDownMenu = ({
     optionValues = optionValues ?? options;
   }, []);
 
-  useEffect(() => {
-    console.log(currentOption);
-  }),
-    [currentOption];
+  // useEffect(() => {
+  //   console.log(currentOption);
+  // }),
+  //   [currentOption];
 
   const handleMenuShowUnshow = (event) => {
     event.preventDefault();
@@ -160,6 +160,7 @@ const RoadmapCreatePage = (props) => {
     isPublic: true,
     tasks: [],
     tags: [],
+    notiStatus: {on:false}
   });
   const { mode } = props; // props from parent
   const { state } = useLocation(); // state from previous page, including fetched roadmap data
@@ -232,7 +233,7 @@ const RoadmapCreatePage = (props) => {
     if (mode === "edit" || mode === "clone") {
       // check whether the user could view this page
       if (!isUserLoggedIn) {
-        alert("unauthorized")
+        alert("unauthorized");
       }
       // check if state is available
       if (state !== null && state !== undefined) {
@@ -267,6 +268,7 @@ const RoadmapCreatePage = (props) => {
         // then set the data to variable
         setLoading(true);
         const tempRoadmap = await getRoadmap(id, 10000, false);
+        console.log(tempRoadmap);
         if (tempRoadmap === null) {
           setLoading(false);
           alert("error");
@@ -473,7 +475,7 @@ const RoadmapCreatePage = (props) => {
       const taskIntersection = initState.find(
         (inittask) => task.id === inittask.id
       );
-      console.log(taskIntersection)
+      console.log(taskIntersection);
 
       // if (taskIntersection === undefined) return;
 
@@ -533,7 +535,7 @@ const RoadmapCreatePage = (props) => {
   };
 
   const compareTagChange = () => {
-    console.log(searchTags())
+    console.log(searchTags());
     let tagChanges = { add: [], delete: [] };
     initialState.current.tags.forEach((inittag) => {
       if (tags.find((tag) => inittag === tag) === undefined)
@@ -661,13 +663,16 @@ const RoadmapCreatePage = (props) => {
     // Begin the spinner
     setLoading(true);
     await generateNotificationObjects();
-    if (await handleSendingApi(
-      roadmapChange,
-      taskChange,
-      subTaskChange,
-      taskRelationChange,
-      tagChanges
-    )) navigate("/")
+    if (
+      await handleSendingApi(
+        roadmapChange,
+        taskChange,
+        subTaskChange,
+        taskRelationChange,
+        tagChanges
+      )
+    )
+      navigate("/");
     setLoading(false);
     // navigate("/");
   };
@@ -747,12 +752,11 @@ const RoadmapCreatePage = (props) => {
         <form onSubmit={handleSubmit} className="h-full w-4/5 max-w-4xl">
           <div className="flex my-4 justify-between">
             <input
-              className="text-2xl focus:outline-none font-inter"
+              className="text-2xl focus:outline-none font-inter w-full"
               type="text"
               value={RMName}
               onChange={handleNameChange}
               placeholder="UNTITLED"
-              size={MAX_RMNAME_LENGTH}
             />
             <div className="flex">
               <button
@@ -773,6 +777,12 @@ const RoadmapCreatePage = (props) => {
               </button>
             </div>
           </div>
+
+          {
+            <motion.div className="text-gray-400">
+              Tags: {tags.join(", ")}
+            </motion.div>
+          }
 
           <label className="text-xl font-bold font-nunito-sans">
             Roadmap Description:{" "}

@@ -308,7 +308,7 @@ const PRIVATE_addAndReassign = async (
 
 const PRIVATE_createRoadmap = async (roadmap, timeout = 0) => {
   if (roadmap === null || roadmap === undefined)
-    throw new Error("roadmap/roadmap id is null");
+    throw new Error("roadmap/is null or undefined");
   if (roadmap.notiStatus.on === false) {
     roadmap.notiStatus.detail = {
       beforeDueDate: false,
@@ -616,6 +616,9 @@ const reformTask = (taskObj) => {
 const reformRoadmap = (roadmapObject) => {
   // Create new object to prevent side effect
   const newRoadmapObj = { ...roadmapObject };
+
+  // front and back use different name
+  newRoadmapObj.is_private = !newRoadmapObj.is_private;
 
   return objRename(newRoadmapObj, inboundRoadmapName);
 };

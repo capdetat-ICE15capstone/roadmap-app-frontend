@@ -5,6 +5,7 @@ import { ReactComponent as DeleteButton } from "../assets/deleteButton.svg";
 import { ReactComponent as ArrowIcon } from "../assets/taskmodal/arrow.svg";
 import { ReactComponent as CalendarIcon } from "../assets/taskmodal/calendar.svg";
 import { ReactComponent as TrashIcon } from "../assets/taskmodal/trash.svg";
+import { ReactComponent as WhiteTrash } from "../assets/taskmodal/whiteTrash.svg"
 import DatePicker from "react-datepicker";
 import Spinner from "./Spinner";
 import { CustomSVG, allNodeColor } from "./CustomSVG";
@@ -81,7 +82,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
           id: oldData.id,
           name: name,
           description: description,
-          nodeColor: nodeColor,
+          nodeColor: nodeColor.name,
           nodeShape: nodeShape,
           startDate: startDate,
           dueDate: dueDate, 
@@ -184,6 +185,9 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
   const checkTaskChange = () => {
     // compare previous data (may not be first) with latest data
 
+    console.log(initialState.current.nodeColor)
+    console.log(nodeColor.name); 
+
     if (
       initialState.current.name !== name ||
       initialState.current.description !== description ||
@@ -281,6 +285,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
           lightButtonText: "Cancel",
           darkButtonText: "Delete",
         }}
+        Icon={WhiteTrash}
       />
       <TwoButtonModal
         isOpen={unSavedModal}
@@ -331,20 +336,20 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
               <div className="flex flex-col lg:flex-row">
                 {/* Left side */}
                 <div className="flex flex-col w-full lg:w-1/2 p-6">
-                  <label className="font-nunito-sans font-bold">Name</label>
+                  <label className="font-inter font-bold">Name</label>
                   <input
                     type="text"
                     value={name}
-                    className="border-2 border-gray-300 rounded-md my-1 placeholder:italic px-1 font-nunito-sans"
+                    className="border-2 border-gray-300 rounded-md my-1 placeholder:italic px-1 font-inter"
                     placeholder=" Enter task name..."
                     onChange={(e) => handleNameChange(e)}
                   ></input>
 
-                  <label className="font-nunito-sans font-bold">
+                  <label className="font-inter font-bold">
                     Description
                   </label>
                   <textarea
-                    className="border-2 border-gray-300 rounded-md my-1 grow placeholder:italic placeholder:justify-start px-1 font-nunito-sans"
+                    className="border-2 border-gray-300 rounded-md my-1 grow placeholder:italic placeholder:justify-start px-1 font-inter"
                     value={description}
                     cols="50"
                     rows="4"
@@ -355,7 +360,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                   {/* Date Setting */}
                   <div className="flex flex-col my-2 gap-2">
                     <div className="w-full grid grid-cols-10">
-                      <label className="self-center font-nunito-sans font-bold">
+                      <label className="self-center font-inter font-bold">
                         Start
                       </label>
                       <div className="col-span-9">
@@ -371,7 +376,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                       </div>
                     </div>
                     <div className="w-full grid grid-cols-10">
-                      <label className="self-center font-nunito-sans font-bold">
+                      <label className="self-center font-inter font-bold">
                         Due
                       </label>
                       <div className="col-span-9">
@@ -391,7 +396,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
 
                   {/* Node setting */}
                   <div>
-                    <label className="font-nunito-sans font-bold">Nodes</label>
+                    <label className="font-inter font-bold">Nodes</label>
                     <div className="flex flex-1 gap-x-1 mt-1 mb-4">
                       <div className="bg-gray-100 basis-1/2 rounded-lg grid grid-rows-3 grid-cols-7 gap-2 h-30 border-2 border-gray-300">
                         <p className="font-bold text-gray-400 pl-2">Color</p>
@@ -462,7 +467,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                 <div className="flex flex-col w-full lg:w-1/2">
                   <div className="bg-gray-100 p-6 basis-full flex flex-col justify-between rounded-b-2xl lg:rounded-bl-none">
                     <div>
-                      <label className="block font-nunito-sans font-bold">
+                      <label className="block font-inter font-bold">
                         Add Subtask
                       </label>
                       <div className="flex flex-col gap-2 overflow-y-auto max-h-32 lg:max-h-none py-2">
@@ -472,7 +477,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                               <input
                                 type="checkbox"
                                 checked={subtask.status}
-                                className="w-4 h-4 self-center font-nunito-sans"
+                                className="w-4 h-4 self-center font-inter"
                                 onChange={() =>
                                   onSubTaskCheckboxChange(
                                     event.target.checked,
@@ -490,7 +495,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                               </button>
                               <input
                                 type="text"
-                                className="border border-black rounded-md grow font-nunito-sans"
+                                className="border border-black rounded-md grow font-inter"
                                 onChange={() =>
                                   onSubtaskTextEdit(
                                     event.target.value,
