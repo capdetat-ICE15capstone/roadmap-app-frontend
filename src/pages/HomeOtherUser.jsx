@@ -3,8 +3,8 @@ import Roadmap from "../components/Roadmap";
 import Kurumi from "../assets/kurumi.jpg";
 import RoadmapToggle from "../components/RoadmapToggle"
 import { ReactComponent as DarkHomeIcon } from "../assets/dark_home_icon.svg";
-import { ReactComponent as BinIcon } from "../assets/Bin.svg"
 import { ReactComponent as LockIcon } from "../assets/Lock.svg"
+import { axiosInstance } from "../functions/axiosInstance";
 
 const HomeOtherUser = () => {
   const [isRoadmap, setIsRoadmap] = useState(true);
