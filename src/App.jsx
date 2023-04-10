@@ -5,6 +5,7 @@ import NoPage from "./pages/NoPage";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import HomeOtherUser from "./pages/HomeOtherUser";
+import { isUserLoggedIn } from "./functions/userFunction";
 
 const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
@@ -25,23 +26,10 @@ function App() {
     <>
       <BrowserRouter>
         <Suspense fallback={<Spinner />}>
+          {isUserLoggedIn() ? 
           <Routes>
-            <Route
-              path="/signup"
-              element={
-                <Suspense fallback={<Spinner />}>
-                  <Signup />
-                </Suspense>
-              }
-            ></Route>
-            <Route
-              path="/login"
-              element={
-                <Suspense fallback={<Spinner />}>
-                  <Login />
-                </Suspense>
-              }
-            ></Route>
+            <Route path="signup" element={<Navigate replace to="/" />} />
+            <Route path="login" element={<Navigate replace to="/" />} />
             <Route
               path="/intro"
               element={
@@ -159,6 +147,44 @@ function App() {
               <Route path="*" element={<Navigate replace to="/404" />} />
             </Route>
           </Routes>
+          :
+          <Routes>
+            <Route
+              path="/signup"
+              element={
+                <Suspense fallback={<Spinner />}>
+                  <Signup />
+                </Suspense>
+              }
+            ></Route>
+            <Route
+              path="/login"
+              element={
+                <Suspense fallback={<Spinner />}>
+                  <Login />
+                </Suspense>
+              }
+            ></Route>
+            <Route
+              path="/intro"
+              element={
+                <Suspense fallback={<Spinner />}>
+                  <Introduction />
+                </Suspense>
+              }
+            ></Route>
+            <Route
+              path="/premium"
+              element={
+                <Suspense fallback={<Spinner />}>
+                  <Premium />
+                </Suspense>
+              }
+            ></Route>
+            <Route path="/404" element={<NoPage />} />
+            <Route path="*" element={<Navigate replace to="/intro" />} />
+          </Routes>
+          }
         </Suspense>
       </BrowserRouter>
     </>
