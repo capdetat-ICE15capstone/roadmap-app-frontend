@@ -305,6 +305,4 @@ export default function View() {
       </>
     )
   }
-
-
 }

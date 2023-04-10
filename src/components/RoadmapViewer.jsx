@@ -19,7 +19,7 @@ function RoadmapViewer({ tasks, currentTaskID }) {
         }
       });
     }
-  }, [])
+  }, [tasks])
 
   // return (
   //   <div className="relative">
