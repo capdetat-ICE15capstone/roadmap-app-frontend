@@ -16,6 +16,15 @@ const Home = () => {
   const [showPremium, setShowPremium] = useState(false);
   const [isLimit, setIsLimit] = useState(false);  
   const [isPremium, setIsPremium] = useState(false);
+  const [home, setHome] = useState({
+    'username' : 'Kurumi',
+    'Level' : 10,
+    'Bio' : {
+      'Description' : 'Kurumi Tokisaki (Codename: Nightmare)',
+      'Link' : 'https://date-a-live.fandom.com/wiki/Kurumi_Tokisaki'
+    },
+    'profile_picture' : `${Kurumi}`    
+  })
 
   function shortenString(str, maxLength) {
     if (str.length > maxLength) {
@@ -82,7 +91,7 @@ const Home = () => {
                 <div className="flex flex-wrap items-center mx-6 mr-12 justify-start h-fit my-[20px]">
                   <div className="relative mr-4">
                     <div className="font-inter font-bold text-lg text-[#09275B]">
-                      Kurumi
+                      {home.username}
                     </div>
                   </div>
                   <div className="flex justify-between bg-[#034DCF] text-white font-bold h-fit rounded-[30px]">
@@ -93,7 +102,7 @@ const Home = () => {
                     </div>     
                     <div className="flex mx-[10px] justify-start items-center">
                       <div className="font-inter text-[#FFFFFF]">
-                        10
+                        {home.Level}
                       </div>
                     </div>               
                   </div>
@@ -101,18 +110,18 @@ const Home = () => {
                 <div className="flex flex-col">
                   <div className="mx-6 mt-[10px] mb-[20px]">
                     <div className="font-inter font-light">
-                      Kurumi Tokisaki (Codename: Nightmare) 
+                      {home.Bio.Description} 
                     </div>
                   </div>
                   <div className="mx-6 my-[10px]">
-                    <a href="https://date-a-live.fandom.com/wiki/Kurumi_Tokisaki" className="font-inter font-light text-[#034DCF]">
-                    {shortenString("https://date-a-live.fandom.com/wiki/Kurumi_Tokisaki", 25)}
+                    <a href={home.Bio.Link} className="font-inter font-light text-[#034DCF]">
+                    {shortenString(home.Bio.Link, 25)}
                     </a>                
                   </div>            
                 </div>              
               </div>
               <div className="flex justify-end w-fit max-w-[200px] h-fit max-h-[200px] ml-4">
-                <img src={Kurumi} className="rounded-full border border-[#5f4545]"/>
+                <img src={home.profile_picture} className="rounded-full border border-[#5f4545]"/>
               </div>
             </div>
           </div>
