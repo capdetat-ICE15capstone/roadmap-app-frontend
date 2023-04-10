@@ -1,10 +1,17 @@
 import React, {useState} from 'react'
+import { useEffect } from 'react';
+import { axiosInstance } from "../functions/axiosInstance";
 import SettingTab from '../components/SettingTab';
 import ToggleSwitch from '../components/ToggleSwitch';
 
 import { ReactComponent as GearIcon } from "../assets/setting_assets/gear.svg";
+import { ReactComponent as ProfileIcon } from "../assets/setting_assets/profile.svg";
+import { ReactComponent as AccountIcon } from "../assets/setting_assets/account.svg";
+import { ReactComponent as NotificationIcon } from "../assets/setting_assets/notification.svg";
 
 const Setting = () => {
+    const [data, setData] = useState(null);
+
     const [tab, setTab] = useState("profile");
 
     const [username, setUsername] = useState("");
@@ -16,24 +23,43 @@ const Setting = () => {
     const [notification, setNotification] = useState(true);
     const [accountPublic, setAccountPublic] = useState(true);
     const [email, setEmail] = useState("username@gmail.com");
-    const [currentRealPassword, setCurrentRealPassword] = useState("username@gmail.com");
-    const [currentPassword, setCurrentPassword] = useState("");
+    const [oldPassword, setOldPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
+    const [newPasswordConform, setNewPasswordConfirm] = useState();
+
+    useEffect (() => {
+        const fetchData = async () => {
+            const response = await getSetting();
+            console.log("Fetched data: ");
+            console.log(response.data);
+            setData(response.data);
+            setUsername(response.data.username);
+            setFirstName(response.data.first_name);
+            setLastName(response.data.last_name);
+            setBio(response.data.bio);
+            setAccountPublic(!response.data.is_private);
+        }
+        fetchData();
+    }, []);
+
+    function SetData() {
+
+    }
 
     const RenderProfile = () => {
         return (
             <div className='flex flex-col'>
-                <SettingTitle text='Profile'/>
+                <SettingTitle text='Profile' Icon={ProfileIcon}/>
                 {/* username, first name, last name, profile pic */}
                 <div className='flex gap-2 justify-between max-w-4xl pl-4'>
                     {/* username, first name, last name */}
                     <div className='flex flex-col flex-grow pl-4'>
                         {/* username */}
-                        <SettingField formID={"edit-username-form"} fieldTitle={"Username"} fieldPlaceHolder={"bocchi"} setOnSubmit={setUsername}/>
+                        <SettingField formID={"edit-username-form"} fieldTitle={"Username"} fieldDataName={"username"} fieldPlaceHolder={username} setOnSubmit={setUsername}/>
                         {/* first name */}
-                        <SettingField formID={"first-name-form"} fieldTitle={"First Name"} fieldPlaceHolder={"Hotori"} setOnSubmit={setFirstName}/>
+                        <SettingField formID={"first-name-form"} fieldTitle={"First Name"} fieldDataName={"first_name"} fieldPlaceHolder={firstName} setOnSubmit={setFirstName}/>
                         {/* last name */}
-                        <SettingField formID={"last-name-form"} fieldTitle={"Last Name"} fieldPlaceHolder={"Gotou"} setOnSubmit={setLastName}/>
+                        <SettingField formID={"last-name-form"} fieldTitle={"Last Name"} fieldDataName={"last_name"} fieldPlaceHolder={lastName} setOnSubmit={setLastName}/>
                     </div>
                     {/* profile pic */}
                     <div className='pl-8'>
@@ -53,9 +79,9 @@ const Setting = () => {
                 {/* bio, links */}
                 <div className='flex flex-col max-w-4xl pl-8'>
                     {/* bio */}
-                    <SettingBioField formID={"bio-form"} fieldTitle={"Bio"} fieldPlaceHolder={"This is the life of Hitori Gotou, a.k.a. bocchi za rokku"} setOnSubmit={setBio}/>
+                    <SettingBioField formID={"bio-form"} fieldTitle={"Bio"} fieldDataName={"bio"} fieldPlaceHolder={bio} setOnSubmit={setBio}/>
                     {/* links */}
-                    <SettingField formID={"links-form"} fieldTitle={"Links"} fieldPlaceHolder={"https://github.com/bocchides"} setOnSubmit={setLink}/>
+                    <SettingField formID={"links-form"} fieldTitle={"Links"} fieldDataName={"link"} fieldPlaceHolder={link} setOnSubmit={setLink}/>
                 </div>
             </div>
         )
@@ -64,10 +90,10 @@ const Setting = () => {
     const RenderAccount = () => {
         return (
             <div className='flex flex-col'>
-                <SettingTitle text='Account'/>
+                <SettingTitle text='Account' Icon={AccountIcon}/>
                 {/* account privacy, email */}
                 <div className='flex-col max-w-4xl pl-8'>
-                    <ToggleSwitch name={"Public Account"} isToggled={accountPublic} setIsToggled={setAccountPublic}/>
+                    <ToggleSwitch name={"Public Account"} isToggled={accountPublic} setIsToggled={setAccountPublic} callOnChanged={updatePrivacy}/>
                     <hr className='border-2 border-transparent'/>
                     <EmailSettingField name="Email Address" email={email}/>
                 </div>
@@ -75,7 +101,7 @@ const Setting = () => {
                 {/* password */}
                 <SettingTopic text="Password"/>
                 <div className='flex max-w-4xl pl-8'>
-                    <PasswordSettingField currentPassword={currentPassword} setCurrentPassword={setCurrentPassword} newPassword={setNewPassword} setNewPassword={setNewPassword}/>
+                    <PasswordSettingField oldPassword={oldPassword} setOldPassword={setOldPassword} newPassword={setNewPassword} setNewPassword={setNewPassword}/>
                 </div>
     
                 {/* delete account */}
@@ -86,14 +112,14 @@ const Setting = () => {
                     </p>
                     <button 
                         className="shadow appearance-none border rounded-lg py-2 px-6 text-sm text-red-500 bg-white leading-tight focus:outline-none focus:shadow-outline font-bold"
-                        onClick={() => {console.log("delete account")}}
+                        onClick={() => deleteAccount()}
                     >
                         Delete your account
                     </button>
                 </div>
     
                 {/* notification */}
-                <SettingTitle text="Notifications"/>
+                <SettingTitle text="Notifications" Icon={NotificationIcon}/>
                 <div className='flex max-w-4xl pl-8'>
                     <ToggleSwitch name={"Allow Notifications"} isToggled={notification} setIsToggled={setNotification}/>
                 </div>
@@ -132,6 +158,205 @@ const Setting = () => {
     //     </div>
     // )
 
+    if (!data) {
+        return <div>Loading...</div>;
+    }
+
+    const SettingField = ({formID, fieldTitle, fieldDataName, fieldPlaceHolder, setOnSubmit}) => {
+        return (
+            <form id={formID} onSubmit={handleFieldSubmit(setOnSubmit, data, setData)} className='mb-4'>
+                <label className='flex flex-col'>
+                    <SettingText text={fieldTitle}/>
+                    <div className='flex gap-0.5'>
+                        <input 
+                            name={fieldDataName}
+                            className="flex-grow shadow appearance-none border rounded-lg w-max py-2 px-3 text-sm text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-100"
+                            placeholder={fieldPlaceHolder}
+                            id="text"
+                        />
+                        <button 
+                            type='submit' 
+                            className="shadow appearance-none border rounded-lg w-16 py-2 px-3 text-sm text-white bg-blue-700 leading-tight focus:outline-none focus:shadow-outline"
+                        >
+                            Edit
+                        </button>
+                    </div>
+                </label>
+            </form>
+        )
+    }
+    
+    const SettingBioField = ({formID, fieldTitle, fieldDataName, fieldPlaceHolder, setOnSubmit}) => {
+        return (
+            <form id={formID} onSubmit={handleFieldSubmit(setOnSubmit)} className='mb-3 max-w-4xl'>
+                <label className='flex flex-col'>
+                    <SettingText text={fieldTitle}/>
+                        <textarea
+                            name={fieldDataName}
+                            className="w-full h-32 px-3 py-2 text-sm text-gray-700 border rounded-lg focus:outline-none resize-none focus:shadow-outline shadow bg-gray-100"
+                            placeholder={fieldPlaceHolder}
+                            id="text"
+                        >
+                        </textarea>
+                        <button 
+                            type='submit' 
+                            className="shadow appearance-none border rounded-lg w-16 py-2 px-3 mt-1 text-sm text-white bg-blue-900 leading-tight focus:outline-none focus:shadow-outline ml-auto"
+                        >
+                            Save
+                        </button>
+                </label>
+            </form>
+        )
+    }
+    
+    const EmailSettingField = ({name, email}) => {
+        return (
+            <div className='flex flex-col max-w-md'>
+                <p className="text-gray-800 text-sm mb-1 font-bold px-1">
+                    {name}
+                </p>
+                <div className='flex gap-0.5'>
+                    <textarea
+                    type="text"
+                    className="w-72 px-3 py-2 h-10 text-sm text-gray-700 border rounded-lg focus:outline-none resize-none focus:shadow-outline shadow bg-gray-100"
+                    placeholder={email}
+                    id="text"
+                    readOnly={true}
+                    ></textarea>
+                </div>
+            </div>
+        )
+    }
+    
+    const PasswordSettingField = () => {
+        return (
+            <form id="passwordSetting" onSubmit={handlePasswordSubmit} className='flex-col justify-between pt-1'>
+                {/* current password */}
+                <div className='flex justify-between gap-20'>
+                    <div className='flex-grow'>
+                        <SettingText text="Current Password"/>
+                        <textarea
+                        type="text"
+                        className="w-72 px-3 py-2 h-10 text-sm text-gray-700 border rounded-lg focus:outline-none resize-none focus:shadow-outline shadow bg-gray-100"
+                        placeholder={'********'}
+                        id="oldPassword"
+                        ></textarea>
+                    </div>
+                    <div className='flex-grow'>
+    
+                    </div>
+                </div>
+                {/* new password */}
+                <div className="flex justify-between gap-20 pt-3">
+                    <div className='flex-col'>
+                        <SettingText text="New Password"/>
+                        <textarea
+                        type="text"
+                        className="w-72 px-3 py-2 h-10 text-sm text-gray-700 border rounded-lg focus:outline-none resize-none focus:shadow-outline shadow bg-gray-100"
+                        placeholder={'********'}
+                        id="newPassword"
+                        ></textarea>
+                    </div>
+                    <div className='flex-col'>
+                        <SettingText text="Confirm New Password"/>
+                        <textarea
+                        type="text"
+                        className="w-72 px-3 py-2 h-10 text-sm text-gray-700 border rounded-lg focus:outline-none resize-none focus:shadow-outline shadow bg-gray-100"
+                        placeholder={'********'}
+                        id="confirmNewPassword"
+                        ></textarea>
+                    </div>
+                </div>
+                {/* update password button */}
+                <div>
+                    <button 
+                        type='submit' 
+                        className="shadow appearance-none border rounded-lg py-2 px-6 mt-4 text-sm text-white bg-blue-900 leading-tight focus:outline-none focus:shadow-outline ml-auto"
+                    >
+                        Update Password
+                    </button>
+                </div>
+            </form>
+        )
+    }
+    
+    const handlePasswordSubmit = (event) => {
+        event.preventDefault();
+        if (event.target.newPassword.value === event.target.confirmNewPassword.value) {
+            // password matched
+            setNewPassword(event.target.newPassword.value);
+            console.log({ ...data, "old_password": event.target.oldPassword.value, "new_password": event.target.newPassword.value});
+            updateSetting("/user/password/", { ...data, "old_password": event.target.oldPassword.value, "new_password": event.target.newPassword.value});
+        } else {
+            console.log("Confirm new password does NOT match");
+        }
+        /* TODO: set data to backend based on form id */
+    }
+    
+    const SettingText = ({text}) => {
+        return (
+            <p className="text-gray-800 text-sm mb-1 font-bold px-1">
+                {text}
+            </p>
+        )
+    }
+    
+    const SettingTopic = ({text}) => {
+        return (
+            <>
+                <p className="text-gray-800 text-sm mt-8 font-bold px-1 pl-8">
+                    {text}
+                </p>
+                <hr className='border-1 border-gray-300 max-w-4xl mb-3 ml-3'/>
+            </>
+        )
+    }
+    
+    const SettingTopicRed = ({text}) => {
+        return (
+            <>
+                <p className="text-red-600 text-sm mt-8 font-bold px-1 pl-8">
+                    {text}
+                </p>
+                <hr className='border-1 border-gray-300 max-w-4xl mb-3 ml-3'/>
+            </>
+        )
+    }
+    
+    const SettingTitle = ({text, Icon}) => {
+        return (
+            <>
+                <div className='flex mt-8 '>
+                    <Icon className="h-8 w-auto"/>
+                    <p className="text-gray-800 text-2xl font-bold px-1">
+                        {text}
+                    </p>
+                </div>
+                <hr className='border-1 border-gray-400 max-w-4xl mb-3'/>
+            </>
+        )
+    }
+    
+    const handleFieldSubmit = setOnSubmit => (event) => {
+        event.preventDefault();
+
+        const { name, value } = event.target.text;
+        setOnSubmit(value);
+        setData({ ...data, [name]: value});
+
+        updateSetting("/user/" + name + "/", { ...data, [name]: value});
+    }
+
+    const deleteAccount = () => {
+        console.log("delete account");
+        updateSetting("/account/deactivate");
+    }
+
+    const updatePrivacy = () => {
+        console.log({ ...data, "is_private": accountPublic});
+        updateSetting("/user/privacy/", { ...data, "is_private": accountPublic});
+    }
+
     return (
         <div className='flex-col h-screen overflow-y-scroll'>
             <div className="relative flex top-[59px] left-[38px] w-fit h-fit mb-24">
@@ -142,7 +367,7 @@ const Setting = () => {
                 Setting
                 </div>
             </div>
-            <div className='max-w-3xl mx-auto'>
+            <div className='w-3/4 max-w-4xl mx-auto'>
                 <RenderProfile/>
                 <RenderAccount/>
             </div>
@@ -152,177 +377,25 @@ const Setting = () => {
 
 export default Setting;
 
-const SettingField = ({formID, fieldTitle, fieldPlaceHolder, setOnSubmit}) => {
-    return (
-        <form id={formID} onSubmit={handleFieldSubmit(setOnSubmit)} className='mb-4'>
-            <label className='flex flex-col'>
-                <SettingText text={fieldTitle}/>
-                <div className='flex gap-0.5'>
-                    <input 
-                        type="username"
-                        className="flex-grow shadow appearance-none border rounded-lg w-max py-2 px-3 text-sm text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-100"
-                        placeholder={fieldPlaceHolder}
-                        id="text"
-                    />
-                    <button 
-                        type='submit' 
-                        className="shadow appearance-none border rounded-lg w-16 py-2 px-3 text-sm text-white bg-blue-700 leading-tight focus:outline-none focus:shadow-outline"
-                    >
-                        Edit
-                    </button>
-                </div>
-            </label>
-        </form>
-    )
-}
+export const getSetting = async (timeout = 0) => {
+    // check whether user is logged-in
+    const route = `/user/user_profile_settings`
 
-const SettingBioField = ({formID, fieldTitle, fieldPlaceHolder, setOnSubmit}) => {
-    return (
-        <form id={formID} onSubmit={handleFieldSubmit(setOnSubmit)} className='mb-3 max-w-4xl'>
-            <label className='flex flex-col'>
-                <SettingText text={fieldTitle}/>
-                    <textarea
-                        type="text"
-                        className="w-full h-32 px-3 py-2 text-sm text-gray-700 border rounded-lg focus:outline-none resize-none focus:shadow-outline shadow bg-gray-100"
-                        placeholder={fieldPlaceHolder}
-                        id="text"
-                    >
-                    </textarea>
-                    <button 
-                        type='submit' 
-                        className="shadow appearance-none border rounded-lg w-16 py-2 px-3 mt-1 text-sm text-white bg-blue-900 leading-tight focus:outline-none focus:shadow-outline ml-auto"
-                    >
-                        Save
-                    </button>
-            </label>
-        </form>
-    )
-}
-
-const EmailSettingField = ({name, email}) => {
-    return (
-        <div className='flex flex-col max-w-md'>
-            <p className="text-gray-800 text-sm mb-1 font-bold px-1">
-                {name}
-            </p>
-            <div className='flex gap-0.5'>
-                <textarea
-                type="text"
-                className="w-72 px-3 py-2 h-10 text-sm text-gray-700 border rounded-lg focus:outline-none resize-none focus:shadow-outline shadow bg-gray-100"
-                placeholder={email}
-                id="text"
-                readOnly={true}
-                ></textarea>
-            </div>
-        </div>
-    )
-}
-
-const PasswordSettingField = ({currentPassword, setCurrentPassword, newPassword, setNewPassword}) => {
-    return (
-        <form id="passwordSetting" onSubmit={handlePasswordSubmit} className='flex-col justify-between pt-1'>
-            {/* current password */}
-            <div className='flex justify-between gap-20'>
-                <div className='flex-grow'>
-                    <SettingText text="Current Password"/>
-                    <textarea
-                    type="text"
-                    className="w-72 px-3 py-2 h-10 text-sm text-gray-700 border rounded-lg focus:outline-none resize-none focus:shadow-outline shadow bg-gray-100"
-                    placeholder={'********'}
-                    id="currentPassword"
-                    ></textarea>
-                </div>
-                <div className='flex-grow'>
-
-                </div>
-            </div>
-            {/* new password */}
-            <div className="flex justify-between gap-20 pt-3">
-                <div className='flex-col'>
-                    <SettingText text="New Password"/>
-                    <textarea
-                    type="text"
-                    className="w-72 px-3 py-2 h-10 text-sm text-gray-700 border rounded-lg focus:outline-none resize-none focus:shadow-outline shadow bg-gray-100"
-                    placeholder={'********'}
-                    id="newPassword"
-                    ></textarea>
-                </div>
-                <div className='flex-col'>
-                    <SettingText text="Confirm New Password"/>
-                    <textarea
-                    type="text"
-                    className="w-72 px-3 py-2 h-10 text-sm text-gray-700 border rounded-lg focus:outline-none resize-none focus:shadow-outline shadow bg-gray-100"
-                    placeholder={'********'}
-                    id="confirmNewPassword"
-                    ></textarea>
-                </div>
-            </div>
-            {/* update password button */}
-            <div>
-                <button 
-                    type='submit' 
-                    className="shadow appearance-none border rounded-lg py-2 px-6 mt-4 text-sm text-white bg-blue-900 leading-tight focus:outline-none focus:shadow-outline ml-auto"
-                >
-                    Update Password
-                </button>
-            </div>
-        </form>
-    )
-}
-
-const handlePasswordSubmit = (event) => {
-    event.preventDefault();
-    if (event.target.newPassword.value === event.target.confirmNewPassword.value) {
-        console.log("Confirm new password matched");
-    } else {
-        console.log("Confirm new password does NOT match");
+    try {
+        let response = await axiosInstance.get(route, { timeout: timeout });
+        return response;
+    } catch (error) {
+        console.error("Fail GetSetting()");
     }
-    /* TODO: set data to backend based on form id */
 }
 
-const SettingText = ({text}) => {
-    return (
-        <p className="text-gray-800 text-sm mb-1 font-bold px-1">
-            {text}
-        </p>
-    )
-}
-
-const SettingTopic = ({text}) => {
-    return (
-        <>
-            <p className="text-gray-800 text-sm mt-8 font-bold px-1 pl-8">
-                {text}
-            </p>
-            <hr className='border-1 border-gray-300 max-w-4xl mb-3 ml-3'/>
-        </>
-    )
-}
-
-const SettingTopicRed = ({text}) => {
-    return (
-        <>
-            <p className="text-red-600 text-sm mt-8 font-bold px-1 pl-8">
-                {text}
-            </p>
-            <hr className='border-1 border-gray-300 max-w-4xl mb-3 ml-3'/>
-        </>
-    )
-}
-
-const SettingTitle = ({text}) => {
-    return (
-        <>
-            <p className="text-gray-800 text-2xl mt-8 font-bold px-1">
-                {text}
-            </p>
-            <hr className='border-1 border-gray-400 max-w-4xl mb-3'/>
-        </>
-    )
-}
-
-const handleFieldSubmit = setOnSubmit => (event) => {
-    event.preventDefault();
-    setOnSubmit(event.target.text.value);
-    /* TODO: set data to backend based on form id */
+export const updateSetting = async (route, body, timeout = 10000) => {
+    try {
+        let response = await axiosInstance.put(route, body, { timeout: timeout });
+        console.log(response);
+        return response;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
 }

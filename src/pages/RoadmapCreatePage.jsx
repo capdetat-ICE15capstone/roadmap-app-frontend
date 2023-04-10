@@ -30,7 +30,7 @@ const MAX_RMDESCRIPTION_LENGTH = 255;
 const notificationDayOption = [1, 3, 5, 7, 14];
 const notificationOption = {
   options: ["No notification"],
-  optionValues: [{ on: false }],
+  optionValues: [{ on: false, detail: { day: 0, beforeDueDate: false } }],
 };
 
 notificationDayOption.forEach((day) => {
@@ -172,7 +172,10 @@ const RoadmapCreatePage = (props) => {
   const [editTaskID, setEditTaskID] = useState(0);
   const [lastId, setLastId] = useState(0);
   const [isPublic, setPublic] = useState(true);
-  const [notiStatus, setNotiStatus] = useState({ on: false });
+  const [notiStatus, setNotiStatus] = useState({
+    on: false,
+    detail: { day: 0, beforeDueDate: false },
+  });
   const [tags, setTags] = useState([]);
   const [publicModal, setPublicModal] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -216,7 +219,7 @@ const RoadmapCreatePage = (props) => {
   const setUpNotification = (roadmap) => {
     console.log(roadmap);
     if (roadmap.reminder_time === 0) {
-      return { on: false };
+      return { on: false, detail: { day: 0, beforeDueDate: false } };
     }
     return {
       on: true,
@@ -232,7 +235,7 @@ const RoadmapCreatePage = (props) => {
     if (mode === "edit" || mode === "clone") {
       // check whether the user could view this page
       if (!isUserLoggedIn) {
-        alert("unauthorized")
+        alert("unauthorized");
       }
       // check if state is available
       if (state !== null && state !== undefined) {
@@ -473,7 +476,7 @@ const RoadmapCreatePage = (props) => {
       const taskIntersection = initState.find(
         (inittask) => task.id === inittask.id
       );
-      console.log(taskIntersection)
+      console.log(taskIntersection);
 
       // if (taskIntersection === undefined) return;
 
@@ -533,7 +536,7 @@ const RoadmapCreatePage = (props) => {
   };
 
   const compareTagChange = () => {
-    console.log(searchTags())
+    console.log(searchTags());
     let tagChanges = { add: [], delete: [] };
     initialState.current.tags.forEach((inittag) => {
       if (tags.find((tag) => inittag === tag) === undefined)
@@ -661,13 +664,16 @@ const RoadmapCreatePage = (props) => {
     // Begin the spinner
     setLoading(true);
     await generateNotificationObjects();
-    if (await handleSendingApi(
-      roadmapChange,
-      taskChange,
-      subTaskChange,
-      taskRelationChange,
-      tagChanges
-    )) navigate("/")
+    if (
+      await handleSendingApi(
+        roadmapChange,
+        taskChange,
+        subTaskChange,
+        taskRelationChange,
+        tagChanges
+      )
+    )
+      navigate("/");
     setLoading(false);
     // navigate("/");
   };
