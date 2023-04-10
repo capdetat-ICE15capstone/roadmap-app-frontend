@@ -42,7 +42,7 @@ const Navbar = () => {
               parentDivClass="bg-blue-800 py-5" />
           </div>
         </div>
-        <div className="flex flex-col grow">
+        <div className="flex flex-col w-full max-w-full overflow-auto">
           <Outlet />
         </div>
       </div>
