@@ -63,13 +63,9 @@ const SearchPage = () => {
 
   // use roadmap name (searchValue) to get an array of corresponding rid
   async function getRid(searchValue) {
-    const route = "/search/roadmap";
+    const route = "/search/roadmap?title=" + searchValue;
     try {
-      const response = await axiosInstance.get(route, {
-        params: {
-          searchValue: searchValue
-        }
-      });
+      const response = await axiosInstance.get(route);
       console.log("Below is getRid RESPONSE DATA : ")
       console.log(response.data);
       return response.data;
@@ -97,6 +93,20 @@ const SearchPage = () => {
     }
   }
 
+   // use a string of rids (rids) to get corresponding roadmap data
+   async function getRoadmap2(rids) {
+    const route = "/feed/roadmap?rids=" + rids;
+    try {
+      const response = await axiosInstance.get(route);
+      console.log("Below is getRoadmap RESPONSE DATA : ")
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
   // fetch roadmap data or user data according to user search input
   const fetchData = async (type) => {
     if (isFetching) return; // return if a fetch is already in progress
@@ -109,13 +119,15 @@ const SearchPage = () => {
         const ridData = await ridResponse;
         console.log("Below is ridData");
         console.log(ridData);
-        const ridString = ridData.search_result.join(","); // join members in ridData(array) together as a string
+        const ridString = ridData.search_result.join(`,`); // join members in ridData(array) together as a string
+        //const newRidString = ridString.replace(/\s/g, '');
+        //const newRidString2 = '"'+newRidString+'"';
+        const ridString2 = encodeURIComponent(ridString);
         console.log("Below is ridString");
         console.log(ridString);
-        const newRidString = ridString.replace(/\s/g, '');
-        console.log("Below is newRidString");
-        console.log(newRidString);
-        const response = await getRoadmap(newRidString);
+        console.log("Below is ridString2");
+        console.log(ridString2);
+        const response = await getRoadmap2(ridString2);
         const data = await response;
         const newArray = [...data];
         setRoadmapArray(prevArray => [...prevArray, ...newArray]);
