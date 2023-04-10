@@ -61,7 +61,7 @@ function App() {
             <Route path="/" element={<Navbar />}>
               <Route index element={<Home />} />
               <Route
-                path="home"
+                path=""
                 element={
                   <Suspense fallback={<Spinner />}>
                     <Home />
