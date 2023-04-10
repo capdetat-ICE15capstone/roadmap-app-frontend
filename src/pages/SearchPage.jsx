@@ -18,9 +18,11 @@ const SearchPage = () => {
   const [isFetching, setIsFetching] = useState(false);
   const isMountedRef = useRef(false);
   const [roadmapArray, setRoadmapArray] = useState([]);
-  const [ridArray, setRidArray] = useState([]);
+  //const [ridArray, setRidArray] = useState([]);
   const [userArray, setUserArray] = useState([]);
   const [uidArray, setUidArray] = useState([]);
+  const [roadmapFound, setRoadmapFound] = useState(false);
+  const [userFound, setUserFound] = useState(false);
 
 
   // classify user input (roadmap(""), user("@"), tag("#"))
@@ -75,15 +77,27 @@ const SearchPage = () => {
     }
   }
 
+  // use roadmap tag (searchValue) to get an array of corresponding rid
+  async function getTagRid(searchValue) {
+    const route = "/search/%23" + searchValue.substring(1);
+    try {
+      console.log("Below is ROUTE : ")
+      console.log(route);
+      const response = await axiosInstance.get(route);
+      console.log("Below is getTagRid RESPONSE DATA : ")
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
   // use a string of rids (rids) to get corresponding roadmap data
   async function getRoadmap(rids) {
-    const route = "/feed/roadmap";
+    const route = "/feed/roadmap?rids=" + rids;
     try {
-      const response = await axiosInstance.get(route, {
-        params: {
-          rids: rids
-        }
-      });
+      const response = await axiosInstance.get(route);
       console.log("Below is getRoadmap RESPONSE DATA : ")
       console.log(response.data);
       return response.data;
@@ -93,12 +107,28 @@ const SearchPage = () => {
     }
   }
 
-   // use a string of rids (rids) to get corresponding roadmap data
-   async function getRoadmap2(rids) {
-    const route = "/feed/roadmap?rids=" + rids;
+  // use username (searchValue) to get an array of corresponding uid
+  async function getUid(searchValue) {
+    const route = "/search/users?username=" + searchValue.substring(1);
+    try {
+      console.log("Below is ROUTE : ")
+      console.log(route);
+      const response = await axiosInstance.get(route);
+      console.log("Below is getUid RESPONSE DATA : ")
+      console.log(response.data);
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
+  // use a string of uids (uids) to get corresponding roadmap data
+  async function getUser(uids) {
+    const route = "/feed/user?uids=" + uids;
     try {
       const response = await axiosInstance.get(route);
-      console.log("Below is getRoadmap RESPONSE DATA : ")
+      console.log("Below is getUser RESPONSE DATA : ")
       console.log(response.data);
       return response.data;
     } catch (error) {
@@ -116,45 +146,64 @@ const SearchPage = () => {
       if (type === "roadmap") {
         console.log("fetch using roadmap")
         const ridResponse = await getRid(searchValue); // use searchValue to get an array of rid
-        const ridData = await ridResponse;
-        console.log("Below is ridData");
-        console.log(ridData);
-        const ridString = ridData.search_result.join(`,`); // join members in ridData(array) together as a string
-        //const newRidString = ridString.replace(/\s/g, '');
-        //const newRidString2 = '"'+newRidString+'"';
-        const ridString2 = encodeURIComponent(ridString);
-        console.log("Below is ridString");
-        console.log(ridString);
-        console.log("Below is ridString2");
-        console.log(ridString2);
-        const response = await getRoadmap2(ridString2);
-        const data = await response;
-        const newArray = [...data];
-        setRoadmapArray(prevArray => [...prevArray, ...newArray]);
-        // search tag case
+        // case : rid is found => use rid to fetch for roadmap data and set roadmapFound to true
+        if (ridResponse.search_result && ridResponse.search_result.length > 0) {
+          console.log('ridResponse is NOT EMPTY');
+          setRoadmapFound(true);
+          const ridString = ridResponse.search_result.join(`,`); // join members in ridData(array) together as a string
+          const ridString2 = encodeURIComponent(ridString);
+          const response = await getRoadmap(ridString2);
+          const data = await response;
+          const newArray = [...data];
+          setRoadmapArray(prevArray => [...prevArray, ...newArray]);
+          // case : rid not found => don't fetch and set roadmapFound to false
+        } else {
+          console.log('ridResponse is EMPTY');
+          setRoadmapFound(false);
+        }
+      // search tag case
       } else if (type === "tag") {
         console.log("fetch using tag")
-        const response = await fetch(`http://localhost:3000/multipleRoadmaps`);
-        const data = await response.json();
-        let newArray = [];
-        data.forEach((data) => {
-          newArray = newArray.concat(data.roadmapArray);
-        });
-        setRoadmapArray(prevArray => [...prevArray, ...newArray]);
-        // search user case
+        const ridResponse = await getTagRid(searchValue); // use searchValue to get an array of rid
+        // case : rid is found => use rid to fetch for roadmap data and set roadmapFound to true
+        if (ridResponse.search_result && ridResponse.search_result.length > 0) {
+          console.log('ridResponse is NOT EMPTY');
+          setRoadmapFound(true);
+          const ridString = ridResponse.search_result.join(`,`); // join members in ridData(array) together as a string
+          const ridString2 = encodeURIComponent(ridString);
+          const response = await getRoadmap(ridString2);
+          const data = await response;
+          const newArray = [...data];
+          setRoadmapArray(prevArray => [...prevArray, ...newArray]);
+          // case : rid not found => don't fetch and set roadmapFound to false
+        } else {
+          console.log('ridResponse is EMPTY');
+          setRoadmapFound(false);
+        }
+      // search user case
       } else if (type === "user") {
         console.log("fetch using user")
-        const response = await fetch(`http://localhost:3000/searchUsers`);
-        const data = await response.json();
-        let newArray = [];
-        data.forEach((data) => {
-          newArray = newArray.concat(data.userArray);
-        });
-        setUserArray(prevArray => [...prevArray, ...newArray]);
+        const uidResponse = await getUid(searchValue); // use searchValue to get an array of uid
+         // case : uid is found => use uid to fetch for user data and set userFound to true
+         if (uidResponse.search_result && uidResponse.search_result.length > 0) {
+          console.log('uidResponse is NOT EMPTY');
+          setUserFound(true);
+          const uidString = uidResponse.search_result.join(`,`); // join members in ridData(array) together as a string
+          const uidString2 = encodeURIComponent(uidString);
+          const response = await getUser(uidString2);
+          const data = await response;
+          const newArray = [...data];
+          setUserArray(prevArray => [...prevArray, ...newArray]);
+          // case : uid not found => don't fetch and set userFound to false
+        } else {
+          console.log('uidResponse is EMPTY');
+          setUserFound(false);
+        }
       }
     } catch (error) {
       console.log(error);
     }
+    console.log("RUNNNNNNNNNNNNNNNNNNNNNNNNNNNN");
     setIsFetching(false); // set isFetching to false to indicate a fetch is complete
   };
 
@@ -167,22 +216,22 @@ const SearchPage = () => {
     }
     if (searchType === "roadmap") {
       setRoadmapArray([]);
-      fetchData(searchType);
       console.log("USEEFFECT roadmap")
+      fetchData(searchType);
       setShowUserResult(false);
       setShowRoadmapResult(true);
       return;
     } else if (searchType === "tag") {
       setRoadmapArray([]);
-      fetchData(searchType);
       console.log("USEEFFECT tag")
+      fetchData(searchType);
       setShowUserResult(false);
       setShowRoadmapResult(true);
       return;
     } else if (searchType === "user") {
       setUserArray([]);
-      fetchData(searchType);
       console.log("USEEFFECT user")
+      fetchData(searchType);
       setShowRoadmapResult(false);
       setShowUserResult(true);
       return;
@@ -194,7 +243,6 @@ const SearchPage = () => {
     <>
       <div className='flex flex-col h-full w-full bg-white overflow-y-auto relative'>
         {/* Top (title & search bar)*/}
-
         <div className='flex justify-center sticky top-0 z-50 bg-white pt-8 pb-2 flex-wrap'>
           <div className='flex w-full md:w-3/4 justify-between'>
             {/*Feed Title*/}
@@ -220,7 +268,7 @@ const SearchPage = () => {
         </div>
         {/* Bottom (show roadmap or user banner)*/}
         {/* roadmaps */}
-        {showRoadmapResult && (
+        {showRoadmapResult && roadmapFound && (
           <div>
             <div className='flex justify-center my-8'>
               <div className='flex flex-wrap items-start w-3/4 gap-20'>
@@ -244,22 +292,32 @@ const SearchPage = () => {
             </div>
           </div>
         )}
+        {showRoadmapResult && !roadmapFound && (
+          <div className='text-center my-8'>
+            <p>Roadmap not found</p>
+          </div>
+        )}
         {/* user banners */}
-        {showUserResult && (
+        {showUserResult && userFound && (
           <div>
             <div className='my-8'>
               <div className=''>
                 {userArray.map((user, index) => (
                   <UserBanner
                     key={index}
-                    owner_id={user.owner_id}
-                    owner_name={user.owner_name}
-                    user_exp={user.user_exp}
-                    avatar_id={user.avatar_id}
+                    uid={user.uid}
+                    username={user.username}
+                    profile_picture_id={user.profile_picture_id}
+                    exp={user.exp}
                   />
                 ))}
               </div>
             </div>
+          </div>
+        )}
+         {showUserResult && !userFound && (
+          <div className='text-center my-8'>
+            <p>User not found</p>
           </div>
         )}
       </div>
