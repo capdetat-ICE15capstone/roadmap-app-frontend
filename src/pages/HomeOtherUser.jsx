@@ -30,9 +30,6 @@ const HomeOtherUser = () => {
     setIsActive(false)
   }
 
-  const deleteRoadmap = () => 
-    setIsDeleteClick(!isDeleteClick)
-
   return (
     <>
       <div className="flex flex-col h-screen overflow-scroll overflow-x-hidden">

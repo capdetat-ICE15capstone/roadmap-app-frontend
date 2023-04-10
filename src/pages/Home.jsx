@@ -57,22 +57,6 @@ const Home = () => {
     }
   },[noOfRoadmap, isLimit])
 
-  async function goToMyHome() {
-    const route = `/home/me`;
-
-    try {
-      const response = await axiosInstance
-        .get(route)
-        .then((res) => res.data)
-        .catch(() => {
-          throw new Error("error");
-        });
-      console.log(response);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
   return (
     <>
       <div className="flex flex-col h-screen overflow-scroll overflow-x-hidden">
