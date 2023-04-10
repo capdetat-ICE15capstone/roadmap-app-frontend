@@ -7,14 +7,14 @@ import {
   editRoadmap,
 } from "../functions/roadmapFunction.jsx";
 import Spinner from "../components/Spinner";
-import { isUserPremium } from "../functions/userFunction";
+import { isUserLoggedIn, isUserPremium } from "../functions/userFunction";
 import { CustomSVG, getTWFill } from "../components/CustomSVG";
 import { ReactComponent as AddButton } from "../assets/addButton.svg";
 import TwoButtonModal from "../components/TwoButtonModal";
 import { ReactComponent as Check } from "../assets/check.svg";
 import { DragDropContext, Draggable } from "react-beautiful-dnd";
 import { StrictModeDroppable } from "../components/StrictModeDroppable";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { ReactComponent as NotiOff } from "../assets/notification/notiOff.svg";
 import { ReactComponent as NotiOn } from "../assets/notification/notiOn.svg";
 
@@ -28,46 +28,126 @@ const MAX_TASKS_NONPREMIUM = 16;
 const MAX_RMNAME_LENGTH = 30;
 const MAX_RMDESCRIPTION_LENGTH = 255;
 const notificationDayOption = [1, 3, 5, 7, 14];
-
-const usePreviousState = (value) => {
-  const ref = useRef();
-  useEffect(() => {
-    ref.current = value;
-  });
-  return ref.current;
+const notificationOption = {
+  options: ["No notification"],
+  optionValues: [{ on: false }],
 };
+
+notificationDayOption.forEach((day) => {
+  return [true, false].forEach((beforeDueDate) => {
+    notificationOption.optionValues.push({
+      on: true,
+      detail: {
+        day: day,
+        beforeDueDate: beforeDueDate,
+      },
+    });
+    notificationOption.options.push(
+      `${day} days before ${beforeDueDate ? "due" : "start"} date`
+    );
+  });
+});
 
 const TaskItem = ({ task, setEditTaskID, setModalState }) => {
   // Task node Component
   return (
     <div className="relative break-words w-32">
-    <div className="flex after:h-1 after:w-full after:bg-black after:absolute after:top-[30px] after:-z-10 justify-center">
-      <div className="flex">
-        <div className="flex flex-col gap-2 items-center">
-          <button
-            type="button"
-            disabled={task.isDone}
-            onClick={() => {
-              setEditTaskID(task.id);
-              setModalState(true);
-            }}
-          >
-            <Check hidden={!task.isDone} className="absolute" />
-            <CustomSVG
-              type={task.nodeShape}
-              className={`${getTWFill(task.nodeColor)}`}
-              size={60}
-              isStrokeOn={true}
-            />
-          </button>
-          <div className="w-4/5 absolute bottom-0 translate-y-[calc(100%_+_10px)]">
-            <span className="block font-bold mx-auto text-center leading-5 font-nunito-sans">
-              {task.name === "" ? "MileStone" : task.name}
-            </span>
+      <div className="flex after:h-1 after:w-full after:bg-black after:absolute after:top-[30px] after:-z-10 justify-center">
+        <div className="flex">
+          <div className="flex flex-col gap-2 items-center">
+            <button
+              type="button"
+              disabled={task.isDone}
+              onClick={() => {
+                setEditTaskID(task.id);
+                setModalState(true);
+              }}
+            >
+              <Check hidden={!task.isDone} className="absolute" />
+              <CustomSVG
+                type={task.nodeShape}
+                className={`${getTWFill(task.nodeColor)}`}
+                size={60}
+                isStrokeOn={true}
+              />
+            </button>
+            <div className="w-4/5 absolute bottom-0 translate-y-[calc(100%_+_10px)]">
+              <span className="block font-bold mx-auto text-center leading-5 font-nunito-sans">
+                {task.name === "" ? "Milestone" : task.name}
+              </span>
+            </div>
           </div>
         </div>
       </div>
     </div>
+  );
+};
+
+const DropDownMenu = ({
+  options,
+  optionValues,
+  currentOption,
+  setOption,
+  optionComparer,
+  Icon,
+  className,
+}) => {
+  const [isMenuShowing, setIsMenuShowing] = useState(false);
+
+  useEffect(() => {
+    optionValues = optionValues ?? options;
+  }, []);
+
+  useEffect(() => {
+    console.log(currentOption);
+  }),
+    [currentOption];
+
+  const handleMenuShowUnshow = (event) => {
+    event.preventDefault();
+    setIsMenuShowing((isMenuShowing) => !isMenuShowing);
+  };
+
+  const handleSetOption = (event, value) => {
+    event.preventDefault();
+    setOption(value);
+    setIsMenuShowing((isMenuShowing) => !isMenuShowing);
+  };
+
+  return (
+    <div className={className}>
+      <button onClick={handleMenuShowUnshow} type="button">
+        <Icon />
+      </button>
+      {isMenuShowing ? (
+        <AnimatePresence>
+          <motion.div
+            className="absolute bg-white border rounded-md flex flex-col right-0"
+            initial={{ y: "-50%", opacity: 0, scale: 0 }}
+            animate={{ y: "0%", opacity: 1, scale: 1 }}
+            exit={{ y: "-50%", opacity: 0, scale: 0 }}
+          >
+            {options.map((option, index) => {
+              return (
+                <button
+                  onClick={(event) =>
+                    handleSetOption(event, optionValues[index])
+                  }
+                  className={`font-bold whitespace-nowrap inline-block p-2 justify-center border hover:scale-125 duration-200 transition hover:bg-yellow-300 justify-self-center ${
+                    optionComparer(optionValues[index], currentOption) === true
+                      ? "bg-gray-300"
+                      : "bg-white"
+                  }`}
+                  type="button"
+                  key={JSON.stringify(optionValues[index])}
+                >
+                  {option}
+                </button>
+              );
+            })}
+          </motion.div>
+        </AnimatePresence>
+      ) : null}
     </div>
   );
 };
@@ -79,6 +159,7 @@ const RoadmapCreatePage = (props) => {
     description: "",
     isPublic: true,
     tasks: [],
+    tags: [],
   });
   const { mode } = props; // props from parent
   const { state } = useLocation(); // state from previous page, including fetched roadmap data
@@ -91,8 +172,6 @@ const RoadmapCreatePage = (props) => {
   const [editTaskID, setEditTaskID] = useState(0);
   const [lastId, setLastId] = useState(0);
   const [isPublic, setPublic] = useState(true);
-  const [edges, setEdges] = useState([]);
-  const [tasksRef, setTasksRef] = useState([]); // [{from: rid1, to: rid2}]
   const [notiStatus, setNotiStatus] = useState({ on: false });
   const [tags, setTags] = useState([]);
   const [publicModal, setPublicModal] = useState(false);
@@ -101,14 +180,6 @@ const RoadmapCreatePage = (props) => {
   useEffect(() => {
     setUpRoadmap();
   }, []);
-
-  useEffect(() => {
-    addEdges();
-  }, [tasksRef]);
-
-  useEffect(() => {
-    console.log(tasks);
-  }, [tasks]);
 
   useEffect(() => {
     // display confirm message when user try to leave the page
@@ -142,18 +213,39 @@ const RoadmapCreatePage = (props) => {
     return x;
   };
 
+  const setUpNotification = (roadmap) => {
+    console.log(roadmap);
+    if (roadmap.reminder_time === 0) {
+      return { on: false };
+    }
+    return {
+      on: true,
+      detail: {
+        beforeDueDate: !roadmap.is_before_start_time,
+        day: roadmap.reminder_time,
+      },
+    };
+  };
+
   const setUpRoadmap = async () => {
     // use to load roadmap page into edit or clone page
     if (mode === "edit" || mode === "clone") {
+      // check whether the user could view this page
+      if (!isUserLoggedIn) {
+        alert("unauthorized")
+      }
       // check if state is available
       if (state !== null && state !== undefined) {
         // set up the data to variable
+        const notificationObject = setUpNotification(state.roadmap);
         if (mode === "edit") {
           initialState.current = {
             name: state.roadmap.name,
             description: state.roadmap.description,
             isPublic: state.roadmap.isPublic,
             tasks: state.roadmap.tasks,
+            tags: state.roadmap.tags,
+            notiStatus: notificationObject,
           };
         }
         let highestID = 0;
@@ -166,12 +258,21 @@ const RoadmapCreatePage = (props) => {
         setRMDesc(state.roadmap.description);
         setTasks(state.roadmap.tasks);
         setPublic(state.roadmap.isPublic);
-        setLastId((lastId) => highestID + 1);
+        setTags(state.roadmap.tags);
+        setNotiStatus(notificationObject);
+        setLastId(highestID + 1);
+        // setLastId((lastId) => highestID + 1);
       } else {
         // fetch the roadmap data
         // then set the data to variable
         setLoading(true);
         const tempRoadmap = await getRoadmap(id, 10000, false);
+        if (tempRoadmap === null) {
+          setLoading(false);
+          alert("error");
+          navigate("/");
+        }
+        const notificationObject = setUpNotification(tempRoadmap);
         if (tempRoadmap !== null) {
           if (mode === "edit") {
             initialState.current = {
@@ -179,6 +280,8 @@ const RoadmapCreatePage = (props) => {
               description: tempRoadmap.description,
               isPublic: tempRoadmap.isPublic,
               tasks: tempRoadmap.tasks,
+              tags: tempRoadmap.tags,
+              notiStatus: notificationObject,
             };
           }
           let highestID = 0;
@@ -191,7 +294,10 @@ const RoadmapCreatePage = (props) => {
           setRMDesc(tempRoadmap.description);
           setTasks(tempRoadmap.tasks);
           setPublic(tempRoadmap.isPublic);
-          setLastId((lastId) => highestID + 1);
+          setTags(tempRoadmap.tags);
+          setNotiStatus(notificationObject);
+          setLastId(highestID + 1);
+          // setLastId((lastId) => highestID + 1);
         } else {
           alert("GET error");
           navigate("/");
@@ -200,7 +306,6 @@ const RoadmapCreatePage = (props) => {
       }
     }
 
-    //
     if (mode === "clone") {
       setTasks((tasks) =>
         tasks.map((task) => {
@@ -225,45 +330,8 @@ const RoadmapCreatePage = (props) => {
       }
     });
 
+    console.log(allTags);
     setTags(allTags);
-  };
-
-  const addRef = (id, preref) => {
-    // add ref from all the tasks node into a container array
-    if (tasksRef.findIndex((tRef) => tRef.id === id) === -1 && preref) {
-      setTasksRef((tasksRef) => [...tasksRef, { id: id, ref: preref }]);
-    }
-  };
-
-  const addEdges = () => {
-    // add edges object when new task is created
-    if (tasksRef.length <= 1) {
-      return;
-    }
-    const lastTwo = tasks.slice(-2);
-    // setEdges(edges => [...edges, {from: tasksRef.find((r) => r.id === lastTwo[0].id).ref , to: tasksRef.find((r) => r.id === lastTwo[1].id).ref}])
-    // setEdges([...edges, { from: lastTwo[0].id, to: lastTwo[1].id }]);
-    const firstPos = tasksRef.find((r) => r.id === lastTwo[0].id).ref;
-    const secondPos = tasksRef.find((r) => r.id === lastTwo[1].id).ref;
-    setEdges([
-      ...edges,
-      {
-        from: {
-          id: lastTwo[0].id,
-          x: firstPos.offsetLeft,
-          y: firstPos.offsetTop,
-        },
-        to: {
-          id: lastTwo[1].id,
-          x: secondPos.offsetLeft,
-          y: secondPos.offsetTop,
-        },
-      },
-    ]);
-  };
-
-  const editEdges = () => {
-    // find the tasks that switch location or was deleted and recalculate the edges
   };
 
   const editTaskCallBack = (status, submissionObject) => {
@@ -295,9 +363,9 @@ const RoadmapCreatePage = (props) => {
             task.id === submissionObject.id ? submissionObject : task
           )
         );
-        initialState.current.tasks.forEach((task) => {
-          // THIS DO NOT WORK
-          if (task.id === submissionObject.id) task = submissionObject;
+        initialState.current.tasks = initialState.current.tasks.map((task) => {
+          if (task.id === submissionObject.id) return submissionObject;
+          return task;
         });
         break;
       case "failed":
@@ -308,9 +376,6 @@ const RoadmapCreatePage = (props) => {
         // user click delete task button
         setTasks((tasks) =>
           tasks.filter((task) => task.id !== submissionObject.id)
-        );
-        setTasksRef((tasksref) =>
-          tasksref.filter((tRef) => tRef.id !== submissionObject.id)
         );
         setHasUnsavedChanges(true);
         break;
@@ -359,14 +424,27 @@ const RoadmapCreatePage = (props) => {
     setTasks(items);
   };
 
-  const checkRoadmapChange = () => {
-    // return bool
+  const compareRoadmapChange = () => {
+    // compare name, desc, public, notisetting
+    // If detect change, return full object
+    // if no change, return null;
     if (
-      RMName !== initialState.name ||
-      RMDesc !== initialState.description ||
-      isPublic !== initialState.isPublic
+      RMName !== initialState.current.name ||
+      RMDesc !== initialState.current.description ||
+      isPublic !== initialState.current.isPublic ||
+      JSON.stringify(notiStatus) !==
+        JSON.stringify(initialState.current.notiStatus) ||
+      mode === "create" ||
+      mode === "clone"
     )
-      return false;
+      return {
+        id: id ?? null,
+        name: RMName,
+        description: RMDesc,
+        isPublic: isPublic,
+        notiStatus: notiStatus,
+      };
+    return null;
   };
 
   const compareTaskChange = (initState, newState) => {
@@ -395,12 +473,11 @@ const RoadmapCreatePage = (props) => {
       const taskIntersection = initState.find(
         (inittask) => task.id === inittask.id
       );
+      console.log(taskIntersection)
 
-      if (!taskIntersection) {
-        // deleted subtask
-        subtaskChange.delete.push(subtask);
-        return;
-      } else if (
+      // if (taskIntersection === undefined) return;
+
+      if (
         taskIntersection.hasFetched === true &&
         (task.name !== taskIntersection.name ||
           task.description !== taskIntersection.description ||
@@ -441,6 +518,8 @@ const RoadmapCreatePage = (props) => {
       const taskIntersection = initState.find(
         (initsubtask) => subtask.id === initsubtask.id
       );
+
+      if (taskIntersection === undefined) return;
       if (
         subtask.detail !== taskIntersection.detail ||
         subtask.status !== taskIntersection.status
@@ -453,50 +532,79 @@ const RoadmapCreatePage = (props) => {
     return subtaskChange;
   };
 
+  const compareTagChange = () => {
+    console.log(searchTags())
+    let tagChanges = { add: [], delete: [] };
+    initialState.current.tags.forEach((inittag) => {
+      if (tags.find((tag) => inittag === tag) === undefined)
+        tagChanges.delete.push(inittag);
+    });
+
+    tags.forEach((tag) => {
+      if (
+        initialState.current.tags.find((inittag) => inittag === tag) ===
+        undefined
+      )
+        tagChanges.add.push(tag);
+    });
+
+    return tagChanges;
+  };
+
+  const compareNotificationChange = (noti1, noti2) => {
+    if (noti1.on !== noti2.on) return false;
+    if (noti1.on === false && noti2.on === false) return true;
+    if (
+      noti1.detail.beforeDueDate !== noti2.detail.beforeDueDate ||
+      noti1.detail.day !== noti2.detail.day
+    )
+      return false;
+    return true;
+  };
+
   const handleSendingApi = async (
     roadmapObject,
     taskChange,
     subtaskChange,
-    relationChange
+    relationChange,
+    tagChanges
   ) => {
     if (mode === "create" || mode === "clone") {
       if (
         (await createRoadmap(roadmapObject, taskChange, subtaskChange)) === null
       ) {
-        alert("Send error");
-      } else {
-        console.log("send succeeded");
+        return false;
       }
+      return true;
     } else if (mode === "edit") {
-      relationChange = relationChange
-        ? roadmapObject.tasks.map((task) => task.id)
-        : null;
       if (
         (await editRoadmap(
           id,
           roadmapObject,
           taskChange,
           subtaskChange,
-          relationChange
+          relationChange,
+          tagChanges
         )) === null
       ) {
-        alert("Send error");
-      } else {
-        console.log("send succeeded");
+        return false;
       }
+      return true;
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await searchTags();
 
-    let taskChange = { add: [], edit: [], delete: [] };
+    // let taskChange = { add: [], edit: [], delete: [] };
     let subTaskChange = { add: [], edit: [], delete: [] };
-    let taskRelationChange = false;
+    let taskRelationChange = null;
+
+    // check for rm name, description, publicity change
+    let roadmapChange = compareRoadmapChange();
 
     // check for task change
-    taskChange = compareTaskChange(initialState.current.tasks, tasks);
+    let taskChange = compareTaskChange(initialState.current.tasks, tasks);
 
     // check for subtask change
     tasks.forEach((task) => {
@@ -524,37 +632,47 @@ const RoadmapCreatePage = (props) => {
     const newTaskRelation = tasks.map((task) => task.id);
     taskRelationChange =
       initialState.current.tasks.map((task) => task.id).toString() !==
-      newTaskRelation.toString();
+      newTaskRelation.toString()
+        ? newTaskRelation
+        : null;
 
+    const completeRoadmap = {
+      id: id ?? null,
+      name: RMName,
+      description: RMDesc,
+      // tasks: tasks,
+      isPublic: isPublic,
+      notificationInfo: notiStatus,
+    };
+
+    const tagChanges = compareTagChange();
+
+    console.log("roadmap change");
+    console.log(roadmapChange);
     console.log("task");
     console.log(taskChange);
     console.log("subtask");
     console.log(subTaskChange);
     console.log("relation change");
     console.log(taskRelationChange);
-
-    const completeRoadmap = {
-      id: id ?? null,
-      name: RMName,
-      description: RMDesc,
-      tasks: tasks,
-      isPublic: isPublic,
-      notificationInfo: notiStatus,
-      tags: tags,
-    };
+    console.log("tag change");
+    console.log(tagChanges);
 
     // Begin the spinner
     setLoading(true);
     await generateNotificationObjects();
-    await handleSendingApi(
-      completeRoadmap,
+    if (await handleSendingApi(
+      roadmapChange,
       taskChange,
       subTaskChange,
-      taskRelationChange
-    );
+      taskRelationChange,
+      tagChanges
+    )) navigate("/")
     setLoading(false);
-    navigate("/");
+    // navigate("/");
   };
+
+  const handleDiscard = () => {};
 
   const handleNotiSettingChange = (event) => {
     setNotiStatus(JSON.parse(event.target.value));
@@ -671,8 +789,18 @@ const RoadmapCreatePage = (props) => {
 
           <div className="h-1/2">
             {/* Notification Setting */}
+
             <div className="relative">
-              <select
+              <DropDownMenu
+                optionValues={notificationOption.optionValues}
+                options={notificationOption.options}
+                currentOption={notiStatus}
+                setOption={setNotiStatus}
+                optionComparer={compareNotificationChange}
+                Icon={notiStatus.on === true ? NotiOn : NotiOff}
+                className="absolute z-10 right-6 top-6"
+              />
+              {/* <select
                 value={JSON.stringify(notiStatus)}
                 onChange={handleNotiSettingChange}
                 className="absolute z-10 right-4 top-4"
@@ -684,7 +812,7 @@ const RoadmapCreatePage = (props) => {
                 >
                   No notification
                 </option>
-                {/* List of all notification option */}
+                List of all notification option 
                 {notificationDayOption.map((day) => {
                   return [true, false].map((beforeDueDate) => {
                     return (
@@ -711,7 +839,7 @@ const RoadmapCreatePage = (props) => {
                     );
                   });
                 })}
-              </select>
+              </select>  */}
             </div>
             {/* End of Notification Setting */}
             {/* Giant task box */}
@@ -780,13 +908,14 @@ const RoadmapCreatePage = (props) => {
             <div className="relative">
               <div className="absolute right-0">
                 <button
-                  className="bg-transparent border-blue-700 font-bold text-blue-700 w-20 h-10 rounded-md border-2 mr-2 font-nunito-sans"
+                  className="bg-transparent border-nav-blue font-bold text-nav-blue w-32 h-10 rounded-full border-2 mr-2 font-nunito-sans"
                   type="button"
+                  onClick={handleDiscard}
                 >
                   Discard
                 </button>
                 <button
-                  className="rounded-md w-20 h-10 bg-blue-700 font-bold text-white font-nunito-sans"
+                  className="rounded-full w-32 h-10 bg-nav-blue font-bold text-white font-nunito-sans"
                   type="submit"
                 >
                   Save

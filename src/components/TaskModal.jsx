@@ -128,7 +128,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
 
   const handleDescriptionChange = (event) => {
     if (event.target.value.length < MAX_DESCRIPTION_LENGTH) {
-      setDescription(event.target.valuee);
+      setDescription(event.target.value);
     }
   };
 
@@ -183,6 +183,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
 
   const checkTaskChange = () => {
     // compare previous data (may not be first) with latest data
+
     if (
       initialState.current.name !== name ||
       initialState.current.description !== description ||
