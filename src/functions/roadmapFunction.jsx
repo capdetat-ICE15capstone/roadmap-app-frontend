@@ -63,7 +63,7 @@ export const getRoadmap = async (rid, timeout = 0, fetchAll = true, rename=true)
     let beforeIsDone = true;
     response.tasks = await Promise.all(
       response.task_relation.map(async (tid, index) => {
-        if (tid !== response.next_task.tid) {
+        if (response.next_task === null || tid !== response.next_task.tid) {
           if (fetchAll === true) {
             return getTask(tid);
           }

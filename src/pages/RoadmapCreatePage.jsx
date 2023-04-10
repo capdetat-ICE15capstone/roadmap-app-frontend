@@ -30,7 +30,7 @@ const MAX_RMDESCRIPTION_LENGTH = 255;
 const notificationDayOption = [1, 3, 5, 7, 14];
 const notificationOption = {
   options: ["No notification"],
-  optionValues: [{ on: false }],
+  optionValues: [{ on: false, detail: { day: 0, beforeDueDate: false } }],
 };
 
 notificationDayOption.forEach((day) => {
@@ -173,7 +173,10 @@ const RoadmapCreatePage = (props) => {
   const [editTaskID, setEditTaskID] = useState(0);
   const [lastId, setLastId] = useState(0);
   const [isPublic, setPublic] = useState(true);
-  const [notiStatus, setNotiStatus] = useState({ on: false });
+  const [notiStatus, setNotiStatus] = useState({
+    on: false,
+    detail: { day: 0, beforeDueDate: false },
+  });
   const [tags, setTags] = useState([]);
   const [publicModal, setPublicModal] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
@@ -217,7 +220,7 @@ const RoadmapCreatePage = (props) => {
   const setUpNotification = (roadmap) => {
     console.log(roadmap);
     if (roadmap.reminder_time === 0) {
-      return { on: false };
+      return { on: false, detail: { day: 0, beforeDueDate: false } };
     }
     return {
       on: true,
