@@ -6,6 +6,7 @@ import RoadmapToggle from "../components/RoadmapToggle"
 import { ReactComponent as DarkHomeIcon } from "../assets/dark_home_icon.svg";
 import { ReactComponent as BinIcon } from "../assets/Bin.svg" 
 import { Link } from "react-router-dom";
+import { axiosInstance } from "../functions/axiosInstance";
 
 const Home = () => {
   const [isRoadmap, setIsRoadmap] = useState(true);
