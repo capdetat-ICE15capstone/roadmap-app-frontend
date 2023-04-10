@@ -13,7 +13,8 @@ const Home = () => {
   const [isActive, setIsActive] = useState(true);
   const [noOfRoadmap, setNoOfRoadmap] = useState(3);
   const [showPremium, setShowPremium] = useState(false);
-  const [isLimit, setIsLimit] = useState(false);
+  const [isLimit, setIsLimit] = useState(false);  
+  const [isPremium, setIsPremium] = useState(false);
 
   function shortenString(str, maxLength) {
     if (str.length > maxLength) {
@@ -40,7 +41,7 @@ const Home = () => {
     setShowPremium(!showPremium)  
 
   useEffect(() => {
-    if (noOfRoadmap >= 3) {
+    if (noOfRoadmap >= 3 && !isPremium) {
       setNoOfRoadmap(3)
       setIsLimit(true)
     }
@@ -147,7 +148,7 @@ const Home = () => {
           <div className="flex justify-start items-center pl-[23px] w-1/2 min-w-[220px] max-w-[790px] h-fit bg-[#00286E] rounded-t-[20px]">
             <div className="flex items-center my-4">
               <BinIcon className="mr-[13px]"/>
-              <div className="font-inter font-bold text-3xl text-[#FFFFFF]">Confirm Deletion</div>
+              <div className="font-inter font-bold text-3xl text-[#FFFFFF]">Number of roadmaps owned capped!</div>
             </div>
           </div>
           <div className="flex w-1/2 min-w-[220px] max-w-[790px] h-fit bg-[#F0F3F4] rounded-b-[20px]">
