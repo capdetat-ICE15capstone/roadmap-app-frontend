@@ -7,20 +7,8 @@ export const isUserPremium = () => {
     return true; // PLACEHOLDER PLS DONT LAUGH
 }
 
-export const isUserLoggedIn = async (timeout = 0) => {
-    // check whether user is logged-in
-    /*
-    const route = `/roadmap/count/`
-
-    try {
-      let response = await axiosInstance.get(route, { timeout: timeout });
-      return true;
-    } catch (error) {
-      return false;
-    }
-    */
-
-    if (localStorage.getItem("token") === undefined) {
+export const isUserLoggedIn = () => {
+    if (localStorage.getItem("token") === null) {
       return false;
     }
     return true;

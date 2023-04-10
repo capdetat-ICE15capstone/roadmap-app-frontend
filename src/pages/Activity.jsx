@@ -155,7 +155,6 @@ const Activity = () => {
                 : <RenderQuest data={questData}/>
                 }
             </div>
-            <button onClick={completeQuestDailyLogin}>aaaaaa</button>
         </div>
     )
 }
