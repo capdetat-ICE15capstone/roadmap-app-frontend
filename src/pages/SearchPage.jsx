@@ -161,7 +161,7 @@ const SearchPage = () => {
           console.log('ridResponse is EMPTY');
           setRoadmapFound(false);
         }
-      // search tag case
+        // search tag case
       } else if (type === "tag") {
         console.log("fetch using tag")
         const ridResponse = await getTagRid(searchValue); // use searchValue to get an array of rid
@@ -180,18 +180,20 @@ const SearchPage = () => {
           console.log('ridResponse is EMPTY');
           setRoadmapFound(false);
         }
-      // search user case
+        // search user case
       } else if (type === "user") {
         console.log("fetch using user")
         const uidResponse = await getUid(searchValue); // use searchValue to get an array of uid
-         // case : uid is found => use uid to fetch for user data and set userFound to true
-         if (uidResponse.search_result && uidResponse.search_result.length > 0) {
+        // case : uid is found => use uid to fetch for user data and set userFound to true
+        if (uidResponse.search_result && uidResponse.search_result.length > 0) {
           console.log('uidResponse is NOT EMPTY');
           setUserFound(true);
           const uidString = uidResponse.search_result.join(`,`); // join members in ridData(array) together as a string
           const uidString2 = encodeURIComponent(uidString);
           const response = await getUser(uidString2);
           const data = await response;
+          console.log("Below is data : ")
+          console.log(data);
           const newArray = [...data];
           setUserArray(prevArray => [...prevArray, ...newArray]);
           // case : uid not found => don't fetch and set userFound to false
@@ -315,7 +317,7 @@ const SearchPage = () => {
             </div>
           </div>
         )}
-         {showUserResult && !userFound && (
+        {showUserResult && !userFound && (
           <div className='text-center my-8'>
             <p>User not found</p>
           </div>

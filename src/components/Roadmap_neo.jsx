@@ -49,34 +49,31 @@ const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_co
                 <div className='text-lg font-bold'>
                   {title}
                 </div>
-                <div className='flex flex-row gap-4'> 
+                <div className='flex flex-row gap-4'>
                   <div className='text-xs flex flex-wrap items-center gap-1'>
-                    <span><ShareIcon/></span> : {forks_count}
+                    <span><ShareIcon /></span> : {forks_count}
                   </div>
                   <div className='text-xs flex flex-wrap items-center gap-1'>
-                    <span><LikeIcon/></span>: {stars_count}
+                    <span><LikeIcon /></span>: {stars_count}
                   </div>
                 </div>
               </div>
               <div className='flex flex-row justify-between items-center'>
                 <div className='flex flex-row'>
-                  <div className='text-sm'>
-                    Owner :
-                  </div>
+                  <div className='text-sm'>Owner :</div>
                   <button className='z-10 text-sm hover:text-blue-600 ml-1 ' onClick={handleClick}>
                     {owner_name}
                   </button>
                 </div>
-                <div className='text-xs text-gray-500'>
-                  Created : {created_at}
-                </div>
+                <div className='text-xs text-gray-500'>Created : {created_at}</div>
               </div>
+
               <div className='flex flex-row items-center'>
                 <span>
-                  <EyeIcon className="flex stroke-1 stroke-gray-700 w-3/4 h-3/4 "/>
+                  <EyeIcon className="flex stroke-1 stroke-gray-700 w-3/4 h-3/4 " />
                 </span>
                 <div className='text-xs text-gray-700'>
-                : {views_count} views
+                  : {views_count} views
                 </div>
               </div>
             </div>
