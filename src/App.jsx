@@ -21,15 +21,48 @@ const Premium = lazy(() => import("./pages/Premium"));
 const Activity = lazy(() => import("./pages/Activity"));
 const SearchPage = lazy(() => import("./pages/SearchPage"));
 
+const ProtectedRoute = ({children}) => {
+  if (!isUserLoggedIn()) {
+    return <Navigate to="/intro" replace />;
+  }
+
+  return children;
+};
+
+const UnProtectedRoute = ({children}) => {
+  if (isUserLoggedIn()) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+};
+
 function App() {
   return (
     <>
       <BrowserRouter>
         <Suspense fallback={<Spinner />}>
-          {isUserLoggedIn() ? 
           <Routes>
-            <Route path="signup" element={<Navigate replace to="/" />} />
-            <Route path="login" element={<Navigate replace to="/" />} />
+            <Route
+              path="/signup"
+              element={
+                <UnProtectedRoute>
+                  <Suspense fallback={<Spinner />}>
+                    <Signup />
+                  </Suspense>
+                </UnProtectedRoute>
+              }
+            ></Route>
+            <Route
+              path="/login"
+              element={
+                <UnProtectedRoute>
+                  <Suspense fallback={<Spinner />}>
+                    <Login />
+                  </Suspense>
+                </UnProtectedRoute>
+              }
+            ></Route>
             <Route
               path="/intro"
               element={
@@ -47,93 +80,114 @@ function App() {
               }
             ></Route>
             <Route path="/" element={<Navbar />}>
-              <Route index element={<Home />} />
               <Route
-                path=""
+                path="/"
                 element={
-                  <Suspense fallback={<Spinner />}>
-                    <Home />
-                  </Suspense>
+                  <ProtectedRoute>
+                    <Suspense fallback={<Spinner />}>
+                      <Home />
+                    </Suspense>
+                  </ProtectedRoute>
                 }
               ></Route>
               <Route
                 path="friend_home"
                 element={
-                  <Suspense fallback={<Spinner />}>
-                    <FriendHome />             
-                  </Suspense>
+                  <ProtectedRoute>
+                    <Suspense fallback={<Spinner />}>
+                      <FriendHome />             
+                    </Suspense>
+                  </ProtectedRoute>
                 }
               ></Route>
               <Route
                 path="view/:roadmap_id"
                 element={
-                  <Suspense fallback={<Spinner />}>
-                    <View />
-                  </Suspense>
+                  <ProtectedRoute>
+                    <Suspense fallback={<Spinner />}>
+                      <View />
+                    </Suspense>
+                  </ProtectedRoute>
                 }
               ></Route>
               <Route
                 path="create"
                 element={
-                  <Suspense fallback={<Spinner />}>
-                    <RoadmapCreatePage mode="create" />
-                  </Suspense>
+                  <ProtectedRoute>
+                    <Suspense fallback={<Spinner />}>
+                      <RoadmapCreatePage mode="create" />
+                    </Suspense>
+                  </ProtectedRoute>
                 }
               ></Route>
               <Route
                 path="feed"
                 element={
-                  <Suspense fallback={<Spinner />}>
-                    <Feed />
-                  </Suspense>
+                  <ProtectedRoute>
+                    <Suspense fallback={<Spinner />}>
+                      <Feed />
+                    </Suspense>
+                  </ProtectedRoute>
                 }
               ></Route>
               <Route
                 path="search"
                 element={
-                  <Suspense fallback={<Spinner />}>
-                    <SearchPage />
-                  </Suspense>
+                  <ProtectedRoute>
+                    <Suspense fallback={<Spinner />}>
+                      <SearchPage />
+                    </Suspense>
+                  </ProtectedRoute>
                 }
               ></Route>
               <Route
                 path="edit/:id"
                 element={
-                  <Suspense fallback={<Spinner />}>
-                    <RoadmapCreatePage mode="edit" />
-                  </Suspense>
+                  <ProtectedRoute>
+                    <Suspense fallback={<Spinner />}>
+                      <RoadmapCreatePage mode="edit" />
+                    </Suspense>
+                  </ProtectedRoute>
                 }
               ></Route>
               <Route
                 path="clone/:id"
                 element={
-                  <Suspense fallback={<Spinner />}>
-                    <RoadmapCreatePage mode="clone" />
-                  </Suspense>
+                  <ProtectedRoute>
+                    <Suspense fallback={<Spinner />}>
+                      <RoadmapCreatePage mode="clone" />
+                    </Suspense>
+                  </ProtectedRoute>
                 }
               ></Route>
               <Route
                 path="view/:id"
                 element={
-                  <Suspense fallback={<Spinner />}>
-                    <View />
-                  </Suspense>
+                  <ProtectedRoute>
+                    <Suspense fallback={<Spinner />}>
+                      <View />
+                    </Suspense>
+                  </ProtectedRoute>
                 }
               ></Route>
               <Route
                 path="setting"
                 element={
-                  <Suspense fallback={<Spinner />}>
-                    <Setting />{" "}
-                  </Suspense>
+                  <ProtectedRoute>
+                    <Suspense fallback={<Spinner />}>
+                      <Setting />{" "}
+                    </Suspense>
+                  </ProtectedRoute>
                 }
               ></Route>
               <Route
                 path="profile"
                 element={
-                  <Suspense fallback={<Spinner />}>
-                    <Profile />{" "}
-                  </Suspense>
+                  <ProtectedRoute>
+                    <Suspense fallback={<Spinner />}>
+                      <Profile />{" "}
+                    </Suspense>
+                  </ProtectedRoute>
                 }
               /><Route
                 path="activity"
@@ -144,47 +198,13 @@ function App() {
                 }
               />
               <Route path="/404" element={<NoPage />} />
-              <Route path="*" element={<Navigate replace to="/404" />} />
+              <Route path="*" element={
+                <ProtectedRoute>
+                  <Navigate replace to="/" />
+                </ProtectedRoute>
+              } />
             </Route>
           </Routes>
-          :
-          <Routes>
-            <Route
-              path="/signup"
-              element={
-                <Suspense fallback={<Spinner />}>
-                  <Signup />
-                </Suspense>
-              }
-            ></Route>
-            <Route
-              path="/login"
-              element={
-                <Suspense fallback={<Spinner />}>
-                  <Login />
-                </Suspense>
-              }
-            ></Route>
-            <Route
-              path="/intro"
-              element={
-                <Suspense fallback={<Spinner />}>
-                  <Introduction />
-                </Suspense>
-              }
-            ></Route>
-            <Route
-              path="/premium"
-              element={
-                <Suspense fallback={<Spinner />}>
-                  <Premium />
-                </Suspense>
-              }
-            ></Route>
-            <Route path="/404" element={<NoPage />} />
-            <Route path="*" element={<Navigate replace to="/intro" />} />
-          </Routes>
-          }
         </Suspense>
       </BrowserRouter>
     </>
