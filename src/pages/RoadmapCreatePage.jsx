@@ -48,7 +48,7 @@ notificationDayOption.forEach((day) => {
   });
 });
 
-const TaskItem = ({ task, setEditTaskID, setModalState }) => {
+const TaskItem = ({ task, setEditTaskID, setModalState, disabled }) => {
   // Task node Component
   return (
     <div className="relative break-words w-32">
@@ -57,18 +57,19 @@ const TaskItem = ({ task, setEditTaskID, setModalState }) => {
           <div className="flex flex-col gap-2 items-center">
             <button
               type="button"
-              disabled={task.isDone}
+              disabled={disabled}
               onClick={() => {
                 setEditTaskID(task.id);
                 setModalState(true);
               }}
             >
-              <Check hidden={!task.isDone} className="absolute" />
+              {/* <Check hidden={!disabled} className="absolute" /> */}
               <CustomSVG
                 type={task.nodeShape}
                 className={`${getTWFill(task.nodeColor)}`}
                 size={60}
                 isStrokeOn={true}
+                noScaleOnHover={disabled}
               />
             </button>
             <div className="w-4/5 absolute bottom-0 translate-y-[calc(100%_+_10px)]">
@@ -868,12 +869,13 @@ const RoadmapCreatePage = (props) => {
                       {/* Task list */}
                       {tasks.map((task, index) => {
                         {
-                          return task.isDone ? (
+                          return index < 1 || tasks[index-1].isDone ? (
                             <TaskItem
                               task={task}
                               key={task.id}
                               setEditTaskID={setEditTaskID}
                               setModalState={setModalState}
+                              disabled={index < 1 || tasks[index-1].isDone}
                             />
                           ) : (
                             <Draggable
@@ -892,6 +894,7 @@ const RoadmapCreatePage = (props) => {
                                     task={task}
                                     setEditTaskID={setEditTaskID}
                                     setModalState={setModalState}
+                                    disabled={index < 1 || tasks[index-1].isDone}
                                   />
                                 </div>
                               )}
