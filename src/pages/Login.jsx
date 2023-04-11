@@ -35,16 +35,28 @@ export default function Login() {
 
   async function submitForm(form) {
     const route = `/user/login`;
-    axiosInstance.post(route, form)
+    try {
+      const response = await axiosInstance.post(route, form);
+      console.log("Below is response : ");
+      console.log(response.data);
+      const token = response.data.token;
+      localStorage.setItem('token', token);
+      navigate('/home');
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+      /*
       .then((response) => {
-        console.log(response.data);
-        const token = response.data.token;
-        localStorage.setItem('token', token);
-        navigate('/home');
-      })
+      console.log(response.data);
+      const token = response.data.token;
+      localStorage.setItem('token', token);
+      navigate('/home');
+    })
       .catch((error) => {
         console.log(error);
       });
+      */
   }
 
   return (
