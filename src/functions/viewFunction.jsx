@@ -65,25 +65,25 @@ export function nodeShapeGenerator(nodeShape, nodeColor, index, currentTaskIndex
   switch (nodeShape) {
     case "square":
       return (
-        <svg className={`${currentNodeColor} hover:scale-110 transition group duration-100`} width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg className={`${currentNodeColor}`} width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
           <rect width="48" height="48" />
         </svg>
       );
     case "circle":
       return (
-        <svg className={`${currentNodeColor} hover:scale-110 transition group duration-100`} width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg className={`${currentNodeColor}`} width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
           <circle cx="24" cy="24" r="24" />
         </svg>
       );
     case "triangle":
       return (
-        <svg className={`${currentNodeColor} hover:scale-110 transition group duration-100`} width="50" height="48" viewBox="0 0 50 48" xmlns="http://www.w3.org/2000/svg">
+        <svg className={`${currentNodeColor}`} width="50" height="48" viewBox="0 0 50 48" xmlns="http://www.w3.org/2000/svg">
           <path d="M25 0L49.2487 48H0.751289L25 0Z" />
         </svg>
       );
     default:
       return (
-        <svg className={`${currentNodeColor} hover:scale-110 transition group duration-100`} width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg className={`${currentNodeColor}`} width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
           <circle cx="24" cy="24" r="24" />
         </svg>
       );

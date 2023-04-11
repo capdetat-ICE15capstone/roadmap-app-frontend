@@ -1,10 +1,19 @@
 import React, { useState, useEffect } from 'react'
 import { nodeShapeGenerator } from '../functions/viewFunction';
-import { shortenString } from '../functions/formatFunction';
+import { convertDateTimeString, shortenString } from '../functions/formatFunction';
 
 function RoadmapViewer({ tasks, currentTaskID }) {
 
   const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
+
+  const [hoveredTask, setHoveredTask] = useState({ id: 0 });
+
+  const [visible, setVisible] = useState();
+
+  const handleMouseOver = (task) => {
+    setHoveredTask(task);
+    console.log(task);
+  };
 
   useEffect(() => {
     if (currentTaskID === -1) {
@@ -15,57 +24,69 @@ function RoadmapViewer({ tasks, currentTaskID }) {
         if (task.id === currentTaskID) {
           reachedCurrentTask = true;
           setCurrentTaskIndex(index);
-          console.log(index);
         }
       });
     }
   }, [tasks])
 
-  // return (
-  //   <div className="relative">
-  //     <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-  //       Hover me
-  //     </button>
-  //     <div className="absolute bg-blue-500 text-white rounded-lg py-2 px-4 whitespace-no-wrap opacity-0 hover:opacity-100">
-  //       This is a bubble
-  //       <svg className="absolute text-blue-500 h-2 w-full left-0 top-full" x="0px" y="0px" viewBox="0 0 255 255" xmlSpace="preserve">
-  //         <polygon className="fill-current" points="0,0 127.5,127.5 255,0" />
-  //       </svg>
-  //     </div>
-  //   </div>
-  // )
-
   return (
-    <div className='flex px-8 pt-4 pb-12 space-x-[25px] overflow-x-auto'>
-      {
-        tasks.map((task, index) => {
-          const zIndex = 10 - index;
-          return (
-            <div key={index} className="relative" style={{ zIndex }}>
-              <div className="absolute top-1/2 -left-1/4 transform -translate-x-1/2 -translate-y-3/4 -z-10">
-                {(index > '0') && <hr className="w-[75px] h-1 bg-black border-0" />}
-              </div>
-              <div className='absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[30px] text-xs text-center font-bold'>
-                {shortenString(task.name, 14)}
-              </div>
-              <button onClick={() => {
-              }}>
-                {(index < currentTaskIndex || (index === currentTaskIndex && currentTaskID === -1)) && (
-                  <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[60%] text-3xl text-center select-none z-50 pointer-events-none'>
-                    ✓
+    <div className='relative z-50 bg-[#f5f8fd] drop-shadow-[0_2px_3px_rgba(0,0,0,0.15)] rounded-2xl p-20'>
+      <div className='absolute top-1/2 right-1/2 transform translate-x-1/2 -translate-y-1/2 flex flex-col w-full overflow-x-auto'>
+        <div className='flex pl-12 pt-8 pb-12 space-x-[25px]'>
+          {
+            tasks.map((task, index) => {
+              const zIndex = 10 - index;
+              return (
+                <div key={index} className="relative" style={{ zIndex }}>
+                  <div className="absolute top-1/2 -left-1/4 transform -translate-x-1/2 -translate-y-3/4 -z-10">
+                    {(index > '0') && <hr className="w-[75px] h-1 bg-black border-0" />}
                   </div>
-                )}
-                {(index > currentTaskIndex) && (
-                  <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[65%] text-2xl text-center select-none z-50 pointer-events-none'>
-                    🔒
+                  <div className="absolute top-1/2 left-[100%] transform -translate-x-1/2 -translate-y-3/4 -z-10">
+                    {(index === (tasks.length - 1)) && <hr className="w-[75px] h-1 border-0 opacity-0" />}
                   </div>
-                )}
-                {nodeShapeGenerator(task.nodeShape, task.nodeColor, index, currentTaskIndex)}
-              </button>
+                  <div className='absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[30px] text-xs text-center font-bold'>
+                    {shortenString(task.name, 14)}
+                  </div>
+                  <div className='relative hover:scale-110 transition group duration-100'>
+                    <button
+                      value={index}
+                      onMouseOver={() => {
+                        handleMouseOver(task);
+                        setVisible(true);
+                      }}
+                      onMouseOut={() => setVisible(false)}
+                    >
+                      {(index < currentTaskIndex || (index === currentTaskIndex && currentTaskID === -1)) && (
+                        <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[60%] text-3xl text-center select-none z-50 pointer-events-none'>
+                          ✓
+                        </div>
+                      )}
+                      {(index > currentTaskIndex) && (
+                        <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[65%] text-md text-center select-none z-50 pointer-events-none'>
+                          🔒
+                        </div>
+                      )}
+                      {nodeShapeGenerator(task.nodeShape, task.nodeColor, index, currentTaskIndex)}
+                    </button>
+                  </div>
+                </div>
+              );
+            })
+          }
+        </div>
+      </div>
+      <div className={`opacity-0 transition-opacity duration-300 ${visible && 'opacity-95'}`}>
+        <div className='absolute -top-[25%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none w-full p-4 bg-white drop-shadow-[0_2px_3px_rgba(0,0,0,0.15)] rounded-xl overflow-visible'>
+          <div className='flex space-x-4 text-xs'>
+            <div>
+              TID: {hoveredTask.id}
             </div>
-          );
-        })
-      }
+            <div>
+              Due date: {convertDateTimeString(hoveredTask.dueDate)}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
