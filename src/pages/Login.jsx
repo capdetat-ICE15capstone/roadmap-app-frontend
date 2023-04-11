@@ -38,7 +38,8 @@ export default function Login() {
     axiosInstance.post(route, form)
       .then((response) => {
         console.log(response.data);
-        localStorage.setItem('token', response.data.token);
+        const token = response.data.token;
+        localStorage.setItem('token', token);
         navigate('/home');
       })
       .catch((error) => {
