@@ -51,7 +51,7 @@ notificationDayOption.forEach((day) => {
 const TaskItem = ({ task, setEditTaskID, setModalState, disabled }) => {
   // Task node Component
   return (
-    <div className="relative break-words w-32">
+    <div className="relative break-words w-28">
       <div className="flex after:h-1 after:w-full after:bg-black after:absolute after:top-[30px] after:-z-10 justify-center">
         <div className="flex">
           <div className="flex flex-col gap-2 items-center">
@@ -63,7 +63,7 @@ const TaskItem = ({ task, setEditTaskID, setModalState, disabled }) => {
                 setModalState(true);
               }}
             >
-              {/* <Check hidden={!disabled} className="absolute" /> */}
+              <Check hidden={!disabled} className="absolute" />
               <CustomSVG
                 type={task.nodeShape}
                 className={`${getTWFill(task.nodeColor)}`}
@@ -869,7 +869,7 @@ const RoadmapCreatePage = (props) => {
                       {/* Task list */}
                       {tasks.map((task, index) => {
                         {
-                          return index < 1 || tasks[index-1].isDone ? (
+                          return mode === "edit" && (index < 1 || tasks[index-1].isDone) ? (
                             <TaskItem
                               task={task}
                               key={task.id}
@@ -894,7 +894,7 @@ const RoadmapCreatePage = (props) => {
                                     task={task}
                                     setEditTaskID={setEditTaskID}
                                     setModalState={setModalState}
-                                    disabled={index < 1 || tasks[index-1].isDone}
+                                    disabled={mode === "edit" && (index < 1 || tasks[index-1].isDone)}
                                   />
                                 </div>
                               )}
