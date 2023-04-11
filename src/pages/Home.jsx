@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import { axiosInstance } from "../functions/axiosInstance";
 
 const Home = () => {
+  const [data, setData] = useState(null);
   const [isRoadmap, setIsRoadmap] = useState(true);
   const [isDeleteClick, setIsDeleteClick] = useState(false);
   const [isActive, setIsActive] = useState(true);
@@ -17,17 +18,9 @@ const Home = () => {
   const [isLimit, setIsLimit] = useState(false);  
   const [isPremium, setIsPremium] = useState(false);
   const [username, setUsername] = useState('');
-  const [level, setLevel] = useState(1);
+  const [level, setLevel] = useState('');
   const [bio, setBio] = useState('');
-  const [home, setHome] = useState({
-    'username' : 'Kurumi',
-    'Level' : 10,
-    'Bio' : {
-      'Description' : 'Kurumi Tokisaki (Codename: Nightmare)',
-      'Link' : 'https://date-a-live.fandom.com/wiki/Kurumi_Tokisaki'
-    },
-    'profile_picture' : `${Kurumi}`    
-  })
+  let roadmapList = [];
 
   function shortenString(str, maxLength) {
     if (str.length > maxLength) {
@@ -75,15 +68,15 @@ const Home = () => {
     const fetchData = async () => {
       const response = await getHomeData();
       console.log("Fetched data: ");
-      console.log(response.data);
+      console.log(response.data.roadmaps);
       setData(response.data);
       setUsername(response.data.profile.username);
-      setLevel(response.data.profile.exp/10);
+      setLevel(Math.round(response.data.profile.exp/100));
       setBio(response.data.profile.bio);
-      setAccountPublic(!response.data.is_private);
     }
     fetchData();
 }, []);
+
 
   return (
     <>
@@ -128,7 +121,7 @@ const Home = () => {
                 </div>              
               </div>
               <div className="flex justify-end w-fit max-w-[200px] h-fit max-h-[200px] ml-4">
-                <img src={home.profile_picture} className="rounded-full border border-[#5f4545]"/>
+                <img src={Kurumi} className="rounded-full border border-[#5f4545]"/>
               </div>
             </div>
           </div>
