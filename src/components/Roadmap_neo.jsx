@@ -23,6 +23,20 @@ const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_co
     title: PropTypes.string
   };
 
+
+  const date = new Date(created_at);
+  const day = date.getUTCDate();
+  const month = date.getUTCMonth() + 1; 
+  const year = date.getUTCFullYear().toString().substr(-2);
+  const created_at_format = `${day}/${month}/${year}`;
+
+  const date2 = new Date(edited_at);
+  const day2 = date2.getUTCDate();
+  const month2 = date2.getUTCMonth() + 1; 
+  const year2 = date2.getUTCFullYear().toString().substr(-2);
+  const edited_at_format = `${day2}/${month2}/${year2}`;
+
+
   //navigage to roadmap owner's home page on click
   const navigate = useNavigate();
   const handleClick = (event) => {
@@ -41,7 +55,7 @@ const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_co
                 {creator_name}
               </div>
               <div className='absolute bottom-[5%] right-[5%] text-xs text-gray-600'>
-                Last updated: {edited_at}
+                Last updated: {edited_at_format}
               </div>
             </div>
             <div className='flex flex-col space-y-1 m-1'>
@@ -60,14 +74,17 @@ const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_co
               </div>
               <div className='flex flex-row justify-between items-center'>
                 <div className='flex flex-row'>
-                  <div className='text-sm'>Owner :</div>
+                  <div className='text-sm'>
+                    Owner :
+                  </div>
                   <button className='z-10 text-sm hover:text-blue-600 ml-1 ' onClick={handleClick}>
                     {owner_name}
                   </button>
                 </div>
-                <div className='text-xs text-gray-500'>Created : {created_at}</div>
+                <div className='text-xs text-gray-500'>
+                  Created : {created_at_format}
+                </div>
               </div>
-
               <div className='flex flex-row items-center'>
                 <span>
                   <EyeIcon className="flex stroke-1 stroke-gray-700 w-3/4 h-3/4 " />
