@@ -53,11 +53,9 @@ const Setting = () => {
 
     //-----PWA thingy----------------------------------------------------------------
 
-    const [notiOn, setNotiOn] = useState(false);
-
     const handleNotiSubscription = () => {
         console.log("function handlenotisub");
-        if (notiOn === true) return;
+        if (notification === true) return;
     
         try {
           // Ask for notification permission
@@ -101,7 +99,7 @@ const Setting = () => {
                   }
                 )
                 .then(() => {
-                  setNotiOn(true);
+                  setNotification(true);
                   console.log("registration complete");
                 })
                 .catch((error) => {
@@ -133,7 +131,7 @@ const Setting = () => {
               .then((successful) => {
                 // You've successfully unsubscribed
                 console.log(successful);
-                setNotiOn(false);
+                setNotification(false);
               })
               .catch((e) => {
                 // Unsubscribing failed
@@ -237,7 +235,11 @@ const Setting = () => {
                 {/* notification */}
                 <SettingTitle text="Notifications" Icon={NotificationIcon}/>
                 <div className='flex max-w-4xl pl-8'>
-                    <ToggleSwitch name={"Allow Notifications"} isToggled={notification} setIsToggled={setNotification}/>
+                    {notification ? 
+                        <ToggleSwitch name={"Allow Notifications"} isToggled={notification} callOnChanged={handleNotiUnsubscription}/>
+                    :
+                        <ToggleSwitch name={"Allow Notifications"} isToggled={notification} callOnChanged={handleNotiSubscription}/>
+                    }
                 </div>
                 <div className='h-36'></div>
             </div>
@@ -487,12 +489,6 @@ const Setting = () => {
                 <RenderProfile/>
                 <RenderAccount/>
             </div>
-            <button
-                className="bg-red-400 w-20 h-10"
-                onClick={notiOn ? handleNotiUnsubscription : handleNotiSubscription}
-            >
-                Sub
-            </button>
         </div>
     )
 }
