@@ -44,7 +44,7 @@ function RoadmapViewer({ tasks, currentTaskID }) {
                   <div className="absolute top-1/2 left-[100%] transform -translate-x-1/2 -translate-y-3/4 -z-10">
                     {(index === (tasks.length - 1)) && <hr className="w-[75px] h-1 border-0 opacity-0" />}
                   </div>
-                  <div className='absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[30px] text-xs text-center font-bold'>
+                  <div className='absolute -bottom-1/3 left-1/2 transform -translate-x-1/2 translate-y-1/2 text-xs text-center self-center font-bold'>
                     {shortenString(task.name, 14)}
                   </div>
                   <div className='relative hover:scale-110 transition group duration-100'>
