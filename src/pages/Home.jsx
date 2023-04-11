@@ -16,6 +16,9 @@ const Home = () => {
   const [showPremium, setShowPremium] = useState(false);
   const [isLimit, setIsLimit] = useState(false);  
   const [isPremium, setIsPremium] = useState(false);
+  const [username, setUsername] = useState('');
+  const [level, setLevel] = useState(1);
+  const [bio, setBio] = useState('');
   const [home, setHome] = useState({
     'username' : 'Kurumi',
     'Level' : 10,
@@ -57,6 +60,31 @@ const Home = () => {
     }
   },[noOfRoadmap, isLimit])
 
+  const getHomeData = async () => {
+    // check whether user is logged-in
+    const route = `/home/me`
+    try {
+        let response = await axiosInstance.get(route, { timeout: 10000 });
+        return response;
+    } catch (error) {
+        console.error("Fail GetHomeData()");
+    }
+}
+
+  useEffect (() => {
+    const fetchData = async () => {
+      const response = await getHomeData();
+      console.log("Fetched data: ");
+      console.log(response.data);
+      setData(response.data);
+      setUsername(response.data.profile.username);
+      setLevel(response.data.profile.exp/10);
+      setBio(response.data.profile.bio);
+      setAccountPublic(!response.data.is_private);
+    }
+    fetchData();
+}, []);
+
   return (
     <>
       <div className="flex flex-col h-screen overflow-scroll overflow-x-hidden">
@@ -75,7 +103,7 @@ const Home = () => {
                 <div className="flex flex-wrap items-center mx-6 mr-12 justify-start h-fit my-[20px]">
                   <div className="relative mr-4">
                     <div className="font-inter font-bold text-lg text-[#09275B]">
-                      {home.username}
+                      {username}
                     </div>
                   </div>
                   <div className="flex justify-between bg-[#034DCF] text-white font-bold h-fit rounded-[30px]">
@@ -86,7 +114,7 @@ const Home = () => {
                     </div>     
                     <div className="flex mx-[10px] justify-start items-center">
                       <div className="font-inter text-[#FFFFFF]">
-                        {home.Level}
+                        {level}
                       </div>
                     </div>               
                   </div>
@@ -94,14 +122,9 @@ const Home = () => {
                 <div className="flex flex-col">
                   <div className="mx-6 mt-[10px] mb-[20px]">
                     <div className="font-inter font-light">
-                      {home.Bio.Description} 
+                      {shortenString(bio, 25)}
                     </div>
                   </div>
-                  <div className="mx-6 my-[10px]">
-                    <a href={home.Bio.Link} className="font-inter font-light text-[#034DCF]">
-                    {shortenString(home.Bio.Link, 25)}
-                    </a>                
-                  </div>            
                 </div>              
               </div>
               <div className="flex justify-end w-fit max-w-[200px] h-fit max-h-[200px] ml-4">
