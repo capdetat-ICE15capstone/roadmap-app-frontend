@@ -29,7 +29,7 @@ const NavItem = (props) => {
 const Navbar = () => {
   return (
     <>
-      <div className="flex fixed h-screen w-screen">
+      <div className="flex fixed h-screen w-screen overflow-x-scroll overflow-y-hidden">
         <div className="">
           <div className="md:flex hidden flex-col h-screen bg-nav-blue justify-between">
             <div className="flex flex-col">
@@ -42,7 +42,7 @@ const Navbar = () => {
               parentDivClass="bg-blue-800 py-5" />
           </div>
         </div>
-        <div className="flex flex-col grow">
+        <div className="flex flex-col w-full max-w-full overflow-auto">
           <Outlet />
         </div>
       </div>

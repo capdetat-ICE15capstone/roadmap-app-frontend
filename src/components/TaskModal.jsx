@@ -1,164 +1,116 @@
-import React, { useRef, useState, useEffect, forwardRef  } from "react";
-import PropTypes from "prop-types";
+import React, { useRef, useState, useEffect, forwardRef } from "react";
+import PropTypes, { node, object } from "prop-types";
 import { ReactComponent as AddButton } from "../assets/addButton.svg";
 import { ReactComponent as DeleteButton } from "../assets/deleteButton.svg";
+import { ReactComponent as ArrowIcon } from "../assets/taskmodal/arrow.svg";
+import { ReactComponent as CalendarIcon } from "../assets/taskmodal/calendar.svg";
+import { ReactComponent as TrashIcon } from "../assets/taskmodal/trash.svg";
 import DatePicker from "react-datepicker";
-import Spinner from "./Spinner"
+import Spinner from "./Spinner";
+import { CustomSVG, allNodeColor } from "./CustomSVG";
+import TwoButtonModal from "./TwoButtonModal";
+import { getTask } from "../functions/roadmapFunction";
 
 import "react-datepicker/dist/react-datepicker.css";
 
 // Current issues
-// 2. Data domain has yet to be enforced
-// 3. CustomSVG is terribly implemented (hard code everywhere)
-// 4. Styling is yet to be finalized
-// 5. Input box shrink problem
-// 6. Datepicker style
+// 2. Date data domain has yet to be enforced
 // 7. Modal size (the modal overflowing the screen)
-// 10. Description text and placeholder starting position (text starts in the middle of the box)
 // 11. Node selector overflow in small screen
-// 12. Problems with some mobile devices
+// 12. Problems with some mobile device
+// 14. Nodes shape selector arent actually centered
 
-// Fixed isses
-// 1. User can choose whatever start and due date they want, incluing in the past
-// 2. (Untested) No logic to check for the lastID when the roadmap is edited instead of created
-// 3. subtask scrolling
-// 4. Description box size problem (box size tends to varies)
-// 5. Using new Date() will also select the time for you, not only date
+// data domain
+const MAX_NAME_LENGTH = 30;
+const MAX_DESCRIPTION_LENGTH = 255;
 
-const CustomSVG = ({
-  height = 42,
-  width = 42,
-  radius = 20,
-  className = "",
-  type = "circle",
-}) => {
-  let cx = Math.ceil(width / 2);
-  let cy = Math.ceil(height / 2);
-  return (
-    <svg height={height} width={width} className={className}>
-      {type === "circle" ? (
-        <circle cx={cx} cy={cy} r={radius} className={className} />
-      ) : null}
-      {type === "square" ? (
-        <rect
-          height={height - 2}
-          width={width - 2}
-          x={1}
-          y={1}
-          className={className}
-        />
-      ) : null}
-      {type === "triangle" ? (
-        <polygon
-          points={`${cx},2 ${width - 2},${height - 1} 2,${height - 1}`}
-          className={className}
-        />
-      ) : null}
-    </svg>
-  );
-};
-
-// const allNodeShape = ["circle", "square", "triangle"]
-
-const allNodeColor = [
-  {
-    name: "Gray",
-    twprop: "fill-gray-400",
-    twtext: "text-gray-400",
-    twbg: "bg-gray-400",
-  },
-  {
-    name: "Red",
-    twprop: "fill-red-400",
-    twtext: "text-red-400",
-    twbg: "bg-red-400",
-  },
-  {
-    name: "Orange",
-    twprop: "fill-orange-400",
-    twtext: "text-orange-400",
-    twbg: "bg-orange-400",
-  },
-  {
-    name: "Yellow",
-    twprop: "fill-yellow-400",
-    twtext: "text-yellow-400",
-    twbg: "bg-yellow-400",
-  },
-  {
-    name: "Green",
-    twprop: "fill-green-400",
-    twtext: "text-green-400",
-    twbg: "bg-green-400",
-  },
-  {
-    name: "Cyan",
-    twprop: "fill-cyan-400",
-    twtext: "text-cyan-400",
-    twbg: "bg-cyan-400",
-  },
-  {
-    name: "Blue",
-    twprop: "fill-blue-400",
-    twtext: "text-blue-400",
-    twbg: "bg-blue-400",
-  },
-  {
-    name: "Violet",
-    twprop: "fill-violet-400",
-    twtext: "text-violet-400",
-    twbg: "bg-violet-400",
-  },
-  {
-    name: "Pink",
-    twprop: "fill-pink-400",
-    twtext: "text-pink-400",
-    twbg: "bg-pink-400",
-  },
-];
-
-const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
-  const nameRef = useRef("");
-  const descriptionRef = useRef("");
-  const [lastId, setLastId] = useState(0); // DO NOT use these parameter directly, use getID to get an id instead
+const TaskModal = ({ oldData, editTaskCallBack }) => {
+  const initialState = useRef({ ...oldData });
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  // WARNING: use getId() to get an ID only
+  const [lastId, setLastId] = useState(0);
   const [subtasks, setSubTasks] = useState([]);
   const [nodeColor, setNodeColor] = useState(allNodeColor[0]);
   const [nodeShape, setNodeShape] = useState("circle");
   const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
+  const [dueDate, setdueDate] = useState(new Date());
   const [loading, setLoading] = useState(false);
+  const [deleteModal, setDeleteModal] = useState(false);
+  const [unSavedModal, setUnSavedModal] = useState(false);
+  const [taskWasFetched, setTaskWasFetched] = useState(false);
   const DatePickerButton = forwardRef(({ value, onClick }, ref) => (
     <div className="w-full">
-      <button className="bg-blue-400 w-full rounded-md" ref={ref} onClick={(e) => {e.preventDefault(); onClick()}}>{value}</button>
+      <button
+        type="button"
+        className="w-full rounded-md h-12 bg-gray-100 border-2 border-gray-300"
+        ref={ref}
+        onClick={(e) => {
+          e.preventDefault();
+          onClick();
+        }}
+      >
+        <div className="flex items-center px-2 justify-between">
+          <div className="flex gap-3 items-center">
+            <CalendarIcon className="h-full" />
+            <div className="flex flex-col items-start">
+              <p className="text-xs text-blue-400">Select date</p>
+              <p className="font-bold text-black">{value}</p>
+            </div>
+          </div>
+          <ArrowIcon />
+        </div>
+      </button>
     </div>
   ));
 
   useEffect(() => {
     async function setModalData() {
-      if (mode === "edit") {
-        await setLoading(true);
-        nameRef.current.value = oldData.name;
-        descriptionRef.current.value = oldData.description;
-        setSubTasks(oldData.subtasks);
-        setNodeColor(allNodeColor.find(({ name }) => name === oldData.nodeColor));
-        setNodeShape(oldData.nodeShape);
-        setStartDate(oldData.startDate);
-        setEndDate(oldData.dueDate);
-        let highestID = 0;
-        oldData.subtasks.forEach((subtask) => {
-          if (subtask.id > highestID) {
-            lowestID = subtask.id;
-          }
-        });
-        await setLastId(highestID + 1); 
-        // I'm not sure about this one. if react set data in order,
-        // then awaiting for this last line to finish should ensure
-        // that everything is finished before leaving the function
+      setLoading(true);
+      if (oldData.id !== -1) {
+        if (oldData.hasFetched === true) {
+          setupTask(oldData);
+        } else {
+          const fetchedData = await getTask(oldData.id);
+          initialState.current = fetchedData;
+          setTaskWasFetched(true);
+          setupTask(fetchedData);
+        }
+      } else {
+        initialState.current = {
+          id: oldData.id,
+          name: name,
+          description: description,
+          nodeColor: nodeColor,
+          nodeShape: nodeShape,
+          startDate: startDate,
+          dueDate: dueDate, 
+          subtasks: subtasks
+        }
       }
+      setLoading(false);
     }
-    setModalData()
-    setLoading(false)
+
+    setModalData();
   }, []);
+
+  const setupTask = (taskObj) => {
+    setName(taskObj.name);
+    setDescription(taskObj.description);
+    setSubTasks(taskObj.subtasks);
+    setNodeColor(allNodeColor.find(({ name }) => name === taskObj.nodeColor));
+    setNodeShape(taskObj.nodeShape);
+    setStartDate(taskObj.startDate);
+    setdueDate(taskObj.dueDate);
+    let highestID = 0;
+    taskObj.subtasks.forEach((subtask) => {
+      if (subtask.id > highestID) {
+        highestID = subtask.id;
+      }
+    });
+
+    setLastId((lastId) => highestID + 1);
+  };
 
   const getId = () => {
     // IMPORTANT: only use this function to get an ID
@@ -168,12 +120,31 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
     return id;
   };
 
+  const handleNameChange = (event) => {
+    if (event.target.value.length < MAX_NAME_LENGTH) {
+      setName(event.target.value);
+    }
+  };
+
+  const handleDescriptionChange = (event) => {
+    if (event.target.value.length < MAX_DESCRIPTION_LENGTH) {
+      setDescription(event.target.value);
+    }
+  };
+
+  const handleDateChange = (mode, date) => {
+    if (mode === "startDate") {
+      setStartDate(date);
+    } else if (mode === "dueDate") {
+      setdueDate(date);
+    }
+  };
+
   const handleNodeColorChange = (event) => {
     setNodeColor(allNodeColor.find(({ name }) => name === event.target.value));
   };
 
   const handleNodeShapeChange = (event, shapeType) => {
-    event.preventDefault();
     setNodeShape(shapeType);
   };
 
@@ -185,12 +156,12 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
         id: getId(),
         detail: "",
         status: false,
+        isTempId: true,
       },
     ]);
   };
 
   const deleteSubTask = (event, id) => {
-    event.preventDefault();
     setSubTasks((subtasks) => subtasks.filter((subtask) => subtask.id !== id));
   };
 
@@ -210,173 +181,298 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
     );
   };
 
+  const checkTaskChange = () => {
+    // compare previous data (may not be first) with latest data
+
+    if (
+      initialState.current.name !== name ||
+      initialState.current.description !== description ||
+      initialState.current.nodeColor.name !== nodeColor.name ||
+      initialState.current.nodeShape !== nodeShape ||
+      initialState.current.startDate.getTime() !== startDate.getTime() ||
+      initialState.current.dueDate.getTime() !== dueDate.getTime()
+    ) {
+      return true;
+    }
+
+    return false;
+  };
+
+  const checkSubtaskChange = () => {
+    let subtaskChange = { add: [], edit: [], delete: [] };
+    initialState.current.subtasks = initialState.current.subtasks ?? [] 
+
+    initialState.current.subtasks.forEach((initsubtask) => {
+      const intersection = subtasks.find(
+        (newsubtask) => newsubtask.id === initsubtask.id
+      );
+      if (intersection === undefined) {
+        // deleted subtask
+        subtaskChange.delete.push(initsubtask.id);
+      } else if (
+        initsubtask.detail !== intersection.detail ||
+        initsubtask.status !== intersection.status
+      ) {
+        // edited subtask
+        subtaskChange.edit.push(initsubtask.id);
+        return;
+      }
+    });
+
+    subtasks.forEach((subtask) => {
+      const intersection = initialState.current.subtasks.find((initsubtask) => initsubtask.id === subtask.id)
+      if (intersection === undefined) {
+        // added subtask
+        subtaskChange.add.push(subtask.id);
+      }
+    });
+    return subtaskChange;
+  };
+
+  const handleDetectChangeBeforeClose = () => {
+    // use to check whether the task has changed
+    // if change is detected but user press close
+    // set the display unsaved change modal to true
+    const check = checkSubtaskChange();
+    const subtaskChange =
+      check.add.length !== 0 ||
+      check.edit.length !== 0 ||
+      check.delete.length !== 0;
+
+    if (checkTaskChange() || subtaskChange) {
+      setUnSavedModal(true);
+      return;
+    }
+    
+    editTaskCallBack(taskWasFetched ? "fetch" : "failed", generateTaskData());
+  };
+
+  const generateTaskData = () => {
+    // generate task object when user create or edit task
+    return {
+      id: oldData.id,
+      name: name,
+      description: description,
+      startDate: startDate,
+      dueDate: dueDate,
+      nodeColor: nodeColor.name,
+      nodeShape: nodeShape,
+      subtasks: subtasks,
+      hasFetched: true,
+      isDone: false,
+      isTempId: oldData.id === -1 || oldData.isTempId === true ? true : false,
+    };
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    editTaskCallBack("success", generateTaskData());
+  };
+
   return (
     <>
-      
-      <form>
-        
+      <TwoButtonModal
+        isOpen={deleteModal}
+        onLightPress={() => setDeleteModal(false)}
+        onDarkPress={() => editTaskCallBack("delete", oldData)}
+        textField={{
+          title: "Confirm Deletion",
+          body: "Deleting task will permanantly remove it from your roadmap?",
+          lightButtonText: "Cancel",
+          darkButtonText: "Delete",
+        }}
+      />
+      <TwoButtonModal
+        isOpen={unSavedModal}
+        onLightPress={() =>
+          editTaskCallBack(
+            taskWasFetched ? "fetch" : "failed",
+            generateTaskData()
+          )
+        }
+        onDarkPress={() => setUnSavedModal(false)}
+        textField={{
+          title: "Unsaved Change",
+          body: "Are you sure you want to discard the change of a task?",
+          lightButtonText: "Ok",
+          darkButtonText: " Cancel",
+        }}
+      />
+
+      <form onSubmit={handleSubmit}>
         <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-20 outline-none focus:outline-none">
           <div className="relative w-11/12 md:w-5/6 my-6 mx-auto xl:w-2/3 2xl:w-1/2 max-h-screen">
             {/*content*/}
-            {loading && <Spinner className="z-30 absolute rounded-xl"/>}
+            {loading && <Spinner className="z-30 absolute rounded-xl" />}
             <div className=" rounded-2xl shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
               {/*header*/}
               <div
-                className={`flex items-start justify-between py-4 px-5 lg:py-8 border-b border-solid border-slate-200 rounded-t-2xl ${nodeColor.twbg} transition duration-300`}
+                className={`flex justify-between py-4 px-5 lg:py-8 border-b border-solid border-slate-200 rounded-t-2xl transition duration-300 items-center bg-white`}
               >
-                <h3 className="text-3xl font-semibold text-white">
-                  Create task
+                <div className={`${oldData.id === -1 ? "" : "w-[50px]"}`}></div>
+                <h3 className="text-4xl font-semibold text-black">
+                  {oldData.id === -1 ? "Create" : "Edit"} TASK
                 </h3>
-                <button
-                  className="p-1 ml-auto bg-transparent border-0 text-white float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
-                  onClick={() => editTaskCallBack("failed", {})}
-                >
-                  {" "}
-                  x
-                </button>
+                {oldData.id === -1 ? (
+                  <div></div>
+                ) : (
+                  <button
+                    type="button"
+                    // className="p-1 bg-transparent border-0 text-white text-3xl"
+                    onClick={() => setDeleteModal(true)}
+                  >
+                    {" "}
+                    <TrashIcon className="h-10" />
+                  </button>
+                )}
               </div>
               {/*body*/}
-              <div className="m-4 overflow-auto">
-                <div className="flex flex-col lg:flex-row gap-2">
-                  <div className="flex flex-col w-full lg:w-1/2">
-                    <label className="font-nunito-sans font-bold">Name</label>
-                    <input
-                      type="text"
-                      className="border border-black rounded-md m-2 placeholder:italic"
-                      placeholder=" Enter task name..."
-                      ref={nameRef}
-                    ></input>
-                    <label className="font-nunito-sans font-bold placeholder:t">
-                      Description
-                    </label>
-                    <input
-                      type="textbox"
-                      className="border border-black rounded-md m-2 grow placeholder:italic placeholder:justify-start h-24"
-                      placeholder=" Enter description..."
-                      ref={descriptionRef}
-                    ></input>
-                    <div className="grid grid-rows-2">
-                      <div className="w-full">
-                        <label className="self-center font-nunito-sans font-bold">
-                          Start
-                        </label>
-                        <div className="m-2">
-                          <DatePicker
-                            selected={startDate}
-                            showTimeSelect
-                            minDate={Date.now()}
-                            onChange={(date) => setStartDate(date)}
-                            // className="border border-black rounded-md justify-self-end w-full"
-                            customInput={<DatePickerButton/>}
-                          ></DatePicker>
-                        </div>
-                      </div>
-                      <div className="w-full">
-                        <label className="self-center font-nunito-sans font-bold">
-                          Due
-                        </label>
-                        <div className="m-2">
-                          <DatePicker
-                            selected={endDate}
-                            showTimeSelect
-                            minDate={Date.now()}
-                            onChange={(date) => setEndDate(date)}
-                            // className="border border-black rounded-md justify-self-end w-full"
-                            customInput={<DatePickerButton/>}
-                          ></DatePicker>
-                        </div>
+
+              <div className="flex flex-col lg:flex-row">
+                {/* Left side */}
+                <div className="flex flex-col w-full lg:w-1/2 p-6">
+                  <label className="font-nunito-sans font-bold">Name</label>
+                  <input
+                    type="text"
+                    value={name}
+                    className="border-2 border-gray-300 rounded-md my-1 placeholder:italic px-1 font-nunito-sans"
+                    placeholder=" Enter task name..."
+                    onChange={(e) => handleNameChange(e)}
+                  ></input>
+
+                  <label className="font-nunito-sans font-bold">
+                    Description
+                  </label>
+                  <textarea
+                    className="border-2 border-gray-300 rounded-md my-1 grow placeholder:italic placeholder:justify-start px-1 font-nunito-sans"
+                    value={description}
+                    cols="50"
+                    rows="4"
+                    placeholder=" Enter description..."
+                    onChange={(e) => handleDescriptionChange(e)}
+                  ></textarea>
+
+                  {/* Date Setting */}
+                  <div className="flex flex-col my-2 gap-2">
+                    <div className="w-full grid grid-cols-10">
+                      <label className="self-center font-nunito-sans font-bold">
+                        Start
+                      </label>
+                      <div className="col-span-9">
+                        <DatePicker
+                          selected={startDate}
+                          showTimeSelect
+                          minDate={Date.now()}
+                          onChange={(date) => {
+                            handleDateChange("startDate", date);
+                          }}
+                          customInput={<DatePickerButton />}
+                        ></DatePicker>
                       </div>
                     </div>
-
-                    <div className="">
-                      <label className="font-nunito-sans font-bold">
-                        Nodes
+                    <div className="w-full grid grid-cols-10">
+                      <label className="self-center font-nunito-sans font-bold">
+                        Due
                       </label>
-                      <div className="flex flex-1 gap-x-1">
-                        {/* <div className="basis-1/5 bg-gray-100 rounded-lg self-center flex justify-center p-2">
-                          <CustomSVG
-                            type={nodeShape}
-                            className={`${nodeColor.twprop}`}
-                          ></CustomSVG>
-                        </div> */}
-                        <div className="bg-gray-100 basis-1/2 rounded-lg p-4 flex gap-2">
-                          <select
-                            value={nodeColor.name}
-                            onChange={handleNodeColorChange}
-                            className={`${nodeColor.twtext} font-bold grow self-center border border-black rounded-lg `}
-                          >
-                            {allNodeColor.map((colorObj) => (
-                              <option
-                                value={colorObj.name}
-                                className={`${colorObj.twtext} font-bold`}
-                              >
-                                {colorObj.name}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                        <div className="bg-gray-100 basis-1/2 rounded-lg flex p-2 gap-2 content-center justify-center">
+                      <div className="col-span-9">
+                        <DatePicker
+                          selected={dueDate}
+                          showTimeSelect
+                          minDate={Date.now()}
+                          onChange={(date) => {
+                            handleDateChange("dueDate", date);
+                          }}
+                          // className="border border-black rounded-md justify-self-end w-full"
+                          customInput={<DatePickerButton />}
+                        ></DatePicker>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Node setting */}
+                  <div>
+                    <label className="font-nunito-sans font-bold">Nodes</label>
+                    <div className="flex flex-1 gap-x-1 mt-1 mb-4">
+                      <div className="bg-gray-100 basis-1/2 rounded-lg grid grid-rows-3 grid-cols-7 gap-2 h-30 border-2 border-gray-300">
+                        <p className="font-bold text-gray-400 pl-2">Color</p>
+                        <select
+                          value={nodeColor.name}
+                          onChange={handleNodeColorChange}
+                          className={`${nodeColor.twtext} font-bold grow self-center border-2 border-gray-300 rounded-lg col-span-5 row-start-2 col-start-2`}
+                        >
+                          {allNodeColor.map((colorObj) => (
+                            <option
+                              value={colorObj.name}
+                              key={colorObj.name}
+                              className={`${colorObj.twtext} font-bold`}
+                            >
+                              {colorObj.name.charAt(0).toUpperCase() +
+                                colorObj.name.slice(1)}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="bg-gray-100 basis-1/2 rounded-lg flex flex-col content-center border-gray-300 border-2">
+                        <p className="font-bold text-gray-400 pl-2">Shape</p>
+                        <div className="flex gap-2 justify-center">
                           <button
+                            type="button"
                             onClick={() =>
                               handleNodeShapeChange(event, "circle")
                             }
                           >
                             <CustomSVG
-                              className={`${nodeColor.twprop} ${
-                                nodeShape === "circle"
-                                  ? "stroke-black stroke-2"
-                                  : ""
-                              } self-center`}
+                              isStrokeOn={nodeShape === "circle"}
+                              className={`${nodeColor.twfill}`}
                             />
                           </button>
 
                           <button
+                            type="button"
                             onClick={() =>
                               handleNodeShapeChange(event, "square")
                             }
                           >
                             <CustomSVG
-                              className={`${nodeColor.twprop} ${
-                                nodeShape === "square"
-                                  ? "stroke-black stroke-2"
-                                  : ""
-                              } self-center`}
                               type="square"
+                              isStrokeOn={nodeShape === "square"}
+                              className={`${nodeColor.twfill}`}
                             />
                           </button>
 
                           <button
+                            type="button"
                             onClick={() =>
                               handleNodeShapeChange(event, "triangle")
                             }
                             value="triangle"
                           >
                             <CustomSVG
-                              className={`${nodeColor.twprop} ${
-                                nodeShape === "triangle"
-                                  ? "stroke-black stroke-2 "
-                                  : ""
-                              } self-center`}
                               type="triangle"
+                              isStrokeOn={nodeShape === "triangle"}
+                              className={`${nodeColor.twfill}`}
                             />
                           </button>
                         </div>
                       </div>
                     </div>
                   </div>
-                  {/* Right side */}
-                  <div className="flex flex-col w-full lg:w-1/2">
-                    <div className="bg-gray-100 rounded-md p-4">
+                </div>
+                {/* Right side */}
+                <div className="flex flex-col w-full lg:w-1/2">
+                  <div className="bg-gray-100 p-6 basis-full flex flex-col justify-between rounded-b-2xl lg:rounded-bl-none">
+                    <div>
                       <label className="block font-nunito-sans font-bold">
                         Add Subtask
                       </label>
                       <div className="flex flex-col gap-2 overflow-y-auto max-h-32 lg:max-h-none py-2">
                         {subtasks.map((subtask) => {
                           return (
-                            <div className="flex gap-2" key={subtask.id}>
+                            <div className="flex gap-2 mx-2" key={subtask.id}>
                               <input
                                 type="checkbox"
-                                className="w-4 h-4 self-center"
+                                checked={subtask.status}
+                                className="w-4 h-4 self-center font-nunito-sans"
                                 onChange={() =>
                                   onSubTaskCheckboxChange(
                                     event.target.checked,
@@ -386,6 +482,7 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
                                 value={subtask.status}
                               ></input>
                               <button
+                                type="button"
                                 onClick={() => deleteSubTask(event, subtask.id)}
                                 className="w-8 h-8 self-center"
                               >
@@ -393,7 +490,7 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
                               </button>
                               <input
                                 type="text"
-                                className="border border-black rounded-md grow"
+                                className="border border-black rounded-md grow font-nunito-sans"
                                 onChange={() =>
                                   onSubtaskTextEdit(
                                     event.target.value,
@@ -409,6 +506,7 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
 
                       <div className="flex gap-4">
                         <button
+                          type="button"
                           onClick={addSubTask}
                           disabled={subtasks.length >= 8}
                         >
@@ -427,57 +525,46 @@ const TaskModal = ({ mode, oldData, editTaskCallBack }) => {
                         ) : null}
                       </div>
                     </div>
+                    <div className="flex items-center justify-end p-4 rounded-b gap-3">
+                      <button
+                        className="text-black border border-black background-transparent rounded-full font-bold uppercase text-sm h-10 w-24 "
+                        type="button"
+                        onClick={handleDetectChangeBeforeClose}
+                      >
+                        Close
+                      </button>
+                      <button
+                        className="bg-nav-blue text-white font-bold uppercase text-sm rounded-full shadow hover:shadow-lg h-10 w-24"
+                        type="submit"
+                      >
+                        Save
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-              {/*footer*/}
-              <div className="flex items-center justify-end p-3 lg:p-6 rounded-b gap-3">
-                <button
-                  className="bg-blue-400 text-white active:bg-emerald-600 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                  type="button"
-                  onClick={() =>
-                    editTaskCallBack("success", {
-                      // This code may or may not be permanent, but definitely usable for testing
-                      name: nameRef.current.value,
-                      description: descriptionRef.current.value,
-                      startDate: startDate,
-                      dueDate: endDate,
-                      nodeColor: nodeColor.name,
-                      nodeShape: nodeShape,
-                      subtasks: subtasks,
-                    })
-                  }
-                >
-                  Save
-                </button>
-                <button
-                  className="text-black border border-black rounded-md background-transparent font-bold uppercase px-6 py-3 text-sm outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
-                  type="button"
-                  onClick={() => editTaskCallBack("failed", {})}
-                >
-                  Close
-                </button>
               </div>
             </div>
           </div>
         </div>
         <div className="opacity-25 fixed inset-0 z-10 bg-black"></div>
       </form>
-      
     </>
   );
 };
 
 TaskModal.propTypes = {
-  mode: PropTypes.string.isRequired,
   oldData: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    description: PropTypes.string.isRequired,
-    startDate: PropTypes.instanceOf(Date).isRequired,
-    dueDate: PropTypes.instanceOf(Date).isRequired,
-    nodeColor: PropTypes.string.isRequired,
-    nodeShape: PropTypes.string.isRequired,
-    subtasks: PropTypes.object.isRequired,
+    id: PropTypes.number.isRequired,
+    name: PropTypes.string,
+    description: PropTypes.string,
+    startDate: PropTypes.instanceOf(Date),
+    dueDate: PropTypes.instanceOf(Date),
+    nodeColor: PropTypes.string,
+    nodeShape: PropTypes.string,
+    subtasks: PropTypes.arrayOf(object),
+    hasFetched: PropTypes.bool,
+    isDone: PropTypes.bool,
+    isTempId: PropTypes.bool,
   }),
   editTaskCallBack: PropTypes.func.isRequired,
 };
