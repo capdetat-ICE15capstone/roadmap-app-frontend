@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import { Link, useNavigate } from "react-router-dom";
 import placeholderImage from "../assets/roadmap_assets/Placeholder_Image.png"
 import RoadmapDropdown from './RoadmapDropdown';
 import { ReactComponent as EyeIcon } from "../assets/roadmap_assets/eye_Icon.svg"
-import { Link } from "react-router-dom";
 
-
-const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_counts, stars_count, forks_count, created_at, edited_at, title, isActive, isOwner, deleteFunction}) => {
+const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_count, stars_count, forks_count, created_at, edited_at, title, isActive, isOwner, deleteFunction}) => {
   Roadmap.propTypes = {
     owner_id: PropTypes.number,
     creator_id: PropTypes.number,
@@ -21,50 +20,53 @@ const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_co
     title: PropTypes.string
   };
 
+  //navigage to roadmap owner's home page on click
+  const navigate = useNavigate();
+  const handleClick = (event) => {
+    event.preventDefault();
+    navigate(`/home/${owner_id}`);
+  };
+
   return (
-    <>
-      <div className='flex flex-col bg-white rounded-3xl shadow-md w-[200px] h-[220px] mr-16 my-8 p-2 space-y-1'>
-        <Link to={'/view/:id'} className='relative'>
-          <img src={placeholderImage} className="rounded-2xl h-full w-full" />
-          <div className='absolute bottom-[5%] left-[5%] text-xs'>
-            test
-          </div>
-          <div className='absolute bottom-[5%] right-[5%] text-xs'>
-            test
-          </div>
-        </Link>
-        <div className='flex flex-col space-y-1 m-1'>
-          <div className='flex flex-row justify-between'>
-            <div className='text-xs font-bold'>
-              Roadmap...
-            </div>
-            <div className='text-xs'>
-              Fork: 69
-            </div>
-            <div className='text-xs'>
-              Star: 420
-            </div>
-          </div>
-          <div className='flex flex-row justify-between'>
-            <div className='text-xs'>
-              Owner: Amigo
-            </div>
-            <div className='text-xs text-gray-500'>
-              Created: 1/1/1
-            </div>
-          </div>
-          <div className='flex flex-row'>
-            <div className='text-xs'>
-              Views: 69420
-            </div>
-          </div>
+    <Link to={`/view/${owner_id}`}>
+      <div className="relative inline-block rounded-[48px] bg-white border-gray-300 border-2 shadow-md w-[300px] h-[300px] hover:transform hover:scale-110 transition duration-150">
+        <div className="relative container rounded-3xl h-3/5 w-auto m-2">
+          <img src={placeholderImage} className="relative object-cover rounded-[48px] h-full w-full" />
+          <h3 className="absolute text-black bottom-2 left-6">
+            {creator_name}
+          </h3>
+          <h6 className="absolute text-gray-600 bottom-2 right-6">
+            Last updated: {edited_at}
+          </h6>
         </div>
-        {isOwner &&
-          <div className='relative flex left-[165px] -top-[20px]'>
-          <RoadmapDropdown onDelete={deleteFunction}/>
-        </div>}
-      </div>
-    </>
+        <div className="relative h-2/5 w-auto">
+          <h1 className="absolute top-0 left-2 text-2xl">
+            {title}
+          </h1>
+          <h6 className="absolute top-0 right-24" >
+            fork : {forks_count}
+          </h6>
+          <h6 className="absolute top-0 right-8">
+            star : {stars_count}
+          </h6>
+          <h1 className="absolute top-10 left-2">
+            Owner : 
+          </h1>
+          <button className="z-10 absolute top-10 left-[70px] hover:text-blue-600" onClick={handleClick}>
+            {owner_name}
+          </button>
+          <h1 className="absolute top-10 right-2 text-gray-600">
+            Created : {created_at}
+          </h1>
+          <span className="absolute bottom-6 left-8">
+            <EyeIcon />
+          </span>
+          <h1 className="absolute bottom-6 left-16">
+            : {views_count} views
+          </h1>
+        </div>
+      </div>    
+    </Link>
   );
 };
 
