@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link, useNavigate } from "react-router-dom";
 import placeholderImage from "../assets/roadmap_assets/Placeholder_Image.png"
@@ -7,9 +7,7 @@ import { ReactComponent as EyeIcon } from "../assets/roadmap_assets/eye_Icon.svg
 import { ReactComponent as ShareIcon } from "../assets/roadmap_assets/Share.svg"
 import { ReactComponent as LikeIcon } from "../assets/roadmap_assets/ThumbsUp.svg"
 
-const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_count, stars_count, forks_count, created_at, edited_at, title, isActive, isOwner, deleteFunction }) => {
-
-  //parameters of roadmap
+const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_count, stars_count, forks_count, created_at, edited_at, title, isActive, isOwner, deleteFunction}) => {
   Roadmap.propTypes = {
     owner_id: PropTypes.number,
     creator_id: PropTypes.number,

@@ -18,7 +18,7 @@ const HomeOtherUser = () => {
   const [isPublic, setIsPublic] = useState(true);
   const [isPremium, setIsPremium] = useState(false);
   let roadmapList = [];
-
+  
   function shortenString(str, maxLength) {
     if (str.length > maxLength) {
       // Shorten the string to the maximum length
@@ -36,7 +36,7 @@ const HomeOtherUser = () => {
     setIsRoadmap(false)
     setIsActive(false)
   }
-
+  
   const getHomeOtherUserData = async (viewer_id) => {
     const route = `/home/view/${viewer_id}`
     try {
@@ -80,7 +80,7 @@ const HomeOtherUser = () => {
       isActive={isActive} 
       isOwner={false} />)
     })
-
+    
   return (
     <>
       <div className="flex flex-col h-screen overflow-scroll overflow-x-hidden">
@@ -145,7 +145,7 @@ const HomeOtherUser = () => {
           <div className="flex w-full justify-center">
             {isPublic? 
             <div className="flex w-3/4 justify-start">
-              <div className="flex flex-wrap justify-start items-start w-fit max-w-[1152px] h-fit m-0">                
+              <div className="flex flex-wrap justify-start items-start w-fit max-w-[1152px] h-fit m-0"> 
                 {roadmapList}
               </div>
             </div>:
