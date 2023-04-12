@@ -65,13 +65,14 @@ const Home = () => {
       setLevel(Math.round(response.data.profile.exp/100));
       setBio(response.data.profile.bio);
       setRoadmap(response.data.roadmaps);
+      setIsPremium(response.data.profile.is_premium);
     }
     fetchData();
   }, []);
 
   const roadmapArray = Array.from(roadmap)
   roadmapArray.forEach((items, index) => {
-    if (index >= 3 && !isPremium)
+    if (index >= 3 && !isPremium) 
       return;
     roadmapList.push(<Roadmap key={index}
       owner_id={items.owner_id}
