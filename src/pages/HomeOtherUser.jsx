@@ -10,7 +10,6 @@ import { axiosInstance } from "../functions/axiosInstance";
 const HomeOtherUser = () => {
   const [data, setData] = useState(null);
   const [isRoadmap, setIsRoadmap] = useState(true);
-  const [isDeleteClick, setIsDeleteClick] = useState(false);
   const [isActive, setIsActive] = useState(true);
   const [username, setUsername] = useState('');
   const [level, setLevel] = useState('');
