@@ -127,7 +127,7 @@ export default function View() {
   function completeTask() {
     setIsLoading(true);
     setIsCompleting(false);
-    const route = `/task/complete/?tid=${currentTask.id}&added_exp=${50}`;
+    const route = `/task/complete?tid=${currentTask.id}&added_exp=${50}`;
     axiosInstance.put(route)
       .then((response) => {
         console.log(response);
