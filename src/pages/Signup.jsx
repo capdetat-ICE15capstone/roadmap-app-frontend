@@ -110,20 +110,17 @@ export default function Signup() {
       });
   }
 
+  // bg-gradient-to-b from-teal-300 to-amber-100
+
   return (
     <>
-      <div className={`flex flex-row h-screen w-screen`}>
-        <div className="flex justify-center w-1/2 bg-gradient-to-b from-cyan-500 to-blue-500">
-          <div className="flex flex-col justify-center m-8">
-
-          </div>
-        </div>
-        <div className="flex justify-center w-1/2">
+      <div className={`flex flex-row h-screen w-screen bg-gradient-to-b from-sub-blue to-main-blue overflow-y-auto py-8`}>
+        <div className="flex items-center justify-center bg-white m-auto rounded-2xl shadow-2xl">
           <div className="flex flex-col justify-center m-8">
             <p className="text-center mb-4 text-3xl font-bold text-slate-600">
               Create Account
             </p>
-            <form id="register-form" onSubmit={handleSignupSubmit}>
+            <form id="register-form" autoComplete="off" onSubmit={handleSignupSubmit}>
               <div className="flex flex-col space-y-1 mb-4">
                 <div className="flex flex-col">
                   <label>

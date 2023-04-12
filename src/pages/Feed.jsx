@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Roadmap from "../components/Roadmap";
+import RoadmapNeo from "../components/Roadmap_neo";
 import SearchBar from "../components/SearchBar";
 import { useNavigate } from "react-router-dom";
 import { ReactComponent as SearchIcon } from "../assets/searchIcon.svg";
+import { axiosInstance } from '../functions/axiosInstance';
 
 const Feed = () => {
   const [search, setSearch] = useState("");
@@ -13,19 +15,19 @@ const Feed = () => {
 
   // classify user input (roadmap(""), user("@""), tag("#""))
   const classifyInput = (input) => {
-    // User search
+    // Search for USER case
     if (input.charAt(0) === "@") {
       const username = input.substring(1);
       const type = "user"
       console.log(`Searching for user ${username}`);
       return type
-    // Tag search  
+      // Search for TAG case  
     } else if (input.charAt(0) === "#") {
       const tag = input.substring(1);
       const type = "tag"
       console.log(`Searching for tag ${tag}`);
       return type
-    // Roadmap search
+      // Search for ROADMAP case
     } else {
       const type = "roadmap"
       console.log(`Searching for roadmap ${input}`);
@@ -40,22 +42,33 @@ const Feed = () => {
     setSearch(document.getElementById("InputSearch").value);
     const searchValue = document.getElementById("InputSearch").value;
     const searchType = classifyInput(searchValue);
-    navigate('/search', { state: { userSearch: searchValue, searchType: searchType} });
+    navigate('/search', { state: { userSearch: searchValue, searchType: searchType } });
     //console.log("search: " + document.getElementById("InputSearch").value);
   };
 
-  // fetch roadmap data from API
+  async function getRecommendRoadmap() {
+    const route = "/feed/recommendation";
+    try {
+      const startTime = performance.now(); // get the start time
+      const response = await axiosInstance.get(route);
+      const endTime = performance.now(); // get the end time
+      const elapsedTime = endTime - startTime; // calculate the elapsed time in milliseconds
+      console.log(`Time elapsed: ${elapsedTime} ms`); // log the elapsed time
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  }
+
+  // fetch roadmap data
   const fetchData = async () => {
     if (isFetching) return; // return if a fetch is already in progress
     setIsFetching(true); // set isFetching to true to indicate a fetch is starting
     try {
-      console.log("fetch")
-      const response = await fetch(`http://localhost:3000/multipleRoadmaps`);
-      const data = await response.json();
-      let newArray = [];
-      data.forEach((data) => {
-        newArray = newArray.concat(data.roadmapArray);
-      });
+      console.log("fetch");
+      const response = await getRecommendRoadmap();
+      const newArray = [...response];
       setRoadmapArray(prevArray => [...prevArray, ...newArray]);
     } catch (error) {
       console.log(error);
@@ -102,10 +115,10 @@ const Feed = () => {
           </div>
         </div>
         {/*Search Result*/}
-        <div className='flex justify-center'>
-          <div className='flex flex-wrap items-start w-3/4 gap-12'>
+        <div className='flex justify-center my-8'>
+          <div className='flex flex-wrap items-start w-3/4 gap-20'>
             {roadmapArray.map((roadmap, index) => (
-              <Roadmap
+              <RoadmapNeo
                 key={index}
                 owner_id={roadmap.owner_id}
                 creator_id={roadmap.creator_id}

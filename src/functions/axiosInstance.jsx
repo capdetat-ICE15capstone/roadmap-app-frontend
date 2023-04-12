@@ -1,6 +1,6 @@
-import axios from "axios";
+import axios from 'axios';
 
-const BASEURL = `http://localhost:8080`;
+const BASEURL = `https://oyster-app-gkodb.ondigitalocean.app`;
 
 export const axiosInstance = axios.create({
   baseURL: BASEURL,
