@@ -16,7 +16,7 @@ import axios from "axios";
 
 const publicVAPIDKey =
   "BEStV6D5Z4rWtMK0X2hXP8X4Zj9CKrOyHej3i1JQOZhk_FRCF3-dv3s7B97WNvIPoe_Pg7zX2CFwPF4_LMsf7ag";
-const route = "http://localhost:8080/subscription";
+const route = "/subscription/";
 
 function urlBase64ToUint8Array(base64String) {
     var padding = "=".repeat((4 - (base64String.length % 4)) % 4);
@@ -156,6 +156,19 @@ const Setting = () => {
             setAccountPublic(!response.data.is_private);
         }
         fetchData();
+        navigator.serviceWorker.ready
+        .then((serviceWorkerRegistration) => {
+            serviceWorkerRegistration.pushManager.getSubscription()
+            .then((subscription) => {
+                if (subscription) {
+                    console.log("subscription: true");
+                    setNotification(true);
+                } else {
+                    console.log("subscription: false");
+                    setNotification(false);
+                }
+            })
+        })
     }, []);
 
     const RenderProfile = () => {
@@ -463,7 +476,7 @@ const Setting = () => {
 
     const deleteAccount = () => {
         console.log("delete account");
-        updateSetting("/account/deactivate");
+        updateSetting("/account/deactivate/");
     }
 
     const updatePrivacy = () => {
@@ -497,7 +510,7 @@ export default Setting;
 
 export const getSetting = async (timeout = 0) => {
     // check whether user is logged-in
-    const route = `/user/user_profile_settings`
+    const route = `/user/user_profile_settings/`
 
     try {
         let response = await axiosInstance.get(route, { timeout: timeout });

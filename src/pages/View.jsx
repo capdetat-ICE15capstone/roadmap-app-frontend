@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react'
-import { isRouteErrorResponse, useNavigate, useParams } from 'react-router-dom';
+import React, { useState, useEffect, useRef} from 'react'
+import { useNavigate, useParams } from 'react-router-dom';
 import { axiosInstance } from "../functions/axiosInstance";
 import { getRoadmap } from '../functions/roadmapFunction';
-import { shortenString, convertDateTimeString } from '../functions/formatFunction';
 import { likeRoadmap, unlikeRoadmap } from '../functions/viewFunction';
 import RoadmapViewer from '../components/RoadmapViewer';
 import Spinner from '../components/Spinner';
@@ -118,7 +117,13 @@ export default function View() {
     }
   }
 
+  const isMountedRef = useRef(false);
+
   useEffect(() => {
+    if (!isMountedRef.current) {
+      isMountedRef.current = true;
+      return;
+    }
     fetchRoadmap();
   }, []);
 
@@ -164,7 +169,7 @@ export default function View() {
     return (
       <>
         <div className='flex h-full bg-white overflow-y-scroll py-8'>
-          <div className="w-5/6 flex-col m-auto space-y-6">
+          <div className="w-3/4 max-w-3xl flex-col m-auto space-y-6">
 
             <RoadmapDetail
               roadmapName={roadmap.name}
