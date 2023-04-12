@@ -100,11 +100,6 @@ const DropDownMenu = ({
     optionValues = optionValues ?? options;
   }, []);
 
-  // useEffect(() => {
-  //   console.log(currentOption);
-  // }),
-  //   [currentOption];
-
   const handleMenuShowUnshow = (event) => {
     event.preventDefault();
     setIsMenuShowing((isMenuShowing) => !isMenuShowing);
@@ -183,7 +178,8 @@ const RoadmapCreatePage = (props) => {
   const [publicModal, setPublicModal] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [errorModal, setErrorModal] = useState(false);
-
+  const [errorHandle, setErrorHandle] = useState({message: "", redirectTo: null});
+  
   useEffect(() => {
     setUpRoadmap();
   }, []);
@@ -221,7 +217,6 @@ const RoadmapCreatePage = (props) => {
   };
 
   const setUpNotification = (roadmap) => {
-    console.log(roadmap);
     if (roadmap.reminder_time === 0) {
       return { on: false, detail: { day: 0, beforeDueDate: false } };
     }
@@ -239,7 +234,8 @@ const RoadmapCreatePage = (props) => {
     if (mode === "edit" || mode === "clone") {
       // check whether the user could view this page
       if (!isUserLoggedIn()) {
-        alert("unauthorized");
+        // alert("unauthorized");
+        handleDisplayErrorMessage("User Unauthorized", "/login", true)
       }
       // check if state is available
       if (state !== null && state !== undefined) {
@@ -277,11 +273,10 @@ const RoadmapCreatePage = (props) => {
         // console.log(tempRoadmap);
         if (tempRoadmap === null) {
           setLoading(false);
-          alert("error");
-          navigate("/");
-        }
-        const notificationObject = setUpNotification(tempRoadmap);
-        if (tempRoadmap !== null) {
+          // alert("error");
+          handleDisplayErrorMessage("Roadmap Loading Failed", "/home", true)
+        } else  {
+          const notificationObject = setUpNotification(tempRoadmap);
           if (mode === "edit") {
             initialState.current = {
               name: tempRoadmap.name,
@@ -306,9 +301,6 @@ const RoadmapCreatePage = (props) => {
           setNotiStatus(notificationObject);
           setLastId(highestID + 1);
           // setLastId((lastId) => highestID + 1);
-        } else {
-          alert("GET error");
-          navigate("/");
         }
         setLoading(false);
       }
@@ -674,7 +666,7 @@ const RoadmapCreatePage = (props) => {
 
     // Begin the spinner
     setLoading(true);
-    await generateNotificationObjects();
+    // await generateNotificationObjects();
     if (
       await handleSendingApi(
         roadmapChange,
@@ -692,14 +684,26 @@ const RoadmapCreatePage = (props) => {
 
   const handleDiscard = () => {};
 
-  const handleNotiSettingChange = (event) => {
-    setNotiStatus(JSON.parse(event.target.value));
-  };
-
-  const handleDisplayErrorMessage = (message) => {
-    console.log(message);
+  const handleDisplayErrorMessage = (error, redirectTo=null, selfGenerateError=false) => {
+    if (selfGenerateError === true) {
+      setErrorHandle({message: error, redirectTo: redirectTo});
+    } else {
+      if (error.response !== undefined && error.response !== null) {
+        if (error.response.status === 401) 
+          redirectTo = "/login";
+        setErrorHandle({message: error.response.data.detail, redirectTo: redirectTo})
+      } else {
+        setErrorHandle({message: error.message, redirectTo: redirectTo})
+      }
+    }
     setErrorModal(true);
-    showErrorModal(message)
+  }
+
+  const handleErrorRedirect = () => {
+    if (errorHandle.redirectTo !== null)
+      navigate(errorHandle.redirectTo);
+    else 
+      setErrorModal(false)
   }
 
   const generateNotificationObjects = () => {
@@ -737,6 +741,17 @@ const RoadmapCreatePage = (props) => {
           darkButtonText: "OK",
         }}
       />
+      <TwoButtonModal
+        isOpen={errorModal}
+        onDarkPress={handleErrorRedirect}
+        textField={{
+          title: "Error",
+          body: errorHandle.message,
+          lightButtonText: "Cancel",
+          darkButtonText: "OK",
+        }}
+        oneButton={true}
+      />
       {modalState ? (
         // id -1 is passed as a temp id to let the modal know it's in create mode, otherwise it's in edit mode
         editTaskID == -1 ? (
@@ -750,7 +765,6 @@ const RoadmapCreatePage = (props) => {
       ) : null}
 
       {loading && <Spinner />}
-      
       <div className="h-full w-full flex justify-center">
         <form onSubmit={handleSubmit} className="h-full w-4/5 max-w-4xl">
         <div className="text-4xl font-bold mt-10 flex items-center">
@@ -830,46 +844,6 @@ const RoadmapCreatePage = (props) => {
                 Icon={notiStatus.on === true ? NotiOn : NotiOff}
                 className="absolute z-10 right-6 top-6"
               />
-              {/* <select
-                value={JSON.stringify(notiStatus)}
-                onChange={handleNotiSettingChange}
-                className="absolute z-10 right-4 top-4"
-              >
-                <option
-                  value={JSON.stringify({ on: false })}
-                  key={"Nonoti"}
-                  className="font-nunito-sans"
-                >
-                  No notification
-                </option>
-                List of all notification option 
-                {notificationDayOption.map((day) => {
-                  return [true, false].map((beforeDueDate) => {
-                    return (
-                      <option
-                        className="font-nunito-sans"
-                        value={JSON.stringify({
-                          on: true,
-                          detail: {
-                            day: day,
-                            beforeDueDate: beforeDueDate,
-                          },
-                        })}
-                        key={JSON.stringify({
-                          detail: {
-                            day: day,
-                            beforeDueDate: beforeDueDate,
-                          },
-                        })}
-                      >
-                        {`${day} days before ${
-                          beforeDueDate ? "due" : "start"
-                        } date`}
-                      </option>
-                    );
-                  });
-                })}
-              </select>  */}
             </div>
             {/* End of Notification Setting */}
             {/* Giant task box */}

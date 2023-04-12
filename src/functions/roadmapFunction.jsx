@@ -168,8 +168,8 @@ export const editRoadmap = async (
     console.log(response);
     return response;
   } catch (error) {
-    reportError(error)
     console.error(error);
+    reportError(error)
     return null;
   }
 };
@@ -212,8 +212,8 @@ export const createRoadmap = async (
     });
     return response;
   } catch (error) {
-    reportError(error)
     console.error(error);
+    reportError(error)
     return null;
   }
 };
