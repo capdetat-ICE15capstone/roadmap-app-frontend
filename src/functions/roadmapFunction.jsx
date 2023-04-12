@@ -120,6 +120,7 @@ export const editRoadmap = async (
   subtaskChange,
   relationChange,
   tagChanges,
+  reportError,
   timeout = 0
 ) => {
   console.log("request");
@@ -167,6 +168,7 @@ export const editRoadmap = async (
     console.log(response);
     return response;
   } catch (error) {
+    reportError(error)
     console.error(error);
     return null;
   }
@@ -176,6 +178,7 @@ export const createRoadmap = async (
   roadmapChange, // null (No Change) or roadmapAttr (For create mode always has roadmapAttr)
   taskChange, // taskChange object {add:[], edit:[], delete:[]}
   subtaskChange, // subtaskChange object {add:[], edit:[], delete:[]
+  reportError,
   timeout = 0
 ) => {
   console.log("initial create roadmap");
@@ -209,6 +212,7 @@ export const createRoadmap = async (
     });
     return response;
   } catch (error) {
+    reportError(error)
     console.error(error);
     return null;
   }
@@ -302,7 +306,7 @@ const PRIVATE_addAndReassign = async (
     return [taskAdd, subTaskAdd, taskRelation];
   } catch (error) {
     console.error(error);
-    throw new Error("add and reassign error");
+    throw error;
   }
 };
 
@@ -332,7 +336,7 @@ const PRIVATE_createRoadmap = async (roadmap, timeout = 0) => {
     return response.data;
   } catch (error) {
     console.error(error);
-    throw new Error("Roadmap create axios error");
+    throw error
   }
 };
 
@@ -362,7 +366,7 @@ const PRIVATE_updateRoadmap = async (roadmap, timeout = 0) => {
     return response.data;
   } catch (error) {
     console.error(error);
-    throw new Error("Roadmap create axios error");
+    throw error
   }
 };
 
@@ -378,7 +382,7 @@ const PRIVATE_updateRelation = async (rid, relation, timeout = 0) => {
     return response.data;
   } catch (error) {
     console.error(error);
-    throw new Error("Roadmap create axios error");
+    throw error
   }
 };
 
@@ -432,7 +436,7 @@ const PRIVATE_createTask = async (rid, tasks, timeout = 0) => {
     }
   } catch (error) {
     console.error(error);
-    throw new Error("Roadmap create axios error");
+    throw error
   }
 };
 
@@ -475,7 +479,7 @@ const PRIVATE_editTask = async (tasks, timeout = 0) => {
     return response.data;
   } catch (error) {
     console.error(error);
-    throw new Error("Roadmap create axios error");
+    throw error
   }
 };
 
@@ -494,7 +498,7 @@ const PRIVATE_deleteTask = async (tids, timeout = 0) => {
     return response;
   } catch (error) {
     console.error(error);
-    throw new Error("Roadmap create axios error");
+    throw error
   }
 };
 
@@ -536,7 +540,7 @@ const PRIVATE_createSubtask = async (subtasks, timeout = 0) => {
     }
   } catch (error) {
     console.error(error);
-    throw new Error("Roadmap create axios error");
+    throw error
   }
 };
 
@@ -572,7 +576,7 @@ const PRIVATE_editSubtask = async (subtasks, timeout = 0) => {
     return response.data;
   } catch (error) {
     console.error(error);
-    throw new Error("Roadmap create axios error");
+    throw error
   }
 };
 
@@ -591,7 +595,7 @@ const PRIVATE_deleteSubtask = async (stids, timeout = 0) => {
     return response;
   } catch (error) {
     console.error(error);
-    throw new Error("Roadmap create axios error");
+    throw error
   }
 };
 

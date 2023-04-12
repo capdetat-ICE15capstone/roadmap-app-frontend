@@ -17,6 +17,7 @@ import { StrictModeDroppable } from "../components/StrictModeDroppable";
 import { AnimatePresence, motion } from "framer-motion";
 import { ReactComponent as NotiOff } from "../assets/notification/notiOff.svg";
 import { ReactComponent as NotiOn } from "../assets/notification/notiOn.svg";
+import { roundTimeToNearest30 } from "../functions/formatFunction";
 
 // TODO: put a null check around getRoadmap and createRoadmap pls
 // BUG: spinner does not stop spinning in error
@@ -181,6 +182,7 @@ const RoadmapCreatePage = (props) => {
   const [tags, setTags] = useState([]);
   const [publicModal, setPublicModal] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [errorModal, setErrorModal] = useState(false);
 
   useEffect(() => {
     setUpRoadmap();
@@ -236,7 +238,7 @@ const RoadmapCreatePage = (props) => {
     // use to load roadmap page into edit or clone page
     if (mode === "edit" || mode === "clone") {
       // check whether the user could view this page
-      if (!isUserLoggedIn) {
+      if (!isUserLoggedIn()) {
         alert("unauthorized");
       }
       // check if state is available
@@ -271,8 +273,8 @@ const RoadmapCreatePage = (props) => {
         // fetch the roadmap data
         // then set the data to variable
         setLoading(true);
-        const tempRoadmap = await getRoadmap(id, 10000, false);
-        console.log(tempRoadmap);
+        const tempRoadmap = await getRoadmap(id, 10000, mode === "clone");
+        // console.log(tempRoadmap);
         if (tempRoadmap === null) {
           setLoading(false);
           alert("error");
@@ -313,10 +315,14 @@ const RoadmapCreatePage = (props) => {
     }
 
     if (mode === "clone") {
+      let timeDifference = undefined;
       setTasks((tasks) =>
         tasks.map((task) => {
+          timeDifference |= (new Date()).getTime() - task.startDate.getTime() 
           task.isDone = false;
           task.isTempId = true;
+          task.startDate = roundTimeToNearest30(new Date(task.startDate.getTime() + timeDifference))
+          task.dueDate = roundTimeToNearest30(new Date(task.dueDate.getTime() + timeDifference))
           task.subtasks.map((subtask) => {
             subtask.isTempId = true;
             return subtask;
@@ -573,11 +579,12 @@ const RoadmapCreatePage = (props) => {
     taskChange,
     subtaskChange,
     relationChange,
-    tagChanges
+    tagChanges,
+    reportError
   ) => {
     if (mode === "create" || mode === "clone") {
       if (
-        (await createRoadmap(roadmapObject, taskChange, subtaskChange)) === null
+        (await createRoadmap(roadmapObject, taskChange, subtaskChange, reportError)) === null
       ) {
         return false;
       }
@@ -590,7 +597,8 @@ const RoadmapCreatePage = (props) => {
           taskChange,
           subtaskChange,
           relationChange,
-          tagChanges
+          tagChanges,
+          reportError
         )) === null
       ) {
         return false;
@@ -673,7 +681,8 @@ const RoadmapCreatePage = (props) => {
         taskChange,
         subTaskChange,
         taskRelationChange,
-        tagChanges
+        tagChanges,
+        handleDisplayErrorMessage
       )
     )
       navigate("/");
@@ -686,6 +695,12 @@ const RoadmapCreatePage = (props) => {
   const handleNotiSettingChange = (event) => {
     setNotiStatus(JSON.parse(event.target.value));
   };
+
+  const handleDisplayErrorMessage = (message) => {
+    console.log(message);
+    setErrorModal(true);
+    showErrorModal(message)
+  }
 
   const generateNotificationObjects = () => {
     // generate array of noti object to be sent to the server
@@ -737,7 +752,7 @@ const RoadmapCreatePage = (props) => {
       {loading && <Spinner />}
       <div className="text-4xl font-bold mt-10 mx-10 flex items-center">
         <div className="flex flex-col">
-          <span className="font-inter">
+          <span className="font-inter text-3xl">
             {mode === "create"
               ? "Create"
               : mode === "edit"
@@ -756,18 +771,18 @@ const RoadmapCreatePage = (props) => {
         <form onSubmit={handleSubmit} className="h-full w-4/5 max-w-4xl">
           <div className="flex my-4 justify-between">
             <input
-              className="text-2xl focus:outline-none font-inter w-full"
+              className="text-2xl focus:outline-none font-inter w-full "
               type="text"
               value={RMName}
               onChange={handleNameChange}
               placeholder="UNTITLED"
             />
-            <div className="flex">
+            <div className="flex ">
               <button
                 type="button"
                 disabled={isPublic}
                 onClick={() => setPublicModal(true)}
-                className="bg-white disabled:bg-blue-100 h-10 w-28 text-md p-2 font-bold rounded-l-full border border-black font-nunito-sans"
+                className="bg-white disabled:bg-blue-100 h-10 w-28 text-md p-2 font-bold rounded-l-full border border-black shadow shadow-gray-400"
               >
                 Public
               </button>
@@ -775,7 +790,7 @@ const RoadmapCreatePage = (props) => {
                 type="button"
                 disabled={!isPublic}
                 onClick={() => setPublicModal(true)}
-                className="h-10 w-28 bg-white disabled:bg-blue-100 text-md p-2 font-bold rounded-r-full border-black border-y border-r font-nunito-sans"
+                className="h-10 w-28 bg-white disabled:bg-blue-100 text-md p-2 font-bold rounded-r-full border-black border-y border-r shadow shadow-gray-400"
               >
                 Private
               </button>
@@ -789,7 +804,7 @@ const RoadmapCreatePage = (props) => {
           }
 
           <label className="text-xl font-bold font-nunito-sans">
-            Roadmap Description:{" "}
+            Roadmap Description{" "}
           </label>
           <div className="my-3">
             <textarea
