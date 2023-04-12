@@ -168,7 +168,7 @@ export default function View() {
   if (roadmap.hasFetched) {
     return (
       <>
-        <div className='flex h-full bg-white overflow-y-scroll py-8'>
+        <div className='flex h-full bg-white overflow-y-auto py-8'>
           <div className="w-3/4 max-w-3xl flex-col m-auto space-y-6">
 
             <RoadmapDetail
