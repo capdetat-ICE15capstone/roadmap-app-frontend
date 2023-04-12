@@ -135,7 +135,7 @@ const DropDownMenu = ({
                   onClick={(event) =>
                     handleSetOption(event, optionValues[index])
                   }
-                  className={`font-bold whitespace-nowrap inline-block p-2 justify-center border hover:scale-125 duration-200 transition hover:bg-yellow-300 justify-self-center ${
+                  className={`font-bold whitespace-nowrap inline-block p-1 px-2 justify-center border hover:scale-125 duration-200 transition hover:bg-yellow-300 justify-self-center ${
                     optionComparer(optionValues[index], currentOption) === true
                       ? "bg-gray-300"
                       : "bg-white"
@@ -750,7 +750,10 @@ const RoadmapCreatePage = (props) => {
       ) : null}
 
       {loading && <Spinner />}
-      <div className="text-4xl font-bold mt-10 mx-10 flex items-center">
+      
+      <div className="h-full w-full flex justify-center">
+        <form onSubmit={handleSubmit} className="h-full w-4/5 max-w-4xl">
+        <div className="text-4xl font-bold mt-10 flex items-center">
         <div className="flex flex-col">
           <span className="font-inter text-3xl">
             {mode === "create"
@@ -763,15 +766,13 @@ const RoadmapCreatePage = (props) => {
             roadmap
           </span>
           <div className="h-2">
-            <hr className="h-0.5 bg-blue-600"></hr>
+            <hr className="h-0.5 bg-nav-blue w-[120%]"></hr>
           </div>
         </div>
       </div>
-      <div className="h-full w-full flex justify-center">
-        <form onSubmit={handleSubmit} className="h-full w-4/5 max-w-4xl">
           <div className="flex my-4 justify-between">
             <input
-              className="text-2xl focus:outline-none font-inter w-full "
+              className="text-2xl focus:outline-none font-inter w-full placeholder:font-extrabold"
               type="text"
               value={RMName}
               onChange={handleNameChange}
@@ -782,7 +783,7 @@ const RoadmapCreatePage = (props) => {
                 type="button"
                 disabled={isPublic}
                 onClick={() => setPublicModal(true)}
-                className="bg-white disabled:bg-blue-100 h-10 w-28 text-md p-2 font-bold rounded-l-full border border-black shadow shadow-gray-400"
+                className="bg-white disabled:bg-blue-100 h-10 w-28 text-md p-2 rounded-l-full border shadow shadow-gray-400"
               >
                 Public
               </button>
@@ -790,7 +791,7 @@ const RoadmapCreatePage = (props) => {
                 type="button"
                 disabled={!isPublic}
                 onClick={() => setPublicModal(true)}
-                className="h-10 w-28 bg-white disabled:bg-blue-100 text-md p-2 font-bold rounded-r-full border-black border-y border-r shadow shadow-gray-400"
+                className="h-10 w-28 bg-white disabled:bg-blue-100 text-md p-2 rounded-r-full border-y border-r shadow shadow-gray-400"
               >
                 Private
               </button>
@@ -803,12 +804,12 @@ const RoadmapCreatePage = (props) => {
             </motion.div>
           }
 
-          <label className="text-xl font-bold font-nunito-sans">
+          <label className="text-xl font-bold ">
             Roadmap Description{" "}
           </label>
-          <div className="my-3">
+          <div className="my-2">
             <textarea
-              className="border rounded-lg border-gray-400 block text-xl p-1 w-full focus:outline-none shadow-lg font-nunito-sans"
+              className="border rounded-lg border-gray-400 block text-xl font-thin p-1 w-full focus:outline-none shadow-lg "
               rows="4"
               cols="60"
               value={RMDesc}
@@ -939,7 +940,7 @@ const RoadmapCreatePage = (props) => {
             <div className="relative">
               <div className="absolute right-0">
                 <button
-                  className="bg-transparent border-nav-blue font-bold text-nav-blue w-32 h-10 rounded-full border-2 mr-2 font-nunito-sans"
+                  className="bg-transparent border-gray-800 font-bold text-gray-800 w-32 h-10 rounded-full border mr-2 font-nunito-sans"
                   type="button"
                   onClick={handleDiscard}
                 >
