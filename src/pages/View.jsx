@@ -8,12 +8,11 @@ import RoadmapViewer from '../components/RoadmapViewer';
 import Spinner from '../components/Spinner';
 import Prompt from '../components/Prompt';
 import RoadmapDetail from '../components/RoadmapDetail';
+import RoadmapTaskDetail from '../components/RoadmapTaskDetail';
 
 export default function View() {
   const { roadmap_id } = useParams();
   const navigate = useNavigate();
-
-  const [hasFetched, setHasFetched] = useState(false);
 
   const [isWarning, setIsWarning] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -38,7 +37,7 @@ export default function View() {
     }
   );
 
-  async function fetchRoadmap() {
+  function fetchRoadmap() {
     getRoadmap(roadmap_id)
       .then((response) => {
         const fetchedRoadmap = response;
@@ -85,7 +84,6 @@ export default function View() {
             axiosInstance.get(route)
               .then((response) => {
                 setIsLiked(Boolean(response.data.liked.toLowerCase() === 'true'));
-                setHasFetched(true);
                 setIsLoading(false);
                 const temp = { ...fetchedRoadmap };
                 temp.hasFetched = true;
@@ -185,74 +183,7 @@ export default function View() {
             <RoadmapViewer tasks={roadmap.tasks} currentTaskID={currentTask.id} className="" />
 
             {(!isCompleted) && (
-              <div className='flex flex-col bg-white rounded-2xl drop-shadow-[0_2px_3px_rgba(0,0,0,0.15)] space-y-4'>
-                <div className='flex flex-row space-x-4 justify-between'>
-                  <div className='flex flex-col space-y-4 w-1/2 p-4'>
-                    <div className='text-md font-bold break-words'>
-                      {currentTask.name}
-                    </div>
-                    <div className='text-sm break-words'>
-                      {currentTask.description}
-                    </div>
-                    <div className='flex flex-col md:flex-row gap-2'>
-                      <div className='grow font-bold text-center text-xs'>
-                        Start: {convertDateTimeString(currentTask.startDate)}
-                      </div>
-                      <div className='grow font-bold text-center text-xs'>
-                        Due: {convertDateTimeString(currentTask.dueDate)}
-                      </div>
-                    </div>
-                  </div>
-                  <div className='flex flex-col space-y-2 w-1/2 p-4 bg-[#f5f8fd] rounded-r-2xl justify-between'>
-                    <div className='flex flex-col justify-center space-y-2 text-sm break-all'>
-                      {currentTask.subtasks.map((subtask, index) => {
-                        return (
-                          <label key={index}>
-                            {(isOwner) && (
-                              <input
-                                type="checkbox"
-                                className="w-4 h-4 mr-2 bg-gray-100 border-gray-300 rounded"
-                                checked={subtask.status}
-                                onChange={() => {
-                                  let updatedTask = { ...currentTask };
-                                  updatedTask.subtasks[index].status = !updatedTask.subtasks[index].status;
-                                  setCurrentTask(updatedTask);
-                                }}
-                              />
-                            )}
-                            {(!isOwner) && (
-                              <input
-                                type="checkbox"
-                                disabled={true}
-                                className="w-4 h-4 mr-2 bg-gray-100 border-gray-300 accent-slate-500 rounded pointer-events-none"
-                                defaultChecked={subtask.status}
-                              />
-                            )}
-                            {subtask.detail}
-                          </label>
-                        )
-                      })}
-                    </div>
-                    {(isOwner) && (
-                      <div className='flex flex-row justify-end gap-2'>
-                        {(saveButton) && (
-                          <button
-                            onClick={() => setIsSaving(true)}
-                            className="bg-main-blue sm:w-28 w-full text-white px-4 py-2 font-semilight rounded-full text-sm font-bold self-center h-10 truncate"
-                            type="button">
-                            Save
-                          </button>
-                        )}
-                        {(completeButton) && (
-                          <button onClick={() => setIsCompleting(true)} className="bg-sub-blue sm:w-28 w-full text-white px-4 py-2 font-semilight rounded-full text-sm font-bold self-center h-10 truncate" type="button">
-                            Complete
-                          </button>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
+              <RoadmapTaskDetail task={currentTask} handleTaskUpdate={(task) => setCurrentTask(task)} handleIsSaving={() => setIsSaving(true)} handleIsCompleting={() => setIsCompleting(true)} isOwner={isOwner} displaySaveButton={saveButton} displayCompleteButton={completeButton}/>
             )}
           </div>
         </div >
