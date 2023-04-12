@@ -52,6 +52,12 @@ module.exports = {
   
         'max-sm': {'max': '639px'},
         // => @media (max-width: 639px) { ... }
+
+        'max-xs': {'max': '495px'},
+        // => @media (max-width: 495px) { ... }
+
+        'xs': {'min': '495px'},
+        // => @media (min-width: 495px) { ... }
       }
     },
   },
