@@ -47,7 +47,7 @@ const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_co
   return (
     <>
       <div>
-        <Link to={`/view/${owner_id}`} >
+        <Link to={`/view/${rid}`} >
           <div className='flex flex-col bg-white rounded-3xl shadow-md w-[280px] h-[300px] p-2 space-y-1 hover:transform hover:scale-110 transition duration-150'>
             <div className='relative'>
               <img src={placeholderImage} className="rounded-2xl h-full w-full" />
@@ -65,10 +65,10 @@ const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_co
                   {title}
                 </div>
                 <div className='z-10 flex flex-row justify-center space-x-4 text-xs w-[35%]'>
-                  <div className='z-10 flex flex-row items-center '>
+                  <div className='z-10 flex flex-row items-center'>
                     <ShareIcon /> : {forks_count}
                   </div>
-                  <div className='z-10 flex flex-row items-center '>
+                  <div className='z-10 flex flex-row items-center'>
                     <LikeIcon /> : {stars_count}
                   </div>
                 </div>
