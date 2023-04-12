@@ -12,7 +12,6 @@ function RoadmapViewer({ tasks, currentTaskID }) {
 
   const handleMouseOver = (task) => {
     setHoveredTask(task);
-    console.log(task);
   };
 
   useEffect(() => {
