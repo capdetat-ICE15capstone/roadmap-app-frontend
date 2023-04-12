@@ -34,7 +34,7 @@ export default function Login() {
   }
 
   async function submitForm(form) {
-    const route = `/user/login`;
+    const route = `/user/login/`;
     axiosInstance.post(route, form)
       .then((response) => {
         console.log(response.data);
