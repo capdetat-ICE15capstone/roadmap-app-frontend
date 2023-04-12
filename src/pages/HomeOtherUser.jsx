@@ -61,8 +61,25 @@ const HomeOtherUser = () => {
     fetchData();
   }, []);
   
-  for (let i = 0;!isPremium? i < 3:i < roadmap.length;i++)
-    roadmapList.push(<Roadmap key={i} isActive={isActive} isOwner={true}/>)
+  const roadmapArray = Array.from(roadmap)
+  roadmapArray.forEach((items, index) => {
+    if (index >= 3 && !isPremium)
+      return;
+    roadmapList.push(<Roadmap key={index}
+      owner_id={items.owner_id}
+      creator_id={items.creator_id}
+      owner_name={items.owner_name}
+      creator_name={items.creator_name}
+      rid={items.rid}
+      views_count={items.views_count}
+      stars_count={items.stars_count}
+      forks_count={items.forks_count}
+      created_at={items.created_at}
+      edited_at={items.edited_at}
+      title={items.title}
+      isActive={isActive} 
+      isOwner={false} />)
+    })
 
   return (
     <>
