@@ -42,7 +42,7 @@ export default function Login() {
         console.log(response.data);
         const token = response.data.token;
         localStorage.setItem('token', token);
-        navigate('/home');
+        navigate('/');
       })
       .catch((error) => {
         console.log(error);
