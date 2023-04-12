@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Roadmap from "../components/Roadmap";
 import Kurumi from "../assets/kurumi.jpg";
 import RoadmapToggle from "../components/RoadmapToggle"
+import Spinner from "../components/Spinner";
 import { ReactComponent as DarkHomeIcon } from "../assets/dark_home_icon.svg";
 import { ReactComponent as LockIcon } from "../assets/Lock.svg"
 import { axiosInstance } from "../functions/axiosInstance";
@@ -83,6 +84,7 @@ const HomeOtherUser = () => {
     
   return (
     <>
+      {!data && <Spinner />}
       <div className="flex flex-col h-screen overflow-scroll overflow-x-hidden">
         <div className="relative flex top-[59px] left-[38px] w-fit h-fit">
           <div className="mr-[13px]">

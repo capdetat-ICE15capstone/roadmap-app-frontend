@@ -99,6 +99,7 @@ const Home = () => {
 
   return (
     <>
+      {!data && <Spinner />}
       <div className="flex flex-col h-screen overflow-scroll overflow-x-hidden">
         <div className="relative flex top-[59px] left-[38px] w-fit h-fit">
           <div className="mr-[13px]">
