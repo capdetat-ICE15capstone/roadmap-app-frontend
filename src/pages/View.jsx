@@ -7,9 +7,9 @@ import { likeRoadmap, unlikeRoadmap } from '../functions/viewFunction';
 import RoadmapViewer from '../components/RoadmapViewer';
 import Spinner from '../components/Spinner';
 import Prompt from '../components/Prompt';
+import RoadmapDetail from '../components/RoadmapDetail';
 
 export default function View() {
-  const navigate = useNavigate();
   const { roadmap_id } = useParams();
 
   const [hasFetched, setHasFetched] = useState(false);
@@ -40,8 +40,12 @@ export default function View() {
   async function fetchRoadmap() {
     getRoadmap(roadmap_id)
       .then((response) => {
-        setRoadmap(response);
         const fetchedRoadmap = response;
+        if (fetchedRoadmap === null) {
+          console.error("Roadmap fetching failed.");
+          setIsLoading(false);
+          return;
+        }
         if (fetchedRoadmap.next_task === null) {
           setIsCompleted(true);
           setCurrentTask(
@@ -65,7 +69,7 @@ export default function View() {
             }
           });
         }
-        setLikeCount(response.stars_count);
+        setLikeCount(fetchedRoadmap.stars_count);
         let route = `/user/`;
         axiosInstance.get(route)
           .then((response) => {
@@ -156,72 +160,36 @@ export default function View() {
     });
   }
 
-  if (hasFetched) {
+  if (roadmap.hasFetched) {
     return (
       <>
         <div className='flex h-full bg-white overflow-y-scroll py-8'>
           <div className="w-5/6 flex-col m-auto space-y-6">
-            <div>
-              <div className='flex justify-between items-center'>
-                <div className='text-3xl font-extrabold truncate self-center py-4'>
-                  {roadmap.name} {isCompleted ? '✓' : ''}
-                </div>
-                <div className="flex self-center space-x-1 h-10">
-                  {isOwner === true && (
-                    <>
-                      <div className="bg-gray-700 grow text-white px-4 py-2 font-semilight rounded-full text-sm font-bold truncate self-center pointer-events-none">
-                        {likeCount} Like
-                      </div>
-                      <button onClick={() => navigate(`/edit/${roadmap_id}`)} className={`${(isCompleted) ? 'bg-gray-700 pointer-events-none' : 'bg-sub-blue'} grow text-white self-center px-4 py-2 font-semilight rounded-full text-sm font-bold`} type="button">
-                        Edit
-                      </button>
-                    </>
-                  )}
-                  {isOwner === false && (
-                    <>
-                      <button onClick={() => handleLike()} className="bg-sub-blue grow text-white px-4 py-2 font-semilight rounded-full text-sm font-bold truncate self-center" type="button">
-                        {likeCount} Like
-                      </button>
-                      <button onClick={() => navigate(`/clone/${roadmap_id}`)} className="bg-main-blue grow text-white px-4 py-2 font-semilight rounded-full text-sm self-center font-bold" type="button">
-                        Clone
-                      </button>
-                    </>
-                  )}
-                  <button onClick={() => setDetailToggle(!detailToggle)} className="bg-gray-500 grow text-white px-4 py-2 font-semilight rounded-full self-center text-sm font-bold" type="button">
-                    i
-                  </button>
-                </div>
-              </div>
-              <div className={`${(detailToggle) ? 'visible' : 'hidden'}`}>
-                <div className='flex flex-col rounded-2xl text-sm space-y-2'>
-                  <div className='flex space-x-2 h-6'>
-                    <div className={`${(roadmap.is_private) ? 'border-red-400' : 'border-green-400'} border-solid border-[1px] rounded-full px-2 py-1 text-xs self-center shrink-0`}>
-                      {!roadmap.is_private ? "Public" : "Private"}
-                    </div>
-                    <div className='border-solid border-[1px] rounded-full px-2 py-1 text-xs border-gray-300 self-center shrink-0'>
-                      {roadmap.views_count} Views
-                    </div>
-                    <div className='border-solid border-[1px] rounded-full px-2 py-1 text-xs border-gray-300 self-center truncate'>
-                      {convertDateTimeString(roadmap.edited_at)}
-                    </div>
-                  </div>
-                  <div>
-                    {roadmap.description}
-                  </div>
-                </div>
-              </div>
-            </div>
 
-            <RoadmapViewer tasks={roadmap.tasks} currentTaskID={currentTask.id} className="z-50" />
+            <RoadmapDetail
+              roadmapName={roadmap.name}
+              roadmapID={roadmap.rid}
+              roadmapPrivacy={roadmap.is_private}
+              roadmapViewCount={roadmap.views_count}
+              roadmapForkCount={roadmap.forks_count}
+              roadmapEditDate={roadmap.edited_at}
+              roadmapDescription={roadmap.description}
+              isOwner={isOwner}
+              likeCount={likeCount}
+              isLiked={isLiked}
+              isCompleted={isCompleted}
+              handleLike={handleLike}
+            />
+            <RoadmapViewer tasks={roadmap.tasks} currentTaskID={currentTask.id} className="" />
 
             {(!isCompleted) && (
               <div className='flex flex-col bg-white rounded-2xl drop-shadow-[0_2px_3px_rgba(0,0,0,0.15)] space-y-4'>
                 <div className='flex flex-row space-x-4 justify-between'>
                   <div className='flex flex-col space-y-4 w-1/2 p-4'>
-                    <div className='text-md font-bold'>
+                    <div className='text-md font-bold break-words'>
                       {currentTask.name}
                     </div>
-                    <div className='text-sm'>
+                    <div className='text-sm break-words'>
                       {currentTask.description}
                     </div>
                     <div className='flex flex-col md:flex-row gap-2'>
@@ -267,16 +235,14 @@ export default function View() {
                       <div className='flex flex-row justify-end gap-2'>
                         {(saveButton) && (
                           <button
-                            onClick={() => {
-                              setIsSaving(true);
-                            }}
-                            className="bg-main-blue sm:w-[40%] w-full text-white px-4 py-2 font-semilight rounded-full text-sm font-bold self-center h-10 truncate"
+                            onClick={() => setIsSaving(true)}
+                            className="bg-main-blue sm:w-28 w-full text-white px-4 py-2 font-semilight rounded-full text-sm font-bold self-center h-10 truncate"
                             type="button">
                             Save
                           </button>
                         )}
                         {(completeButton) && (
-                          <button onClick={() => setIsCompleting(true)} className="bg-sub-blue sm:w-[40%] w-full text-white px-4 py-2 font-semilight rounded-full text-sm font-bold self-center h-10 truncate" type="button">
+                          <button onClick={() => setIsCompleting(true)} className="bg-sub-blue sm:w-28 w-full text-white px-4 py-2 font-semilight rounded-full text-sm font-bold self-center h-10 truncate" type="button">
                             Complete
                           </button>
                         )}
@@ -288,13 +254,8 @@ export default function View() {
             )}
           </div>
         </div >
-        <button onClick={() => setIsOwner(!isOwner)} className="bg-nav-blue text-white px-4 py-2 font-semilight text-sm font-bold" type="button">
-          CHANGE VIEW MODE (FOR DEVELOPMENT)
-        </button>
         {(isLoading) && (
-          <div className='text-3xl font-bold text-red-500'>
-            LOADING...
-          </div>
+          <Spinner />
         )}
         {(isSaving) && (
           <Prompt message={"confirm save?"} confirmFunction={updateSubtasks} cancelFunction={() => setIsSaving(false)} />
@@ -307,12 +268,7 @@ export default function View() {
   } else {
     return (
       <>
-        {(!isWarning) && (
-          <Spinner />
-        )}
-        {(isWarning) && (
-          <Prompt message={"An error has occured. Refetch roadmap?"} confirmFunction={fetchRoadmap} cancelFunction={() => setIsWarning(false)} />
-        )}
+        <Spinner />
       </>
     )
   }
