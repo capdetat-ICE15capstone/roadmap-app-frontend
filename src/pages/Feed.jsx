@@ -12,6 +12,9 @@ const Feed = () => {
   const isMountedRef = useRef(false);
   const [isFetching, setIsFetching] = useState(false);
   const navigate = useNavigate();
+  const [sortViewAsc, setSortViewAsc] = useState(true);
+  const [sortByCreatedAt, setSortByCreatedAt] = useState(false);
+
 
   // classify user input (roadmap(""), user("@""), tag("#""))
   const classifyInput = (input) => {
@@ -70,6 +73,8 @@ const Feed = () => {
       const response = await getRecommendRoadmap();
       const newArray = [...response];
       setRoadmapArray(prevArray => [...prevArray, ...newArray]);
+      console.log("below is array");
+      console.log(roadmapArray);
     } catch (error) {
       console.log(error);
     }
@@ -86,6 +91,29 @@ const Feed = () => {
     setRoadmapArray([]);
     fetchData();
   }, []);
+
+  // sort functions (view, date)
+  // sort by view
+  const handleSortByView = () => {
+    const sortedData = [...roadmapArray].sort((a, b) => {
+      return sortViewAsc ? a.views_count - b.views_count : b.views_count - a.views_count;
+    });
+    setRoadmapArray(sortedData);
+    setSortViewAsc(!sortViewAsc);
+  };
+  // sort by date
+  const handleSortByDate = () => {
+    const sortedItems = [...roadmapArray].sort((a, b) => {
+      if (sortByCreatedAt) {
+        return new Date(a.created_at) - new Date(b.created_at);
+      } else {
+        return new Date(b.created_at) - new Date(a.created_at);
+      }
+    });
+    setRoadmapArray(sortedItems);
+    setSortByCreatedAt(!sortByCreatedAt);
+  };
+
 
   return (
     <>
@@ -112,6 +140,17 @@ const Feed = () => {
                 </button>
               </div>
             </form>
+            <div className='flex flex-row items-center gap-2'>
+              <div className='felx'>
+                Sort by:
+              </div>
+              <button className="flex hover:text-blue-600" onClick={handleSortByView}>
+                Popularity
+              </button>
+              <button className="flex hover:text-blue-600" onClick={handleSortByDate}>
+                Date
+              </button>
+            </div>
           </div>
         </div>
         {/*Search Result*/}

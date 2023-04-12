@@ -59,21 +59,11 @@ const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_co
               </div>
             </div>
             <div className='flex flex-col space-y-1 m-1'>
-              {/**/}
               <div className=' flex flex-row justify-between items-center'>
-                <div className=' text-md font-bold truncate w-[65%]'>
+                <div className=' text-md font-bold truncate w-[100%]'>
                   {title}
                 </div>
-                <div className='z-10 flex flex-row justify-center space-x-4 text-xs w-[35%]'>
-                  <div className='z-10 flex flex-row items-center'>
-                    <ShareIcon /> : {forks_count}
-                  </div>
-                  <div className='z-10 flex flex-row items-center'>
-                    <LikeIcon /> : {stars_count}
-                  </div>
-                </div>
               </div>
-              {/**/}
               <div className='flex flex-row justify-between items-center'>
                 <div className='flex flex-row'>
                   <div className='text-sm'>
@@ -87,12 +77,22 @@ const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_co
                   Created : {created_at_format}
                 </div>
               </div>
-              <div className='flex flex-row items-center'>
-                <span>
-                  <EyeIcon className="flex stroke-1 stroke-gray-700 w-3/4 h-3/4 " />
-                </span>
-                <div className='text-xs text-gray-700'>
-                  : {views_count} views
+              <div className='flex flex-row justify-between items-center'>
+                <div className='static flex flex-row items-center left-[5%]'>
+                  <span>
+                    <EyeIcon className="flex stroke-1 stroke-gray-700 w-3/4 h-3/4 " />
+                  </span>
+                  <div className='text-xs text-gray-700'>
+                    : {views_count} views
+                  </div>
+                </div>
+                <div className='z-10 static flex flex-row justify-center space-x-4 text-xs right-[5%]'>
+                  <div className='z-10 flex flex-row items-center'>
+                    <ShareIcon /> : {forks_count}
+                  </div>
+                  <div className='z-10 flex flex-row items-center'>
+                    <LikeIcon /> : {stars_count}
+                  </div>
                 </div>
               </div>
             </div>
