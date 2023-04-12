@@ -17,13 +17,15 @@ function RoadmapDetail({ roadmapName, roadmapID, roadmapPrivacy, roadmapViewCoun
         <div className="flex self-center space-x-1 h-10">
           {isOwner === true && (
             <>
-              <div className="flex items-center gap-2 bg-gray-700 grow text-white px-4 py-2 font-semilight rounded-full text-sm font-bold truncate self-center pointer-events-none">
+              <div className="flex items-center space-x-2 bg-gray-700 grow text-white px-4 py-2 font-semilight rounded-full text-sm font-bold truncate self-center pointer-events-none">
                 {(!isLiked) ? (
                   <LikeIcon className='h-4 w-4 mb-[1px]' />
                 ) : (
                   <LikeHilightIcon className='h-4 w-4 mb-[1px]' />
                 )}
-                {likeCount}
+                <span>
+                  {likeCount}
+                </span>
               </div>
               <button onClick={() => navigate(`/edit/${roadmapID}`)} className={`${(isCompleted) ? 'bg-gray-700 pointer-events-none' : 'bg-sub-blue'} grow text-white self-center px-4 py-2 font-semilight rounded-full text-sm font-bold`} type="button">
                 Edit
@@ -32,17 +34,21 @@ function RoadmapDetail({ roadmapName, roadmapID, roadmapPrivacy, roadmapViewCoun
           )}
           {isOwner === false && (
             <>
-              <button onClick={handleLike} className="flex items-center gap-2 bg-sub-blue grow text-white px-4 py-2 font-semilight rounded-full text-sm font-bold truncate self-center" type="button">
+              <button onClick={handleLike} className="flex space-x-2 items-center bg-sub-blue grow text-white px-4 py-2 font-semilight rounded-full text-sm font-bold self-center" type="button">
                 {(!isLiked) ? (
                   <LikeIcon className='h-4 w-4 mb-[1px]' />
                 ) : (
                   <LikeHilightIcon className='h-4 w-4 mb-[1px]' />
                 )}
-                {likeCount}
+                <span>
+                  {likeCount}
+                </span>
               </button>
-              <button onClick={() => navigate(`/clone/${roadmapID}`)} className="flex items-center gap-2 bg-main-blue grow text-white px-4 py-2 font-semilight rounded-full text-sm self-center font-bold" type="button">
+              <button onClick={() => navigate(`/clone/${roadmapID}`)} className="flex items-center space-x-2 bg-main-blue grow text-white px-4 py-2 font-semilight rounded-full text-sm self-center font-bold" type="button">
                 <ForkIcon className='h-4 w-4 mb-[1px]' />
-                {roadmapForkCount}
+                <span>
+                  {roadmapForkCount}
+                </span>
               </button>
             </>
           )}
