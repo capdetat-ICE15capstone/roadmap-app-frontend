@@ -11,6 +11,7 @@ import RoadmapDetail from '../components/RoadmapDetail';
 
 export default function View() {
   const { roadmap_id } = useParams();
+  const navigate = useNavigate();
 
   const [hasFetched, setHasFetched] = useState(false);
 
@@ -44,6 +45,7 @@ export default function View() {
         if (fetchedRoadmap === null) {
           console.error("Roadmap fetching failed.");
           setIsLoading(false);
+          setIsWarning(true);
           return;
         }
         if (fetchedRoadmap.next_task === null) {
@@ -265,6 +267,8 @@ export default function View() {
         )}
       </>
     )
+  } else if (isWarning) {
+    return <Prompt message={"Roadmap fetching failed. Retry?"} confirmFunction={() => {fetchRoadmap(); setIsWarning(false)}} cancelFunction={() => navigate("/feed")} />
   } else {
     return (
       <>
