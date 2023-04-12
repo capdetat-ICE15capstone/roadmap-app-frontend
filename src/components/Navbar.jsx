@@ -13,7 +13,7 @@ import { ReactComponent as BookIcon } from "../assets/navbar_assets/book_icon.sv
 const NavItem = (props) => {
   return (
     <>
-      <NavLink className={`relative flex items-center max-md:justify-center md:justify-start md:pl-8 w-full h-16 ${props.baseColor} hover:bg-sub-blue hover:scale-105 transition group duration-200`} to={props.to}>
+      <NavLink className={`relative flex items-center max-md:justify-center md:justify-start md:pl-8 md:w-full max-xs:grow h-16 ${props.baseColor} hover:bg-sub-blue hover:scale-105 transition group duration-200`} to={props.to}>
         <div className="flex items-center space-x-4">
           <div className="flex shrink-0">
             <props.SvgIcon className="w-10" />
@@ -43,13 +43,12 @@ const Navbar = () => {
             <div className="w-16">
               <NavItem SvgIcon={UserLogo} displayName="Profile" baseColor="bg-blue-900" to="/" />
             </div>
-
           </div>
         </div>
         <div className="flex flex-col flex-grow overflow-x-hidden">
           <Outlet />
         </div>
-        <div className="flex xs:hidden max-xs:visible ">
+        <div className="flex xs:hidden max-xs:visible w-full justify-between">
           <NavItem SvgIcon={HomeLogo} displayName="Home" baseColor="bg-nav-blue" to="/" />
           <NavItem SvgIcon={FeedLogo} displayName="Feed" baseColor="bg-nav-blue" to="/feed" />
           <NavItem SvgIcon={BookIcon} displayName="Quest" baseColor="bg-nav-blue" to="/quest" />
