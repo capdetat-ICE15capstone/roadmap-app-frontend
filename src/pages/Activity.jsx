@@ -20,6 +20,7 @@ const Activity = () => {
     const [currentTab, setCurrentTab] = useState("1");
 
     useEffect (() => {
+        completeQuestDailyLogin();
         insertDailyQuests();
         const fetchData = async () => {
             const response1 = await getQuest();
@@ -91,13 +92,13 @@ const Activity = () => {
             <div className='grow flex-col'>
                 {questData.map((quest) => {
                     return (
-                        <button className="flex flex-col w-full" onClick={() => handleClickQuest()} disabled={true}>
+                        <button className={`flex flex-col w-full ${quest.isDone ? 'bg-gray-300' : ''}`} onClick={() => handleClickQuest()} disabled={true}>
                             <div className="flex justify-between h-14 w-full my-3">
                                 {/* name, due date */}
                                 <div className="w-48 h-full flex">
                                     <div className="border-l-[3px] border-yellow-400 h-full w-4"></div>
                                     <div className="flex flex-col justify-between text-left">
-                                        <p className="text-nav-blue text-lg font-bold">{quest.name}</p>
+                                        <p className={`text-nav-blue text-lg font-bold ${quest.isDone ? 'line-through' : ''}`}>{quest.name}</p>
                                         <p className="text-nav-blue text-sm">daily quest</p>
                                     </div>
                                 </div>
@@ -256,24 +257,36 @@ const formatQuestData = ({data}) => {
             name: "Daily login",
             point: 25,
             qid: 0,
-            des: "/"
+            des: "/",
+            isDone: false
         },
         {
             name: "Public a roadmap",
             point: 25,
             qid: 1,
-            des: "/"
+            des: "/",
+            isDone: false
         },
         {
             name: "Rate a roadmap",
             point: 25,
             qid: 2,
-            des: "/"
+            des: "/",
+            isDone: false
         }
     ];
 
     console.log(data);
-    const outputData = comparedData.filter((item) => data.includes(item.qid));
+    //const outputData = comparedData.filter((item) => data.includes(item.qid));
+    const outputData = comparedData.map((item) => {
+        return {
+            name: item.name,
+            point: item.point,
+            qid: item.qid,
+            des: item.des,
+            isDone : data.includes(item.qid) ? false : true
+        }
+    })
 
     return outputData;
 }
