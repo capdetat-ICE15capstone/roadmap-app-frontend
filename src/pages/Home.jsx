@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import Roadmap from "../components/Roadmap";
 import Kurumi from "../assets/kurumi.jpg";
 import RoadmapCreate from "../components/RoadmapCreate";
-import RoadmapToggle from "../components/RoadmapToggle"
+import RoadmapToggle from "../components/RoadmapToggle";
+import Spinner from "../components/Spinner";
 import { ReactComponent as DarkHomeIcon } from "../assets/dark_home_icon.svg";
 import { ReactComponent as BinIcon } from "../assets/Bin.svg" 
 import { Link } from "react-router-dom";
