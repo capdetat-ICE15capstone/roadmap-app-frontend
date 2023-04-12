@@ -89,12 +89,12 @@ const Home = () => {
       isActive={isActive} 
       isOwner={true} 
       deleteFunction={deleteRoadmap}/>)
-    })
-  
+    })  
+
   useEffect(() => {
     if (roadmapList.length >= 3 && !isPremium) 
       setIsLimit(true)
-  },[])
+  },[roadmapList])
 
   return (
     <>
