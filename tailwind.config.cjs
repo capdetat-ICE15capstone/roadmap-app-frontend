@@ -14,6 +14,7 @@ module.exports = {
         'nav-black': "#36393E",
         'nav-gray': "#5E646D",
         'nav-blue': "#00286E",
+        'base-blue': "#001945",
         'main-blue': "#00286E",
         'sub-blue': "#0047C4"
       },

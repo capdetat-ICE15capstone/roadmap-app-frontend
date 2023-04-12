@@ -103,7 +103,7 @@ export default function Signup() {
       .then((response) => {
         console.log(response.data);
         localStorage.setItem('token', response.data.token);
-        navigate("/home", {"state": {"firstLogin": true}});
+        navigate("/", {"state": {"firstLogin": true}});
       })
       .catch((error) => {
         console.log(error);
