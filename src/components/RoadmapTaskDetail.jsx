@@ -13,7 +13,7 @@ function RoadmapTaskDetail({ task, handleTaskUpdate, handleIsSaving, handleIsCom
             <div className='text-sm break-words'>
               {task.description}
             </div>
-            <div className='flex flex-col md:flex-row gap-2'>
+            <div className='flex flex-col md:flex-row space-x-2'>
               <div className='grow font-bold text-center text-xs'>
                 Start: {convertDateTimeString(task.startDate)}
               </div>
@@ -26,11 +26,11 @@ function RoadmapTaskDetail({ task, handleTaskUpdate, handleIsSaving, handleIsCom
             <div className='flex flex-col justify-center space-y-2 text-sm break-all'>
               {task.subtasks.map((subtask, index) => {
                 return (
-                  <label key={index}>
+                  <label key={index} className='flex items-center'>
                     {(isOwner) && (
                       <input
                         type="checkbox"
-                        className="w-4 h-4 mr-2 bg-gray-100 border-gray-300 rounded"
+                        className="w-4 h-4 mr-2 bg-gray-100 border-gray-300 rounded shrink-0"
                         checked={subtask.status}
                         onChange={() => {
                           let updatedTask = { ...task };
@@ -43,7 +43,7 @@ function RoadmapTaskDetail({ task, handleTaskUpdate, handleIsSaving, handleIsCom
                       <input
                         type="checkbox"
                         disabled={true}
-                        className="w-4 h-4 mr-2 bg-gray-100 border-gray-300 accent-slate-500 rounded pointer-events-none"
+                        className="w-4 h-4 mr-2 bg-gray-100 border-gray-300 accent-slate-500 rounded pointer-events-none shrink-0"
                         defaultChecked={subtask.status}
                       />
                     )}
@@ -53,7 +53,7 @@ function RoadmapTaskDetail({ task, handleTaskUpdate, handleIsSaving, handleIsCom
               })}
             </div>
             {(isOwner) && (
-              <div className='flex flex-row justify-end gap-2'>
+              <div className='flex flex-row justify-end space-x-2'>
                 {(displaySaveButton) && (
                   <button
                     onClick={handleIsSaving}
