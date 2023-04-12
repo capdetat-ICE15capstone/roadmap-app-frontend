@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Roadmap from "../components/Roadmap";
 import Kurumi from "../assets/kurumi.jpg";
 import RoadmapToggle from "../components/RoadmapToggle"
@@ -7,10 +7,17 @@ import { ReactComponent as LockIcon } from "../assets/Lock.svg"
 import { axiosInstance } from "../functions/axiosInstance";
 
 const HomeOtherUser = () => {
+  const [data, setData] = useState(null);
   const [isRoadmap, setIsRoadmap] = useState(true);
   const [isDeleteClick, setIsDeleteClick] = useState(false);
   const [isActive, setIsActive] = useState(true);
-  const [isPublic, setIsPublic] = useState(false);
+  const [username, setUsername] = useState('');
+  const [level, setLevel] = useState('');
+  const [bio, setBio] = useState('');
+  const [roadmap, setRoadmap] = useState({});
+  const [isPublic, setIsPublic] = useState(true);
+  const [isPremium, setIsPremium] = useState(false);
+  let roadmapList = [];
 
   function shortenString(str, maxLength) {
     if (str.length > maxLength) {
@@ -30,6 +37,33 @@ const HomeOtherUser = () => {
     setIsActive(false)
   }
 
+  const getHomeOtherUserData = async (viewer_id) => {
+    const route = `/home/view/${viewer_id}`
+    try {
+        let response = await axiosInstance.get(route, { timeout: 10000 });
+        return response;
+    } catch (error) {
+        console.error("Fail GetHomeOtherUserData()");
+    }
+  }
+
+  useEffect (() => {
+    const fetchData = async () => {
+      let viewer_id = 18;
+      const response = await getHomeOtherUserData(viewer_id);
+      setData(response.data);
+      setUsername(response.data.profile.username);
+      setLevel(Math.round(response.data.profile.exp/100));
+      setBio(response.data.profile.bio);
+      setRoadmap(response.data.roadmaps);
+      setIsPublic(!response.data.profile.is_private);
+    }
+    fetchData();
+  }, []);
+  
+  for (let i = 0;!isPremium? i < 3:i < roadmap.length;i++)
+    roadmapList.push(<Roadmap key={i} isActive={isActive} isOwner={true}/>)
+
   return (
     <>
       <div className="flex flex-col h-screen overflow-scroll overflow-x-hidden">
@@ -48,7 +82,7 @@ const HomeOtherUser = () => {
                 <div className="flex flex-wrap items-center mx-6 mr-12 justify-start h-fit my-[20px]">
                   <div className="relative mr-4">
                     <div className="font-inter font-bold text-lg text-[#09275B]">
-                      Kurumi
+                      {username}
                     </div>
                   </div>
                   {isPublic && <div className="flex justify-between bg-[#034DCF] text-white font-bold h-fit rounded-[30px]">
@@ -59,7 +93,7 @@ const HomeOtherUser = () => {
                     </div>     
                     <div className="flex mx-[10px] justify-start items-center">
                       <div className="font-inter text-[#FFFFFF]">
-                        10
+                        {level}
                       </div>
                     </div>               
                   </div>}
@@ -68,14 +102,9 @@ const HomeOtherUser = () => {
                 <div className="flex flex-col">
                   <div className="mx-6 mt-[10px] mb-[20px]">
                     <div className="font-inter font-light">
-                      Kurumi Tokisaki (Codename: Nightmare) 
+                      {shortenString(bio, 25)}
                     </div>
                   </div>
-                  <div className="mx-6 my-[10px]">
-                    <a href="https://date-a-live.fandom.com/wiki/Kurumi_Tokisaki" className="font-inter font-light text-[#034DCF]">
-                    {shortenString("https://date-a-live.fandom.com/wiki/Kurumi_Tokisaki", 30)}
-                    </a>                
-                  </div>            
                 </div>:
                 <div className="flex justify-center items-center mb-[20px]">
                   <div className="flex justify-center items-center w-[75px] min-w-[75px] h-[75px] rounded-[75px] border-[3px] border-[#000000] scale-50">
@@ -100,8 +129,7 @@ const HomeOtherUser = () => {
             {isPublic? 
             <div className="flex w-3/4 justify-start">
               <div className="flex flex-wrap justify-start items-start w-fit max-w-[1152px] h-fit m-0">                
-                <Roadmap isActive={isActive}/>
-                <Roadmap isActive={isActive}/>
+                {roadmapList}
               </div>
             </div>:
             <div className="flex flex-col w-3/4 min-w-[260px] rounded-[30px] mt-8 justify-center items-center bg-[#F0F3F4] h-[462px] mb-[20px]">

@@ -13,13 +13,13 @@ const Home = () => {
   const [isRoadmap, setIsRoadmap] = useState(true);
   const [isDeleteClick, setIsDeleteClick] = useState(false);
   const [isActive, setIsActive] = useState(true);
-  const [noOfRoadmap, setNoOfRoadmap] = useState(3);
   const [showPremium, setShowPremium] = useState(false);
   const [isLimit, setIsLimit] = useState(false);  
   const [isPremium, setIsPremium] = useState(false);
   const [username, setUsername] = useState('');
   const [level, setLevel] = useState('');
   const [bio, setBio] = useState('');
+  const [roadmap, setRoadmap] = useState({});
   let roadmapList = [];
 
   function shortenString(str, maxLength) {
@@ -46,13 +46,6 @@ const Home = () => {
   const promptPremium = () => 
     setShowPremium(!showPremium)  
 
-  useEffect(() => {
-    if (noOfRoadmap >= 3 && !isPremium) {
-      setNoOfRoadmap(3)
-      setIsLimit(true)
-    }
-  },[noOfRoadmap, isLimit])
-
   const getHomeData = async () => {
     // check whether user is logged-in
     const route = `/home/me`
@@ -62,21 +55,27 @@ const Home = () => {
     } catch (error) {
         console.error("Fail GetHomeData()");
     }
-}
+  }
 
   useEffect (() => {
     const fetchData = async () => {
       const response = await getHomeData();
-      console.log("Fetched data: ");
-      console.log(response.data.roadmaps);
       setData(response.data);
       setUsername(response.data.profile.username);
       setLevel(Math.round(response.data.profile.exp/100));
       setBio(response.data.profile.bio);
+      setRoadmap(response.data.roadmaps)
     }
     fetchData();
-}, []);
+  }, []);
 
+  for (let i = 0;!isPremium? i < 3:i < roadmap.length;i++)
+    roadmapList.push(<Roadmap key={i} isActive={isActive} isOwner={true} deleteFunction={deleteRoadmap}/>)
+  
+  useEffect(() => {
+    if (roadmapList.length >= 3 && !isPremium) 
+      setIsLimit(true)
+  },[])
 
   return (
     <>
@@ -137,8 +136,7 @@ const Home = () => {
                 <div>
                   <RoadmapCreate isLimit={isLimit} onClick={promptPremium} />
                 </div>}
-                  <Roadmap isActive={isActive} isOwner={true} deleteFunction={deleteRoadmap}/>
-                  <Roadmap isActive={isActive} isOwner={true} deleteFunction={deleteRoadmap}/>
+                  {roadmapList}
               </div>
             </div>
           </div>
