@@ -10,8 +10,9 @@ export function shortenString(str, maxLength) {
 
 export function convertDateTimeString(str) {
   const dateObj = new Date(str);
-  const formattedDateTime = dateObj.toLocaleString();
-  return formattedDateTime;
+  const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+  const formattedDate = dateObj.toLocaleString('en-US', options);
+  return formattedDate;
 }
 
 export function roundTimeToNearest30(date = new Date()) {
