@@ -133,12 +133,12 @@ const RecommendedRoadmap = React.forwardRef((props, ref) => {
   ];
 
   return (
-    <div className="flex flex-col justify-center bg-nav-blue" ref={ref}>
+    <div className="flex flex-col justify-center bg-nav-blue px-10 pb-10" ref={ref}>
       <div className="text-white font-bold flex text-2xl justify-center my-10">
         Recommended Roadmap
       </div>
       <div>
-        <div className="flex gap-4 justify-center flex-wrap ">
+        <div className="flex gap-4 justify-evenly flex-wrap">
           {RMdata.map((roadmap, index) => {
             return (
               <motion.div
@@ -252,7 +252,7 @@ const PremiumPage = React.forwardRef((props, ref) => {
                 <span className="text-4xl">{plan.line2}</span>
                 <span>{plan.line3}</span>
                 <div>
-                  <ol className="before:[&>li]:content-['✓'] [&>li]:my-5">
+                  <ol className="before:[&>li]:content-['✓_'] [&>li]:my-5">
                     {plan.list.map((listItem) => {
                       return <li>{listItem}</li>;
                     })}

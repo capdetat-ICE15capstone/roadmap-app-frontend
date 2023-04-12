@@ -18,8 +18,8 @@ module.exports = {
         'sub-blue': "#0047C4"
       },
       fontFamily: {
-        "nunito-sans": ['Nunito Sans', "sans-serif"],
-        "inter": ['Inter', "sans-serif"]
+        // "nunito-sans": ['Nunito Sans', "sans-serif"],
+        "sans": ['Inter', "sans-serif"]
       },
       width: {
         '18':'4.5rem',
