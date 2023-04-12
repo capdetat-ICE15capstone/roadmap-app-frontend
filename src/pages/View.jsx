@@ -169,7 +169,7 @@ export default function View() {
     return (
       <>
         <div className='flex h-full bg-white overflow-y-scroll py-8'>
-          <div className="w-5/6 flex-col m-auto space-y-6">
+          <div className="w-3/4 max-w-3xl flex-col m-auto space-y-6">
 
             <RoadmapDetail
               roadmapName={roadmap.name}
