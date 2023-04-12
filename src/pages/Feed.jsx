@@ -117,44 +117,43 @@ const Feed = () => {
 
   return (
     <>
-      <div className='flex flex-col h-full w-full bg-white overflow-y-auto relative'>
-        {/*Top (title & search bar)*/}
-        <div className='flex justify-center sticky top-0 z-50 bg-white pt-8 pb-2'>
-          <div className='flex w-3/4 justify-center'>
-            {/*Feed Title*/}
-            <div className='flex items-center text-3xl font-bold'>
-              <SearchIcon className="flex h-8 w-8 mr-2 mt-2 fill-[#09275B]" />
-              <div className='flex text-[#09275B]'>
-                Feed
-              </div>
+      {/*Top (title & search bar)*/}
+      <div className='flex justify-center top-0 bg-white pt-8 pb-2'>
+        <div className='flex w-3/4 justify-between'>
+          {/*Feed Title*/}
+          <div className='flex items-center text-3xl font-bold'>
+            <SearchIcon className="flex h-8 w-8 mr-2 mt-2 fill-[#09275B]" />
+            <div className='flex text-[#09275B]'>
+              Feed
             </div>
-            {/*Search bar*/}
-            <form className="mx-auto" id="searchForm" onSubmit={handleSubmit}>
-              <div
-                className="relative inline-block my-4"
-                onSubmit={handleSubmit}
-              >
-                <SearchBar />
-                <button type="submit" className="bg-[#00286E] hover:bg-[#011C4B] text-white font-bold appearance-none border rounded-3xl px-12 py-4 ml-2 leading-tight focus:outline-none focus:shadow-outline">
+          </div>
+          {/*Search bar*/}
+          <form id="searchForm" onSubmit={handleSubmit}>
+            <div className='flex'>
+              <div className="inline-flex" onSubmit={handleSubmit}>
+                <SearchBar className="w-1/2"/>
+                <button type="submit" className="bg-[#00286E] hover:bg-[#011C4B] text-white font-bold rounded-3xl px-12 py-4 ml-2 leading-tight focus:outline-none focus:shadow-outline">
                   Search
                 </button>
               </div>
-            </form>
-            <div className='flex flex-row items-center gap-2'>
-              <div className='felx'>
-                Sort by:
-              </div>
-              <button className="flex hover:text-blue-600" onClick={handleSortByView}>
-                Popularity
-              </button>
-              <button className="flex hover:text-blue-600" onClick={handleSortByDate}>
-                Date
-              </button>
             </div>
+          </form>
+          <div className='flex flex-row items-center gap-2'>
+            <div className='felx'>
+              Sort by:
+            </div>
+            <button className="flex hover:text-blue-600" onClick={handleSortByView}>
+              Popularity
+            </button>
+            <button className="flex hover:text-blue-600" onClick={handleSortByDate}>
+              Date
+            </button>
           </div>
         </div>
+      </div>
+      <div className='flex flex-col flex-grow w-full bg-white overflow-y-auto'>
         {/*Search Result*/}
-        <div className='flex justify-center my-8'>
+        <div className='flex justify-center pt-8 pb-12'>
           <div className='flex flex-wrap items-start w-3/4 gap-20'>
             {roadmapArray.map((roadmap, index) => (
               <RoadmapNeo
