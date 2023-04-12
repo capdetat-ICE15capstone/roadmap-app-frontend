@@ -31,8 +31,11 @@ const NavItem = (props) => {
 const Navbar = () => {
   return (
     <>
-      <div className="fixed flex h-full w-full">
-        <div className="flex flex-col items-center justify-between max-md:w-18 md:w-[180px] bg-nav-blue shrink-0 z-50">
+      <div className="fixed flex flex-row-reverse h-full w-full">
+        <div className="flex flex-col flex-grow">
+          <Outlet />
+        </div>
+        <div className="flex flex-col items-center justify-between max-md:w-18 md:w-[180px] bg-nav-blue shrink-0">
           <div className="w-full">
             <div className="w-full flex justify-center items-center bg-base-blue px-4 gap-4">
               <Logo className="my-2" />
@@ -49,9 +52,6 @@ const Navbar = () => {
           <div className="w-full">
             <NavItem SvgIcon={UserLogo} displayName="Profile" baseColor="bg-blue-900" to="/" />
           </div>
-        </div>
-        <div className="flex flex-col flex-grow z-0">
-          <Outlet />
         </div>
       </div>
     </>
