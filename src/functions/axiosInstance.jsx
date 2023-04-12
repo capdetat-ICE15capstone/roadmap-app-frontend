@@ -1,4 +1,16 @@
 import axios from 'axios';
+//import https from 'https';
+
+/*
+const agent = new https.Agent({
+  rejectUnauthorized: false
+});
+
+export const axiosInstance = axios.create({
+  baseURL: 'https://oyster-app-gkodb.ondigitalocean.app',
+  httpsAgent: agent
+});
+*/
 
 const BASEURL = `https://oyster-app-gkodb.ondigitalocean.app`;
 

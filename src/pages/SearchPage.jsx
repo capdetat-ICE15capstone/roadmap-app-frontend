@@ -81,8 +81,6 @@ const SearchPage = () => {
   async function getTagRid(searchValue) {
     const route = "/search/%23" + searchValue.substring(1);
     try {
-      console.log("Below is ROUTE : ")
-      console.log(route);
       const response = await axiosInstance.get(route);
       console.log("Below is getTagRid RESPONSE DATA : ")
       console.log(response.data);
@@ -111,8 +109,6 @@ const SearchPage = () => {
   async function getUid(searchValue) {
     const route = "/search/users?username=" + searchValue.substring(1);
     try {
-      console.log("Below is ROUTE : ")
-      console.log(route);
       const response = await axiosInstance.get(route);
       console.log("Below is getUid RESPONSE DATA : ")
       console.log(response.data);
@@ -205,34 +201,30 @@ const SearchPage = () => {
     } catch (error) {
       console.log(error);
     }
-    console.log("RUNNNNNNNNNNNNNNNNNNNNNNNNNNNN");
     setIsFetching(false); // set isFetching to false to indicate a fetch is complete
   };
 
   // Run when enter search page 
   useEffect(() => {
-    console.log("SearchPage mounted");
     if (!isMountedRef.current) {
+      console.log("SearchPage mounted");
       isMountedRef.current = true;
       return;
     }
     if (searchType === "roadmap") {
       setRoadmapArray([]);
-      console.log("USEEFFECT roadmap")
       fetchData(searchType);
       setShowUserResult(false);
       setShowRoadmapResult(true);
       return;
     } else if (searchType === "tag") {
       setRoadmapArray([]);
-      console.log("USEEFFECT tag")
       fetchData(searchType);
       setShowUserResult(false);
       setShowRoadmapResult(true);
       return;
     } else if (searchType === "user") {
       setUserArray([]);
-      console.log("USEEFFECT user")
       fetchData(searchType);
       setShowRoadmapResult(false);
       setShowUserResult(true);
