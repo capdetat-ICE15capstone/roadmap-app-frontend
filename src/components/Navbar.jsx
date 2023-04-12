@@ -32,7 +32,7 @@ const Navbar = () => {
   return (
     <>
       <div className="fixed flex flex-row-reverse h-full w-full">
-        <div className="flex flex-col flex-grow">
+        <div className="flex flex-col flex-grow overflow-x-hidden">
           <Outlet />
         </div>
         <div className="flex flex-col items-center justify-between max-md:w-18 md:w-[180px] bg-nav-blue shrink-0">
