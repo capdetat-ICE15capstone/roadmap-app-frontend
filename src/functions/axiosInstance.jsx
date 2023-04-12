@@ -1,7 +1,7 @@
 import axios from 'axios';
 //import https from 'https';
 
-const BASEURL = `https://oyster-app-gkodb.ondigitalocean.app/`;
+const BASEURL = `http://oyster-app-gkodb.ondigitalocean.app`;
 
 export const axiosInstance = axios.create({
   baseURL: BASEURL,
