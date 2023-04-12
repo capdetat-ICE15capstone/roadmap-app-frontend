@@ -25,6 +25,7 @@ import "react-datepicker/dist/react-datepicker.css";
 // data domain
 const MAX_NAME_LENGTH = 30;
 const MAX_DESCRIPTION_LENGTH = 255;
+const MAX_SUBTASK_LENGTH = 30;
 
 const TaskModal = ({ oldData, editTaskCallBack }) => {
   const initialState = useRef({ ...oldData });
@@ -170,7 +171,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
   const onSubtaskTextEdit = (newValue, id) => {
     setSubTasks(
       subtasks.map((subtask) =>
-        subtask.id === id ? { ...subtask, detail: newValue } : { ...subtask }
+        subtask.id === id ? { ...subtask, detail: newValue.length > MAX_SUBTASK_LENGTH ? subtask.detail : newValue } : { ...subtask }
       )
     );
   };

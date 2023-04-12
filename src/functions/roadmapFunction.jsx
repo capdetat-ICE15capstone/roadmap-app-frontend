@@ -517,7 +517,7 @@ const PRIVATE_createSubtask = async (subtasks, timeout = 0) => {
       tid: subtasks[0].tid,
     };
   } else if (subtasks.length > 1) {
-    route = `/subtask/subtasks/`;
+    route = `/subtask/subtasks`;
     reqBody = subtasks.map((subtask) => {
       return {
         title: subtask.detail,
@@ -560,7 +560,7 @@ const PRIVATE_editSubtask = async (subtasks, timeout = 0) => {
       is_done: subtasks[0].status,
     };
   } else if (subtasks.length > 1) {
-    route = `/subtask/subtasks/`;
+    route = `/subtask/subtasks`;
     reqBody = subtasks.map((subtask) => {
       return {
         title: subtask.detail,
