@@ -265,7 +265,7 @@ const PremiumPage = React.forwardRef((props, ref) => {
         <DollarSign/>
         <span className="text-nav-blue text-3xl font-bold">Pricing</span>
       </div>
-      <div className="flex h-4/5 w-2/3 gap-4 lg:w-full justify-evenly flex-col lg:flex-row mb-4">
+      <div className="flex h-4/5 w-4/5 gap-4 lg:w-full justify-evenly flex-col lg:flex-row mb-4">
         {planDetail.map((plan) => {
           return (
             <div className={`p-8 flex flex-col border-2 border-t-[16px] basis-1/3 mx-4 gap-4 items-center justify-between rounded-2xl ${plan.borderClass}`}>
