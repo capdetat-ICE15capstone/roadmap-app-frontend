@@ -18,7 +18,6 @@ const Feed = lazy(() => import("./pages/Feed"));
 const Setting = lazy(() => import("./pages/Setting"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Introduction = lazy(() => import("./pages/Introduction"));
-const Premium = lazy(() => import("./pages/Premium"));
 const Activity = lazy(() => import("./pages/Activity"));
 const SearchPage = lazy(() => import("./pages/SearchPage"));
 
@@ -142,7 +141,7 @@ function App() {
               path="/premium"
               element={
                 <Suspense fallback={<Spinner />}>
-                  <Premium />
+                  <Introduction wantPremium={true}/>
                 </Suspense>
               }
             ></Route>
