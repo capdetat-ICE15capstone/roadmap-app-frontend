@@ -135,13 +135,13 @@ export default function Signup() {
             <form id="register-form" autoComplete="off" onSubmit={handleSignupSubmit}>
               <div className="flex flex-col space-y-1 mb-4">
                 <div className="flex flex-col">
-                  <label>
+                  <label className='focus:outline-none focus:shadow-outline'>
                     <div className="text-gray-600 text-xs">
                       Email Address
                     </div>
                     <input
                       type="email"
-                      className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-sm text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-sm text-gray-700 leading-tight"
                       id="InputEmail"
                       placeholder="Email Address"
                       onChange={(event) =>
@@ -154,13 +154,13 @@ export default function Signup() {
                   </label>
                 </div>
                 <div className="flex flex-row justify-between space-x-4">
-                  <label className='w-1/2'>
+                  <label className='w-1/2 focus:outline-none focus:shadow-outline'>
                     <div className="text-gray-600 text-xs">
                       First Name
                     </div>
                     <input
                       type="firstname"
-                      className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-sm text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-sm text-gray-700 leading-tight"
                       id="InputFirstName"
                       placeholder="First Name"
                       onChange={(event) =>
@@ -171,13 +171,13 @@ export default function Signup() {
                       invalid first name
                     </div>
                   </label>
-                  <label className='w-1/2'>
+                  <label className='w-1/2  focus:outline-none focus:shadow-outline'>
                     <div className="text-gray-600 text-xs">
                       Last Name
                     </div>
                     <input
                       type="lastname"
-                      className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-sm text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-sm text-gray-700 leading-tight"
                       id="InputLastName"
                       placeholder="Last Name"
                       onChange={(event) =>
@@ -191,12 +191,12 @@ export default function Signup() {
                 </div>
                 <div className="flex flex-col">
                   <label>
-                    <div className="text-gray-600 text-xs">
+                    <div className="text-gray-600 text-xs focus:outline-none focus:shadow-outline">
                       Username
                     </div>
                     <input
                       type="username"
-                      className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-sm text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-sm text-gray-700 leading-tight"
                       id="InputUsername"
                       placeholder="Username"
                       onChange={(event) =>
@@ -209,13 +209,13 @@ export default function Signup() {
                   </label>
                 </div>
                 <div className="flex flex-row justify-between space-x-4">
-                  <label className='w-1/2'>
+                  <label className='w-1/2 focus:outline-none focus:shadow-outline'>
                     <div className="text-gray-600 text-xs">
                       Password
                     </div>
                     <input
                       type="password"
-                      className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-sm text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-sm text-gray-700 leading-tight"
                       id="InputPassword"
                       placeholder="********"
                       onChange={(event) =>
@@ -226,13 +226,13 @@ export default function Signup() {
                       invalid password
                     </div>
                   </label>
-                  <label className='w-1/2'>
+                  <label className='w-1/2 focus:outline-none focus:shadow-outline'>
                     <div className="text-gray-600 text-xs">
                       Confirm Password
                     </div>
                     <input
                       type="password"
-                      className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-sm text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-sm text-gray-700 leading-tight"
                       id="InputPasswordConfirm"
                       placeholder="********"
                       onChange={(event) =>
@@ -258,7 +258,7 @@ export default function Signup() {
                     ...
                   </a>
                 </label>
-                <button type="submit" className="bg-red-500 text-white shadow font-bold py-2 grow rounded-3xl focus:outline-none focus:shadow-outline">
+                <button type="submit" className="bg-red-500 text-white shadow font-bold py-2 grow rounded-3xl transition ease-in-out hover:bg-red-700 duration-300">
                   Sign Up
                 </button>
               </div>

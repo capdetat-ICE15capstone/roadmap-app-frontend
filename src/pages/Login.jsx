@@ -104,10 +104,10 @@ export default function Login() {
                 </div>
               </div>
               <div className="flex flex-col space-y-2">
-                <button type="submit" className="bg-blue-900 text-white shadow font-bold py-2 rounded-lg">
+                <button type="submit" className="bg-blue-900 text-white shadow font-bold py-2 rounded-lg transition ease-in-out hover:bg-sub-blue duration-300">
                   Log In
                 </button>
-                <button type="button" className="bg-red-500 text-white shadow font-bold py-2 rounded-lg" onClick={() => navigate("/signup")}>
+                <button type="button" className="bg-red-500 text-white shadow font-bold py-2 rounded-lg transition ease-in-out hover:bg-red-700 duration-300" onClick={() => navigate("/signup")}>
                   Sign Up
                 </button>
               </div>
@@ -116,7 +116,7 @@ export default function Login() {
         </div>
       </div>
       {isWarning && (
-        <Prompt title="Login Failed" message={failMessage} positiveText="Okay" positiveFunction={() => setIsWarning(false)} />
+        <Prompt title="Login Failed" message={failMessage} positiveText="Retry" positiveFunction={() => setIsWarning(false)} />
       )}
       {isLoading && (
         <Spinner />
