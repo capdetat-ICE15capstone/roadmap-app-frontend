@@ -16,7 +16,8 @@ module.exports = {
         'nav-blue': "#00286E",
         'base-blue': "#001945",
         'main-blue': "#00286E",
-        'sub-blue': "#0047C4"
+        'sub-blue': "#0047C4",
+        'mid-blue': "#195dd4",
       },
       fontFamily: {
         "nunito-sans": ['Nunito Sans', "sans-serif"],
