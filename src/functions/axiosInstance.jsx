@@ -1,6 +1,6 @@
-import axios from 'axios';
+import axios from "axios";
 
-const BASEURL = `https://oyster-app-gkodb.ondigitalocean.app`;
+export const BASEURL = `https://oyster-app-gkodb.ondigitalocean.app`;
 
 export const axiosInstance = axios.create({
   baseURL: BASEURL,
@@ -12,6 +12,7 @@ axiosInstance.interceptors.request.use(
       config.headers["Authorization"] = `Bearer ${localStorage.getItem(
         "token"
       )}`;
+
     config.metadata = { startTime: new Date() };
     return config;
   },
@@ -22,21 +23,29 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
   (response) => {
-    const newRes = { ...response }
-    newRes.config.metadata.endTime = new Date();
-    newRes.duration =
-      newRes.config.metadata.endTime - newRes.config.metadata.startTime;
-    console.warn("fetching: " + response.request.responseURL)
-    console.warn("response time: " + newRes.duration + "ms");
+    try {
+      const newRes = { ...response };
+      newRes.config.metadata.endTime = new Date();
+      newRes.duration =
+        newRes.config.metadata.endTime - newRes.config.metadata.startTime;
+      console.warn("fetching: " + response.request.responseURL);
+      console.warn("response time: " + newRes.duration + "ms");
+    } catch (error) {
+      console.warn("error displaying response time");
+    }
     return response;
   },
   (error) => {
-    const newError = { ...error }
-    newError.config.metadata.endTime = new Date();
-    newError.duration =
-      newError.config.metadata.endTime - newError.config.metadata.startTime;
-    console.warn("fetching:" + error.request.responseURL)
-    console.warn("response time: " + newError.duration + "ms");
-    return Promise.reject(newError);
+    try {
+      const newError = { ...error };
+      newError.config.metadata.endTime = new Date();
+      newError.duration =
+        newError.config.metadata.endTime - newError.config.metadata.startTime;
+      console.warn("fetching:" + error.request.responseURL);
+      console.warn("response time: " + newError.duration + "ms");
+    } catch (error) {
+      console.warn("error displaying response time");
+    }
+    return Promise.reject(error);
   }
 );
