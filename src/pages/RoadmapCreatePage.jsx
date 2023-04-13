@@ -265,7 +265,6 @@ const RoadmapCreatePage = (props) => {
         setTags(state.roadmap.tags);
         setNotiStatus(notificationObject);
         setLastId(highestID + 1);
-        // setLastId((lastId) => highestID + 1);
       } else {
         // fetch the roadmap data
         // then set the data to variable
@@ -301,7 +300,6 @@ const RoadmapCreatePage = (props) => {
           setTags(tempRoadmap.tags);
           setNotiStatus(notificationObject);
           setLastId(highestID + 1);
-          // setLastId((lastId) => highestID + 1);
         }
         setLoading(false);
       }
@@ -907,16 +905,16 @@ const RoadmapCreatePage = (props) => {
             {/* End of Task box */}
 
             <div className="relative">
-              <div className="absolute right-0">
+              <div className="absolute right-0 w-full xs:w-auto flex gap-2">
                 <button
-                  className="bg-transparent border-gray-800 font-bold text-gray-800 w-32 h-10 rounded-full border mr-2 font-nunito-sans"
+                  className="bg-transparent inline border-gray-800 w-full font-bold xs:w-32 text-gray-800 h-10 rounded-full border m-0"
                   type="button"
                   onClick={() => setDiscardModal(true)}
                 >
                   Discard
                 </button>
                 <button
-                  className="rounded-full w-32 h-10 bg-nav-blue font-bold text-white font-nunito-sans"
+                  className="rounded-full w-full inline xs:w-32 h-10 bg-nav-blue font-bold text-white"
                   type="submit"
                 >
                   Save
