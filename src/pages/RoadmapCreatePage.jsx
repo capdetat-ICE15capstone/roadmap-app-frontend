@@ -179,6 +179,7 @@ const RoadmapCreatePage = (props) => {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [errorModal, setErrorModal] = useState(false);
   const [errorHandle, setErrorHandle] = useState({message: "", redirectTo: null});
+  const [discardModal, setDiscardModal] = useState(false)
   
   useEffect(() => {
     setUpRoadmap();
@@ -344,6 +345,7 @@ const RoadmapCreatePage = (props) => {
     switch (status) {
       case "success":
         // user click save
+        setHasUnsavedChanges(true);
         switch (submissionObject.id) {
           case -1:
             // new tasks
@@ -378,10 +380,10 @@ const RoadmapCreatePage = (props) => {
         break;
       case "delete":
         // user click delete task button
+        setHasUnsavedChanges(true);
         setTasks((tasks) =>
           tasks.filter((task) => task.id !== submissionObject.id)
         );
-        setHasUnsavedChanges(true);
         break;
       default:
         console.warn("Unexplained default case");
@@ -682,7 +684,9 @@ const RoadmapCreatePage = (props) => {
     // navigate("/");
   };
 
-  const handleDiscard = () => {};
+  const handleDiscard = () => {
+    navigate(0);
+  };
 
   const handleDisplayErrorMessage = (error, redirectTo=null, selfGenerateError=false) => {
     if (selfGenerateError === true) {
@@ -705,26 +709,6 @@ const RoadmapCreatePage = (props) => {
     else 
       setErrorModal(false)
   }
-
-  const generateNotificationObjects = () => {
-    // generate array of noti object to be sent to the server
-    if (notiStatus.on === false) {
-      return {};
-    }
-
-    const dayInMs = notiStatus.detail.day * 24 * 60 * 60 * 1000;
-    const completeNotiObject = tasks.map((task) => {
-      const taskDate = (
-        notiStatus.detail.beforeDueDate === true ? task.dueDate : task.startDate
-      ).getTime();
-      return {
-        id: task.id,
-        datetime: new Date(taskDate - dayInMs),
-      };
-    });
-
-    return completeNotiObject;
-  };
 
   return (
     <>
@@ -751,6 +735,17 @@ const RoadmapCreatePage = (props) => {
           darkButtonText: "OK",
         }}
         oneButton={true}
+      />
+      <TwoButtonModal
+        isOpen={discardModal}
+        onLightPress={() => setDiscardModal(false)}
+        onDarkPress={handleDiscard}
+        textField={{
+          title: `Discard Change?`,
+          body: "Are you sure you want to discard change? (The page is going to reload)",
+          lightButtonText: "Cancel",
+          darkButtonText: "OK",
+        }}
       />
       {modalState ? (
         // id -1 is passed as a temp id to let the modal know it's in create mode, otherwise it's in edit mode
@@ -916,7 +911,7 @@ const RoadmapCreatePage = (props) => {
                 <button
                   className="bg-transparent border-gray-800 font-bold text-gray-800 w-32 h-10 rounded-full border mr-2 font-nunito-sans"
                   type="button"
-                  onClick={handleDiscard}
+                  onClick={() => setDiscardModal(true)}
                 >
                   Discard
                 </button>
