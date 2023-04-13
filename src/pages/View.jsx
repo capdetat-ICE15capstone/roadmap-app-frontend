@@ -1,15 +1,6 @@
-<<<<<<< Updated upstream
-import React, { useState, useEffect, useRef} from 'react'
-import { useNavigate, useParams } from 'react-router-dom';
-=======
-<<<<<<< Updated upstream
-import React, { useState, useEffect } from 'react'
-import { isRouteErrorResponse, useNavigate, useParams } from 'react-router-dom';
-=======
 import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
->>>>>>> Stashed changes
->>>>>>> Stashed changes
+
 import { axiosInstance } from "../functions/axiosInstance";
 import { getRoadmap } from '../functions/roadmapFunction';
 import { likeRoadmap, unlikeRoadmap } from '../functions/viewFunction';
@@ -213,16 +204,8 @@ export default function View() {
         )}
       </>
     )
-<<<<<<< Updated upstream
-  } else if (isWarning) {
-    return <Prompt message={"Roadmap fetching failed. Retry?"} confirmFunction={() => {fetchRoadmap(); setIsWarning(false)}} cancelFunction={() => navigate("/feed")} />
-=======
-<<<<<<< Updated upstream
-=======
   } else if (isWarning) {
     return <Prompt message={"Roadmap fetching failed"} positiveMessage="return" positiveFunction={() => {fetchRoadmap(); setIsWarning(false); navigate("/feed");}} />
->>>>>>> Stashed changes
->>>>>>> Stashed changes
   } else {
     return (
       <>
