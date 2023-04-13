@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { axiosInstance } from '../functions/axiosInstance';
 
+import Prompt from '../components/Prompt';
+import Spinner from '../components/Spinner';
+
 export default function Signup() {
   const navigate = useNavigate();
 
@@ -23,6 +26,11 @@ export default function Signup() {
   const [validUsername, setValidUsername] = useState(false);
   const [validPassword, setValidPassword] = useState(false);
   const [validPasswordConfirm, setValidPasswordConfirm] = useState(false);
+
+  const [isWarning, setIsWarning] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [failMessage, setFailMessage] = useState();
 
   // const location = useLocation();
   // const isFirst = location.state?.state || false;
@@ -98,15 +106,19 @@ export default function Signup() {
 
 
   async function submitForm(form) {
-    const route = `/user/register`;
+    setIsLoading(true);
+    const route = `/user/register/`;
     axiosInstance.post(route, form)
       .then((response) => {
         console.log(response.data);
         localStorage.setItem('token', response.data.token);
-        navigate("/", {"state": {"firstLogin": true}});
+        navigate("/", { "state": { "firstLogin": true } });
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error.response.data.detail);
+        setFailMessage(error.response.data.detail);
+        setIsLoading(false);
+        setIsWarning(true);
       });
   }
 
@@ -259,6 +271,12 @@ export default function Signup() {
           </div>
         </div>
       </div>
+      {isWarning && (
+        <Prompt title="Signup Failed" message={failMessage} positiveText="Try again" positiveFunction={() => setIsWarning(false)} />
+      )}
+      {isLoading && (
+        <Spinner />
+      )}
     </>
   )
 }
