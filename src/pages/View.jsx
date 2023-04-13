@@ -1,18 +1,27 @@
+<<<<<<< Updated upstream
+import React, { useState, useEffect, useRef} from 'react'
+import { useNavigate, useParams } from 'react-router-dom';
+=======
+<<<<<<< Updated upstream
 import React, { useState, useEffect } from 'react'
 import { isRouteErrorResponse, useNavigate, useParams } from 'react-router-dom';
+=======
+import React, { useState, useEffect, useRef } from 'react'
+import { useNavigate, useParams } from 'react-router-dom';
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 import { axiosInstance } from "../functions/axiosInstance";
 import { getRoadmap } from '../functions/roadmapFunction';
-import { shortenString, convertDateTimeString } from '../functions/formatFunction';
 import { likeRoadmap, unlikeRoadmap } from '../functions/viewFunction';
 import RoadmapViewer from '../components/RoadmapViewer';
 import Spinner from '../components/Spinner';
 import Prompt from '../components/Prompt';
 import RoadmapDetail from '../components/RoadmapDetail';
+import RoadmapTaskDetail from '../components/RoadmapTaskDetail';
 
 export default function View() {
   const { roadmap_id } = useParams();
-
-  const [hasFetched, setHasFetched] = useState(false);
+  const navigate = useNavigate();
 
   const [isWarning, setIsWarning] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -37,13 +46,14 @@ export default function View() {
     }
   );
 
-  async function fetchRoadmap() {
+  function fetchRoadmap() {
     getRoadmap(roadmap_id)
       .then((response) => {
         const fetchedRoadmap = response;
         if (fetchedRoadmap === null) {
           console.error("Roadmap fetching failed.");
           setIsLoading(false);
+          setIsWarning(true);
           return;
         }
         if (fetchedRoadmap.next_task === null) {
@@ -83,7 +93,6 @@ export default function View() {
             axiosInstance.get(route)
               .then((response) => {
                 setIsLiked(Boolean(response.data.liked.toLowerCase() === 'true'));
-                setHasFetched(true);
                 setIsLoading(false);
                 const temp = { ...fetchedRoadmap };
                 temp.hasFetched = true;
@@ -118,7 +127,13 @@ export default function View() {
     }
   }
 
+  const isMountedRef = useRef(false);
+
   useEffect(() => {
+    if (!isMountedRef.current) {
+      isMountedRef.current = true;
+      return;
+    }
     fetchRoadmap();
   }, []);
 
@@ -127,7 +142,7 @@ export default function View() {
   function completeTask() {
     setIsLoading(true);
     setIsCompleting(false);
-    const route = `/task/complete/?tid=${currentTask.id}&added_exp=${50}`;
+    const route = `/task/complete?tid=${currentTask.id}&added_exp=${50}`;
     axiosInstance.put(route)
       .then((response) => {
         console.log(response);
@@ -163,8 +178,8 @@ export default function View() {
   if (roadmap.hasFetched) {
     return (
       <>
-        <div className='flex h-full bg-white overflow-y-scroll py-8'>
-          <div className="w-5/6 flex-col m-auto space-y-6">
+        <div className='flex h-full bg-white overflow-y-auto py-8'>
+          <div className="w-3/4 max-w-3xl flex-col m-auto space-y-6">
 
             <RoadmapDetail
               roadmapName={roadmap.name}
@@ -183,74 +198,7 @@ export default function View() {
             <RoadmapViewer tasks={roadmap.tasks} currentTaskID={currentTask.id} className="" />
 
             {(!isCompleted) && (
-              <div className='flex flex-col bg-white rounded-2xl drop-shadow-[0_2px_3px_rgba(0,0,0,0.15)] space-y-4'>
-                <div className='flex flex-row space-x-4 justify-between'>
-                  <div className='flex flex-col space-y-4 w-1/2 p-4'>
-                    <div className='text-md font-bold break-words'>
-                      {currentTask.name}
-                    </div>
-                    <div className='text-sm break-words'>
-                      {currentTask.description}
-                    </div>
-                    <div className='flex flex-col md:flex-row gap-2'>
-                      <div className='grow font-bold text-center text-xs'>
-                        Start: {convertDateTimeString(currentTask.startDate)}
-                      </div>
-                      <div className='grow font-bold text-center text-xs'>
-                        Due: {convertDateTimeString(currentTask.dueDate)}
-                      </div>
-                    </div>
-                  </div>
-                  <div className='flex flex-col space-y-2 w-1/2 p-4 bg-[#f5f8fd] rounded-r-2xl justify-between'>
-                    <div className='flex flex-col justify-center space-y-2 text-sm break-all'>
-                      {currentTask.subtasks.map((subtask, index) => {
-                        return (
-                          <label key={index}>
-                            {(isOwner) && (
-                              <input
-                                type="checkbox"
-                                className="w-4 h-4 mr-2 bg-gray-100 border-gray-300 rounded"
-                                checked={subtask.status}
-                                onChange={() => {
-                                  let updatedTask = { ...currentTask };
-                                  updatedTask.subtasks[index].status = !updatedTask.subtasks[index].status;
-                                  setCurrentTask(updatedTask);
-                                }}
-                              />
-                            )}
-                            {(!isOwner) && (
-                              <input
-                                type="checkbox"
-                                disabled={true}
-                                className="w-4 h-4 mr-2 bg-gray-100 border-gray-300 accent-slate-500 rounded pointer-events-none"
-                                defaultChecked={subtask.status}
-                              />
-                            )}
-                            {subtask.detail}
-                          </label>
-                        )
-                      })}
-                    </div>
-                    {(isOwner) && (
-                      <div className='flex flex-row justify-end gap-2'>
-                        {(saveButton) && (
-                          <button
-                            onClick={() => setIsSaving(true)}
-                            className="bg-main-blue sm:w-28 w-full text-white px-4 py-2 font-semilight rounded-full text-sm font-bold self-center h-10 truncate"
-                            type="button">
-                            Save
-                          </button>
-                        )}
-                        {(completeButton) && (
-                          <button onClick={() => setIsCompleting(true)} className="bg-sub-blue sm:w-28 w-full text-white px-4 py-2 font-semilight rounded-full text-sm font-bold self-center h-10 truncate" type="button">
-                            Complete
-                          </button>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
+              <RoadmapTaskDetail task={currentTask} handleTaskUpdate={(task) => setCurrentTask(task)} handleIsSaving={() => setIsSaving(true)} handleIsCompleting={() => setIsCompleting(true)} isOwner={isOwner} displaySaveButton={saveButton} displayCompleteButton={completeButton}/>
             )}
           </div>
         </div >
@@ -258,13 +206,23 @@ export default function View() {
           <Spinner />
         )}
         {(isSaving) && (
-          <Prompt message={"confirm save?"} confirmFunction={updateSubtasks} cancelFunction={() => setIsSaving(false)} />
+          <Prompt message={"confirm save?"} positiveFunction={updateSubtasks} negativeFunction={() => setIsSaving(false)} />
         )}
         {(isCompleting) && (
-          <Prompt message={"confirm complete?"} confirmFunction={completeTask} cancelFunction={() => setIsCompleting(false)} />
+          <Prompt message={"confirm complete?"} positiveFunction={completeTask} negativeFunction={() => setIsCompleting(false)} />
         )}
       </>
     )
+<<<<<<< Updated upstream
+  } else if (isWarning) {
+    return <Prompt message={"Roadmap fetching failed. Retry?"} confirmFunction={() => {fetchRoadmap(); setIsWarning(false)}} cancelFunction={() => navigate("/feed")} />
+=======
+<<<<<<< Updated upstream
+=======
+  } else if (isWarning) {
+    return <Prompt message={"Roadmap fetching failed"} positiveMessage="return" positiveFunction={() => {fetchRoadmap(); setIsWarning(false); navigate("/feed");}} />
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
   } else {
     return (
       <>
