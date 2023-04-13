@@ -2,10 +2,11 @@ import "./App.css";
 import Navbar from "./components/Navbar";
 import Spinner from "./components/Spinner";
 import NoPage from "./pages/NoPage";
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
-import { lazy, Suspense } from "react";
+import { BrowserRouter, Route, Routes, Navigate, useLocation } from "react-router-dom";
+import { lazy, Suspense, useState, useEffect } from "react";
 import HomeOtherUser from "./pages/HomeOtherUser";
-import { isUserLoggedIn } from "./functions/userFunction";
+import { isServerResponding, isUserLoggedIn } from "./functions/userFunction";
+import { axiosInstance } from "./functions/axiosInstance";
 
 const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
@@ -21,23 +22,89 @@ const Premium = lazy(() => import("./pages/Premium"));
 const Activity = lazy(() => import("./pages/Activity"));
 const SearchPage = lazy(() => import("./pages/SearchPage"));
 
-const ProtectedRoute = ({children}) => {
-  if (!isUserLoggedIn()) {
-    return <Navigate to="/intro" replace />;
+function ProtectedRoute({ children }) {
+  const route = '/user/'
+  const [authStatus, setAuthStatus] = useState(null);
+
+  console.log(children);
+  axiosInstance.get(route)
+    .then(response => {
+      console.log(response);
+      setAuthStatus(true);
+    })
+    .catch(error => {
+      console.error(error);
+      setAuthStatus(false);
+    })
+
+  if (authStatus == null) {
+    return <Spinner />;
+  } else if (authStatus === true) {
+    return children;
+  } else {
+    return <Navigate replace to="/intro" />;
   }
+}
 
-  return children;
-};
+function UnProtectedRoute({ children }) {
+  const route = '/user/'
+  const [authStatus, setAuthStatus] = useState(null);
 
-const UnProtectedRoute = ({children}) => {
-  if (isUserLoggedIn()) {
-    return <Navigate to="/" replace />;
+  console.log(children);
+  axiosInstance.get(route)
+    .then(response => {
+      console.log(response);
+      setAuthStatus(true);
+    })
+    .catch(error => {
+      console.error(error);
+      setAuthStatus(false);
+    })
+
+  if (authStatus == null) {
+    return <Spinner />;
+  } else if (authStatus === true) {
+    return <Navigate replace to="/" />;
+  } else {
+    return children;
   }
-
-  return children;
-};
+}
 
 function App() {
+  /*
+  let [fetched, setFetched] = useState(false);
+  let [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect (() => {
+    const fetchData = async () => {
+      setIsLoggedIn(await isUserLoggedIn());
+      setFetched(true);
+    }
+    fetchData();
+  }, [location.pathname]);
+
+  const ProtectedRoute = ({children}) => {
+    if (!isLoggedIn) {
+      return <Navigate to="/intro" replace />;
+    }
+
+    return children;
+  }
+
+  const UnProtectedRoute = ({children}) => {
+    if (isLoggedIn) {
+      return <Navigate to="/" replace />;
+    }
+
+    return children;
+  }
+
+  if (!fetched) return <Spinner />;
+
+  console.log(window.location.pathname);
+  console.log(isLoggedIn);
+  */
+
   return (
     <>
       <BrowserRouter>
@@ -192,9 +259,11 @@ function App() {
               /><Route
                 path="activity"
                 element={
-                  <Suspense fallback={<Spinner />}>
-                    <Activity />{" "}
-                  </Suspense>
+                  <ProtectedRoute>
+                    <Suspense fallback={<Spinner />}>
+                      <Activity />{" "}
+                    </Suspense>
+                  </ProtectedRoute>
                 }
               />
               <Route path="/404" element={<NoPage />} />

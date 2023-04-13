@@ -7,11 +7,20 @@ export const isUserPremium = () => {
   return true; // PLACEHOLDER PLS DONT LAUGH
 };
 
-export const isUserLoggedIn = () => {
+export const isUserLoggedIn = async (timeout = 0) => {
+  /*
   if (localStorage.getItem("token") === null) {
     return false;
   }
   return true;
+  */
+  const route = '/user/';
+  try {
+      let response = await axiosInstance.get(route, { timeout: timeout });
+      return true;
+  } catch (error) {
+      return false;
+  }
 };
 
 export const isServerResponding = async (url="/") => {
