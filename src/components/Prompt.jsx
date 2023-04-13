@@ -1,10 +1,7 @@
 import React from 'react';
 
-function Prompt({ message, confirmFunction, cancelFunction }) {
+function Prompt({ title, message, positiveText, cancelText, positiveFunction, negativeFunction }) {
 
-  // useEffect(() => {
-
-  // }, [])
   return (
     <div className="fixed inset-0 z-50">
       <div className="absolute inset-0 z-10 flex items-center justify-center">
@@ -12,15 +9,19 @@ function Prompt({ message, confirmFunction, cancelFunction }) {
           <div className='text-center'>
             {message}
           </div>
-          <div className='flex space-x-2'>
-            <button onClick={cancelFunction} className="bg-gray-400 w-1/2 text-white px-4 py-2 rounded-full text-sm font-bold" type="button">
-              Cancel
+          <div className={`${(cancelText && positiveText) && 'space-x-2'} flex justify-center`}>
+            <button
+              onClick={negativeFunction}
+              className={`${cancelText ? 'visible' : 'hidden'} ${positiveText && 'w-1/2'} bg-gray-500 text-white px-4 py-2 rounded-full text-sm font-bold`}
+              type="button">
+              {cancelText}
             </button>
             <button
-              onClick={confirmFunction}
-              className="bg-sub-blue w-1/2 text-white px-4 py-2 rounded-full text-sm font-bold"
-              type="button">
-              Confirm
+              onClick={positiveFunction}
+              className={`${positiveText ? 'visible' : 'hidden'} ${cancelText && 'w-1/2'} bg-sub-blue text-white px-4 py-2 rounded-full text-sm font-bold`}
+              type="button"
+            >
+              {positiveText}
             </button>
           </div>
         </div>
