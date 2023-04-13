@@ -5,6 +5,7 @@ import {
   getRoadmap,
   createRoadmap,
   editRoadmap,
+  countRoadmap,
 } from "../functions/roadmapFunction.jsx";
 import Spinner from "../components/Spinner";
 import { isUserLoggedIn, isUserPremium } from "../functions/userFunction";
@@ -231,13 +232,14 @@ const RoadmapCreatePage = (props) => {
   };
 
   const setUpRoadmap = async () => {
-    // use to load roadmap page into edit or clone page
+    if (await countRoadmap() >= 3 && !(await isUserPremium()) && mode === "create") {
+      handleDisplayErrorMessage("Roadmap limit for non-premium used","/", true)
+    }
     if (mode === "edit" || mode === "clone") {
       // check whether the user could view this page
       if (!isUserLoggedIn()) {
-        // alert("unauthorized");
         handleDisplayErrorMessage("User Unauthorized", "/login", true)
-      }
+      }  
       // check if state is available
       if (state !== null && state !== undefined) {
         // set up the data to variable
