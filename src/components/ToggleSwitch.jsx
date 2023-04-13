@@ -1,4 +1,4 @@
-const ToggleSwitch = ({name, isToggled, setIsToggled, callOnChanged = () => {}}) => {
+const ToggleSwitch = ({name, isToggled, setIsToggled = () => {}, callOnChanged = () => {}}) => {
   return (
     <div className="">
         <label htmlFor={name} className="flex items-end cursor-pointer justify-between w-64">

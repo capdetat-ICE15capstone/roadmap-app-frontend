@@ -8,19 +8,21 @@ import { ReactComponent as HomeLogo } from "../assets/navbar_assets/home_icon.sv
 import { ReactComponent as CalendarLogo } from "../assets/navbar_assets/calendar_icon.svg"
 import { ReactComponent as SettingLogo } from "../assets/navbar_assets/setting_icon.svg"
 import { ReactComponent as UserLogo } from "../assets/navbar_assets/username_icon.svg"
-import { ReactComponent as BellIcon } from "../assets/navbar_assets/bell_icon.svg"
 import { ReactComponent as BookIcon } from "../assets/navbar_assets/book_icon.svg"
 
 const NavItem = (props) => {
-  // iconClass, navLinkClass, SvgIcon, to, parentDivClass, childDivClass
   return (
     <>
-      <NavLink className={`py-3 flex justify-center content-middle hover:bg-yellow-500 hover:scale-105 transition group duration-200 ${props.parentDivClass}`} to={props.to}>
-        <div className={`overflow-hidden whitespace-nowrap flex ${props.childDivClass}`}>
-          <props.SvgIcon className={`w-full h-auto inline ${props.iconClass}`} />
-          {/* <div className={`left-20 font-nunito-sans text-white font-bold ml-2 justify-self-center ${props.navLinkClass}`} to={props.to}>{props.displayName}</div> */}
-          <span className="left-20 w-auto py-2 px-3 ml-3 rounded-md transition-all duration-100 scale-0 origin-left bg-nav-blue absolute text-white font-bold group-hover:scale-100">{props.displayName}</span>
+      <NavLink className={`relative flex items-center max-md:justify-center md:justify-start md:pl-8 md:w-full max-xs:grow h-16 ${props.baseColor} hover:bg-sub-blue hover:scale-105 transition group duration-200`} to={props.to}>
+        <div className="flex items-center space-x-4">
+          <div className="flex shrink-0">
+            <props.SvgIcon className="w-10" />
+          </div>
+          <div className="flex flex-grow max-md:hidden text-white font-bold">
+            {props.displayName}
+          </div>
         </div>
+        <div className="md:hidden max-xs:hidden absolute top-1/2 xs:left-[170%] transform -translate-x-1/2 -translate-y-1/2 py-2 px-3 rounded-md transition-all duration-100 scale-0 origin-left bg-nav-blue text-white font-bold group-hover:scale-100">{props.displayName}</div>
       </NavLink>
     </>
   )
@@ -29,21 +31,47 @@ const NavItem = (props) => {
 const Navbar = () => {
   return (
     <>
-      <div className="flex fixed h-screen w-screen overflow-x-scroll overflow-y-hidden">
-        <div className="">
-          <div className="md:flex hidden flex-col h-screen bg-nav-blue justify-between">
-            <div className="flex flex-col">
-              <Logo className="justify-self-center self-center h-12 m-4" />
-              <NavItem SvgIcon={HomeLogo} displayName="Home" to="/" />
-              <NavItem SvgIcon={FeedLogo} displayName="Feed" to="/feed" />
-              <NavItem SvgIcon={SettingLogo} displayName="Setting" to="/setting" />
+      <div className="fixed flex max-xs:flex-col xs:flex-row-reverse h-full w-full">
+        <div className="flex xs:hidden max-xs:visible">
+          <div className="flex items-center justify-between bg-nav-blue w-full h-16">
+            <div className="flex items-center h-full ml-4 space-x-2">
+              <Logo className="p-2" />
+              <div className="text-white text-3xl font-bold">
+                MileMap
+              </div>
             </div>
-            <NavItem SvgIcon={UserLogo} to="/profile" displayName="Profile"
-              parentDivClass="bg-blue-800 py-5" />
+            <div className="w-16">
+              <NavItem SvgIcon={UserLogo} displayName="Profile" baseColor="bg-blue-900" to="/" />
+            </div>
           </div>
         </div>
-        <div className="flex flex-col w-full max-w-full overflow-auto">
+        <div className="flex flex-col flex-grow overflow-x-hidden">
           <Outlet />
+        </div>
+        <div className="flex xs:hidden max-xs:visible w-full justify-between">
+          <NavItem SvgIcon={HomeLogo} displayName="Home" baseColor="bg-nav-blue" to="/" />
+          <NavItem SvgIcon={FeedLogo} displayName="Feed" baseColor="bg-nav-blue" to="/feed" />
+          <NavItem SvgIcon={BookIcon} displayName="Quest" baseColor="bg-nav-blue" to="/quest" />
+          <NavItem SvgIcon={CalendarLogo} displayName="Shop" baseColor="bg-nav-blue" to="/shop" />
+          <NavItem SvgIcon={SettingLogo} displayName="Setting" baseColor="bg-nav-blue" to="/setting" />
+        </div>
+        <div className="max-xs:hidden flex flex-col items-center justify-between max-md:w-18 md:w-[180px] bg-nav-blue shrink-0">
+          <div className="w-full">
+            <div className="w-full flex justify-center items-center bg-base-blue px-4 space-x-4">
+              <Logo className="my-2" />
+              <div className=" w-[60%] max-md:hidden text-white text-xl font-bold">
+                MileMap
+              </div>
+            </div>
+            <NavItem SvgIcon={HomeLogo} displayName="Home" baseColor="bg-nav-blue" to="/" />
+            <NavItem SvgIcon={FeedLogo} displayName="Feed" baseColor="bg-nav-blue" to="/feed" />
+            <NavItem SvgIcon={BookIcon} displayName="Quest" baseColor="bg-nav-blue" to="/quest" />
+            <NavItem SvgIcon={CalendarLogo} displayName="Shop" baseColor="bg-nav-blue" to="/shop" />
+            <NavItem SvgIcon={SettingLogo} displayName="Setting" baseColor="bg-nav-blue" to="/setting" />
+          </div>
+          <div className="w-full">
+            <NavItem SvgIcon={UserLogo} displayName="Profile" baseColor="bg-blue-900" to="/" />
+          </div>
         </div>
       </div>
     </>
