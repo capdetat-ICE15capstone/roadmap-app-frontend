@@ -1,46 +1,62 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { useLocation } from 'react-router-dom';
-import axios from 'axios';
+import { axiosInstance } from '../functions/axiosInstance';
+
+import { ReactComponent as Logo } from '../assets/shapes/logo.svg'
 
 export default function Login() {
   const navigate = useNavigate();
-  const location = useLocation();
-  const isFirst = location.state?.state || false;
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
 
-  const [error, setError] = useState({ 'state': false, 'message': "" });
+  // Check if there is a saved login information on first render.
+  useEffect(() => {
+    if (localStorage.getItem('saved_email') !== null && localStorage.getItem('saved_password') !== null) {
+      const submission = {
+        "email": localStorage.getItem('saved_email'),
+        "password": localStorage.getItem('saved_password')
+      };
+      submitForm(submission);
+    }
+  }, [])
 
   function handleSubmit(event) {
     event.preventDefault();
-    axios.post('http://localhost:8080/login', { email, password })
-      .then(response => {
-        localStorage.setItem('token', response.data.token);
-        if (isFirst) {
-          navigate('/profile', { state: { firstLogin: true } });
-        } else {
-          navigate('/profile');
-        }
+    const submission = {
+      "email": email,
+      "password": password
+    };
+    if (rememberMe) {
+      localStorage.setItem('saved_email', email);
+      localStorage.setItem('saved_password', password);
+    }
+    submitForm(submission);
+  }
+
+  async function submitForm(form) {
+    const route = `/user/login/`;
+    axiosInstance.post(route, form)
+      .then((response) => {
+        console.log(response.data);
+        const token = response.data.token;
+        localStorage.setItem('token', token);
+        navigate('/');
       })
-      .catch(error => console.log(error));
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   return (
     <>
-      <div className={`flex flex-row h-screen w-screen`}>
-        <div className="flex justify-center w-1/2 bg-gradient-to-b from-cyan-500 to-blue-500">
-          <div className="flex flex-col justify-center m-8">
-
-          </div>
-        </div>
-        <div className="flex justify-center w-1/2">
-          <div className="flex flex-col justify-center m-6">
-            <p className="flex justify-center mb-4 text-3xl font-bold text-slate-600">
+      <div className={`flex flex-row h-screen w-screen bg-gradient-to-b from-sub-blue to-main-blue overflow-y-auto py-8`}>
+        <div className="flex items-center justify-center bg-white m-auto rounded-2xl shadow-2xl">
+          <div className="flex flex-col justify-between items-center p-6">
+            <div className="flex text-3xl font-bold text-slate-600 mb-4">
               User Login
-            </p>
+            </div>
             <form onSubmit={handleSubmit}>
               <div className="flex flex-col space-y-4 mb-4">
                 <input
@@ -63,22 +79,17 @@ export default function Login() {
                 />
               </div>
               <div className="flex flex-col mb-4">
-                <div className="flex flex-row justify-between ">
-                  <label>
+                <div className="flex items-center justify-left">
+                  <label className='inline-flex'>
                     <input
                       type="checkbox"
-                      className="w-4 h-4S bg-gray-100 border-gray-300 rounded"
+                      className="w-4 h-4 bg-gray-100 border-gray-300 rounded"
                       id="CheckRememberMe"
                       onChange={() => setRememberMe(!rememberMe)}
                     />
-                    <a className="ml-2 text-xs font-medium text-gray-400">
-                      Remember Me
-                    </a>
                   </label>
-                  <div>
-                    <a className="font-bold text-xs text-blue-900" href="#">
-                      Forgot Password?
-                    </a>
+                  <div className="ml-2 text-xs font-medium text-gray-400">
+                    Remember Me
                   </div>
                 </div>
               </div>

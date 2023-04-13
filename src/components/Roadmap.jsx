@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link, useNavigate } from "react-router-dom";
 import placeholderImage from "../assets/roadmap_assets/Placeholder_Image.png"
+import RoadmapDropdown from './RoadmapDropdown';
 import { ReactComponent as EyeIcon } from "../assets/roadmap_assets/eye_Icon.svg"
+import { ReactComponent as ShareIcon } from "../assets/roadmap_assets/Share.svg"
+import { ReactComponent as LikeIcon } from "../assets/roadmap_assets/ThumbsUp.svg"
 
-const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_count, stars_count, forks_count, created_at, edited_at, title }) => {
-
-  //parameters of roadmap
+const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_count, stars_count, forks_count, created_at, edited_at, title, isActive, isOwner, deleteFunction}) => {
   Roadmap.propTypes = {
     owner_id: PropTypes.number,
     creator_id: PropTypes.number,
@@ -29,46 +30,59 @@ const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_co
   };
 
   return (
-    <Link to={`/view/${owner_id}`}>
-      <div className="relative inline-block rounded-[48px] bg-white border-gray-300 border-2 shadow-md w-80 h-80 m-8 hover:transform hover:scale-110 transition duration-300">
-        <div className="relative container rounded-3xl h-3/5 w-auto m-2">
-          <img src={placeholderImage} className="relative object-cover rounded-[48px] h-full w-full" />
-          <h3 className="absolute text-black bottom-2 left-6">
+    <>
+      <div className='flex flex-col bg-white rounded-3xl shadow-md w-[200px] h-[220px] mr-16 my-8 p-2 space-y-1'>
+        <Link to={'/view/:id'} className='relative'>
+          <img src={placeholderImage} className="rounded-2xl h-full w-full" />
+          <div className='absolute bottom-[5%] left-[5%] text-xs font-bold'>
             {creator_name}
-          </h3>
-          <h6 className="absolute text-gray-600 bottom-2 right-6">
+          </div>
+          <div className='absolute bottom-[5%] right-[5%] text-xs text-gray-600'>
             Last updated: {edited_at}
-          </h6>
-        </div>
-        <div className="relative h-2/5 w-auto">
-          <h1 className="absolute top-0 left-2 text-2xl">
-            {title}
-          </h1>
-          <h6 className="absolute top-0 right-24" >
-            fork : {forks_count}
-          </h6>
-          <h6 className="absolute top-0 right-8">
-            star : {stars_count}
-          </h6>
-          <h1 className="absolute top-10 left-2">
-            Owner : 
-          </h1>
-          <button className="z-10 absolute top-10 left-[70px] hover:text-blue-600" onClick={handleClick}>
-            {owner_name}
-          </button>
-          <h1 className="absolute top-10 right-2 text-gray-600">
-            Created : {created_at}
-          </h1>
-          <span className="absolute bottom-6 left-8">
-            <EyeIcon />
-          </span>
-          <h1 className="absolute bottom-6 left-16">
+          </div>
+        </Link>
+        <div className='flex flex-col space-y-1 m-1'>
+          <div className='flex flex-row justify-between'>
+            <div className='text-lg font-bold'>
+              {title}
+            </div>
+            <div className='flex flex-row gap-4'> 
+              <div className='text-xs flex flex-wrap items-center gap-1'>
+                <span><ShareIcon/></span> : {forks_count}
+              </div>
+              <div className='text-xs flex flex-wrap items-center gap-1'>
+                <span><LikeIcon/></span>: {stars_count}
+              </div>
+            </div>
+          </div>
+          <div className='flex flex-row justify-between items-center'>
+            <div className='flex flex-row'>
+              <div className='text-sm'>
+                Owner :
+              </div>
+              <button className='z-10 text-sm hover:text-blue-600 ml-1 ' onClick={handleClick}>
+                {owner_name}
+              </button>
+            </div>
+            <div className='text-xs text-gray-500'>
+              Created : {created_at}
+            </div>
+          </div>
+          <div className='flex flex-row items-center'>
+            <span>
+              <EyeIcon className="flex stroke-1 stroke-gray-700 w-3/4 h-3/4 "/>
+            </span>
+            <div className='text-xs text-gray-700'>
             : {views_count} views
-          </h1>
+            </div>
+          </div>
         </div>
+        {isOwner &&
+          <div className='relative flex left-[165px] -top-[25px]'>
+          <RoadmapDropdown onDelete={deleteFunction}/>
+        </div>}
       </div>
-    </Link>
-
+    </>
   );
 };
 

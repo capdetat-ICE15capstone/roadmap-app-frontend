@@ -4,18 +4,38 @@ import Spinner from "./components/Spinner";
 import NoPage from "./pages/NoPage";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { lazy, Suspense } from "react";
+import HomeOtherUser from "./pages/HomeOtherUser";
+import { isUserLoggedIn } from "./functions/userFunction";
 
 const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
 const View = lazy(() => import("./pages/View"));
 const RoadmapCreatePage = lazy(() => import("./pages/RoadmapCreatePage"));
 const Home = lazy(() => import("./pages/Home"));
-const Feed = lazy(() => import("./pages/Feed"))
+const FriendHome = lazy(() => import("./pages/HomeOtherUser"));
+const Feed = lazy(() => import("./pages/Feed"));
 const Setting = lazy(() => import("./pages/Setting"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Introduction = lazy(() => import("./pages/Introduction"));
 const Premium = lazy(() => import("./pages/Premium"));
+const Activity = lazy(() => import("./pages/Activity"));
 const SearchPage = lazy(() => import("./pages/SearchPage"));
+
+const ProtectedRoute = ({children}) => {
+  if (!isUserLoggedIn()) {
+    return <Navigate to="/intro" replace />;
+  }
+
+  return children;
+};
+
+const UnProtectedRoute = ({children}) => {
+  if (isUserLoggedIn()) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+};
 
 function App() {
   return (
@@ -26,17 +46,21 @@ function App() {
             <Route
               path="/signup"
               element={
-                <Suspense fallback={<Spinner />}>
-                  <Signup />
-                </Suspense>
+                <UnProtectedRoute>
+                  <Suspense fallback={<Spinner />}>
+                    <Signup />
+                  </Suspense>
+                </UnProtectedRoute>
               }
             ></Route>
             <Route
               path="/login"
               element={
-                <Suspense fallback={<Spinner />}>
-                  <Login />
-                </Suspense>
+                <UnProtectedRoute>
+                  <Suspense fallback={<Spinner />}>
+                    <Login />
+                  </Suspense>
+                </UnProtectedRoute>
               }
             ></Route>
             <Route
@@ -56,89 +80,129 @@ function App() {
               }
             ></Route>
             <Route path="/" element={<Navbar />}>
-              <Route index element={<Home />} />
               <Route
-                path="home"
+                path="/"
                 element={
-                  <Suspense fallback={<Spinner />}>
-                    <Home />
-                  </Suspense>
+                  <ProtectedRoute>
+                    <Suspense fallback={<Spinner />}>
+                      <Home />
+                    </Suspense>
+                  </ProtectedRoute>
                 }
               ></Route>
               <Route
-                path="view"
+                path="friend_home"
                 element={
-                  <Suspense fallback={<Spinner />}>
-                    <View />
-                  </Suspense>
+                  <ProtectedRoute>
+                    <Suspense fallback={<Spinner />}>
+                      <FriendHome />             
+                    </Suspense>
+                  </ProtectedRoute>
+                }
+              ></Route>
+              <Route
+                path="view/:roadmap_id"
+                element={
+                  <ProtectedRoute>
+                    <Suspense fallback={<Spinner />}>
+                      <View />
+                    </Suspense>
+                  </ProtectedRoute>
                 }
               ></Route>
               <Route
                 path="create"
                 element={
-                  <Suspense fallback={<Spinner />}>
-                    <RoadmapCreatePage mode="create" />
-                  </Suspense>
+                  <ProtectedRoute>
+                    <Suspense fallback={<Spinner />}>
+                      <RoadmapCreatePage mode="create" />
+                    </Suspense>
+                  </ProtectedRoute>
                 }
               ></Route>
               <Route
                 path="feed"
                 element={
-                  <Suspense fallback={<Spinner />}>
-                    <Feed />
-                  </Suspense>
+                  <ProtectedRoute>
+                    <Suspense fallback={<Spinner />}>
+                      <Feed />
+                    </Suspense>
+                  </ProtectedRoute>
                 }
               ></Route>
               <Route
                 path="search"
                 element={
-                  <Suspense fallback={<Spinner />}>
-                    <SearchPage />
-                  </Suspense>
+                  <ProtectedRoute>
+                    <Suspense fallback={<Spinner />}>
+                      <SearchPage />
+                    </Suspense>
+                  </ProtectedRoute>
                 }
               ></Route>
               <Route
                 path="edit/:id"
                 element={
-                  <Suspense fallback={<Spinner />}>
-                    <RoadmapCreatePage mode="edit" />
-                  </Suspense>
+                  <ProtectedRoute>
+                    <Suspense fallback={<Spinner />}>
+                      <RoadmapCreatePage mode="edit" />
+                    </Suspense>
+                  </ProtectedRoute>
                 }
               ></Route>
               <Route
                 path="clone/:id"
                 element={
-                  <Suspense fallback={<Spinner />}>
-                    <RoadmapCreatePage mode="clone" />
-                  </Suspense>
+                  <ProtectedRoute>
+                    <Suspense fallback={<Spinner />}>
+                      <RoadmapCreatePage mode="clone" />
+                    </Suspense>
+                  </ProtectedRoute>
                 }
               ></Route>
               <Route
                 path="view/:id"
                 element={
-                  <Suspense fallback={<Spinner />}>
-                    {/* insert view roadmap element */}
-                  </Suspense>
+                  <ProtectedRoute>
+                    <Suspense fallback={<Spinner />}>
+                      <View />
+                    </Suspense>
+                  </ProtectedRoute>
                 }
               ></Route>
               <Route
                 path="setting"
                 element={
-                  <Suspense fallback={<Spinner />}>
-                    <Setting />{" "}
-                  </Suspense>
+                  <ProtectedRoute>
+                    <Suspense fallback={<Spinner />}>
+                      <Setting />{" "}
+                    </Suspense>
+                  </ProtectedRoute>
                 }
               ></Route>
               <Route
                 path="profile"
                 element={
+                  <ProtectedRoute>
+                    <Suspense fallback={<Spinner />}>
+                      <Profile />{" "}
+                    </Suspense>
+                  </ProtectedRoute>
+                }
+              /><Route
+                path="activity"
+                element={
                   <Suspense fallback={<Spinner />}>
-                    <Profile />{" "}
+                    <Activity />{" "}
                   </Suspense>
                 }
               />
               <Route path="/404" element={<NoPage />} />
-              <Route path="*" element={<Navigate replace to="/404" />} />
+              <Route path="*" element={
+                <ProtectedRoute>
+                  <Navigate replace to="/" />
+                </ProtectedRoute>
+              } />
             </Route>
           </Routes>
         </Suspense>
