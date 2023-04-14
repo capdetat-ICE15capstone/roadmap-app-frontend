@@ -61,7 +61,10 @@ export default function Login() {
 
   return (
     <>
-      <div className={`flex flex-row h-screen w-screen bg-gradient-to-b from-sub-blue to-main-blue overflow-y-auto py-8`}>
+      <div className={`relative flex flex-row h-screen w-screen bg-gradient-to-b from-sub-blue to-main-blue overflow-y-auto py-8`}>
+        <button type="button" onClick={() => navigate(-1)} className="absolute top-4 left-4 bg-nav-blue text-white shadow font-bold py-2 px-4 rounded-full transition ease-in-out hover:bg-mid-blue duration-300">
+          ˂ Back
+        </button>
         <div className={`flex items-center justify-center bg-white m-auto rounded-2xl shadow-2xl`}>
           <div className="flex flex-col justify-between items-center p-6">
             <div className="flex text-3xl font-bold text-slate-600 mb-4">
@@ -104,7 +107,7 @@ export default function Login() {
                 </div>
               </div>
               <div className="flex flex-col space-y-2">
-                <button type="submit" className="bg-blue-900 text-white shadow font-bold py-2 rounded-lg transition ease-in-out hover:bg-sub-blue duration-300">
+                <button type="submit" className="bg-sub-blue text-white shadow font-bold py-2 rounded-lg transition ease-in-out hover:bg-blue-900 duration-300">
                   Log In
                 </button>
                 <button type="button" className="bg-red-500 text-white shadow font-bold py-2 rounded-lg transition ease-in-out hover:bg-red-700 duration-300" onClick={() => navigate("/signup")}>

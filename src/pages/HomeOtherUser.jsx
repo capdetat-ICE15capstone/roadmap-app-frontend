@@ -20,6 +20,8 @@ const HomeOtherUser = () => {
   let roadmapList = [];
   
   function shortenString(str, maxLength) {
+    if (str == null)
+      return ""
     if (str.length > maxLength) {
       // Shorten the string to the maximum length
       str = str.slice(0, maxLength) + '...';
@@ -37,20 +39,8 @@ const HomeOtherUser = () => {
     setIsActive(false)
   }
 
-  const getUserUID = async () => {
-    const route = `/user/`
-    try {
-        let response = await axiosInstance.get(route, { timeout: 10000 });
-        return response;
-    } catch (error) {
-        console.error("Fail GetUserUID()");
-    }
-  }
-  
-  const getHomeOtherUserData = async () => {
-    const response = await getUserUID()
-    console.log(response.data.uid)
-    const route = `/home/view/${response.data.uid}`
+  const getHomeOtherUserData = async (viewer_id) => {
+    const route = `/home/view/${viewer_id}`
     try {
         let response = await axiosInstance.get(route, { timeout: 10000 });
         return response;
@@ -61,7 +51,7 @@ const HomeOtherUser = () => {
 
   useEffect (() => {
     const fetchData = async () => {
-      const response = await getHomeOtherUserData();
+      const response = await getHomeOtherUserData(window.location.pathname.substring(6));
       setData(response.data);
       setUsername(response.data.profile.username);
       setLevel(Math.round(response.data.profile.exp/100));
