@@ -158,7 +158,7 @@ const RoadmapCreatePage = (props) => {
     isPublic: true,
     tasks: [],
     tags: [],
-    notiStatus: {on:false}
+    notiStatus: { on: false },
   });
   const { mode } = props; // props from parent
   const { state } = useLocation(); // state from previous page, including fetched roadmap data
@@ -179,9 +179,12 @@ const RoadmapCreatePage = (props) => {
   const [publicModal, setPublicModal] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [errorModal, setErrorModal] = useState(false);
-  const [errorHandle, setErrorHandle] = useState({message: "", redirectTo: null});
-  const [discardModal, setDiscardModal] = useState(false)
-  
+  const [errorHandle, setErrorHandle] = useState({
+    message: "",
+    redirectTo: null,
+  });
+  const [discardModal, setDiscardModal] = useState(false);
+
   useEffect(() => {
     setUpRoadmap();
   }, []);
@@ -232,14 +235,21 @@ const RoadmapCreatePage = (props) => {
   };
 
   const setUpRoadmap = async () => {
-    if (await countRoadmap() >= 3 && !(await isUserPremium()) && mode === "create") {
-      handleDisplayErrorMessage("Roadmap limit for non-premium used","/", true)
+    if (
+      (await countRoadmap()) >= 3 &&
+      !(await isUserPremium()) &&
+      mode === "create"
+    ) {
+      handleDisplayErrorMessage(
+        "Roadmap limit for non-premium used",
+        "/",
+        true
+      );
     }
     if (mode === "edit" || mode === "clone") {
-      // check whether the user could view this page
       if (!isUserLoggedIn()) {
-        handleDisplayErrorMessage("User Unauthorized", "/login", true)
-      }  
+        handleDisplayErrorMessage("User Unauthorized", "/login", true);
+      }
       // check if state is available
       if (state !== null && state !== undefined) {
         // set up the data to variable
@@ -272,12 +282,10 @@ const RoadmapCreatePage = (props) => {
         // then set the data to variable
         setLoading(true);
         const tempRoadmap = await getRoadmap(id, 10000, mode === "clone");
-        // console.log(tempRoadmap);
         if (tempRoadmap === null) {
           setLoading(false);
-          // alert("error");
-          handleDisplayErrorMessage("Roadmap Loading Failed", "/home", true)
-        } else  {
+          handleDisplayErrorMessage("Roadmap Loading Failed", "/home", true);
+        } else {
           const notificationObject = setUpNotification(tempRoadmap);
           if (mode === "edit") {
             initialState.current = {
@@ -311,11 +319,15 @@ const RoadmapCreatePage = (props) => {
       let timeDifference = undefined;
       setTasks((tasks) =>
         tasks.map((task) => {
-          timeDifference |= (new Date()).getTime() - task.startDate.getTime() 
+          timeDifference |= new Date().getTime() - task.startDate.getTime();
           task.isDone = false;
           task.isTempId = true;
-          task.startDate = roundTimeToNearest30(new Date(task.startDate.getTime() + timeDifference))
-          task.dueDate = roundTimeToNearest30(new Date(task.dueDate.getTime() + timeDifference))
+          task.startDate = roundTimeToNearest30(
+            new Date(task.startDate.getTime() + timeDifference)
+          );
+          task.dueDate = roundTimeToNearest30(
+            new Date(task.dueDate.getTime() + timeDifference)
+          );
           task.subtasks.map((subtask) => {
             subtask.isTempId = true;
             return subtask;
@@ -577,27 +589,22 @@ const RoadmapCreatePage = (props) => {
     reportError
   ) => {
     if (mode === "create" || mode === "clone") {
-      if (
-        (await createRoadmap(roadmapObject, taskChange, subtaskChange, reportError)) === null
-      ) {
-        return false;
-      }
-      return true;
+      return await createRoadmap(
+        roadmapObject,
+        taskChange,
+        subtaskChange,
+        reportError
+      );
     } else if (mode === "edit") {
-      if (
-        (await editRoadmap(
-          id,
-          roadmapObject,
-          taskChange,
-          subtaskChange,
-          relationChange,
-          tagChanges,
-          reportError
-        )) === null
-      ) {
-        return false;
-      }
-      return true;
+      return await editRoadmap(
+        id,
+        roadmapObject,
+        taskChange,
+        subtaskChange,
+        relationChange,
+        tagChanges,
+        reportError
+      );
     }
   };
 
@@ -644,71 +651,77 @@ const RoadmapCreatePage = (props) => {
         ? newTaskRelation
         : null;
 
-    const completeRoadmap = {
-      id: id ?? null,
-      name: RMName,
-      description: RMDesc,
-      // tasks: tasks,
-      isPublic: isPublic,
-      notificationInfo: notiStatus,
-    };
-
     const tagChanges = compareTagChange();
 
-    console.log("roadmap change");
-    console.log(roadmapChange);
-    console.log("task");
-    console.log(taskChange);
-    console.log("subtask");
-    console.log(subTaskChange);
-    console.log("relation change");
-    console.log(taskRelationChange);
-    console.log("tag change");
-    console.log(tagChanges);
+    // console.log("roadmap change");
+    // console.log(roadmapChange);
+    // console.log("task");
+    // console.log(taskChange);
+    // console.log("subtask");
+    // console.log(subTaskChange);
+    // console.log("relation change");
+    // console.log(taskRelationChange);
+    // console.log("tag change");
+    // console.log(tagChanges);
 
-    // Begin the spinner
     setLoading(true);
-    // await generateNotificationObjects();
-    if (
-      await handleSendingApi(
-        roadmapChange,
-        taskChange,
-        subTaskChange,
-        taskRelationChange,
-        tagChanges,
-        handleDisplayErrorMessage
-      )
-    )
-      navigate("/");
-    setLoading(false);
-    // navigate("/");
+    const response = await handleSendingApi(
+      roadmapChange,
+      taskChange,
+      subTaskChange,
+      taskRelationChange,
+      tagChanges,
+      handleDisplayErrorMessage
+    );
+    setLoading(false)
+    if (response !== null && response !== undefined) {
+      if (mode === "create" || mode === "clone") {
+        try {
+          navigate(`/view/${response.roadmap.rid}`)
+        } catch (error) {
+          console.error(error);
+          handleDisplayErrorMessage("Error navigating to view page", "/", true)
+        }
+      } else {
+        try {
+          navigate(`/view/${id}`)
+        } catch (error) {
+          console.error(error);
+          handleDisplayErrorMessage("Error navigating to view page", "/", true)
+        }
+      }
+    }
   };
 
   const handleDiscard = () => {
     navigate(0);
   };
 
-  const handleDisplayErrorMessage = (error, redirectTo=null, selfGenerateError=false) => {
+  const handleDisplayErrorMessage = (
+    error,
+    redirectTo = null,
+    selfGenerateError = false
+  ) => {
     if (selfGenerateError === true) {
-      setErrorHandle({message: error, redirectTo: redirectTo});
+      setErrorHandle({ message: error, redirectTo: redirectTo });
     } else {
       if (error.response !== undefined && error.response !== null) {
-        if (error.response.status === 401) 
-          redirectTo = "/login";
-        setErrorHandle({message: error.response.data.detail, redirectTo: redirectTo})
+        if (error.response.status === 401) redirectTo = "/login";
+        setErrorHandle({
+          message: error.response.data.detail,
+          redirectTo: redirectTo,
+        });
       } else {
-        setErrorHandle({message: error.message, redirectTo: redirectTo})
+        setErrorHandle({ message: error.message, redirectTo: redirectTo });
       }
     }
     setErrorModal(true);
-  }
+  };
 
   const handleErrorRedirect = () => {
-    if (errorHandle.redirectTo !== null)
-      navigate(errorHandle.redirectTo);
-    else 
-      setErrorModal(false)
-  }
+    if (errorHandle.redirectTo !== null) navigate(errorHandle.redirectTo);
+    else setErrorModal(false);
+  };
 
   return (
     <>
@@ -762,23 +775,23 @@ const RoadmapCreatePage = (props) => {
       {loading && <Spinner />}
       <div className="h-full w-full flex justify-center">
         <form onSubmit={handleSubmit} className="h-full w-4/5 max-w-4xl">
-        <div className="text-4xl font-bold mt-10 flex items-center">
-        <div className="flex flex-col">
-          <span className="font-inter text-3xl">
-            {mode === "create"
-              ? "Create"
-              : mode === "edit"
-              ? "Edit"
-              : mode === "clone"
-              ? "Clone"
-              : null}{" "}
-            roadmap
-          </span>
-          <div className="h-2">
-            <hr className="h-0.5 bg-nav-blue w-[120%]"></hr>
+          <div className="text-4xl font-bold mt-10 flex items-center">
+            <div className="flex flex-col">
+              <span className="font-inter text-3xl">
+                {mode === "create"
+                  ? "Create"
+                  : mode === "edit"
+                  ? "Edit"
+                  : mode === "clone"
+                  ? "Clone"
+                  : null}{" "}
+                roadmap
+              </span>
+              <div className="h-2">
+                <hr className="h-0.5 bg-nav-blue w-[120%]"></hr>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
           <div className="flex my-4 justify-between">
             <input
               className="text-2xl focus:outline-none font-inter w-full placeholder:font-extrabold"
@@ -813,9 +826,7 @@ const RoadmapCreatePage = (props) => {
             </motion.div>
           }
 
-          <label className="text-xl font-bold ">
-            Roadmap Description{" "}
-          </label>
+          <label className="text-xl font-bold ">Roadmap Description </label>
           <div className="my-2">
             <textarea
               className="border rounded-lg border-gray-400 block text-xl font-thin p-1 w-full focus:outline-none shadow-lg "
@@ -854,13 +865,14 @@ const RoadmapCreatePage = (props) => {
                       {/* Task list */}
                       {tasks.map((task, index) => {
                         {
-                          return mode === "edit" && (index < 1 || tasks[index-1].isDone) ? (
+                          return mode === "edit" &&
+                            (index < 1 || tasks[index - 1].isDone) ? (
                             <TaskItem
                               task={task}
                               key={task.id}
                               setEditTaskID={setEditTaskID}
                               setModalState={setModalState}
-                              disabled={index < 1 || tasks[index-1].isDone}
+                              disabled={index < 1 || tasks[index - 1].isDone}
                             />
                           ) : (
                             <Draggable
@@ -879,7 +891,10 @@ const RoadmapCreatePage = (props) => {
                                     task={task}
                                     setEditTaskID={setEditTaskID}
                                     setModalState={setModalState}
-                                    disabled={mode === "edit" && (index < 1 || tasks[index-1].isDone)}
+                                    disabled={
+                                      mode === "edit" &&
+                                      (index < 1 || tasks[index - 1].isDone)
+                                    }
                                   />
                                 </div>
                               )}

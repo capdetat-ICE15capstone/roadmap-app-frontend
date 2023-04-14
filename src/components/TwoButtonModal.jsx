@@ -17,7 +17,7 @@ function TwoButtonModal({
         <div className="fixed inset-0 bg-gray-500 opacity-75"></div>
 
         <div></div>
-        <div className="bg-white rounded-2xl w-2/5 z-40">
+        <div className="bg-white rounded-2xl w-4/5 md:w-3/5 lg:w-2/5 z-40">
           <div className="w-full bg-blue-900 h-2/5 p-4 rounded-t-2xl flex gap-3">
             <Icon className="w-8 h-8" />
             <span className="font-bold text-white text-2xl">
