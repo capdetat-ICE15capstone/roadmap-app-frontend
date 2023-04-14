@@ -11,6 +11,8 @@ import Spinner from "../components/Spinner";
 import { isUserLoggedIn, isUserPremium } from "../functions/userFunction";
 import { CustomSVG, getTWFill } from "../components/CustomSVG";
 import { ReactComponent as AddButton } from "../assets/addButton.svg";
+import { ReactComponent as Lock } from "../assets/cec_page/lock.svg";
+import { ReactComponent as Unlock } from "../assets/cec_page/unlock.svg";
 import TwoButtonModal from "../components/TwoButtonModal";
 import { ReactComponent as Check } from "../assets/check.svg";
 import { DragDropContext, Draggable } from "react-beautiful-dnd";
@@ -54,7 +56,7 @@ const TaskItem = ({ task, setEditTaskID, setModalState, disabled }) => {
   // Task node Component
   return (
     <div className="relative break-words w-28">
-      <div className="flex after:h-1 after:w-full after:bg-black after:absolute after:top-[30px] after:-z-10 justify-center">
+      <div className="flex after:h-1 after:w-full after:bg-black after:absolute after:top-[30px] after:z-10 justify-center">
         <div className="flex">
           <div className="flex flex-col gap-2 items-center">
             <button
@@ -64,6 +66,7 @@ const TaskItem = ({ task, setEditTaskID, setModalState, disabled }) => {
                 setEditTaskID(task.id);
                 setModalState(true);
               }}
+              className="z-20"
             >
               <Check hidden={!disabled} className="absolute" />
               <CustomSVG
@@ -113,9 +116,9 @@ const DropDownMenu = ({
   };
 
   return (
-    <div className={className}>
+    <div className={`${className} w-9 h-9`}>
       <button onClick={handleMenuShowUnshow} type="button">
-        <Icon />
+        <Icon className="w-9 h-9" />
       </button>
       {isMenuShowing ? (
         <AnimatePresence>
@@ -673,21 +676,21 @@ const RoadmapCreatePage = (props) => {
       tagChanges,
       handleDisplayErrorMessage
     );
-    setLoading(false)
+    setLoading(false);
     if (response !== null && response !== undefined) {
       if (mode === "create" || mode === "clone") {
         try {
-          navigate(`/view/${response.roadmap.rid}`)
+          navigate(`/view/${response.roadmap.rid}`);
         } catch (error) {
           console.error(error);
-          handleDisplayErrorMessage("Error navigating to view page", "/", true)
+          handleDisplayErrorMessage("Error navigating to view page", "/", true);
         }
       } else {
         try {
-          navigate(`/view/${id}`)
+          navigate(`/view/${id}`);
         } catch (error) {
           console.error(error);
-          handleDisplayErrorMessage("Error navigating to view page", "/", true)
+          handleDisplayErrorMessage("Error navigating to view page", "/", true);
         }
       }
     }
@@ -773,26 +776,25 @@ const RoadmapCreatePage = (props) => {
       ) : null}
 
       {loading && <Spinner />}
-      <div className="h-full w-full flex justify-center">
-        <form onSubmit={handleSubmit} className="h-full w-4/5 max-w-4xl">
-          <div className="text-4xl font-bold mt-10 flex items-center">
-            <div className="flex flex-col">
-              <span className="font-inter text-3xl">
-                {mode === "create"
-                  ? "Create"
-                  : mode === "edit"
-                  ? "Edit"
-                  : mode === "clone"
-                  ? "Clone"
-                  : null}{" "}
-                roadmap
-              </span>
-              <div className="h-2">
-                <hr className="h-0.5 bg-nav-blue w-[120%]"></hr>
-              </div>
-            </div>
-          </div>
-          <div className="flex my-4 justify-between">
+      <div className="h-full flex justify-center items-center flex-col m-auto max-w-5xl w-[90%]">
+        {/* <div className="text-4xl font-bold flex items-start"> */}
+        <div className="flex w-full justify-start">
+          <span className="text-4xl font-bold">
+            {mode === "create"
+              ? "Create"
+              : mode === "edit"
+              ? "Edit"
+              : mode === "clone"
+              ? "Clone"
+              : null}{" "}
+          </span>
+        </div>
+        {/* </div> */}
+        <form
+          onSubmit={handleSubmit}
+          className=" rounded-3xl w-full gap-3 border flex flex-col bg-white p-10 h-4/5 xs:h-2/3 m-3"
+        >
+          <div className="flex flex-col xs:flex-row justify-between">
             <input
               className="text-2xl focus:outline-none font-inter w-full placeholder:font-extrabold"
               type="text"
@@ -800,60 +802,59 @@ const RoadmapCreatePage = (props) => {
               onChange={handleNameChange}
               placeholder="UNTITLED"
             />
-            <div className="flex ">
+            <div className="flex gap-2 ">
+              {/* Notification Setting */}
+              <div className="relative basis-1/2 xs:basis-auto justify-self-center">
+                <DropDownMenu
+                  optionValues={notificationOption.optionValues}
+                  options={notificationOption.options}
+                  currentOption={notiStatus}
+                  setOption={setNotiStatus}
+                  optionComparer={compareNotificationChange}
+                  Icon={notiStatus.on === true ? NotiOn : NotiOff}
+                  className="z-10 hover:scale-125 transition duration-150"
+                />
+              </div>
+              {/* End of Notification Setting */}
               <button
                 type="button"
-                disabled={isPublic}
                 onClick={() => setPublicModal(true)}
-                className="bg-white disabled:bg-blue-100 h-10 w-28 text-md p-2 rounded-l-full border shadow shadow-gray-400"
+                className="basis-1/2 xs:basis-auto"
               >
-                Public
-              </button>
-              <button
-                type="button"
-                disabled={!isPublic}
-                onClick={() => setPublicModal(true)}
-                className="h-10 w-28 bg-white disabled:bg-blue-100 text-md p-2 rounded-r-full border-y border-r shadow shadow-gray-400"
-              >
-                Private
+                {isPublic ? (
+                  <Unlock className="w-9 h-9 hover:scale-125 transition duration-150" />
+                ) : (
+                  <Lock className="w-9 h-9 hover:scale-125 transition duration-150" />
+                )}
               </button>
             </div>
           </div>
 
-          {
+          {tags.length > 0 && tags.length <= 3 ? (
             <motion.div className="text-gray-400">
               Tags: {tags.join(", ")}
             </motion.div>
-          }
+          ) : tags.length > 3 ? (
+            <motion.div className="text-gray-400">
+              Tags: {`${tags.slice(0, 3).join(", ")}, +${tags.length-3}`}
+            </motion.div>
+          ) : null}
 
           <label className="text-xl font-bold ">Roadmap Description </label>
-          <div className="my-2">
+          <div className="">
             <textarea
-              className="border rounded-lg border-gray-400 block text-xl font-thin p-1 w-full focus:outline-none shadow-lg "
+              className="border rounded-lg border-gray-400 block text-md font-thin p-1 w-full focus:outline-none shadow-lg placeholder:text-italic"
               rows="4"
               cols="60"
               value={RMDesc}
               onChange={handleDescriptionChange}
+              placeholder="Enter roadmap description..."
             ></textarea>
           </div>
 
-          <div className="h-1/2">
-            {/* Notification Setting */}
-
-            <div className="relative">
-              <DropDownMenu
-                optionValues={notificationOption.optionValues}
-                options={notificationOption.options}
-                currentOption={notiStatus}
-                setOption={setNotiStatus}
-                optionComparer={compareNotificationChange}
-                Icon={notiStatus.on === true ? NotiOn : NotiOff}
-                className="absolute z-10 right-6 top-6"
-              />
-            </div>
-            {/* End of Notification Setting */}
+          <div className="grow">
             {/* Giant task box */}
-            <div className="flex overflow-x-auto flex-col justify-center bg-blue-100 my-4 border-2 shadow-xl border-gray-300 rounded-3xl items-start h-2/3 p-4 pl-8 pr-16 relative max-w-full w-full z-0">
+            <div className="flex overflow-x-auto flex-col justify-center bg-blue-100 border-2 shadow-xl h-full border-gray-300 rounded-3xl items-start p-4 pl-8 pr-16 z-0">
               <DragDropContext onDragEnd={handleOrderSwitch}>
                 <StrictModeDroppable droppableId="tasks" direction="horizontal">
                   {(provided) => (
@@ -920,23 +921,22 @@ const RoadmapCreatePage = (props) => {
               </DragDropContext>
             </div>
             {/* End of Task box */}
-
-            <div className="relative">
-              <div className="absolute right-0 w-full xs:w-auto flex gap-2">
-                <button
-                  className="bg-transparent inline border-gray-800 w-full font-bold xs:w-32 text-gray-800 h-10 rounded-full border m-0"
-                  type="button"
-                  onClick={() => setDiscardModal(true)}
-                >
-                  Discard
-                </button>
-                <button
-                  className="rounded-full w-full inline xs:w-32 h-10 bg-nav-blue font-bold text-white"
-                  type="submit"
-                >
-                  Save
-                </button>
-              </div>
+          </div>
+          <div className="justify-end flex">
+            <div className="right-0 w-full xs:w-auto flex gap-2">
+              <button
+                className="bg-transparent inline border-gray-800 w-full font-bold xs:w-32 text-gray-800 h-10 rounded-full border m-0"
+                type="button"
+                onClick={() => setDiscardModal(true)}
+              >
+                Discard
+              </button>
+              <button
+                className="rounded-full w-full inline xs:w-32 h-10 bg-nav-blue font-bold text-white"
+                type="submit"
+              >
+                Save
+              </button>
             </div>
           </div>
         </form>
