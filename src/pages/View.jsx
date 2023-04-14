@@ -24,21 +24,15 @@ export default function View() {
 
   const [isOwner, setIsOwner] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
-  const [detailToggle, setDetailToggle] = useState(true);
   const [saveButton, setSaveButton] = useState(true);
   const [completeButton, setCompleteButton] = useState(false);
 
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
 
-  const [currentTask, setCurrentTask] = useState(
-  );
-
-  const [roadmap, setRoadmap] = useState(
-    {
-      hasFetched: false
-    }
-  );
+  const [currentTask, setCurrentTask] = useState();
+  const [roadmap, setRoadmap] = useState({ 'hasFetched': false });
+  const [ownerProfile, setOwnerProfile] = useState();
 
   function fetchRoadmap() {
     getRoadmap(roadmap_id)
@@ -62,6 +56,8 @@ export default function View() {
               setCurrentTask(task);
               if (task.subtasks.length === 0) {
                 setSaveButton(false);
+              } else {
+                setSaveButton(true);
               }
               let isReadyToComplete = true;
               task.subtasks.forEach((subtask) => {
@@ -83,18 +79,27 @@ export default function View() {
             } else {
               setIsOwner(false);
             }
-            route = `/roadmap/like/?rid=${roadmap_id}`;
+            route = "/feed/user?uids=" + fetchedRoadmap.owner_id;
             axiosInstance.get(route)
               .then((response) => {
-                setIsLiked(Boolean(response.data.liked.toLowerCase() === 'true'));
-                setIsLoading(false);
-                const temp = { ...fetchedRoadmap };
-                temp.hasFetched = true;
-                setRoadmap(temp);
+                console.log(response.data[0]);
+                setOwnerProfile(response.data[0]);
+                route = `/roadmap/like/?rid=${roadmap_id}`;
+                axiosInstance.get(route)
+                  .then((response) => {
+                    setIsLiked(Boolean(response.data.liked.toLowerCase() === 'true'));
+                    setIsLoading(false);
+                    const temp = { ...fetchedRoadmap };
+                    temp.hasFetched = true;
+                    setRoadmap(temp);
+                  })
+                  .catch((error) => {
+                    console.error(error);
+                    setIsWarning(true);
+                  });
               })
               .catch((error) => {
-                console.log(error);
-                setIsWarning(true);
+                console.error(error);
               });
           })
           .catch((error) => {
@@ -108,7 +113,7 @@ export default function View() {
       });
   }
 
-  async function handleLike() {
+  function handleLike() {
     console.log(isLiked);
     if (isLiked) {
       unlikeRoadmap(roadmap_id);
@@ -131,12 +136,36 @@ export default function View() {
     fetchRoadmap();
   }, []);
 
-  // now gotta modify this code to update per node (task/milestone) to save resources. 
-
   function completeTask() {
     setIsLoading(true);
     setIsCompleting(false);
-    const route = `/task/complete?tid=${currentTask.id}&added_exp=${50}`;
+
+    let experiencePoints = 0;
+
+    const dueDate = new Date(currentTask.dueDate);
+    const currentDate = new Date();
+
+    const differenceMs = (dueDate - currentDate);
+    const differenceDays = Math.floor(differenceMs / (1000 * 60 * 60 * 24));
+
+    console.log(differenceDays);
+
+    switch (true) {
+      case (differenceDays <= 0): // done before dueDate, gets 3 stars (30xp)
+        experiencePoints = 30;
+        break;
+      case (differenceDays > 0 && differenceDays <= 3): // done within 1-3 days after dueDate, gets 2 stars (20xp)
+        experiencePoints = 20;
+        break;
+      case (differenceDays > 3): // done more than 3 days after dueDate, gets 1 star (10xp)
+        experiencePoints = 10;
+        break;
+      default:
+        console.log("default!");
+        break;
+    }
+
+    const route = `/task/complete?tid=${currentTask.id}&added_exp=${experiencePoints}`;
     axiosInstance.put(route)
       .then((response) => {
         console.log(response);
@@ -147,9 +176,10 @@ export default function View() {
       });
   }
 
-  async function updateSubtasks() {
+  function updateSubtasks() {
     setIsSaving(false);
     setIsLoading(true);
+
     const route = `/subtask/`;
     currentTask.subtasks.forEach((subtask) => {
       console.log(subtask);
@@ -180,10 +210,10 @@ export default function View() {
                 <span className='text-4xl font-extrabold text-nav-blue'>VIEW</span>
               </div>
               <div className='flex justify-center items-center bg-nav-blue rounded-xl py-1 px-3 space-x-2'>
-                <UserLogo className='w-8 h-8'/>
+                <UserLogo className='w-8 h-8' />
                 <div className='flex flex-col'>
-                  <span className='text-xs font-bold text-white'>USERNAME</span>
-                  <span className='text-xs font-bold text-white'>LVL</span>
+                  <span className='text-xs font-bold text-white'>{ownerProfile.username}</span>
+                  <span className='text-xs font-bold text-white'>{ownerProfile.exp}</span>
                 </div>
               </div>
             </div>
