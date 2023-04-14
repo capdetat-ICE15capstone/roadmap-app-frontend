@@ -249,7 +249,7 @@ const PremiumPage = React.forwardRef((props, ref) => {
       list: [
         "Unlimited roadmaps allowed",
         "Unlimited tasks allowed",
-        "Unlimited subtasks allowed",
+        "A maximum of 8 subtasks per roadmap allowed",
         "No ads banner on any page",
       ],
       buttonText: "Choose Professional",
@@ -295,8 +295,12 @@ const PremiumPage = React.forwardRef((props, ref) => {
 const MotionRecommendedRoadmap = motion(RecommendedRoadmap);
 const MotionPremiumPage = motion(PremiumPage);
 
-const Introduction = () => {
+const Introduction = ({ wantPremium=false }) => {
   const [inPremium, setInPremium] = useState(false);
+
+  useEffect(() => {
+    setInPremium(wantPremium);
+  }, [])
 
   return (
     <>
