@@ -9,6 +9,7 @@ import Spinner from '../components/Spinner';
 import Prompt from '../components/Prompt';
 import RoadmapDetail from '../components/RoadmapDetail';
 import RoadmapTaskDetail from '../components/RoadmapTaskDetail';
+import PopUpTaskViewer from '../components/PopUpTaskViewer';
 
 import { ReactComponent as BookIcon } from "../assets/shapes/book_icon.svg"
 import { ReactComponent as UserLogo } from "../assets/shapes/username_icon.svg"
@@ -23,6 +24,7 @@ export default function View() {
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
+  const [isViewingTask, setIsViewingTask] = useState(false);
 
   const [isOwner, setIsOwner] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
@@ -33,6 +35,7 @@ export default function View() {
   const [likeCount, setLikeCount] = useState(0);
 
   const [currentTask, setCurrentTask] = useState();
+  const [currentViewTask, setCurrentViewTask] = useState();
   const [roadmap, setRoadmap] = useState({ 'hasFetched': false });
   const [ownerProfile, setOwnerProfile] = useState();
 
@@ -216,20 +219,20 @@ export default function View() {
                 <BookIcon />
                 <span className='max-sm:hidden text-4xl font-extrabold text-white'>VIEW</span>
               </div>
-              <div className='flex w-full justify-center items-center bg-base-blue drop-shadow-[0_2px_10px_rgba(0,0,0,0.25)] rounded-3xl p-2 space-x-2  max-w-sm'>
+              <div className='flex w-full justify-center items-center bg-base-blue drop-shadow-[0_2px_5px_rgba(0,0,0,0.25)] rounded-3xl p-2 space-x-2  max-w-sm'>
                 <UserLogo className='w-8 h-8' />
                 <div className='flex flex-col'>
                   <span className='text-xs font-bold text-white'>{ownerProfile.username}</span>
                   <span className='text-xs font-bold text-white'>LVL. {Math.floor(0.01 * ownerProfile.exp)}</span>
                 </div>
-                <div className="flex flex-auto relative bg-gray-500 rounded-2xl h-8">
-                  <div className={`bg-[#F43054] h-full rounded-2xl transition-all duration-500 ease-in-out`} style={{ width: `${exp}%` }}>
+                <div className={`flex flex-auto relative bg-gray-500 rounded-2xl h-8`}>
+                  <div className={`${isOwner ? 'bg-[#F43054]' : 'bg-gray-700'} h-full rounded-2xl transition-all duration-500 ease-in-out`} style={{ width: `${exp}%` }}>
                     <span className="text-white w-full text-lg font-bold text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">{exp} / 100</span>
                   </div>
                 </div>
               </div>
             </div>
-            <div className='flex flex-col rounded-3xl bg-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.25)] p-4 space-y-6'>
+            <div className='flex flex-col rounded-3xl bg-white drop-shadow-[0_2px_5px_rgba(0,0,0,0.25)] p-4 space-y-6'>
               <RoadmapDetail
                 roadmapName={roadmap.name}
                 roadmapID={roadmap.rid}
@@ -244,7 +247,7 @@ export default function View() {
                 isCompleted={isCompleted}
                 handleLike={handleLike}
               />
-              <RoadmapViewer tasks={roadmap.tasks} currentTaskID={currentTask.id} className="" />
+              <RoadmapViewer tasks={roadmap.tasks} currentTaskID={currentTask.id} handleTaskView={(task) => { setCurrentViewTask(task); setIsViewingTask(true) }} />
               {(!isCompleted) && (
                 <RoadmapTaskDetail task={currentTask} handleTaskUpdate={(task) => setCurrentTask(task)} handleIsSaving={() => setIsSaving(true)} handleIsCompleting={() => setIsCompleting(true)} isOwner={isOwner} displaySaveButton={saveButton} displayCompleteButton={completeButton} />
               )}
@@ -260,10 +263,13 @@ export default function View() {
         {(isCompleting) && (
           <Prompt title="Confirm completing" message={"Are you sure you want to complete this task? (You won't be able to come back to this task again after completion."} positiveText="Yes" negativeText="No" positiveFunction={completeTask} negativeFunction={() => setIsCompleting(false)} />
         )}
+        {(isViewingTask) && (
+          <PopUpTaskViewer task={currentViewTask} handleCloseWindow={() => setIsViewingTask(false)}/>
+        )}
       </>
     )
   } else if (isWarning) {
-    return <Prompt title="Error" message={"Roadmap fetching failed"} positiveText="return home" positiveFunction={() => { fetchRoadmap(); setIsWarning(false); navigate("/"); }} />
+    return <Prompt title="Error" message={"Roadmap fetching failed"} positiveText="return" positiveFunction={() => { fetchRoadmap(); setIsWarning(false); navigate(-1); }} />
   } else {
     return (
       <>
