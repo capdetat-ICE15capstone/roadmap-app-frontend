@@ -24,6 +24,7 @@ export const CustomSVG = ({
   isStrokeOn = false,
   strokeWidth = 2,
   strokeColor = "black",
+  noScaleOnHover = false
 }) => {
   const [shapeAttr, setShapeAttr] = useState({});
 
@@ -108,7 +109,7 @@ export const CustomSVG = ({
           width={size}
           initial="hidden"
           animate="visible"
-          whileHover={{scale:1.2}}
+          whileHover={{scale: noScaleOnHover ? 1 : 1.2}}
           key={type}
         >
           <motion.circle {...shapeAttr} className={className} variants={draw} />
@@ -119,7 +120,7 @@ export const CustomSVG = ({
           width={size}
           initial="hidden"
           animate="visible"
-          whileHover={{scale:1.2}}
+          whileHover={{scale: noScaleOnHover ? 1 : 1.2}}
           key={type}
         >
           <motion.rect {...shapeAttr} className={className} variants={draw} />
@@ -130,7 +131,7 @@ export const CustomSVG = ({
           width={size}
           initial="hidden"
           animate="visible"
-          whileHover={{scale:1.2}}
+          whileHover={{scale: noScaleOnHover ? 1 : 1.2}}
           key={type}
         >
           <motion.polygon

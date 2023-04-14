@@ -2,31 +2,30 @@ import React, { useEffect, useState } from "react";
 import Roadmap from "../components/Roadmap";
 import Kurumi from "../assets/kurumi.jpg";
 import RoadmapCreate from "../components/RoadmapCreate";
-import RoadmapToggle from "../components/RoadmapToggle"
+import RoadmapToggle from "../components/RoadmapToggle";
+import Spinner from "../components/Spinner";
 import { ReactComponent as DarkHomeIcon } from "../assets/dark_home_icon.svg";
 import { ReactComponent as BinIcon } from "../assets/Bin.svg" 
 import { Link } from "react-router-dom";
 import { axiosInstance } from "../functions/axiosInstance";
 
 const Home = () => {
+  const [data, setData] = useState(null);
   const [isRoadmap, setIsRoadmap] = useState(true);
   const [isDeleteClick, setIsDeleteClick] = useState(false);
   const [isActive, setIsActive] = useState(true);
-  const [noOfRoadmap, setNoOfRoadmap] = useState(3);
   const [showPremium, setShowPremium] = useState(false);
   const [isLimit, setIsLimit] = useState(false);  
   const [isPremium, setIsPremium] = useState(false);
-  const [home, setHome] = useState({
-    'username' : 'Kurumi',
-    'Level' : 10,
-    'Bio' : {
-      'Description' : 'Kurumi Tokisaki (Codename: Nightmare)',
-      'Link' : 'https://date-a-live.fandom.com/wiki/Kurumi_Tokisaki'
-    },
-    'profile_picture' : `${Kurumi}`    
-  })
+  const [username, setUsername] = useState('');
+  const [level, setLevel] = useState('');
+  const [bio, setBio] = useState('');
+  const [roadmap, setRoadmap] = useState({});
+  let roadmapList = [];
 
   function shortenString(str, maxLength) {
+    if (str == null)
+      return ""
     if (str.length > maxLength) {
       // Shorten the string to the maximum length
       str = str.slice(0, maxLength) + '...';
@@ -50,15 +49,59 @@ const Home = () => {
   const promptPremium = () => 
     setShowPremium(!showPremium)  
 
-  useEffect(() => {
-    if (noOfRoadmap >= 3 && !isPremium) {
-      setNoOfRoadmap(3)
-      setIsLimit(true)
+  const getHomeData = async () => {
+    // check whether user is logged-in
+    const route = `/home/me`
+    try {
+        let response = await axiosInstance.get(route, { timeout: 10000 });
+        return response;
+    } catch (error) {
+        console.error("Fail GetHomeData()");
     }
-  },[noOfRoadmap, isLimit])
+  }
+
+  useEffect (() => {
+    const fetchData = async () => {
+      const response = await getHomeData();
+      setData(response.data);
+      setUsername(response.data.profile.username);
+      setLevel(Math.round(response.data.profile.exp/100));
+      setBio(response.data.profile.bio);
+      setRoadmap(response.data.roadmaps);
+      setIsPremium(response.data.profile.is_premium);
+    }
+    fetchData();
+  }, []);
+
+  const roadmapArray = Array.from(roadmap)
+  roadmapArray.forEach((items, index) => {
+    if (index >= 3 && !isPremium) 
+      return;
+    roadmapList.push(<Roadmap key={index}
+      owner_id={items.owner_id}
+      creator_id={items.creator_id}
+      owner_name={items.owner_name}
+      creator_name={items.creator_name}
+      rid={items.rid}
+      views_count={items.views_count}
+      stars_count={items.stars_count}
+      forks_count={items.forks_count}
+      created_at={items.created_at}
+      edited_at={items.edited_at}
+      title={items.title}
+      isActive={isActive} 
+      isOwner={true} 
+      deleteFunction={deleteRoadmap}/>)
+    })  
+
+  useEffect(() => {
+    if (roadmapList.length >= 3 && !isPremium) 
+      setIsLimit(true)
+  },[roadmapList])
 
   return (
     <>
+      {!data && <Spinner />}
       <div className="flex flex-col h-screen overflow-scroll overflow-x-hidden">
         <div className="relative flex top-[59px] left-[38px] w-fit h-fit">
           <div className="mr-[13px]">
@@ -75,7 +118,7 @@ const Home = () => {
                 <div className="flex flex-wrap items-center mx-6 mr-12 justify-start h-fit my-[20px]">
                   <div className="relative mr-4">
                     <div className="font-inter font-bold text-lg text-[#09275B]">
-                      {home.username}
+                      {username}
                     </div>
                   </div>
                   <div className="flex justify-between bg-[#034DCF] text-white font-bold h-fit rounded-[30px]">
@@ -86,7 +129,7 @@ const Home = () => {
                     </div>     
                     <div className="flex mx-[10px] justify-start items-center">
                       <div className="font-inter text-[#FFFFFF]">
-                        {home.Level}
+                        {level}
                       </div>
                     </div>               
                   </div>
@@ -94,18 +137,13 @@ const Home = () => {
                 <div className="flex flex-col">
                   <div className="mx-6 mt-[10px] mb-[20px]">
                     <div className="font-inter font-light">
-                      {home.Bio.Description} 
+                      {shortenString(bio, 25)}
                     </div>
                   </div>
-                  <div className="mx-6 my-[10px]">
-                    <a href={home.Bio.Link} className="font-inter font-light text-[#034DCF]">
-                    {shortenString(home.Bio.Link, 25)}
-                    </a>                
-                  </div>            
                 </div>              
               </div>
               <div className="flex justify-end w-fit max-w-[200px] h-fit max-h-[200px] ml-4">
-                <img src={home.profile_picture} className="rounded-full border border-[#5f4545]"/>
+                <img src={Kurumi} className="rounded-full border border-[#5f4545]"/>
               </div>
             </div>
           </div>
@@ -121,8 +159,7 @@ const Home = () => {
                 <div>
                   <RoadmapCreate isLimit={isLimit} onClick={promptPremium} />
                 </div>}
-                  <Roadmap isActive={isActive} isOwner={true} deleteFunction={deleteRoadmap}/>
-                  <Roadmap isActive={isActive} isOwner={true} deleteFunction={deleteRoadmap}/>
+                  {roadmapList}
               </div>
             </div>
           </div>

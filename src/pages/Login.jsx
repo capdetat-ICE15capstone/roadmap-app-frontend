@@ -2,14 +2,20 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { axiosInstance } from '../functions/axiosInstance';
 
-import { ReactComponent as Logo } from '../assets/shapes/logo.svg'
+import Prompt from '../components/Prompt';
+import Spinner from '../components/Spinner';
 
 export default function Login() {
   const navigate = useNavigate();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
   const [rememberMe, setRememberMe] = useState(false);
+
+  const [isWarning, setIsWarning] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [failMessage, setFailMessage] = useState();
 
   // Check if there is a saved login information on first render.
   useEffect(() => {
@@ -36,23 +42,30 @@ export default function Login() {
   }
 
   async function submitForm(form) {
+    setIsLoading(true);
     const route = `/user/login/`;
     axiosInstance.post(route, form)
       .then((response) => {
-        console.log(response.data);
+        console.log(response.data.detail);
         const token = response.data.token;
         localStorage.setItem('token', token);
         navigate('/');
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error.response.data.detail);
+        setFailMessage(error.response.data.detail);
+        setIsLoading(false);
+        setIsWarning(true);
       });
   }
 
   return (
     <>
-      <div className={`flex flex-row h-screen w-screen bg-gradient-to-b from-sub-blue to-main-blue overflow-y-auto py-8`}>
-        <div className="flex items-center justify-center bg-white m-auto rounded-2xl shadow-2xl">
+      <div className={`relative flex flex-row h-screen w-screen bg-gradient-to-b from-sub-blue to-main-blue overflow-y-auto py-8`}>
+        <button type="button" onClick={() => navigate(-1)} className="absolute top-4 left-4 bg-nav-blue text-white shadow font-bold py-2 px-4 rounded-full transition ease-in-out hover:bg-mid-blue duration-300">
+          ˂ Back
+        </button>
+        <div className={`flex items-center justify-center bg-white m-auto rounded-2xl shadow-2xl`}>
           <div className="flex flex-col justify-between items-center p-6">
             <div className="flex text-3xl font-bold text-slate-600 mb-4">
               User Login
@@ -94,10 +107,10 @@ export default function Login() {
                 </div>
               </div>
               <div className="flex flex-col space-y-2">
-                <button type="submit" className="bg-blue-900 text-white shadow font-bold py-2 rounded-lg">
+                <button type="submit" className="bg-sub-blue text-white shadow font-bold py-2 rounded-lg transition ease-in-out hover:bg-blue-900 duration-300">
                   Log In
                 </button>
-                <button type="button" className="bg-red-500 text-white shadow font-bold py-2 rounded-lg" onClick={() => navigate("/signup")}>
+                <button type="button" className="bg-red-500 text-white shadow font-bold py-2 rounded-lg transition ease-in-out hover:bg-red-700 duration-300" onClick={() => navigate("/signup")}>
                   Sign Up
                 </button>
               </div>
@@ -105,6 +118,12 @@ export default function Login() {
           </div>
         </div>
       </div>
+      {isWarning && (
+        <Prompt title="Login Failed" message={failMessage} positiveText="Retry" positiveFunction={() => setIsWarning(false)} />
+      )}
+      {isLoading && (
+        <Spinner />
+      )}
     </>
   )
 }

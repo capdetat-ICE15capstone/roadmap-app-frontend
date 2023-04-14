@@ -5,11 +5,13 @@ import { ReactComponent as DeleteButton } from "../assets/deleteButton.svg";
 import { ReactComponent as ArrowIcon } from "../assets/taskmodal/arrow.svg";
 import { ReactComponent as CalendarIcon } from "../assets/taskmodal/calendar.svg";
 import { ReactComponent as TrashIcon } from "../assets/taskmodal/trash.svg";
+import { ReactComponent as WhiteTrash } from "../assets/taskmodal/whiteTrash.svg"
 import DatePicker from "react-datepicker";
 import Spinner from "./Spinner";
 import { CustomSVG, allNodeColor } from "./CustomSVG";
 import TwoButtonModal from "./TwoButtonModal";
 import { getTask } from "../functions/roadmapFunction";
+import { roundTimeToNearest30 } from "../functions/formatFunction";
 
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -23,6 +25,7 @@ import "react-datepicker/dist/react-datepicker.css";
 // data domain
 const MAX_NAME_LENGTH = 30;
 const MAX_DESCRIPTION_LENGTH = 255;
+const MAX_SUBTASK_LENGTH = 30;
 
 const TaskModal = ({ oldData, editTaskCallBack }) => {
   const initialState = useRef({ ...oldData });
@@ -33,8 +36,8 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
   const [subtasks, setSubTasks] = useState([]);
   const [nodeColor, setNodeColor] = useState(allNodeColor[0]);
   const [nodeShape, setNodeShape] = useState("circle");
-  const [startDate, setStartDate] = useState(new Date());
-  const [dueDate, setdueDate] = useState(new Date());
+  const [startDate, setStartDate] = useState(roundTimeToNearest30());
+  const [dueDate, setdueDate] = useState(roundTimeToNearest30());
   const [loading, setLoading] = useState(false);
   const [deleteModal, setDeleteModal] = useState(false);
   const [unSavedModal, setUnSavedModal] = useState(false);
@@ -81,7 +84,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
           id: oldData.id,
           name: name,
           description: description,
-          nodeColor: nodeColor,
+          nodeColor: nodeColor.name,
           nodeShape: nodeShape,
           startDate: startDate,
           dueDate: dueDate, 
@@ -134,9 +137,9 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
 
   const handleDateChange = (mode, date) => {
     if (mode === "startDate") {
-      setStartDate(date);
+      setStartDate(roundTimeToNearest30(date));
     } else if (mode === "dueDate") {
-      setdueDate(date);
+      setdueDate(roundTimeToNearest30(date));
     }
   };
 
@@ -168,7 +171,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
   const onSubtaskTextEdit = (newValue, id) => {
     setSubTasks(
       subtasks.map((subtask) =>
-        subtask.id === id ? { ...subtask, detail: newValue } : { ...subtask }
+        subtask.id === id ? { ...subtask, detail: newValue.length > MAX_SUBTASK_LENGTH ? subtask.detail : newValue } : { ...subtask }
       )
     );
   };
@@ -184,10 +187,13 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
   const checkTaskChange = () => {
     // compare previous data (may not be first) with latest data
 
+    console.log(initialState.current.nodeColor)
+    console.log(nodeColor.name); 
+
     if (
       initialState.current.name !== name ||
       initialState.current.description !== description ||
-      initialState.current.nodeColor.name !== nodeColor.name ||
+      initialState.current.nodeColor !== nodeColor.name ||
       initialState.current.nodeShape !== nodeShape ||
       initialState.current.startDate.getTime() !== startDate.getTime() ||
       initialState.current.dueDate.getTime() !== dueDate.getTime()
@@ -281,6 +287,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
           lightButtonText: "Cancel",
           darkButtonText: "Delete",
         }}
+        Icon={WhiteTrash}
       />
       <TwoButtonModal
         isOpen={unSavedModal}
@@ -300,14 +307,14 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
       />
 
       <form onSubmit={handleSubmit}>
-        <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-20 outline-none focus:outline-none">
+        <div className="justify-center items-center flex overflow-y-auto fixed inset-0 z-20 outline-none focus:outline-none py-3">
           <div className="relative w-11/12 md:w-5/6 my-6 mx-auto xl:w-2/3 2xl:w-1/2 max-h-screen">
             {/*content*/}
             {loading && <Spinner className="z-30 absolute rounded-xl" />}
             <div className=" rounded-2xl shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
               {/*header*/}
               <div
-                className={`flex justify-between py-4 px-5 lg:py-8 border-b border-solid border-slate-200 rounded-t-2xl transition duration-300 items-center bg-white`}
+                className={`flex justify-between py-4 px-5 xl:py-8 border-b border-solid border-slate-200 rounded-t-2xl transition duration-300 items-center bg-white`}
               >
                 <div className={`${oldData.id === -1 ? "" : "w-[50px]"}`}></div>
                 <h3 className="text-4xl font-semibold text-black">
@@ -327,24 +334,23 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                 )}
               </div>
               {/*body*/}
-
-              <div className="flex flex-col lg:flex-row">
+              <div className="flex flex-col md:flex-row max-h-full">
                 {/* Left side */}
-                <div className="flex flex-col w-full lg:w-1/2 p-6">
-                  <label className="font-nunito-sans font-bold">Name</label>
+                <div className="flex flex-col w-full md:w-1/2 p-6 overflow-y-auto">
+                  <label className="font-inter font-bold">Name</label>
                   <input
                     type="text"
                     value={name}
-                    className="border-2 border-gray-300 rounded-md my-1 placeholder:italic px-1 font-nunito-sans"
+                    className="border-2 border-gray-300 rounded-md my-1 placeholder:italic px-1 font-inter"
                     placeholder=" Enter task name..."
                     onChange={(e) => handleNameChange(e)}
                   ></input>
 
-                  <label className="font-nunito-sans font-bold">
+                  <label className="font-inter font-bold">
                     Description
                   </label>
                   <textarea
-                    className="border-2 border-gray-300 rounded-md my-1 grow placeholder:italic placeholder:justify-start px-1 font-nunito-sans"
+                    className="border-2 border-gray-300 rounded-md my-1 grow placeholder:italic placeholder:justify-start px-1 font-inter"
                     value={description}
                     cols="50"
                     rows="4"
@@ -354,11 +360,11 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
 
                   {/* Date Setting */}
                   <div className="flex flex-col my-2 gap-2">
-                    <div className="w-full grid grid-cols-10">
-                      <label className="self-center font-nunito-sans font-bold">
+                    <div className="w-full flex justify-between gap-3">
+                      <label className="self-center font-inter font-bold">
                         Start
                       </label>
-                      <div className="col-span-9">
+                      <div className="basis-10/12">
                         <DatePicker
                           selected={startDate}
                           showTimeSelect
@@ -370,11 +376,11 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                         ></DatePicker>
                       </div>
                     </div>
-                    <div className="w-full grid grid-cols-10">
-                      <label className="self-center font-nunito-sans font-bold">
-                        Due
+                    <div className="w-full flex justify-between gap-3">
+                      <label className="self-center font-inter font-bold">
+                        Due 
                       </label>
-                      <div className="col-span-9">
+                      <div className="basis-10/12 ">
                         <DatePicker
                           selected={dueDate}
                           showTimeSelect
@@ -391,7 +397,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
 
                   {/* Node setting */}
                   <div>
-                    <label className="font-nunito-sans font-bold">Nodes</label>
+                    <label className="font-inter font-bold">Nodes</label>
                     <div className="flex flex-1 gap-x-1 mt-1 mb-4">
                       <div className="bg-gray-100 basis-1/2 rounded-lg grid grid-rows-3 grid-cols-7 gap-2 h-30 border-2 border-gray-300">
                         <p className="font-bold text-gray-400 pl-2">Color</p>
@@ -459,28 +465,16 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                   </div>
                 </div>
                 {/* Right side */}
-                <div className="flex flex-col w-full lg:w-1/2">
-                  <div className="bg-gray-100 p-6 basis-full flex flex-col justify-between rounded-b-2xl lg:rounded-bl-none">
+                <div className="flex flex-col w-full md:w-1/2">
+                  <div className="bg-gray-100 p-6 basis-full flex flex-col justify-between rounded-b-2xl xl:rounded-bl-none">
                     <div>
-                      <label className="block font-nunito-sans font-bold">
+                      <label className="block font-inter font-bold">
                         Add Subtask
                       </label>
-                      <div className="flex flex-col gap-2 overflow-y-auto max-h-32 lg:max-h-none py-2">
+                      <div className="flex flex-col gap-2 overflow-y-auto max-h-32 md:max-h-none py-2">
                         {subtasks.map((subtask) => {
                           return (
                             <div className="flex gap-2 mx-2" key={subtask.id}>
-                              <input
-                                type="checkbox"
-                                checked={subtask.status}
-                                className="w-4 h-4 self-center font-nunito-sans"
-                                onChange={() =>
-                                  onSubTaskCheckboxChange(
-                                    event.target.checked,
-                                    subtask.id
-                                  )
-                                }
-                                value={subtask.status}
-                              ></input>
                               <button
                                 type="button"
                                 onClick={() => deleteSubTask(event, subtask.id)}
@@ -490,7 +484,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                               </button>
                               <input
                                 type="text"
-                                className="border border-black rounded-md grow font-nunito-sans"
+                                className="border border-black rounded-md grow font-inter"
                                 onChange={() =>
                                   onSubtaskTextEdit(
                                     event.target.value,
