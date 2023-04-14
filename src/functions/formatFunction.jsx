@@ -14,3 +14,10 @@ export function convertDateTimeString(str) {
   const formattedDate = dateObj.toLocaleString('en-US', options);
   return formattedDate;
 }
+
+export function roundTimeToNearest30(date = new Date()) {
+  const minutes = 30;
+  const ms = 1000 * 60 * minutes;
+
+  return new Date(Math.ceil(date.getTime() / ms) * ms);
+}

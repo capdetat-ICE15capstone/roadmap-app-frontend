@@ -1,18 +1,22 @@
 import { precacheAndRoute, cleanupOutdatedCaches } from "workbox-precaching";
-import { clientsClaim } from "workbox-core"
+import { clientsClaim, skipWaiting } from "workbox-core"
+import { isServerResponding } from "./functions/userFunction";
 
 cleanupOutdatedCaches()
 clientsClaim()
-
 const myCache = self.__WB_MANIFEST;
 precacheAndRoute(myCache);
+
 console.warn("Service worker is now operable");
+
+self.addEventListener("install", (event) => {
+  self.skipWaiting()
+})
 
 // listen for push notification
 self.addEventListener("push", (event) => {
   // listen for push notification
   const data = event.data.json();
-  console.log(data);
   self.registration.showNotification(data.title, {
     body: data.body,
     icon: "android-chrome-192x192.png",
@@ -21,17 +25,13 @@ self.addEventListener("push", (event) => {
 
 // use cache for offline event
 self.addEventListener("fetch", (event) => {
-  console.log(event);
-  if (!navigator.onLine) { // This is not good, if the server is down but internet online this would fail
-    console.log("offline");
-    event.respondWith(
-      caches.match(event.request).then((response) => {
-        if (response) return response;
-      })
-    );
-  }
+  event.respondWith(
+    (async function () {
+      try {
+        return await fetch(event.request);
+      } catch (err) {
+        return caches.match(event.request);
+      }
+    })(),
+  );
 });
-
-self.addEventListener("fetch", (event) => {
-  
-})

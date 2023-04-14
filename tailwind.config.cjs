@@ -16,11 +16,12 @@ module.exports = {
         'nav-blue': "#00286E",
         'base-blue': "#001945",
         'main-blue': "#00286E",
-        'sub-blue': "#0047C4"
+        'sub-blue': "#0047C4",
+        'mid-blue': "#195dd4",
       },
       fontFamily: {
-        "nunito-sans": ['Nunito Sans', "sans-serif"],
-        "inter": ['Inter', "sans-serif"]
+        // "nunito-sans": ['Nunito Sans', "sans-serif"],
+        "sans": ['Inter', "sans-serif"]
       },
       width: {
         '18':'4.5rem',
@@ -52,6 +53,12 @@ module.exports = {
   
         'max-sm': {'max': '639px'},
         // => @media (max-width: 639px) { ... }
+
+        'max-xs': {'max': '495px'},
+        // => @media (max-width: 495px) { ... }
+
+        'xs': {'min': '495px'},
+        // => @media (min-width: 495px) { ... }
       }
     },
   },
