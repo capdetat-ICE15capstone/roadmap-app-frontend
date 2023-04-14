@@ -17,6 +17,8 @@ export default function View() {
   const { roadmap_id } = useParams();
   const navigate = useNavigate();
 
+  const [exp, setExp] = useState();
+
   const [isWarning, setIsWarning] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -82,8 +84,13 @@ export default function View() {
             route = "/feed/user?uids=" + fetchedRoadmap.owner_id;
             axiosInstance.get(route)
               .then((response) => {
-                console.log(response.data[0]);
                 setOwnerProfile(response.data[0]);
+                const currentLevel = Math.floor(0.01 * response.data[0].exp);
+                const currentExp = response.data[0].exp;
+                const gaugePercent = currentExp - (currentLevel * 100);
+                setExp(gaugePercent);
+                console.log(gaugePercent);
+
                 route = `/roadmap/like/?rid=${roadmap_id}`;
                 axiosInstance.get(route)
                   .then((response) => {
@@ -202,22 +209,27 @@ export default function View() {
   if (roadmap.hasFetched) {
     return (
       <>
-        <div className='flex h-full bg-white overflow-y-auto py-6'>
+        <div className='flex h-full overflow-y-auto py-6'>
           <div className="xs:w-[80%] max-xs:w-[90%] max-w-3xl flex-col space-y-6 m-auto">
-            <div className='flex justify-between items-center'>
+            <div className='flex justify-between items-center space-x-6'>
               <div className='flex items-center space-x-2'>
                 <BookIcon />
-                <span className='text-4xl font-extrabold text-nav-blue'>VIEW</span>
+                <span className='max-sm:hidden text-4xl font-extrabold text-white'>VIEW</span>
               </div>
-              <div className='flex justify-center items-center bg-nav-blue rounded-xl py-1 px-3 space-x-2'>
+              <div className='flex w-full justify-center items-center bg-base-blue drop-shadow-[0_2px_10px_rgba(0,0,0,0.25)] rounded-3xl p-2 space-x-2  max-w-sm'>
                 <UserLogo className='w-8 h-8' />
                 <div className='flex flex-col'>
                   <span className='text-xs font-bold text-white'>{ownerProfile.username}</span>
                   <span className='text-xs font-bold text-white'>LVL. {Math.floor(0.01 * ownerProfile.exp)}</span>
                 </div>
+                <div className="flex flex-auto relative bg-gray-500 rounded-2xl h-8">
+                  <div className={`bg-[#F43054] h-full rounded-2xl transition-all duration-500 ease-in-out`} style={{ width: `${exp}%` }}>
+                    <span className="text-white w-full text-lg font-bold text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">{exp} / 100</span>
+                  </div>
+                </div>
               </div>
             </div>
-            <div className='flex flex-col rounded-3xl bg-white drop-shadow-[0_2px_3px_rgba(0,0,0,0.15)] p-4 space-y-6'>
+            <div className='flex flex-col rounded-3xl bg-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.25)] p-4 space-y-6'>
               <RoadmapDetail
                 roadmapName={roadmap.name}
                 roadmapID={roadmap.rid}
