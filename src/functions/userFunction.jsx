@@ -7,12 +7,33 @@ export const isUserPremium = async () => {
     return false; // PLACEHOLDER PLS DONT LAUGH
 }
 
-export const isUserLoggedIn = () => {
-    if (localStorage.getItem("token") === null) {
+export const isUserLoggedIn = async (timeout = 0) => {
+  /*
+  if (localStorage.getItem("token") === null) {
+    return false;
+  }
+  return true;
+  */
+  const route = '/user/';
+  try {
+      let response = await axiosInstance.get(route, { timeout: timeout });
+      return true;
+  } catch (error) {
       return false;
-    }
-    return true;
-}
+  }
+};
+
+export const isServerResponding = async (url="/") => {
+  try {
+    await axiosInstance.get(url)
+  } catch (error) {
+    return false;
+  }
+
+  
+  return true;
+};
+
 
 export const getUserInformation = async () => {
   try {

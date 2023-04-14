@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef} from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
+
 import { axiosInstance } from "../functions/axiosInstance";
 import { getRoadmap } from '../functions/roadmapFunction';
 import { likeRoadmap, unlikeRoadmap } from '../functions/viewFunction';
@@ -8,6 +9,9 @@ import Spinner from '../components/Spinner';
 import Prompt from '../components/Prompt';
 import RoadmapDetail from '../components/RoadmapDetail';
 import RoadmapTaskDetail from '../components/RoadmapTaskDetail';
+
+import { ReactComponent as BookIcon } from "../assets/shapes/book_icon.svg"
+import { ReactComponent as UserLogo } from "../assets/shapes/username_icon.svg"
 
 export default function View() {
   const { roadmap_id } = useParams();
@@ -168,43 +172,56 @@ export default function View() {
   if (roadmap.hasFetched) {
     return (
       <>
-        <div className='flex h-full bg-white overflow-y-auto py-8'>
-          <div className="w-3/4 max-w-3xl flex-col m-auto space-y-6">
-
-            <RoadmapDetail
-              roadmapName={roadmap.name}
-              roadmapID={roadmap.rid}
-              roadmapPrivacy={roadmap.is_private}
-              roadmapViewCount={roadmap.views_count}
-              roadmapForkCount={roadmap.forks_count}
-              roadmapEditDate={roadmap.edited_at}
-              roadmapDescription={roadmap.description}
-              isOwner={isOwner}
-              likeCount={likeCount}
-              isLiked={isLiked}
-              isCompleted={isCompleted}
-              handleLike={handleLike}
-            />
-            <RoadmapViewer tasks={roadmap.tasks} currentTaskID={currentTask.id} className="" />
-
-            {(!isCompleted) && (
-              <RoadmapTaskDetail task={currentTask} handleTaskUpdate={(task) => setCurrentTask(task)} handleIsSaving={() => setIsSaving(true)} handleIsCompleting={() => setIsCompleting(true)} isOwner={isOwner} displaySaveButton={saveButton} displayCompleteButton={completeButton}/>
-            )}
+        <div className='flex h-full bg-white overflow-y-auto py-6'>
+          <div className="xs:w-[80%] max-xs:w-[90%] max-w-3xl flex-col space-y-6 m-auto">
+            <div className='flex justify-between items-center'>
+              <div className='flex items-center space-x-2'>
+                <BookIcon />
+                <span className='text-4xl font-extrabold text-nav-blue'>VIEW</span>
+              </div>
+              <div className='flex justify-center items-center bg-nav-blue rounded-xl py-1 px-3 space-x-2'>
+                <UserLogo className='w-8 h-8'/>
+                <div className='flex flex-col'>
+                  <span className='text-xs font-bold text-white'>USERNAME</span>
+                  <span className='text-xs font-bold text-white'>LVL</span>
+                </div>
+              </div>
+            </div>
+            <div className='flex flex-col rounded-3xl bg-white drop-shadow-[0_2px_3px_rgba(0,0,0,0.15)] p-4 space-y-6'>
+              <RoadmapDetail
+                roadmapName={roadmap.name}
+                roadmapID={roadmap.rid}
+                roadmapPrivacy={roadmap.is_private}
+                roadmapViewCount={roadmap.views_count}
+                roadmapForkCount={roadmap.forks_count}
+                roadmapEditDate={roadmap.edited_at}
+                roadmapDescription={roadmap.description}
+                isOwner={isOwner}
+                likeCount={likeCount}
+                isLiked={isLiked}
+                isCompleted={isCompleted}
+                handleLike={handleLike}
+              />
+              <RoadmapViewer tasks={roadmap.tasks} currentTaskID={currentTask.id} className="" />
+              {(!isCompleted) && (
+                <RoadmapTaskDetail task={currentTask} handleTaskUpdate={(task) => setCurrentTask(task)} handleIsSaving={() => setIsSaving(true)} handleIsCompleting={() => setIsCompleting(true)} isOwner={isOwner} displaySaveButton={saveButton} displayCompleteButton={completeButton} />
+              )}
+            </div>
           </div>
         </div >
         {(isLoading) && (
           <Spinner />
         )}
         {(isSaving) && (
-          <Prompt message={"confirm save?"} confirmFunction={updateSubtasks} cancelFunction={() => setIsSaving(false)} />
+          <Prompt title="Confirm saving" message={"Are you sure you want to save?"} positiveText="Yes" negativeText="No" positiveFunction={updateSubtasks} negativeFunction={() => setIsSaving(false)} />
         )}
         {(isCompleting) && (
-          <Prompt message={"confirm complete?"} confirmFunction={completeTask} cancelFunction={() => setIsCompleting(false)} />
+          <Prompt title="Confirm completing" message={"Are you sure you want to complete this task? (You won't be able to come back to this task again after completion."} positiveText="Yes" negativeText="No" positiveFunction={completeTask} negativeFunction={() => setIsCompleting(false)} />
         )}
       </>
     )
   } else if (isWarning) {
-    return <Prompt message={"Roadmap fetching failed. Retry?"} confirmFunction={() => {fetchRoadmap(); setIsWarning(false)}} cancelFunction={() => navigate("/feed")} />
+    return <Prompt title="Error" message={"Roadmap fetching failed"} positiveText="return home" positiveFunction={() => { fetchRoadmap(); setIsWarning(false); navigate("/"); }} />
   } else {
     return (
       <>
