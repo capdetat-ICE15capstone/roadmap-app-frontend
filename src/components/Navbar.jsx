@@ -71,9 +71,9 @@ const Navbar = () => {
               <NavItem SvgIcon={SettingLogo} displayName="Setting" baseColor="bg-nav-blue" to="/setting" />
             </div>
           </div>
-          <div className="w-full">
-            <NavItem SvgIcon={UserLogo} displayName="Profile" baseColor="bg-base-blue" to="/" />
-          </div>
+          <button className="w-full" onClick={() => localStorage.removeItem('token')}>
+            <NavItem SvgIcon={UserLogo} displayName="Log Out" baseColor="bg-base-blue" to="/login" />
+          </button>
         </div>
       </div>
     </>
