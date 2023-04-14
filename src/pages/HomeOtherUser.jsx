@@ -36,9 +36,21 @@ const HomeOtherUser = () => {
     setIsRoadmap(false)
     setIsActive(false)
   }
+
+  const getUserUID = async () => {
+    const route = `/user/`
+    try {
+        let response = await axiosInstance.get(route, { timeout: 10000 });
+        return response;
+    } catch (error) {
+        console.error("Fail GetUserUID()");
+    }
+  }
   
-  const getHomeOtherUserData = async (viewer_id) => {
-    const route = `/home/view/${viewer_id}`
+  const getHomeOtherUserData = async () => {
+    const response = await getUserUID()
+    console.log(response.data.uid)
+    const route = `/home/view/${response.data.uid}`
     try {
         let response = await axiosInstance.get(route, { timeout: 10000 });
         return response;
@@ -49,8 +61,7 @@ const HomeOtherUser = () => {
 
   useEffect (() => {
     const fetchData = async () => {
-      let viewer_id = 18;
-      const response = await getHomeOtherUserData(viewer_id);
+      const response = await getHomeOtherUserData();
       setData(response.data);
       setUsername(response.data.profile.username);
       setLevel(Math.round(response.data.profile.exp/100));
