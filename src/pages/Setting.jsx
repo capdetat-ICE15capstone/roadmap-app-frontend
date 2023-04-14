@@ -4,6 +4,7 @@ import { axiosInstance } from "../functions/axiosInstance";
 import SettingTab from '../components/SettingTab';
 import ToggleSwitch from '../components/ToggleSwitch';
 import SettingProfileImageSelector from '../components/SettingProfileImageSelector';
+import { getProfilePictureSrc } from '../components/SettingProfileImageSelector';
 
 import Spinner from "../components/Spinner";
 
@@ -52,6 +53,7 @@ const Setting = () => {
     const [newPassword, setNewPassword] = useState("");
     const [newPasswordConform, setNewPasswordConfirm] = useState();
 
+    const [profilePictureID, setProfilePictureID] = useState(0);
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
     //-----PWA thingy----------------------------------------------------------------
@@ -157,6 +159,7 @@ const Setting = () => {
             setLastName(response.data.last_name);
             setBio(response.data.bio);
             setAccountPublic(!response.data.is_private);
+            setProfilePictureID(response.data.profile_picture_id);
         }
         fetchData();
         navigator.serviceWorker.ready
@@ -195,11 +198,13 @@ const Setting = () => {
                         <div className='pl-10'>
                             <div className=''>
                                 <div className='w-48 h-48 overflow-hidden rounded-full'>
-                                    <img src="https://preview.redd.it/p2hrqjb7bpaa1.jpg?width=640&crop=smart&auto=webp&v=enabled&s=3a93ad0769038a197421464aa34389e830525baa"></img>
+                                    <img src={getProfilePictureSrc(profilePictureID)}></img>
                                 </div>
                             </div>
-                            <button className="shadow appearance-none border rounded-lg w-16 py-2 px-3 text-sm text-white bg-blue-900 leading-tight focus:outline-none focus:shadow-outline float-right">
-                                Save
+                            <button className="shadow appearance-none border rounded-lg w-16 py-2 px-3 text-sm text-white bg-blue-700 leading-tight focus:outline-none focus:shadow-outline float-right"
+                                onClick={() => {setIsProfileModalOpen(!isProfileModalOpen)}}
+                            >
+                                Edit
                             </button>
                         </div>
                     </div>
@@ -487,6 +492,18 @@ const Setting = () => {
         updateSetting("/user/privacy/", { ...data, "is_private": accountPublic});
     }
 
+    const updateProfilePicture = async (id) => {
+        // set profile image
+        updateSetting("user/profile_picture/", { ...data, "profile_picture_id": id})
+        .then(() => {
+            setIsProfileModalOpen(false);
+            setProfilePictureID(id);
+        })
+    
+        // close
+
+    }
+
     if (!data) {
         return <Spinner/>;
     }
@@ -505,10 +522,7 @@ const Setting = () => {
                 <RenderProfile/>
                 <RenderAccount/>
             </div>
-            <SettingProfileImageSelector isOpen={isProfileModalOpen}/>
-            <button className={``} onClick={() => {setIsProfileModalOpen(!isProfileModalOpen)}}>
-                aaaa
-            </button>
+            <SettingProfileImageSelector isOpen={isProfileModalOpen} setIsOpen={setIsProfileModalOpen} selectedIndex={profilePictureID} setProfilePicture={updateProfilePicture}/>
         </div>
     )
 }
