@@ -40,8 +40,8 @@ const Navbar = () => {
                 MileMap
               </div>
             </div>
-            <div className="w-16">
-              <NavItem SvgIcon={UserLogo} displayName="Profile" baseColor="bg-base-blue" to="/" />
+            <div className="w-20">
+              <NavItem SvgIcon={Logout} displayName="Profile" baseColor="bg-base-blue" to="/" />
             </div>
           </div>
         </div>
@@ -72,7 +72,7 @@ const Navbar = () => {
             </div>
           </div>
           <button className="w-full" onClick={() => localStorage.removeItem('token')}>
-            <NavItem SvgIcon={UserLogo} displayName="Log Out" baseColor="bg-base-blue" to="/login" />
+            <NavItem SvgIcon={Logout} displayName="Log Out" baseColor="bg-base-blue" to="/login" />
           </button>
         </div>
       </div>
