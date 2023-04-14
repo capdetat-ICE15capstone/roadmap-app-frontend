@@ -25,7 +25,7 @@ const Home = () => {
 
   function shortenString(str, maxLength) {
     if (str == null)
-      return "Null Bio"
+      return ""
     if (str.length > maxLength) {
       // Shorten the string to the maximum length
       str = str.slice(0, maxLength) + '...';
