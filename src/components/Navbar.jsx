@@ -9,7 +9,7 @@ import { ReactComponent as CalendarLogo } from "../assets/navbar_assets/calendar
 import { ReactComponent as SettingLogo } from "../assets/navbar_assets/setting_icon.svg"
 import { ReactComponent as UserLogo } from "../assets/navbar_assets/username_icon.svg"
 import { ReactComponent as BookIcon } from "../assets/navbar_assets/book_icon.svg"
-
+import { ReactComponent as Logout } from "../assets/shapes/logout.svg";
 const NavItem = (props) => {
   return (
     <>
@@ -45,7 +45,7 @@ const Navbar = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col flex-grow bg-gradient-to-br from-blue-900 to-nav-blue overflow-x-hidden">
+        <div className="flex flex-col flex-grow bg-gradient-to-br from-gray-50 to-gray-100 overflow-x-hidden">
           <Outlet />
         </div>
         <div className="flex xs:hidden max-xs:visible bg-nav-blue drop-shadow-[0_2px_5px_rgba(0,0,0,0.25)]">
