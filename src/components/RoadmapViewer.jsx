@@ -5,9 +5,7 @@ import { convertDateTimeString, shortenString } from '../functions/formatFunctio
 function RoadmapViewer({ tasks, currentTaskID }) {
 
   const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
-
   const [hoveredTask, setHoveredTask] = useState({ id: 0 });
-
   const [visible, setVisible] = useState();
 
   const handleMouseOver = (task) => {
@@ -29,7 +27,7 @@ function RoadmapViewer({ tasks, currentTaskID }) {
   }, [tasks])
 
   return (
-    <div className='relative z-50 bg-[#f5f8fd] drop-shadow-[0_2px_3px_rgba(0,0,0,0.15)] rounded-2xl p-20'>
+    <div className='relative bg-[#e6eefc] rounded-2xl p-20'>
       <div className='absolute top-1/2 right-1/2 transform translate-x-1/2 -translate-y-1/2 flex flex-col w-full overflow-x-auto'>
         <div className='flex pl-12 pt-8 pb-12 space-x-[25px]'>
           {
