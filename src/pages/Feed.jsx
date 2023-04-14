@@ -1,10 +1,26 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Roadmap from "../components/Roadmap";
 import RoadmapNeo from "../components/Roadmap_neo";
 import SearchBar from "../components/SearchBar";
 import { useNavigate } from "react-router-dom";
 import { ReactComponent as SearchIcon } from "../assets/searchIcon.svg";
 import { axiosInstance } from '../functions/axiosInstance';
+import DropdownSorting from "../components/DropdownSorting";
+
+const DropdownMenuItem = (props) => {
+  const handleClick = () => {
+    props.onSelect(props.array);
+  }
+
+  return (
+    <a
+      href="#"
+      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+      onClick={handleClick}
+    >
+      {props.label}
+    </a>
+  );
+}
 
 const Feed = () => {
   const [search, setSearch] = useState("");
@@ -14,6 +30,10 @@ const Feed = () => {
   const navigate = useNavigate();
   const [sortViewAsc, setSortViewAsc] = useState(true);
   const [sortByCreatedAt, setSortByCreatedAt] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const toggleMenu = () => setIsOpen(!isOpen);
+  const [title, setTitle] = useState("Sort");
 
 
   // classify user input (roadmap(""), user("@""), tag("#""))
@@ -73,8 +93,6 @@ const Feed = () => {
       const response = await getRecommendRoadmap();
       const newArray = [...response];
       setRoadmapArray(prevArray => [...prevArray, ...newArray]);
-      console.log("below is array");
-      console.log(roadmapArray);
     } catch (error) {
       console.log(error);
     }
@@ -90,6 +108,8 @@ const Feed = () => {
     }
     setRoadmapArray([]);
     fetchData();
+    console.log("below is array");
+    console.log(roadmapArray);
   }, []);
 
   // sort functions (view, date)
@@ -114,6 +134,32 @@ const Feed = () => {
     setSortByCreatedAt(!sortByCreatedAt);
   };
 
+  const handleSort = (sortedArray) => {
+    setRoadmapArray(sortedArray);
+    console.log(sortedArray);
+  };
+
+  const DateAscending = (array) => {
+    console.log(array)
+    array.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+    setIsOpen(false);
+  }
+
+  const DateDecending = (array) => {
+    array.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    setIsOpen(false);
+  }
+
+  const ViewAscending = (array) => {
+    array.sort((a, b) => a.views_count - b.views_count);
+    setIsOpen(false);
+  }
+
+  const ViewDecending = (array) => {
+    array.sort((a, b) => b.views_count - a.views_count);
+    setIsOpen(false);
+  }
+
 
   return (
     <>
@@ -131,7 +177,7 @@ const Feed = () => {
           <form id="searchForm" onSubmit={handleSubmit}>
             <div className='flex'>
               <div className="inline-flex" onSubmit={handleSubmit}>
-                <SearchBar className="w-1/2"/>
+                <SearchBar className="w-1/2" />
                 <button type="submit" className="bg-[#00286E] hover:bg-[#011C4B] text-white font-bold rounded-3xl px-12 py-4 ml-2 leading-tight focus:outline-none focus:shadow-outline">
                   Search
                 </button>
@@ -139,15 +185,28 @@ const Feed = () => {
             </div>
           </form>
           <div className='flex flex-row items-center gap-2'>
-            <div className='felx'>
-              Sort by:
+            <div className="relative">
+              <button
+                className="inline-flex array-center justify-center w-full px-4 py-2 text-base font-medium text-gray-700 bg-white rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                onClick={toggleMenu}
+              >
+                <span>{title}</span>
+              </button>
+              {isOpen && (
+                <div
+                  className="absolute z-50 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 mt-2"
+                  role="menu"
+                  aria-orientation="vertical"
+                  aria-labelledby="menu-button"
+                >
+                  <DropdownMenuItem label="Date ^" onSelect={DateAscending} array={roadmapArray} />
+                  <DropdownMenuItem label="Date v" onSelect={DateDecending} array={roadmapArray} />
+                  <DropdownMenuItem label="Views ^" onSelect={ViewAscending} array={roadmapArray} />
+                  <DropdownMenuItem label="Views v" onSelect={ViewDecending} array={roadmapArray} />
+
+                </div>
+              )}
             </div>
-            <button className="flex hover:text-blue-600" onClick={handleSortByView}>
-              Popularity
-            </button>
-            <button className="flex hover:text-blue-600" onClick={handleSortByDate}>
-              Date
-            </button>
           </div>
         </div>
       </div>
