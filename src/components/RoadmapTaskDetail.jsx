@@ -22,7 +22,7 @@ function RoadmapTaskDetail({ task, handleTaskUpdate, handleIsSaving, handleIsCom
               </div>
             </div>
           </div>
-          <div className='flex flex-col space-y-2 w-1/2 p-4 bg-[#f5f8fd] rounded-r-2xl justify-between'>
+          <div className='flex flex-col space-y-4 w-1/2 p-4 bg-[#f5f8fd] rounded-r-2xl justify-between'>
             <div className='flex flex-col justify-center space-y-2 text-sm break-all'>
               {task.subtasks.map((subtask, index) => {
                 return (
