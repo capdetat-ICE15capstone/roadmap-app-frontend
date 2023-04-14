@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Roadmap from "../components/Roadmap";
 import Kurumi from "../assets/kurumi.jpg";
 import RoadmapToggle from "../components/RoadmapToggle"
+import Spinner from "../components/Spinner";
 import { ReactComponent as DarkHomeIcon } from "../assets/dark_home_icon.svg";
 import { ReactComponent as LockIcon } from "../assets/Lock.svg"
 import { axiosInstance } from "../functions/axiosInstance";
@@ -9,7 +10,6 @@ import { axiosInstance } from "../functions/axiosInstance";
 const HomeOtherUser = () => {
   const [data, setData] = useState(null);
   const [isRoadmap, setIsRoadmap] = useState(true);
-  const [isDeleteClick, setIsDeleteClick] = useState(false);
   const [isActive, setIsActive] = useState(true);
   const [username, setUsername] = useState('');
   const [level, setLevel] = useState('');
@@ -20,6 +20,8 @@ const HomeOtherUser = () => {
   let roadmapList = [];
   
   function shortenString(str, maxLength) {
+    if (str == null)
+      return ""
     if (str.length > maxLength) {
       // Shorten the string to the maximum length
       str = str.slice(0, maxLength) + '...';
@@ -36,7 +38,7 @@ const HomeOtherUser = () => {
     setIsRoadmap(false)
     setIsActive(false)
   }
-  
+
   const getHomeOtherUserData = async (viewer_id) => {
     const route = `/home/view/${viewer_id}`
     try {
@@ -49,8 +51,7 @@ const HomeOtherUser = () => {
 
   useEffect (() => {
     const fetchData = async () => {
-      let viewer_id = 18;
-      const response = await getHomeOtherUserData(viewer_id);
+      const response = await getHomeOtherUserData(window.location.pathname.substring(6));
       setData(response.data);
       setUsername(response.data.profile.username);
       setLevel(Math.round(response.data.profile.exp/100));
@@ -83,6 +84,7 @@ const HomeOtherUser = () => {
     
   return (
     <>
+      {!data && <Spinner />}
       <div className="flex flex-col h-screen overflow-scroll overflow-x-hidden">
         <div className="relative flex top-[59px] left-[38px] w-fit h-fit">
           <div className="mr-[13px]">

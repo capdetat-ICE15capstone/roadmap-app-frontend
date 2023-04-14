@@ -157,7 +157,7 @@ function App() {
                 }
               ></Route>
               <Route
-                path="friend_home"
+                path="home/:uid"
                 element={
                   <ProtectedRoute>
                     <Suspense fallback={<Spinner />}>
