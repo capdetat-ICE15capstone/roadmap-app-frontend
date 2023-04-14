@@ -213,7 +213,7 @@ export default function View() {
                 <UserLogo className='w-8 h-8' />
                 <div className='flex flex-col'>
                   <span className='text-xs font-bold text-white'>{ownerProfile.username}</span>
-                  <span className='text-xs font-bold text-white'>{ownerProfile.exp}</span>
+                  <span className='text-xs font-bold text-white'>LVL. {Math.floor(0.01 * ownerProfile.exp)}</span>
                 </div>
               </div>
             </div>
