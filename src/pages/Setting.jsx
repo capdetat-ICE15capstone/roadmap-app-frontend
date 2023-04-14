@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { axiosInstance } from "../functions/axiosInstance";
 import SettingTab from '../components/SettingTab';
 import ToggleSwitch from '../components/ToggleSwitch';
+import SettingProfileImageSelector from '../components/SettingProfileImageSelector';
 
 import Spinner from "../components/Spinner";
 
@@ -50,6 +51,8 @@ const Setting = () => {
     const [oldPassword, setOldPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [newPasswordConform, setNewPasswordConfirm] = useState();
+
+    const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
     //-----PWA thingy----------------------------------------------------------------
 
@@ -502,6 +505,10 @@ const Setting = () => {
                 <RenderProfile/>
                 <RenderAccount/>
             </div>
+            <SettingProfileImageSelector isOpen={isProfileModalOpen}/>
+            <button className={``} onClick={() => {setIsProfileModalOpen(!isProfileModalOpen)}}>
+                aaaa
+            </button>
         </div>
     )
 }
