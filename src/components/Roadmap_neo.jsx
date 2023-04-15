@@ -115,7 +115,7 @@ const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_co
                 </div>
                 <div className='flex flex-row flex-nowrap justify-between items-center'>
                   <div className='flex flex-row'>
-                    <div className='flex-nowrap w-1/2 text-xs'>
+                    <div className='flex-nowrap text-xs'>
                       Owner :
                     </div>
                     <span className='z-10 text-xs hover:text-blue-600 ml-1 truncate' onClick={handleClick}>
