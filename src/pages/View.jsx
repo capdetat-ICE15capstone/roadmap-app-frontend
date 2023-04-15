@@ -213,11 +213,11 @@ export default function View() {
     return (
       <>
         <div className='flex h-full overflow-y-auto py-6'>
-          <div className="xs:w-[80%] max-xs:w-[90%] max-w-3xl flex-col space-y-6 m-auto">
+          <div className="xs:w-[80%] max-xs:w-[90%] max-w-4xl flex-col space-y-6 m-auto">
             <div className='flex justify-between items-center space-x-6'>
               <div className='flex items-center space-x-2'>
                 <BookIcon />
-                <span className='max-sm:hidden text-4xl font-extrabold text-white'>VIEW</span>
+                <span className='max-sm:hidden text-4xl font-extrabold text-nav-blue'>VIEW</span>
               </div>
               <div className='flex w-full justify-center items-center bg-base-blue drop-shadow-[0_2px_5px_rgba(0,0,0,0.25)] rounded-3xl p-2 space-x-2  max-w-sm'>
                 <UserLogo className='w-8 h-8' />
