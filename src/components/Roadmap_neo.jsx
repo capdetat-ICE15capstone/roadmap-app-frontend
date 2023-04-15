@@ -127,20 +127,24 @@ const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_co
                   </div>
                 </div>
                 <div className='flex flex-row flex-nowrap justify-between items-center'>
-                  <div className='static flex flex-row items-center left-[5%]'>
-                    <span>
-                      <EyeIcon className="flex stroke-1 stroke-gray-700 w-3/4 h-3/4 " />
-                    </span>
+                  <div className='static flex flex-row items-center left-[5%] space-x-1'>
+                    <EyeIcon className="flex stroke-1 stroke-gray-700" />
                     <div className='text-xs text-gray-700'>
                       : {views_count} views
                     </div>
                   </div>
                   <div className='z-10 static flex flex-row justify-center space-x-4 text-xs right-[5%]'>
-                    <div className='z-10 flex flex-row items-center'>
-                      <ShareIcon /> : {forks_count}
+                    <div className='z-10 flex flex-row items-center space-x-1'>
+                      <ShareIcon />
+                      <div className='text-xs text-gray-700'>
+                        : {forks_count}
+                      </div>
                     </div>
-                    <div className='z-10 flex flex-row items-center'>
-                      <LikeIcon /> : {stars_count}
+                    <div className='z-10 flex flex-row items-center space-x-1'>
+                      <LikeIcon />
+                      <div className='text-xs text-gray-700'>
+                        : {stars_count}
+                      </div>
                     </div>
                   </div>
                 </div>

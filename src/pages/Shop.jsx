@@ -191,9 +191,7 @@ function Shop() {
           </div>
         </div>
       </div>
-      {isViewingItem && (
-        <ShopItemDetail item={selectedItem} points={points} handlePoints={(amount) => {setPoints(amount)}} handleClose={() => setIsViewingItem(false)} />
-      )}
+      <ShopItemDetail visible={isViewingItem} item={selectedItem} points={points} handlePoints={(amount) => { setPoints(amount) }} handleClose={() => setIsViewingItem(false)} />
     </>
   )
 }

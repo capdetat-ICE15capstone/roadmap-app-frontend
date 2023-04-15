@@ -2,22 +2,22 @@ import React from "react";
 import { ReactComponent as Logo } from "../assets/logo.svg";
 import { AnimatePresence, motion } from 'framer-motion';
 
-const Spinner = ({ className = "z-50", visible }) => {
+const SpinnerNeo = ({ className = "z-50", visible }) => {
   const variants = {
     fadeIntial: {
       opacity: 0,
     },
     fadeAnimate: {
-      opacity: 0.5,
+      opacity: 0.75,
       transition: {
-        duration: 0.5,
+        duration: 0.3,
         ease: 'easeInOut'
       }
     },
     fadeExit: {
       opacity: 0,
       transition: {
-        duration: 0.5,
+        duration: 0.3,
         ease: 'easeInOut'
       }
     }
@@ -40,4 +40,8 @@ const Spinner = ({ className = "z-50", visible }) => {
   );
 };
 
-export default Spinner;
+SpinnerNeo.defaultProps = {
+  visible: false
+};
+
+export default SpinnerNeo;

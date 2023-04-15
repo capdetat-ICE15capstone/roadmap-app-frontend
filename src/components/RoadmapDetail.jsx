@@ -9,7 +9,6 @@ import { ReactComponent as ForkIcon } from '../assets/shapes/fork.svg';
 function RoadmapDetail({ roadmapName, roadmapID, roadmapPrivacy, roadmapViewCount, roadmapForkCount, roadmapEditDate, roadmapDescription, isOwner, likeCount, isLiked, isCompleted, handleLike }) {
   const navigate = useNavigate();
 
-  const [isHovered, setIsHovered] = useState(false);
   const [visible, setVisible] = useState();
 
   return (
@@ -33,17 +32,22 @@ function RoadmapDetail({ roadmapName, roadmapID, roadmapPrivacy, roadmapViewCoun
                       {likeCount}
                     </span>
                   </div>
-                  <button onClick={() => navigate(`/edit/${roadmapID}`)} className={`${(isCompleted) ? 'bg-gray-700 pointer-events-none' : 'bg-sub-blue'} flex max-sm:flex-1 sm:w-24  justify-center items-center text-white px-4 py-2 font-semilight rounded-full text-sm font-bold transition ease-in-out hover:bg-nav-blue duration-300`} type="button">
+                  <button onClick={() => navigate(`/edit/${roadmapID}`)} className={`${(isCompleted) ? 'bg-gray-700 pointer-events-none' : 'bg-sub-blue'} flex max-sm:flex-1 sm:w-24  justify-center items-center text-white px-4 py-2 font-semilight rounded-full text-sm font-bold transition ease-in-out hover:bg-nav-blue hover:scale-105 hover:z-10 duration-200`} type="button">
                     Edit
                   </button>
-                  <button onClick={() => console.log("detail!")} className="flex sm:w-24 max-sm:flex-1 justify-center items-center bg-nav-blue text-white px-4 py-2 font-semilight rounded-full max-sm:text-sm font-bold transition ease-in-out hover:bg-black duration-300" type="button">
+                  <button
+                    className="flex max-sm:flex-1 justify-center items-center bg-nav-blue text-white px-4 py-2 font-semilight rounded-full max-sm:text-sm font-bold transition ease-in-out hover:bg-black hover:scale-105 hover:z-10 duration-200"
+                    type="button"
+                    onMouseOver={() => setVisible(true)}
+                    onMouseOut={() => setVisible(false)}
+                  >
                     i
                   </button>
                 </>
               )}
               {isOwner === false && (
                 <>
-                  <div onClick={handleLike} className="flex sm:w-24 max-sm:flex-1 shrink-0 justify-center items-center space-x-2 bg-sub-blue grow text-white px-4 py-2 font-semilight rounded-full text-sm font-bold truncate transition ease-in-out hover:bg-nav-blue duration-300" type="button">
+                  <button onClick={handleLike} className="flex sm:w-24 max-sm:flex-1 shrink-0 justify-center items-center space-x-2 bg-sub-blue grow text-white px-4 py-2 font-semilight rounded-full text-sm font-bold truncate transition ease-in-out hover:bg-nav-blue hover:scale-105 hover:z-10 duration-200" type="button">
                     {(!isLiked) ? (
                       <LikeIcon className='h-4 w-4' />
                     ) : (
@@ -52,16 +56,15 @@ function RoadmapDetail({ roadmapName, roadmapID, roadmapPrivacy, roadmapViewCoun
                     <span>
                       {likeCount}
                     </span>
-                  </div>
-                  <button onClick={() => navigate(`/clone/${roadmapID}`)} className={`flex sm:w-24 max-sm:flex-1 justify-center items-center space-x-2 bg-sub-blue grow text-white px-4 py-2 font-semilight rounded-full text-sm font-bold truncate transition ease-in-out hover:bg-nav-blue duration-300`} type="button">
+                  </button>
+                  <button onClick={() => navigate(`/clone/${roadmapID}`)} className={`flex sm:w-24 max-sm:flex-1 justify-center items-center space-x-2 bg-sub-blue grow text-white px-4 py-2 font-semilight rounded-full text-sm font-bold truncate transition ease-in-out hover:bg-nav-blue hover:scale-105 hover:z-10 duration-200`} type="button">
                     <ForkIcon className='h-4 w-4' />
                     <span>
                       {roadmapForkCount}
                     </span>
                   </button>
                   <button
-                    onClick={() => console.log("detail!")}
-                    className="flex max-sm:flex-1 justify-center items-center bg-nav-blue text-white px-4 py-2 font-semilight rounded-full max-sm:text-sm font-bold transition ease-in-out hover:bg-black duration-300"
+                    className="flex max-sm:flex-1 justify-center items-center bg-nav-blue text-white px-4 py-2 font-semilight rounded-full max-sm:text-sm font-bold transition ease-in-out hover:bg-black hover:scale-105 hover:z-10 duration-200"
                     type="button"
                     onMouseOver={() => setVisible(true)}
                     onMouseOut={() => setVisible(false)}
@@ -89,7 +92,7 @@ function RoadmapDetail({ roadmapName, roadmapID, roadmapPrivacy, roadmapViewCoun
             </div>
           </div>
         </div>
-        <div className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90%] pointer-events-none p-4 bg-white drop-shadow-[0_2px_3px_rgba(0,0,0,0.15)] rounded-xl opacity-0 transition-opacity duration-300 ${visible && 'opacity-90'}`}>
+        <div className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90%] pointer-events-none p-4 bg-white drop-shadow-[0_2px_3px_rgba(0,0,0,0.15)] rounded-xl opacity-0 transition-opacity duration-300 z-10 ${visible && 'opacity-90'}`}>
           <div className='flex flex-col text-black text-xs'>
             <span>★★★ Done before due date</span>
             <span>★★ Done after due date 1-3 days</span>
