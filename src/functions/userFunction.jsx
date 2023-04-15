@@ -4,7 +4,7 @@ export const isUserPremium = async () => {
     // check whether or not the user is premium
     // return true if the user is premium
     // return false if the user is not logged in or the user is not premium
-    return false; // PLACEHOLDER PLS DONT LAUGH
+    return true; // PLACEHOLDER PLS DONT LAUGH
 }
 
 export const isUserLoggedIn = async (timeout = 0) => {
@@ -38,7 +38,7 @@ export const isServerResponding = async (url="/") => {
 export const getUserInformation = async () => {
   try {
     const res = await axiosInstance.get("/user/");
-    return res;
+    return res.data;
   } catch (error) {
     console.error(error)
     throw error

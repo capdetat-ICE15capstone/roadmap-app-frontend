@@ -195,6 +195,7 @@ export const createRoadmap = async (
   roadmapChange, // null (No Change) or roadmapAttr (For create mode always has roadmapAttr)
   taskChange, // taskChange object {add:[], edit:[], delete:[]}
   subtaskChange, // subtaskChange object {add:[], edit:[], delete:[]
+  tagChanges,
   reportError,
   timeout = 0
 ) => {
@@ -225,6 +226,8 @@ export const createRoadmap = async (
       response.roadmap.rid,
       taskRelation
     );
+
+    response.addTagChange = await addTags(response.roadmap.rid, tagChanges.add);
 
     console.log("Create roadmap Response");
     console.log(response);
@@ -257,7 +260,7 @@ export const addTags = async (rid, tags, timeout = 0) => {
   }
 };
 
-export const deleteTags = async (rid, tags, timeout = 1000) => {
+export const deleteTags = async (rid, tags, timeout = 0) => {
   if (rid === undefined || rid === null) return null;
   let route = "/tag/";
 

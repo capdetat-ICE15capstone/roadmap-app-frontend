@@ -187,9 +187,6 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
   const checkTaskChange = () => {
     // compare previous data (may not be first) with latest data
 
-    console.log(initialState.current.nodeColor)
-    console.log(nodeColor.name); 
-
     if (
       initialState.current.name !== name ||
       initialState.current.description !== description ||
@@ -200,7 +197,6 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
     ) {
       return true;
     }
-
     return false;
   };
 
@@ -235,17 +231,23 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
     return subtaskChange;
   };
 
-  const handleDetectChangeBeforeClose = () => {
-    // use to check whether the task has changed
-    // if change is detected but user press close
-    // set the display unsaved change modal to true
+  const isChangeDetected = () => {
+    // return true for change
     const check = checkSubtaskChange();
     const subtaskChange =
       check.add.length !== 0 ||
       check.edit.length !== 0 ||
       check.delete.length !== 0;
+    
+    return checkTaskChange() || subtaskChange
+  }
 
-    if (checkTaskChange() || subtaskChange) {
+  const handleDetectChangeBeforeClose = () => {
+    // use to check whether the task has changed
+    // if change is detected but user press close
+    // set the display unsaved change modal to true
+
+    if (isChangeDetected()) {
       setUnSavedModal(true);
       return;
     }
@@ -272,7 +274,9 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    editTaskCallBack("success", generateTaskData());
+    // if no change, go to fetch or failed condition
+    // if change, go to success immediately
+    editTaskCallBack(isChangeDetected() || oldData.id === -1 ? "success" : "fetch", generateTaskData());
   };
 
   return (

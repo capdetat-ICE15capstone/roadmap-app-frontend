@@ -8,7 +8,11 @@ import {
   countRoadmap,
 } from "../functions/roadmapFunction.jsx";
 import Spinner from "../components/Spinner";
-import { isUserLoggedIn, isUserPremium } from "../functions/userFunction";
+import {
+  getUserInformation,
+  isUserLoggedIn,
+  isUserPremium,
+} from "../functions/userFunction";
 import { CustomSVG, getTWFill } from "../components/CustomSVG";
 import { ReactComponent as AddButton } from "../assets/addButton.svg";
 import { ReactComponent as Lock } from "../assets/cec_page/lock.svg";
@@ -51,6 +55,12 @@ notificationDayOption.forEach((day) => {
     );
   });
 });
+
+function textAreaAutoGrow(element) {
+  console.log(element)
+  element.style.height = "5px";
+  element.style.height = (element.scrollHeight)+"px";
+}
 
 const TaskItem = ({ task, setEditTaskID, setModalState, disabled }) => {
   // Task node Component
@@ -238,26 +248,32 @@ const RoadmapCreatePage = (props) => {
   };
 
   const setUpRoadmap = async () => {
+    setLoading(true);
+    if (!isUserLoggedIn()) {
+      setLoading(false);
+      handleDisplayErrorMessage("User Unauthorized", "/login", true);
+    }
     if (
       (await countRoadmap()) >= 3 &&
       !(await isUserPremium()) &&
       mode === "create"
     ) {
+      setLoading(false);
       handleDisplayErrorMessage(
         "Roadmap limit for non-premium used",
         "/",
         true
       );
     }
+    const userInfo = await getUserInformation();
     if (mode === "edit" || mode === "clone") {
-      if (!isUserLoggedIn()) {
-        handleDisplayErrorMessage("User Unauthorized", "/login", true);
-      }
       // check if state is available
       if (state !== null && state !== undefined) {
         // set up the data to variable
         const notificationObject = setUpNotification(state.roadmap);
         if (mode === "edit") {
+          if (userInfo.uid !== state.roadmap.owner_id)
+            handleDisplayErrorMessage("User is not authorized", "/", true);
           initialState.current = {
             name: state.roadmap.name,
             description: state.roadmap.description,
@@ -283,14 +299,18 @@ const RoadmapCreatePage = (props) => {
       } else {
         // fetch the roadmap data
         // then set the data to variable
-        setLoading(true);
-        const tempRoadmap = await getRoadmap(id, 10000, mode === "clone");
+        // const tempRoadmap = await getRoadmap(id, 10000, mode === "clone"); //individual fetch is bugged
+        const tempRoadmap = await getRoadmap(id, 10000, true); 
         if (tempRoadmap === null) {
           setLoading(false);
           handleDisplayErrorMessage("Roadmap Loading Failed", "/home", true);
         } else {
           const notificationObject = setUpNotification(tempRoadmap);
           if (mode === "edit") {
+            if (userInfo.uid !== tempRoadmap.owner_id) {
+              setLoading(false)
+              handleDisplayErrorMessage("User is not authorized", "/", true);
+            }         
             initialState.current = {
               name: tempRoadmap.name,
               description: tempRoadmap.description,
@@ -313,10 +333,10 @@ const RoadmapCreatePage = (props) => {
           setTags(tempRoadmap.tags);
           setNotiStatus(notificationObject);
           setLastId(highestID + 1);
-        }
-        setLoading(false);
+        } 
       }
     }
+    setLoading(false);
 
     if (mode === "clone") {
       let timeDifference = undefined;
@@ -360,6 +380,7 @@ const RoadmapCreatePage = (props) => {
     switch (status) {
       case "success":
         // user click save
+        console.log("success")
         setHasUnsavedChanges(true);
         switch (submissionObject.id) {
           case -1:
@@ -374,11 +395,18 @@ const RoadmapCreatePage = (props) => {
                 task.id === submissionObject.id ? submissionObject : task
               )
             );
+            initialState.current.tasks.map((task) => {
+              if (task.id === submissionObject.id) {
+                task.hasFetched = true;
+              }
+              return task;
+            })
             break;
         }
         break;
       case "fetch":
         // task was fetched but not edited
+        console.log("fetch");
         setTasks(
           tasks.map((task) =>
             task.id === submissionObject.id ? submissionObject : task
@@ -395,6 +423,7 @@ const RoadmapCreatePage = (props) => {
         break;
       case "delete":
         // user click delete task button
+        console.log("delete");
         setHasUnsavedChanges(true);
         setTasks((tasks) =>
           tasks.filter((task) => task.id !== submissionObject.id)
@@ -497,7 +526,9 @@ const RoadmapCreatePage = (props) => {
       console.log(taskIntersection);
 
       // if (taskIntersection === undefined) return;
-
+      console.log(taskIntersection);
+      console.log(task.nodeShape);
+      console.log(taskIntersection.nodeShape);
       if (
         taskIntersection.hasFetched === true &&
         (task.name !== taskIntersection.name ||
@@ -508,6 +539,7 @@ const RoadmapCreatePage = (props) => {
           task.dueDate.getTime() !== taskIntersection.dueDate.getTime())
       ) {
         // edited task
+        console.log(`added task ${task.id} to edit list`)
         taskChange.edit.push(task);
         return;
       }
@@ -596,6 +628,7 @@ const RoadmapCreatePage = (props) => {
         roadmapObject,
         taskChange,
         subtaskChange,
+        tagChanges,
         reportError
       );
     } else if (mode === "edit") {
@@ -614,7 +647,6 @@ const RoadmapCreatePage = (props) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // let taskChange = { add: [], edit: [], delete: [] };
     let subTaskChange = { add: [], edit: [], delete: [] };
     let taskRelationChange = null;
 
@@ -794,17 +826,20 @@ const RoadmapCreatePage = (props) => {
           onSubmit={handleSubmit}
           className=" rounded-3xl w-full gap-3 border flex flex-col bg-white p-10 h-4/5 xs:h-2/3 m-3"
         >
-          <div className="flex flex-col xs:flex-row justify-between">
+          <div className="flex flex-col xs:flex-row justify-between gap-2">
+            <label className="text-md font-bold block leading-none">
+              Roadmap Name
+            </label>
             <input
-              className="text-2xl focus:outline-none font-inter w-full placeholder:font-extrabold"
-              type="text"
+              className="text-3xl focus:outline-none text-ellipsis font-bold w-full placeholder:font-extrabold"
               value={RMName}
+              type="text"
               onChange={handleNameChange}
               placeholder="UNTITLED"
             />
-            <div className="flex gap-2 ">
+            <div className="flex gap-2 justify-evenly">
               {/* Notification Setting */}
-              <div className="relative basis-1/2 xs:basis-auto justify-self-center">
+              <div className="relative flex justify-center items-center after:content-['_Publicity'] after:font-bold xs:after:content-none">
                 <DropDownMenu
                   optionValues={notificationOption.optionValues}
                   options={notificationOption.options}
@@ -816,10 +851,11 @@ const RoadmapCreatePage = (props) => {
                 />
               </div>
               {/* End of Notification Setting */}
+              <div className="flex justify-center items-center after:content-['_Notification'] after:font-bold xs:after:content-none">
               <button
                 type="button"
                 onClick={() => setPublicModal(true)}
-                className="basis-1/2 xs:basis-auto"
+                className=""
               >
                 {isPublic ? (
                   <Unlock className="w-9 h-9 hover:scale-125 transition duration-150" />
@@ -827,6 +863,7 @@ const RoadmapCreatePage = (props) => {
                   <Lock className="w-9 h-9 hover:scale-125 transition duration-150" />
                 )}
               </button>
+              </div>
             </div>
           </div>
 
@@ -836,13 +873,12 @@ const RoadmapCreatePage = (props) => {
             </motion.div>
           ) : tags.length > 3 ? (
             <motion.div className="text-gray-400">
-              Tags: {`${tags.slice(0, 3).join(", ")}, +${tags.length-3}`}
+              Tags: {`${tags.slice(0, 3).join(", ")}, +${tags.length - 3}`}
             </motion.div>
           ) : null}
 
-          
           <div className="">
-          <label className="text-xl font-bold ">Roadmap Description </label>
+            <label className="text-md font-bold">Roadmap Description </label>
             <textarea
               className="border rounded-lg border-gray-400 block text-md font-thin p-1 w-full focus:outline-none shadow-lg placeholder:text-italic"
               rows="4"
