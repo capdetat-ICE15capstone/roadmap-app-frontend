@@ -3,7 +3,6 @@ import RoadmapNeo from "../components/Roadmap_neo";
 import SearchBar from "../components/SearchBar";
 import { ReactComponent as SearchIcon } from "../assets/searchIcon.svg";
 import { axiosInstance } from '../functions/axiosInstance';
-import DropdownSorting from "../components/DropdownSorting";
 import Spinner from '../components/Spinner';
 import UserBanner from '../components/UserBanner';
 import Prompt from '../components/Prompt';
@@ -27,11 +26,8 @@ const DropdownMenuItem = (props) => {
 }
 
 const Feed = () => {
-  const [roadmapArray, setRoadmapArray] = useState([]);
   const isMountedRef = useRef(false);
   const [isFetching, setIsFetching] = useState(false);
-  const [sortViewAsc, setSortViewAsc] = useState(true);
-  const [sortByCreatedAt, setSortByCreatedAt] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const toggleMenu = () => setIsOpen(!isOpen);
   const [title, setTitle] = useState("Sort");
@@ -70,9 +66,10 @@ const Feed = () => {
     const searchTerm = document.getElementById("InputSearch").value;
     const searchType = classifyInput(searchTerm);
 
-    if (searchTerm === "") {
+    if (searchTerm === "") {;
       getRecommendRoadmap();
       setSearchTypeName('Roadmap');
+      return;
     }
 
     switch (true) {
@@ -181,33 +178,6 @@ const Feed = () => {
     getRecommendRoadmap();
   }, []);
 
-  // sort functions (view, date)
-  // sort by view
-  const handleSortByView = () => {
-    const sortedData = [...roadmapArray].sort((a, b) => {
-      return sortViewAsc ? a.views_count - b.views_count : b.views_count - a.views_count;
-    });
-    setRoadmapArray(sortedData);
-    setSortViewAsc(!sortViewAsc);
-  };
-  // sort by date
-  const handleSortByDate = () => {
-    const sortedItems = [...roadmapArray].sort((a, b) => {
-      if (sortByCreatedAt) {
-        return new Date(a.created_at) - new Date(b.created_at);
-      } else {
-        return new Date(b.created_at) - new Date(a.created_at);
-      }
-    });
-    setRoadmapArray(sortedItems);
-    setSortByCreatedAt(!sortByCreatedAt);
-  };
-
-  const handleSort = (sortedArray) => {
-    setRoadmapArray(sortedArray);
-    console.log(sortedArray);
-  };
-
   const DateAscending = (array) => {
     console.log(array)
     array.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
@@ -234,7 +204,7 @@ const Feed = () => {
       <>
         {/*Top (title & search bar)*/}
         <div className='flex flex-col items-center h-full w-full bg-white'>
-          <div className='flex justify-between items-center w-4/5 h-10 m-8 space-x-4'>
+          <div className='flex justify-between items-center w-4/5 h-10 mt-10 mx-8 mb-8 space-x-4'>
             {/*Feed Title*/}
             <div className='max-md:hidden flex j items-center shrink-0 h-full text-4xl font-extrabold text-nav-blue space-x-2'>
               <SearchIcon className="flex h-8 w-8 fill-[#09275B]" />
@@ -247,22 +217,23 @@ const Feed = () => {
             <div className='flex flex-row items-center gap-2'>
               <div className="relative">
                 <button
-                  className="inline-flex array-center justify-center w-full px-4 py-2 text-base font-medium text-gray-700 bg-white rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  onClick={toggleMenu}
+                  className="inline-flex array-center justify-center w-full px-4 py-2 text-base font-medium text-gray-700 bg-white rounded-md hover:bg-gray-50"
+                  onMouseEnter={toggleMenu}
                 >
-                  <span>{title}</span>
+                  <span className='bg-gray-300 py-2 px-4 rounded-md'>Sort</span>
                 </button>
                 {isOpen && (
                   <div
-                    className="absolute z-50 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 mt-2"
+                    className="absolute top-full left-1/2 tranfrom -translate-x-1/2 -translate-y-1/2 z-30 w-32 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 mt-2"
                     role="menu"
                     aria-orientation="vertical"
                     aria-labelledby="menu-button"
+                    onMouseLeave={toggleMenu}
                   >
-                    <DropdownMenuItem label="Date ^" onSelect={DateAscending} array={roadmapArray} />
-                    <DropdownMenuItem label="Date v" onSelect={DateDecending} array={roadmapArray} />
-                    <DropdownMenuItem label="Views ^" onSelect={ViewAscending} array={roadmapArray} />
-                    <DropdownMenuItem label="Views v" onSelect={ViewDecending} array={roadmapArray} />
+                    <DropdownMenuItem label="Newer" onSelect={DateAscending} array={currentRoadmapList} />
+                    <DropdownMenuItem label="Older" onSelect={DateDecending} array={currentRoadmapList} />
+                    <DropdownMenuItem label="More Views" onSelect={ViewAscending} array={currentRoadmapList} />
+                    <DropdownMenuItem label="Less Views" onSelect={ViewDecending} array={currentRoadmapList} />
                   </div>
                 )}
               </div>
