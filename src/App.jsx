@@ -8,6 +8,7 @@ import HomeOtherUser from "./pages/HomeOtherUser";
 import { isServerResponding, isUserLoggedIn } from "./functions/userFunction";
 import { axiosInstance } from "./functions/axiosInstance";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Shop from "./pages/Shop";
 
 const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
@@ -241,7 +242,16 @@ function App() {
                     </Suspense>
                   </ProtectedRoute>
                 }
-              />
+              /><Route
+              path="shop"
+              element={
+                <ProtectedRoute>
+                  <Suspense fallback={<Spinner />}>
+                    <Shop />{" "}
+                  </Suspense>
+                </ProtectedRoute>
+              }
+            />
               <Route path="/404" element={<NoPage />} />
               <Route path="*" element={
                 <ProtectedRoute>

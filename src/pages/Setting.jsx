@@ -56,6 +56,8 @@ const Setting = () => {
     const [profilePictureID, setProfilePictureID] = useState(0);
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
+    const [level, setLevel] = useState(0);
+
     //-----PWA thingy----------------------------------------------------------------
 
     const handleNotiSubscription = () => {
@@ -160,6 +162,8 @@ const Setting = () => {
             setBio(response.data.bio);
             setAccountPublic(!response.data.is_private);
             setProfilePictureID(response.data.profile_picture_id);
+            const response2 = await getHomeData();
+            setLevel(Math.round(response2.data.profile.exp/100));
         }
         fetchData();
         navigator.serviceWorker.ready
@@ -181,10 +185,26 @@ const Setting = () => {
         return (
             <div className='flex flex-col'>
                 <SettingTitle text='Profile' Icon={ProfileIcon}/>
+                {/* profile pic */}
+                <div className='pl-4 lg:hidden max-lg:visible w-72'>
+                    <SettingText text="Profile Picture"/>
+                    <div className='pl-10'>
+                        <div className=''>
+                            <div className='w-48 h-48 overflow-hidden rounded-full'>
+                                <img src={getProfilePictureSrc(profilePictureID)}></img>
+                            </div>
+                        </div>
+                        <button className="shadow appearance-none border rounded-lg w-16 py-2 px-3 text-sm text-white bg-blue-700 leading-tight focus:outline-none focus:shadow-outline float-right"
+                            onClick={() => {setIsProfileModalOpen(!isProfileModalOpen)}}
+                        >
+                            Edit
+                        </button>
+                    </div>
+                </div>
                 {/* username, first name, last name, profile pic */}
-                <div className='flex gap-2 justify-between max-w-4xl pl-4'>
+                <div className='flex gap-2 justify-between max-w-4xl pl-2'>
                     {/* username, first name, last name */}
-                    <div className='flex flex-col flex-grow pl-4'>
+                    <div className='flex flex-col flex-grow pl-2'>
                         {/* username */}
                         <SettingField formID={"edit-username-form"} fieldTitle={"Username"} fieldDataName={"username"} fieldPlaceHolder={username} setOnSubmit={setUsername}/>
                         {/* first name */}
@@ -193,9 +213,9 @@ const Setting = () => {
                         <SettingField formID={"last-name-form"} fieldTitle={"Last Name"} fieldDataName={"last_name"} fieldPlaceHolder={lastName} setOnSubmit={setLastName}/>
                     </div>
                     {/* profile pic */}
-                    <div className='pl-8'>
+                    <div className='pl-8 max-lg:hidden'>
                         <SettingText text="Profile Picture"/>
-                        <div className='pl-10'>
+                        <div className='pl-6'>
                             <div className=''>
                                 <div className='w-48 h-48 overflow-hidden rounded-full'>
                                     <img src={getProfilePictureSrc(profilePictureID)}></img>
@@ -210,7 +230,7 @@ const Setting = () => {
                     </div>
                 </div>
                 {/* bio, links */}
-                <div className='flex flex-col max-w-4xl pl-8'>
+                <div className='flex flex-col max-w-4xl pl-4'>
                     {/* bio */}
                     <SettingBioField formID={"bio-form"} fieldTitle={"Bio"} fieldDataName={"bio"} fieldPlaceHolder={bio} setOnSubmit={setBio}/>
                     {/* links */}
@@ -227,7 +247,7 @@ const Setting = () => {
             <div className='flex flex-col'>
                 <SettingTitle text='Account' Icon={AccountIcon}/>
                 {/* account privacy, email */}
-                <div className='flex-col max-w-4xl pl-8'>
+                <div className='flex-col max-w-4xl pl-4'>
                     <ToggleSwitch name={"Public Account"} isToggled={accountPublic} setIsToggled={setAccountPublic} callOnChanged={updatePrivacy}/>
                     <hr className='border-2 border-transparent'/>
                     <EmailSettingField name="Email Address" email={email}/>
@@ -235,13 +255,13 @@ const Setting = () => {
     
                 {/* password */}
                 <SettingTopic text="Password"/>
-                <div className='flex max-w-4xl pl-8'>
+                <div className='flex max-w-4xl pl-4'>
                     <PasswordSettingField oldPassword={oldPassword} setOldPassword={setOldPassword} newPassword={setNewPassword} setNewPassword={setNewPassword}/>
                 </div>
     
                 {/* delete account */}
                 <SettingTopicRed text="Delete Account"/>
-                <div className='flex-col max-w-4xl pl-8'>
+                <div className='flex-col max-w-4xl pl-4'>
                     <p className='text-sm text-gray-500 mb-3'>
                         Once you delete your account, there is no going back. Please be certain.
                     </p>
@@ -255,7 +275,7 @@ const Setting = () => {
     
                 {/* notification */}
                 <SettingTitle text="Notifications" Icon={NotificationIcon}/>
-                <div className='flex max-w-4xl pl-8'>
+                <div className='flex max-w-4xl pl-4'>
                     {notification ? 
                         <ToggleSwitch name={"Allow Notifications"} isToggled={notification} callOnChanged={handleNotiUnsubscription}/>
                     :
@@ -311,9 +331,9 @@ const Setting = () => {
                         />
                         <button 
                             type='submit' 
-                            className="shadow appearance-none border rounded-lg w-16 py-2 px-3 text-sm text-white bg-blue-700 leading-tight focus:outline-none focus:shadow-outline"
+                            className="shadow appearance-none border rounded-lg w-16 py-2 px-3 text-sm text-white bg-blue-900 leading-tight focus:outline-none focus:shadow-outline"
                         >
-                            Edit
+                            Save
                         </button>
                     </div>
                 </label>
@@ -439,7 +459,7 @@ const Setting = () => {
     const SettingTopic = ({text}) => {
         return (
             <>
-                <p className="text-gray-800 text-sm mt-8 font-bold px-1 pl-8">
+                <p className="text-gray-800 text-sm mt-8 font-bold px-1 pl-4">
                     {text}
                 </p>
                 <hr className='border-1 border-gray-300 max-w-4xl mb-3 ml-3'/>
@@ -450,7 +470,7 @@ const Setting = () => {
     const SettingTopicRed = ({text}) => {
         return (
             <>
-                <p className="text-red-600 text-sm mt-8 font-bold px-1 pl-8">
+                <p className="text-red-600 text-sm mt-8 font-bold px-1 pl-4">
                     {text}
                 </p>
                 <hr className='border-1 border-gray-300 max-w-4xl mb-3 ml-3'/>
@@ -522,7 +542,7 @@ const Setting = () => {
                 <RenderProfile/>
                 <RenderAccount/>
             </div>
-            <SettingProfileImageSelector isOpen={isProfileModalOpen} setIsOpen={setIsProfileModalOpen} selectedIndex={profilePictureID} setProfilePicture={updateProfilePicture}/>
+            <SettingProfileImageSelector isOpen={isProfileModalOpen} setIsOpen={setIsProfileModalOpen} selectedIndex={profilePictureID} setProfilePicture={updateProfilePicture} level={level}/>
         </div>
     )
 }
@@ -540,6 +560,17 @@ export const getSetting = async (timeout = 0) => {
         console.error("Fail GetSetting()");
     }
 }
+
+const getHomeData = async () => {
+    // check whether user is logged-in
+    const route = `/home/me`
+    try {
+        let response = await axiosInstance.get(route, { timeout: 10000 });
+        return response;
+    } catch (error) {
+        console.error("Fail GetHomeData()");
+    }
+  }
 
 export const updateSetting = async (route, body, timeout = 10000) => {
     try {
