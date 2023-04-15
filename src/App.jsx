@@ -7,6 +7,8 @@ import { lazy, Suspense, useState, useEffect } from "react";
 import HomeOtherUser from "./pages/HomeOtherUser";
 import { isServerResponding, isUserLoggedIn } from "./functions/userFunction";
 import { axiosInstance } from "./functions/axiosInstance";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Shop from "./pages/Shop";
 
 const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
@@ -20,30 +22,6 @@ const Profile = lazy(() => import("./pages/Profile"));
 const Introduction = lazy(() => import("./pages/Introduction"));
 const Activity = lazy(() => import("./pages/Activity"));
 const SearchPage = lazy(() => import("./pages/SearchPage"));
-
-function ProtectedRoute({ children }) {
-  const route = '/user/'
-  const [authStatus, setAuthStatus] = useState(null);
-
-  console.log(children);
-  axiosInstance.get(route)
-    .then(response => {
-      console.log(response);
-      setAuthStatus(true);
-    })
-    .catch(error => {
-      console.error(error);
-      setAuthStatus(false);
-    })
-
-  if (authStatus == null) {
-    return <Spinner />;
-  } else if (authStatus === true) {
-    return children;
-  } else {
-    return <Navigate replace to="/intro" />;
-  }
-}
 
 function UnProtectedRoute({ children }) {
   const route = '/user/'
@@ -157,7 +135,7 @@ function App() {
                 }
               ></Route>
               <Route
-                path="friend_home"
+                path="home/:uid"
                 element={
                   <ProtectedRoute>
                     <Suspense fallback={<Spinner />}>
@@ -264,7 +242,16 @@ function App() {
                     </Suspense>
                   </ProtectedRoute>
                 }
-              />
+              /><Route
+              path="shop"
+              element={
+                <ProtectedRoute>
+                  <Suspense fallback={<Spinner />}>
+                    <Shop />{" "}
+                  </Suspense>
+                </ProtectedRoute>
+              }
+            />
               <Route path="/404" element={<NoPage />} />
               <Route path="*" element={
                 <ProtectedRoute>

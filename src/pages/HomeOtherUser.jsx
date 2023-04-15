@@ -20,6 +20,8 @@ const HomeOtherUser = () => {
   let roadmapList = [];
   
   function shortenString(str, maxLength) {
+    if (str == null)
+      return ""
     if (str.length > maxLength) {
       // Shorten the string to the maximum length
       str = str.slice(0, maxLength) + '...';
@@ -36,7 +38,7 @@ const HomeOtherUser = () => {
     setIsRoadmap(false)
     setIsActive(false)
   }
-  
+
   const getHomeOtherUserData = async (viewer_id) => {
     const route = `/home/view/${viewer_id}`
     try {
@@ -49,8 +51,7 @@ const HomeOtherUser = () => {
 
   useEffect (() => {
     const fetchData = async () => {
-      let viewer_id = 18;
-      const response = await getHomeOtherUserData(viewer_id);
+      const response = await getHomeOtherUserData(window.location.pathname.substring(6));
       setData(response.data);
       setUsername(response.data.profile.username);
       setLevel(Math.round(response.data.profile.exp/100));

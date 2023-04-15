@@ -10,7 +10,7 @@ export function shortenString(str, maxLength) {
 
 export function convertDateTimeString(str) {
   const dateObj = new Date(str);
-  const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+  const options = { year: 'numeric', month: 'long', day: 'numeric'};
   const formattedDate = dateObj.toLocaleString('en-US', options);
   return formattedDate;
 }
