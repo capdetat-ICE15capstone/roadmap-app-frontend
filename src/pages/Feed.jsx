@@ -1,10 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import RoadmapNeo from "../components/Roadmap_neo";
 import SearchBar from "../components/SearchBar";
-import { useNavigate } from "react-router-dom";
 import { ReactComponent as SearchIcon } from "../assets/searchIcon.svg";
 import { axiosInstance } from '../functions/axiosInstance';
 import DropdownSorting from "../components/DropdownSorting";
+import Spinner from '../components/Spinner';
+import UserBanner from '../components/UserBanner';
+import Prompt from '../components/Prompt';
+
+import { getRoadmap, getRid, getTagRid, getUid, getUser } from '../functions/feedFunction';
 
 const DropdownMenuItem = (props) => {
   const handleClick = () => {
@@ -23,18 +27,21 @@ const DropdownMenuItem = (props) => {
 }
 
 const Feed = () => {
-  const [search, setSearch] = useState("");
   const [roadmapArray, setRoadmapArray] = useState([]);
   const isMountedRef = useRef(false);
   const [isFetching, setIsFetching] = useState(false);
-  const navigate = useNavigate();
   const [sortViewAsc, setSortViewAsc] = useState(true);
   const [sortByCreatedAt, setSortByCreatedAt] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null);
   const toggleMenu = () => setIsOpen(!isOpen);
   const [title, setTitle] = useState("Sort");
 
+  const [currentRoadmapList, setCurrentRoadmapList] = useState([]);
+  const [currentUserList, setCurrentUserList] = useState([]);
+  const [hasFetched, setHasFetched] = useState(false);
+
+  const [searchTypeName, setSearchTypeName] = useState("roadmap");
+  const [displayType, setDisplayType] = useState("roadmap");
 
   // classify user input (roadmap(""), user("@""), tag("#""))
   const classifyInput = (input) => {
@@ -59,45 +66,110 @@ const Feed = () => {
   }
 
   // naviage the user to SearchPage
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    setRoadmapArray([]);
-    setSearch(document.getElementById("InputSearch").value);
-    const searchValue = document.getElementById("InputSearch").value;
-    const searchType = classifyInput(searchValue);
-    navigate('/search', { state: { userSearch: searchValue, searchType: searchType } });
-    //console.log("search: " + document.getElementById("InputSearch").value);
+  const handleSubmit = () => {
+    const searchTerm = document.getElementById("InputSearch").value;
+    const searchType = classifyInput(searchTerm);
+
+    if (searchTerm === "") {
+      getRecommendRoadmap();
+      setSearchTypeName('Roadmap');
+    }
+
+    switch (true) {
+      case ('user' === searchType):
+        searchUser(searchTerm);
+        setSearchTypeName('User');
+        return;
+      case ('roadmap' === searchType):
+        searchRoadmap(searchTerm);
+        setSearchTypeName('Roadmap');
+        return;
+      case ('tag' === searchType):
+        searchWithTag(searchTerm);
+        setSearchTypeName('Roadmap');
+        return;
+      default:
+        return;
+    }
   };
 
-  async function getRecommendRoadmap() {
-    const route = "/feed/recommendation";
+  async function searchRoadmap(searchValue) {
+    setIsFetching(true);
     try {
-      const startTime = performance.now(); // get the start time
-      const response = await axiosInstance.get(route);
-      const endTime = performance.now(); // get the end time
-      const elapsedTime = endTime - startTime; // calculate the elapsed time in milliseconds
-      console.log(`Time elapsed: ${elapsedTime} ms`); // log the elapsed time
-      return response.data;
+      const ridResponse = await getRid(searchValue); // use searchValue to get an array of rid
+      // case : rid is found => use rid to fetch for roadmap data and set roadmapFound to true
+      if (ridResponse.search_result && ridResponse.search_result.length > 0) {
+        console.log("found");
+        const ridString = ridResponse.search_result.join(`,`); // join members in ridData(array) together as a string
+        const response = await getRoadmap(encodeURIComponent(ridString));
+        setCurrentRoadmapList([...response]);
+        setDisplayType("roadmap");
+      } else {
+        console.log('not found');
+        // case : rid not found => don't fetch and set roadmapFound to false
+        setDisplayType("empty");
+      }
+      setIsFetching(false);
     } catch (error) {
-      console.log(error);
-      return null;
+      console.error(error);
     }
   }
 
-  // fetch roadmap data
-  const fetchData = async () => {
-    if (isFetching) return; // return if a fetch is already in progress
-    setIsFetching(true); // set isFetching to true to indicate a fetch is starting
+  async function searchUser(searchValue) {
+    setIsFetching(true);
     try {
-      console.log("fetch");
-      const response = await getRecommendRoadmap();
-      const newArray = [...response];
-      setRoadmapArray(prevArray => [...prevArray, ...newArray]);
+      const uidResponse = await getUid(searchValue); // use searchValue to get an array of uid
+      // case : uid is found => use uid to fetch for user data and set userFound to true
+      if (uidResponse.search_result && uidResponse.search_result.length > 0) {
+        const uidString = encodeURIComponent(uidResponse.search_result.join(`,`));
+        const response = await getUser(uidString);
+        setCurrentUserList([...response]);
+        setDisplayType("user");
+        // case : uid not found => don't fetch and set userFound to false
+      } else {
+        setDisplayType("empty");
+      }
+      setIsFetching(false);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
-    setIsFetching(false); // set isFetching to false to indicate a fetch is complete
-  };
+  }
+
+  async function searchWithTag(searchValue) {
+    setIsFetching(true);
+    try {
+      const ridResponse = await getTagRid(searchValue); // use searchValue to get an array of rid
+      // case : rid is found => use rid to fetch for roadmap data and set roadmapFound to true
+      if (ridResponse.search_result && ridResponse.search_result.length > 0) {
+        const ridString = encodeURIComponent(ridResponse.search_result.join(`,`));
+        const response = await getRoadmap(ridString);
+        setCurrentRoadmapList([...response]);
+        setDisplayType("roadmap");
+        // case : rid not found => don't fetch and set roadmapFound to false
+      } else {
+        setDisplayType("empty");
+      }
+      setIsFetching(false);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function getRecommendRoadmap() {
+    if (hasFetched) {
+      setIsFetching(true);
+    }
+    setDisplayType("roadmap");
+    const route = "/feed/recommendation";
+    try {
+      const response = await axiosInstance.get(route);
+      setCurrentRoadmapList(response.data);
+      setHasFetched(true);
+      setIsFetching(false);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   // fetch data when page is changed and when feed is reloaded
   useEffect(() => {
@@ -106,10 +178,7 @@ const Feed = () => {
       isMountedRef.current = true;
       return;
     }
-    setRoadmapArray([]);
-    fetchData();
-    console.log("below is array");
-    console.log(roadmapArray);
+    getRecommendRoadmap();
   }, []);
 
   // sort functions (view, date)
@@ -160,83 +229,108 @@ const Feed = () => {
     setIsOpen(false);
   }
 
-
-  return (
-    <div className='bg-white'>
-      {/*Top (title & search bar)*/}
-      <div className='flex justify-center top-0 pt-8 pb-2'>
-        <div className='flex w-[90%] justify-between'>
-          {/*Feed Title*/}
-          <div className='flex items-center text-3xl font-bold'>
-            <SearchIcon className="flex h-8 w-8 mr-2 mt-2 fill-[#09275B]" />
-            <div className='flex text-[#09275B]'>
-              Feed
-            </div>
-          </div>
-          {/*Search bar*/}
-          <form id="searchForm" onSubmit={handleSubmit}>
-            <div className='flex'>
-              <div className="inline-flex" onSubmit={handleSubmit}>
-                <SearchBar className="w-1/2" />
-                <button type="submit" className="bg-[#00286E] hover:bg-[#011C4B] text-white font-bold rounded-3xl px-12 py-4 ml-2 leading-tight focus:outline-none focus:shadow-outline">
-                  Search
-                </button>
+  if (hasFetched) {
+    return (
+      <>
+        {/*Top (title & search bar)*/}
+        <div className='flex flex-col items-center h-full w-full bg-white'>
+          <div className='flex justify-between items-center w-4/5 h-10 m-8 space-x-4'>
+            {/*Feed Title*/}
+            <div className='max-md:hidden flex j items-center shrink-0 h-full text-4xl font-extrabold text-nav-blue space-x-2'>
+              <SearchIcon className="flex h-8 w-8 fill-[#09275B]" />
+              <div className=''>
+                Feed
               </div>
             </div>
-          </form>
-          <div className='flex flex-row items-center gap-2'>
-            <div className="relative">
-              <button
-                className="inline-flex array-center justify-center w-full px-4 py-2 text-base font-medium text-gray-700 bg-white rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                onClick={toggleMenu}
-              >
-                <span>{title}</span>
-              </button>
-              {isOpen && (
-                <div
-                  className="absolute z-50 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 mt-2"
-                  role="menu"
-                  aria-orientation="vertical"
-                  aria-labelledby="menu-button"
+            {/*Search bar*/}
+            <SearchBar onSubmit={() => handleSubmit()} />
+            <div className='flex flex-row items-center gap-2'>
+              <div className="relative">
+                <button
+                  className="inline-flex array-center justify-center w-full px-4 py-2 text-base font-medium text-gray-700 bg-white rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                  onClick={toggleMenu}
                 >
-                  <DropdownMenuItem label="Date ^" onSelect={DateAscending} array={roadmapArray} />
-                  <DropdownMenuItem label="Date v" onSelect={DateDecending} array={roadmapArray} />
-                  <DropdownMenuItem label="Views ^" onSelect={ViewAscending} array={roadmapArray} />
-                  <DropdownMenuItem label="Views v" onSelect={ViewDecending} array={roadmapArray} />
-
-                </div>
-              )}
+                  <span>{title}</span>
+                </button>
+                {isOpen && (
+                  <div
+                    className="absolute z-50 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 mt-2"
+                    role="menu"
+                    aria-orientation="vertical"
+                    aria-labelledby="menu-button"
+                  >
+                    <DropdownMenuItem label="Date ^" onSelect={DateAscending} array={roadmapArray} />
+                    <DropdownMenuItem label="Date v" onSelect={DateDecending} array={roadmapArray} />
+                    <DropdownMenuItem label="Views ^" onSelect={ViewAscending} array={roadmapArray} />
+                    <DropdownMenuItem label="Views v" onSelect={ViewDecending} array={roadmapArray} />
+                  </div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-      <div className='flex justify-center w-full overflow-y-auto'>
-        {/*Search Result*/}
-        <div className='flex justify-center w-[90%]'>
-          <div className='grid p-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10'>
-            {roadmapArray.map((roadmap, index) => (
-              <RoadmapNeo
-                key={index}
-                owner_id={roadmap.owner_id}
-                creator_id={roadmap.creator_id}
-                owner_name={roadmap.owner_name}
-                creator_name={roadmap.creator_name}
-                rid={roadmap.rid}
-                views_count={roadmap.views_count}
-                stars_count={roadmap.stars_count}
-                forks_count={roadmap.forks_count}
-                created_at={roadmap.created_at}
-                edited_at={roadmap.edited_at}
-                title={roadmap.title}
-              />
-            ))}
-            <div class="pb-4"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+          {/*Search Result*/}
+          {displayType === "roadmap" && (
+            <div className='flex flex-col h-full w-full items-center bg-white overflow-y-auto'>
+              <div className='flex flex-col justify-center items-center w-[90%] py-6 space-y-8'>
+                <div className='grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8'>
+                  {currentRoadmapList.map((roadmap, index) => {
+                    return (
+                      <RoadmapNeo
+                        key={index}
+                        owner_id={roadmap.owner_id}
+                        creator_id={roadmap.creator_id}
+                        owner_name={roadmap.owner_name}
+                        creator_name={roadmap.creator_name}
+                        rid={roadmap.rid}
+                        views_count={roadmap.views_count}
+                        stars_count={roadmap.stars_count}
+                        forks_count={roadmap.forks_count}
+                        created_at={roadmap.created_at}
+                        edited_at={roadmap.edited_at}
+                        title={roadmap.title}
+                      />
+                    )
+                  })}
+                  <div class="pb-4"></div>
+                </div>
+              </div>
+            </div>
+          )}
+          {displayType === "user" && (
+            <>
+              <div className='flex flex-col h-full w-full items-center bg-white overflow-y-auto'>
+                <div className='flex flex-col justify-center items-center w-[90%] py-6 space-y-8'>
+                  {currentUserList.map((user, index) => (
+                    <UserBanner
+                      key={index}
+                      uid={user.uid}
+                      username={user.username}
+                      profile_picture_id={user.profile_picture_id}
+                      exp={user.exp}
+                    />
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+          {displayType === "empty" && (
+            <>
+              <div className='flex flex-col h-full w-full items-center bg-white overflow-y-auto'>
+                <div className='flex flex-col justify-center items-center w-[90%] py-6 space-y-8'>
+                </div>
+              </div>
+              <Prompt title={"Error"} message={searchTypeName + ' Not Found'} positiveText="Return" positiveFunction={() => getRecommendRoadmap()} />
+            </>
+          )}
+        </div >
+        {isFetching && (
+          <Spinner />
+        )}
+      </>
+    );
+  } else {
+    return <Spinner />;
+  }
 };
 
 export default Feed;
-//                         npx json-server --watch json_server_test/db.json

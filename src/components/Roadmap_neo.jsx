@@ -99,7 +99,7 @@ const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_co
                   })}
                 </div>
                 <div className='flex justify-between p-2'>
-                  <div className='text-xs font-bold truncate'>
+                  <div className='text-xs font-bold'>
                     {creator_name}
                   </div>
                   <div className='text-xs text-gray-600'>
@@ -118,9 +118,9 @@ const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_co
                     <div className='text-xs'>
                       Owner :
                     </div>
-                    <button className='z-10 text-xs hover:text-blue-600 ml-1 ' onClick={handleClick}>
+                    <span className='z-10 text-xs hover:text-blue-600 ml-1 truncate' onClick={handleClick}>
                       {owner_name}
-                    </button>
+                    </span>
                   </div>
                   <div className='text-xs text-gray-500'>
                     Created : {created_at_format}
