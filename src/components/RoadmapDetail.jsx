@@ -20,10 +20,10 @@ function RoadmapDetail({ roadmapName, roadmapID, roadmapPrivacy, roadmapViewCoun
             <div className='text-3xl font-extrabold self-center break-words'>
               {roadmapName} {isCompleted ? '✓' : ''}
             </div>
-            <div className="flex sm:w-[200px] sm:justify-end sm:space-x-1 max-sm:space-x-2 max-sm:w-full h-9 shrink-0">
+            <div className="flex sm:justify-end sm:space-x-1 max-sm:space-x-2 max-sm:w-full h-9 shrink-0">
               {isOwner === true && (
                 <>
-                  <div className="flex flex-1 justify-center items-center space-x-2 bg-gray-600 text-white px-4 py-2 font-semilight rounded-full text-sm font-bold truncate pointer-events-none">
+                  <div className="flex sm:w-24 max-sm:flex-1 justify-center items-center space-x-2 bg-gray-600 text-white px-4 py-2 font-semilight rounded-full text-sm font-bold truncate pointer-events-none">
                     {(!isLiked) ? (
                       <LikeIcon className='h-4 w-4' />
                     ) : (
@@ -33,17 +33,17 @@ function RoadmapDetail({ roadmapName, roadmapID, roadmapPrivacy, roadmapViewCoun
                       {likeCount}
                     </span>
                   </div>
-                  <button onClick={() => navigate(`/edit/${roadmapID}`)} className={`${(isCompleted) ? 'bg-gray-700 pointer-events-none' : 'bg-sub-blue'} flex flex-1 justify-center items-center text-white px-4 py-2 font-semilight rounded-full text-sm font-bold transition ease-in-out hover:bg-nav-blue duration-300`} type="button">
+                  <button onClick={() => navigate(`/edit/${roadmapID}`)} className={`${(isCompleted) ? 'bg-gray-700 pointer-events-none' : 'bg-sub-blue'} flex max-sm:flex-1 sm:w-24  justify-center items-center text-white px-4 py-2 font-semilight rounded-full text-sm font-bold transition ease-in-out hover:bg-nav-blue duration-300`} type="button">
                     Edit
                   </button>
-                  <button onClick={() => console.log("detail!")} className="flex max-sm:flex-1 justify-center items-center bg-nav-blue text-white px-4 py-2 font-semilight rounded-full max-sm:text-sm font-bold transition ease-in-out hover:bg-black duration-300" type="button">
+                  <button onClick={() => console.log("detail!")} className="flex sm:w-24 max-sm:flex-1 justify-center items-center bg-nav-blue text-white px-4 py-2 font-semilight rounded-full max-sm:text-sm font-bold transition ease-in-out hover:bg-black duration-300" type="button">
                     i
                   </button>
                 </>
               )}
               {isOwner === false && (
                 <>
-                  <div onClick={handleLike} className="flex max-sm:flex-1 justify-center items-center space-x-2 bg-sub-blue grow text-white px-4 py-2 font-semilight rounded-full text-sm font-bold truncate transition ease-in-out hover:bg-nav-blue duration-300" type="button">
+                  <div onClick={handleLike} className="flex sm:w-24 max-sm:flex-1 shrink-0 justify-center items-center space-x-2 bg-sub-blue grow text-white px-4 py-2 font-semilight rounded-full text-sm font-bold truncate transition ease-in-out hover:bg-nav-blue duration-300" type="button">
                     {(!isLiked) ? (
                       <LikeIcon className='h-4 w-4' />
                     ) : (
@@ -53,7 +53,7 @@ function RoadmapDetail({ roadmapName, roadmapID, roadmapPrivacy, roadmapViewCoun
                       {likeCount}
                     </span>
                   </div>
-                  <button onClick={() => navigate(`/clone/${roadmapID}`)} className={`flex max-sm:flex-1 justify-center items-center space-x-2 bg-sub-blue grow text-white px-4 py-2 font-semilight rounded-full text-sm font-bold truncate transition ease-in-out hover:bg-nav-blue duration-300`} type="button">
+                  <button onClick={() => navigate(`/clone/${roadmapID}`)} className={`flex sm:w-24 max-sm:flex-1 justify-center items-center space-x-2 bg-sub-blue grow text-white px-4 py-2 font-semilight rounded-full text-sm font-bold truncate transition ease-in-out hover:bg-nav-blue duration-300`} type="button">
                     <ForkIcon className='h-4 w-4' />
                     <span>
                       {roadmapForkCount}
