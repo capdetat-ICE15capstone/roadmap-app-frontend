@@ -162,10 +162,10 @@ const Feed = () => {
 
 
   return (
-    <>
+    <div className='bg-white'>
       {/*Top (title & search bar)*/}
-      <div className='flex justify-center top-0 bg-white pt-8 pb-2'>
-        <div className='flex w-3/4 justify-between'>
+      <div className='flex justify-center top-0 pt-8 pb-2'>
+        <div className='flex w-[90%] justify-between'>
           {/*Feed Title*/}
           <div className='flex items-center text-3xl font-bold'>
             <SearchIcon className="flex h-8 w-8 mr-2 mt-2 fill-[#09275B]" />
@@ -210,10 +210,10 @@ const Feed = () => {
           </div>
         </div>
       </div>
-      <div className='flex flex-col flex-grow w-full bg-white overflow-y-auto'>
+      <div className='flex justify-center w-full overflow-y-auto'>
         {/*Search Result*/}
-        <div className='flex justify-center pt-8 pb-12'>
-          <div className='flex flex-wrap items-start w-3/4 gap-20'>
+        <div className='flex justify-center w-[90%]'>
+          <div className='grid p-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10'>
             {roadmapArray.map((roadmap, index) => (
               <RoadmapNeo
                 key={index}
@@ -230,10 +230,11 @@ const Feed = () => {
                 title={roadmap.title}
               />
             ))}
+            <div class="pb-4"></div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
