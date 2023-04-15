@@ -840,8 +840,9 @@ const RoadmapCreatePage = (props) => {
             </motion.div>
           ) : null}
 
-          <label className="text-xl font-bold ">Roadmap Description </label>
+          
           <div className="">
+          <label className="text-xl font-bold ">Roadmap Description </label>
             <textarea
               className="border rounded-lg border-gray-400 block text-md font-thin p-1 w-full focus:outline-none shadow-lg placeholder:text-italic"
               rows="4"
