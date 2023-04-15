@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { ReactComponent as SearchIcon } from "../assets/searchIcon.svg";
 
-const SearchBar = ({ onSubmit, setSearchTerm }) => {
+const SearchBar = ({ onSubmit }) => {
   return (
     <>
-      <form className='flex space-x-2 relative'>
+      <form className='flex space-x-2 relative' onSubmit={onSubmit}>
         <input
           id="InputSearch"
           type="text"
