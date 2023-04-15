@@ -151,7 +151,7 @@ function Shop() {
   return (
     <>
       <div className='flex flex-col items-center h-full w-full bg-white'>
-        <div className='flex justify-between items-center w-4/5 h-10 m-8 space-x-4'>
+        <div className='flex justify-between items-center w-4/5 h-10 mt-10 mx-8 mb-8 space-x-4'>
           <div className='flex items-center shrink-0 h-full text-4xl font-extrabold text-nav-blue space-x-2'>
             <ShopLogo className='h-10 w-10' />
             <div className='max-md:hidden'>
