@@ -60,10 +60,10 @@ const SettingProfileImageSelector = ({isOpen, setIsOpen, selectedIndex = 0, setP
     const ProfPic = ({id, reqLevel}) => {
         return (
             //div className={`w-${side} h-${side} overflow-hidden rounded-full`}>
-            <button className={`px-1 py-2`} onClick={handleClickProfile(id)} disabled={level < reqLevel}>
+            <button className={`px-1 py-2`} onClick={handleClickProfile(id)} disabled={level < reqLevel && reqLevel > 0}>
                 <div className="flex flex-col">
                     <div className={`relative w-36 h-36 lg-w-40 lg-h-40 overflow-hidden rounded-full border-8 ${index == id ? "border-blue-800" : "border-transparent"}`}>
-                        {level < reqLevel ?
+                        {level < reqLevel && reqLevel > 0 ?
                             <div className={`absolute w-full h-full overflow-hidden bg-black opacity-50`}>
                                 <div className="flex flex-col w-full h-full justify-center items-center">
                                     <LockIcon width={64} height={64}/>
@@ -76,7 +76,7 @@ const SettingProfileImageSelector = ({isOpen, setIsOpen, selectedIndex = 0, setP
                             />
                         </div>
                     </div>
-                    <p className={`${level < reqLevel? "text-black" : "text-transparent"}`}>{"Level: " + reqLevel}</p>
+                    <p className={`${level < reqLevel && reqLevel > 0 ? "text-black" : "text-transparent"}`}>{"Level: " + reqLevel}</p>
                 </div>
             </button>
         )
