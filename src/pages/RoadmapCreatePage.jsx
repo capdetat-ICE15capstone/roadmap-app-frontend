@@ -25,6 +25,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ReactComponent as NotiOff } from "../assets/notification/notiOff.svg";
 import { ReactComponent as NotiOn } from "../assets/notification/notiOn.svg";
 import { roundTimeToNearest30 } from "../functions/formatFunction";
+import { ReactComponent as QuestionMark } from "../assets/taskmodal/QuestionMark.svg"
+import { ReactComponent as Close } from "../assets/close.svg";
 
 // TODO: put a null check around getRoadmap and createRoadmap pls
 // BUG: spinner does not stop spinning in error
@@ -197,6 +199,8 @@ const RoadmapCreatePage = (props) => {
     redirectTo: null,
   });
   const [discardModal, setDiscardModal] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
+  const [helpPage, setHelpPage] = useState(1);
 
   useEffect(() => {
     setUpRoadmap();
@@ -758,6 +762,17 @@ const RoadmapCreatePage = (props) => {
     else setErrorModal(false);
   };
 
+  const helpClick = () => {
+    setShowHelp(!showHelp);
+    setHelpPage(1);
+  }
+
+  const previousPageClick = () => 
+    setHelpPage(helpPage - 1);  
+
+  const nextPageCLick = () => 
+    setHelpPage(helpPage + 1);  
+
   return (
     <>
       <TwoButtonModal
@@ -810,7 +825,7 @@ const RoadmapCreatePage = (props) => {
       {loading && <Spinner />}
       <div className="h-full flex justify-center items-center flex-col m-auto max-w-5xl w-[90%]">
         {/* <div className="text-4xl font-bold flex items-start"> */}
-        <div className="flex w-full justify-start">
+        <div className="flex w-full justify-between">
           <span className="text-4xl font-bold">
             {mode === "create"
               ? "Create"
@@ -820,6 +835,9 @@ const RoadmapCreatePage = (props) => {
               ? "Clone"
               : null}{" "}
           </span>
+          <button onClick={helpClick} className="rounded-full w-32 inline xs:w-32 h-10 bg-nav-blue font-bold text-white">
+            Help
+          </button>
         </div>
         {/* </div> */}
         <form
@@ -978,6 +996,45 @@ const RoadmapCreatePage = (props) => {
           </div>
         </form>
       </div>
+      {showHelp && 
+      <div className="absolute flex flex-col left-0 justify-center items-center w-full h-full bg-gray-300 bg-opacity-[0.58] z-10">
+        <div className="flex justify-start items-center px-[23px] w-1/2 min-w-[220px] max-w-[790px] h-fit bg-[#00286E] rounded-t-[20px]">
+          <div className="flex items-center justify-between w-full my-4">
+            <div className="flex items-center w-fit">
+              <QuestionMark className="mr-[13px]"/>
+              <div className="font-inter font-bold text-3xl text-[#FFFFFF]">How to create a roadmap?</div>
+            </div>
+            <button onClick={helpClick}>
+              <Close />
+            </button>
+          </div>
+        </div>
+        <div className="flex w-1/2 min-w-[220px] max-w-[790px] h-fit bg-[#F0F3F4] rounded-b-[20px]">
+          <div className="flex flex-col w-full h-fit">
+            <div className="w-fit mx-10 my-8 font-inter font-bold text-xl text-[#333333] ">
+              {helpPage == 1? "Step 1: ":""}
+              {helpPage == 2? "Step 2: ":""}
+              {helpPage == 3? "Step 3: ":""}
+              {helpPage == 4? "Step 4: ":""}
+              {helpPage == 5? "Step 5: ":""}
+            </div>
+            <div className="flex justify-end mb-8 px-4 w-full h-[43px]">
+              {helpPage != 1 && 
+              <button onClick={previousPageClick} className="flex justify-center items-center text-[#525252] hover:text-[#FFFFFF] border border-[#525252] rounded-[30px] w-[90px] hover:bg-[#e30b0b] hover:border-none">
+                <div className="font-inter">
+                  Previous
+                </div>
+              </button>}
+              {helpPage != 5 && 
+              <button onClick={nextPageCLick} className="flex justify-center items-center ml-4 text-[#FDFDFB] bg-[#00286E] hover:bg-[#038a1c] border rounded-[30px] w-[90px]">
+                <div className="font-inter">
+                  Next
+                </div>
+              </button>}
+            </div>       
+          </div>
+        </div>
+      </div>}
     </>
   );
 };
