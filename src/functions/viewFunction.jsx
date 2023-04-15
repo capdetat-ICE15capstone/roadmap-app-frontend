@@ -89,3 +89,27 @@ export function nodeShapeGenerator(nodeShape, nodeColor, index, currentTaskIndex
       );
   }
 }
+
+export function calculateExp(date) {
+  const dueDate = new Date(date);
+  const currentDate = new Date();
+
+  const differenceMs = (dueDate - currentDate);
+  const differenceDays = Math.floor(differenceMs / (1000 * 60 * 60 * 24));
+  
+  switch (true) {
+    case (differenceDays <= 0): // done before dueDate, gets 3 stars (30xp)
+      return 30;
+    case (differenceDays > 0 && differenceDays <= 3): // done within 1-3 days after dueDate, gets 2 stars (20xp)
+      return 20;
+    case (differenceDays > 3): // done more than 3 days after dueDate, gets 1 star (10xp)
+      return 10;
+    default:
+      return 0;
+  }
+}
+
+export function calculateGuagePercentage(exp) {
+  const currentLevel = Math.floor(0.01 * exp);
+  return (exp - (currentLevel * 100));
+}
