@@ -9,7 +9,7 @@ import { ReactComponent as CalendarLogo } from "../assets/navbar_assets/calendar
 import { ReactComponent as SettingLogo } from "../assets/navbar_assets/setting_icon.svg"
 import { ReactComponent as UserLogo } from "../assets/navbar_assets/username_icon.svg"
 import { ReactComponent as BookIcon } from "../assets/navbar_assets/book_icon.svg"
-
+import { ReactComponent as Logout } from "../assets/shapes/logout.svg";
 const NavItem = (props) => {
   return (
     <>
@@ -40,12 +40,12 @@ const Navbar = () => {
                 MileMap
               </div>
             </div>
-            <div className="w-16">
-              <NavItem SvgIcon={UserLogo} displayName="Profile" baseColor="bg-base-blue" to="/" />
+            <div className="w-20">
+              <NavItem SvgIcon={Logout} displayName="Profile" baseColor="bg-base-blue" to="/" />
             </div>
           </div>
         </div>
-        <div className="flex flex-col flex-grow bg-gradient-to-br from-blue-900 to-nav-blue overflow-x-hidden">
+        <div className="flex flex-col flex-grow bg-gradient-to-br from-gray-50 to-gray-100 overflow-x-hidden">
           <Outlet />
         </div>
         <div className="flex xs:hidden max-xs:visible bg-nav-blue drop-shadow-[0_2px_5px_rgba(0,0,0,0.25)]">
@@ -72,7 +72,7 @@ const Navbar = () => {
             </div>
           </div>
           <button className="w-full" onClick={() => localStorage.removeItem('token')}>
-            <NavItem SvgIcon={UserLogo} displayName="Log Out" baseColor="bg-base-blue" to="/login" />
+            <NavItem SvgIcon={Logout} displayName="Log Out" baseColor="bg-base-blue" to="/login" />
           </button>
         </div>
       </div>

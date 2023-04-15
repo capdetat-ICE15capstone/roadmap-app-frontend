@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { nodeShapeGenerator } from '../functions/viewFunction';
 import { convertDateTimeString, shortenString } from '../functions/formatFunction';
 
-function RoadmapViewer({ tasks, currentTaskID }) {
+function RoadmapViewer({ tasks, currentTaskID, handleTaskView }) {
 
   const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
   const [hoveredTask, setHoveredTask] = useState({ id: 0 });
@@ -47,11 +47,7 @@ function RoadmapViewer({ tasks, currentTaskID }) {
                   <div className='relative hover:scale-110 transition group duration-100'>
                     <button
                       value={index}
-                      onMouseOver={() => {
-                        handleMouseOver(task);
-                        setVisible(true);
-                      }}
-                      onMouseOut={() => setVisible(false)}
+                      onClick={() => handleTaskView(task)}
                     >
                       {(index < currentTaskIndex || (index === currentTaskIndex && currentTaskID === -1)) && (
                         <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[60%] text-3xl text-center select-none z-50 pointer-events-none'>
@@ -59,7 +55,7 @@ function RoadmapViewer({ tasks, currentTaskID }) {
                         </div>
                       )}
                       {(index > currentTaskIndex) && (
-                        <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[65%] text-md text-center select-none z-50 pointer-events-none'>
+                        <div className='text-3xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[65%] text-md text-center select-none z-50 pointer-events-none'>
                           🔒
                         </div>
                       )}
