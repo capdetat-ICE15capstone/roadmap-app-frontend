@@ -98,7 +98,7 @@ const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_co
                     );
                   })}
                 </div>
-                <div className='flex justify-between p-2'>
+                <div className='flex flex-nowrap justify-between p-2'>
                   <div className='text-xs font-bold'>
                     {creator_name}
                   </div>
@@ -107,26 +107,26 @@ const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_co
                   </div>
                 </div>
               </div>
-              <div className='flex flex-col space-y-1 m-1'>
+              <div className='flex flex-col flex-nowrap space-y-1 m-1'>
                 <div className=' flex flex-row justify-between items-center'>
                   <div className=' text-md font-bold truncate w-[100%]'>
                     {title ? title : "no name"}
                   </div>
                 </div>
-                <div className='flex flex-row justify-between items-center'>
+                <div className='flex flex-row flex-nowrap justify-between items-center'>
                   <div className='flex flex-row'>
-                    <div className='text-xs'>
+                    <div className='flex-nowrap w-1/2 text-xs'>
                       Owner :
                     </div>
                     <span className='z-10 text-xs hover:text-blue-600 ml-1 truncate' onClick={handleClick}>
                       {owner_name}
                     </span>
                   </div>
-                  <div className='text-xs text-gray-500'>
+                  <div className='flex-nowrap w-1/2 text-xs text-gray-500'>
                     Created : {created_at_format}
                   </div>
                 </div>
-                <div className='flex flex-row justify-between items-center'>
+                <div className='flex flex-row flex-nowrap justify-between items-center'>
                   <div className='static flex flex-row items-center left-[5%]'>
                     <span>
                       <EyeIcon className="flex stroke-1 stroke-gray-700 w-3/4 h-3/4 " />
