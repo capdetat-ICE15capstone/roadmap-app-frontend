@@ -11,7 +11,7 @@ function TwoButtonModal({
 }) {
   return (
     <div
-      className={`fixed z-50 inset-0 overflow-y-auto ${isOpen ? "" : "hidden"}`}
+      className={`fixed z-[60] inset-0 overflow-y-auto ${isOpen ? "" : "hidden"}`}
     >
       <div className="flex items-center justify-center min-h-screen">
         <div className="fixed inset-0 bg-gray-500 opacity-75"></div>

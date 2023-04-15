@@ -311,7 +311,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
       />
 
       <form onSubmit={handleSubmit}>
-        <div className="justify-center items-center flex overflow-y-auto fixed inset-0 z-30 outline-none focus:outline-none py-3">
+        <div className="justify-center items-center flex overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none py-3">
           <div className="relative w-11/12 md:w-5/6 my-6 mx-auto xl:w-2/3 2xl:w-1/2 max-h-screen">
             {/*content*/}
             {loading && <Spinner className="z-30 absolute rounded-xl" />}

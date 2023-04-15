@@ -58,11 +58,6 @@ notificationDayOption.forEach((day) => {
   });
 });
 
-function textAreaAutoGrow(element) {
-  console.log(element)
-  element.style.height = "5px";
-  element.style.height = (element.scrollHeight)+"px";
-}
 
 const TaskItem = ({ task, setEditTaskID, setModalState, disabled }) => {
   // Task node Component
@@ -78,12 +73,12 @@ const TaskItem = ({ task, setEditTaskID, setModalState, disabled }) => {
                 setEditTaskID(task.id);
                 setModalState(true);
               }}
-              className="z-20"
+              className="z-20 relative"
             >
-              <Check hidden={!disabled} className="absolute" />
+              <Check hidden={!disabled} className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2"/>
               <CustomSVG
                 type={task.nodeShape}
-                className={`${getTWFill(task.nodeColor)}`}
+                className={`${disabled ? "fill-gray-400" : getTWFill(task.nodeColor)}`}
                 size={60}
                 isStrokeOn={true}
                 noScaleOnHover={disabled}
@@ -128,14 +123,14 @@ const DropDownMenu = ({
   };
 
   return (
-    <div className={`${className} w-9 h-9`}>
+    <div className={`${className} w-9 h-9 z-40`}>
       <button onClick={handleMenuShowUnshow} type="button">
         <Icon className="w-9 h-9" />
       </button>
       {isMenuShowing ? (
         <AnimatePresence>
           <motion.div
-            className="absolute bg-white border rounded-md flex flex-col right-0"
+            className="absolute bg-white border rounded-md flex flex-col left-0 xs:left-auto xs:right-0"
             initial={{ y: "-50%", opacity: 0, scale: 0 }}
             animate={{ y: "0%", opacity: 1, scale: 1 }}
             exit={{ y: "-50%", opacity: 0, scale: 0 }}
@@ -844,14 +839,14 @@ const RoadmapCreatePage = (props) => {
           onSubmit={handleSubmit}
           className=" rounded-3xl w-full gap-3 border flex flex-col bg-white p-10 h-4/5 xs:h-2/3 m-3"
         >
-          <div className="flex flex-col xs:flex-row justify-between gap-2">
+          <div className="flex flex-col xs:flex-row justify-between items-center gap-2">
             <label className="text-md font-bold block leading-none">
               Roadmap Name
             </label>
-            <input
-              className="text-3xl focus:outline-none text-ellipsis font-bold w-full placeholder:font-extrabold"
+            <textarea
+              className="text-3xl focus:outline-none text-ellipsis font-bold w-full leading-none placeholder:font-extrabold justify-center"
               value={RMName}
-              type="text"
+              rows="2"
               onChange={handleNameChange}
               placeholder="UNTITLED"
             />
@@ -899,7 +894,7 @@ const RoadmapCreatePage = (props) => {
             <label className="text-md font-bold">Roadmap Description </label>
             <textarea
               className="border rounded-lg border-gray-400 block text-md font-thin p-1 w-full focus:outline-none shadow-lg placeholder:text-italic"
-              rows="4"
+              rows="3"
               cols="60"
               value={RMDesc}
               onChange={handleDescriptionChange}
