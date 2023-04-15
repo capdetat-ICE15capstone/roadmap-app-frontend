@@ -217,10 +217,10 @@ const Feed = () => {
             <div className='flex flex-row items-center gap-2'>
               <div className="relative">
                 <button
-                  className="inline-flex array-center justify-center w-full px-4 py-2 text-base font-medium text-gray-700 bg-white rounded-md hover:bg-gray-50"
+                  className="bg-gray-300 py-2 px-4 rounded-md"
                   onMouseEnter={toggleMenu}
                 >
-                  <span className='bg-gray-300 py-2 px-4 rounded-md'>Sort</span>
+                  Sort
                 </button>
                 {isOpen && (
                   <div
