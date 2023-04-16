@@ -1,8 +1,9 @@
 import { axiosInstance } from "./axiosInstance";
-import { getUserInformation } from "./userFunction";
 
 // PRIVATE method will NOT deal with errors, it will throw
 // error, the parent function should deal with them
+
+const DEFAULT_TIMEOUT = 3000; // unit in ms
 
 const inboundTaskName = [
   { from: "tid", to: "id" },
@@ -43,18 +44,19 @@ const objRename = (obj = null, renameToObj = null) => {
   return newObj;
 };
 
-export const countRoadmap = async () => {
+export const countRoadmap = async (timeout=DEFAULT_TIMEOUT) => {
   try {
-    const response = await axiosInstance.get("/roadmap/count/")
+    const response = await axiosInstance.get("/roadmap/count/", {timeout:timeout})
     return response.data.count
   } catch (error) {
     console.error(error);
+    return null
   }
 };
 
 export const getRoadmap = async (
   rid,
-  timeout = 0,
+  timeout = DEFAULT_TIMEOUT,
   fetchAll = true,
   rename = true
 ) => {
@@ -113,7 +115,7 @@ export const getRoadmap = async (
   }
 };
 
-export const getTask = async (tid, timeout = 0) => {
+export const getTask = async (tid, timeout = DEFAULT_TIMEOUT) => {
   // Get one task
   if (tid === undefined || tid === null) return null;
   const route = `/task/${tid}`;
@@ -136,7 +138,7 @@ export const editRoadmap = async (
   relationChange,
   tagChanges,
   reportError,
-  timeout = 0
+  timeout = DEFAULT_TIMEOUT
 ) => {
   console.log("Edit roadmap request: ");
   console.log({
@@ -197,7 +199,7 @@ export const createRoadmap = async (
   subtaskChange, // subtaskChange object {add:[], edit:[], delete:[]
   tagChanges,
   reportError,
-  timeout = 0
+  timeout = DEFAULT_TIMEOUT
 ) => {
   console.log("Create roadmap request: ");
   console.log({
@@ -239,7 +241,7 @@ export const createRoadmap = async (
   }
 };
 
-export const addTags = async (rid, tags, timeout = 0) => {
+export const addTags = async (rid, tags, timeout = DEFAULT_TIMEOUT) => {
   if (rid === undefined || rid === null) return null;
   let route = "/tag/";
 
@@ -260,7 +262,7 @@ export const addTags = async (rid, tags, timeout = 0) => {
   }
 };
 
-export const deleteTags = async (rid, tags, timeout = 0) => {
+export const deleteTags = async (rid, tags, timeout = DEFAULT_TIMEOUT) => {
   if (rid === undefined || rid === null) return null;
   let route = "/tag/";
 
@@ -331,7 +333,7 @@ const PRIVATE_addAndReassign = async (
   }
 };
 
-const PRIVATE_createRoadmap = async (roadmap, timeout = 0) => {
+const PRIVATE_createRoadmap = async (roadmap, timeout = DEFAULT_TIMEOUT) => {
   if (roadmap === null || roadmap === undefined)
     throw new Error("roadmap/is null or undefined");
   if (roadmap.notiStatus.on === false) {
@@ -361,7 +363,7 @@ const PRIVATE_createRoadmap = async (roadmap, timeout = 0) => {
   }
 };
 
-const PRIVATE_updateRoadmap = async (roadmap, timeout = 0) => {
+const PRIVATE_updateRoadmap = async (roadmap, timeout = DEFAULT_TIMEOUT) => {
   if (roadmap === null || roadmap.id === null)
     throw new Error("roadmap/roadmap id is null");
   if (roadmap.notiStatus.on === false) {
@@ -391,7 +393,7 @@ const PRIVATE_updateRoadmap = async (roadmap, timeout = 0) => {
   }
 };
 
-const PRIVATE_updateRelation = async (rid, relation, timeout = 0) => {
+const PRIVATE_updateRelation = async (rid, relation, timeout = DEFAULT_TIMEOUT) => {
   const route = `/roadmap/relation?rid=${rid}`;
   const reqBody = relation;
   console.log(relation);
@@ -407,7 +409,7 @@ const PRIVATE_updateRelation = async (rid, relation, timeout = 0) => {
   }
 };
 
-const PRIVATE_createTask = async (rid, tasks, timeout = 0) => {
+const PRIVATE_createTask = async (rid, tasks, timeout = DEFAULT_TIMEOUT) => {
   // always return array of tid
   console.log(rid);
   console.log(tasks);
@@ -461,7 +463,7 @@ const PRIVATE_createTask = async (rid, tasks, timeout = 0) => {
   }
 };
 
-const PRIVATE_editTask = async (tasks, timeout = 0) => {
+const PRIVATE_editTask = async (tasks, timeout = DEFAULT_TIMEOUT) => {
   if (tasks.length === 0) return null;
 
   let route = "";
@@ -504,7 +506,7 @@ const PRIVATE_editTask = async (tasks, timeout = 0) => {
   }
 };
 
-const PRIVATE_deleteTask = async (tids, timeout = 0) => {
+const PRIVATE_deleteTask = async (tids, timeout = DEFAULT_TIMEOUT) => {
   if (tids === undefined || tids === null) return null;
   if (!Array.isArray(tids)) tids = [tids];
 
@@ -523,7 +525,7 @@ const PRIVATE_deleteTask = async (tids, timeout = 0) => {
   }
 };
 
-const PRIVATE_createSubtask = async (subtasks, timeout = 0) => {
+const PRIVATE_createSubtask = async (subtasks, timeout = DEFAULT_TIMEOUT) => {
   if (!Array.isArray(subtasks)) subtasks = [subtasks];
   if (subtasks.length === 0) return null;
 
@@ -565,7 +567,7 @@ const PRIVATE_createSubtask = async (subtasks, timeout = 0) => {
   }
 };
 
-const PRIVATE_editSubtask = async (subtasks, timeout = 0) => {
+const PRIVATE_editSubtask = async (subtasks, timeout = DEFAULT_TIMEOUT) => {
   if (subtasks.length === 0) return null;
 
   console.log(subtasks);
@@ -601,7 +603,7 @@ const PRIVATE_editSubtask = async (subtasks, timeout = 0) => {
   }
 };
 
-const PRIVATE_deleteSubtask = async (stids, timeout = 0) => {
+const PRIVATE_deleteSubtask = async (stids, timeout = DEFAULT_TIMEOUT) => {
   if (stids === undefined || stids === null) return null;
   if (!Array.isArray(stids)) stids = [stids];
 

@@ -265,15 +265,21 @@ const RoadmapCreatePage = (props) => {
 
   const setUpRoadmap = async () => {
     setLoading(true);
-    if (!isUserLoggedIn()) {
+
+    const loginStatus = await isUserLoggedIn();
+    const roadmapCount = await countRoadmap();
+    const premiumStatus = await isUserPremium();
+    const userInfo = await getUserInformation();
+
+    if (roadmapCount === null || premiumStatus === null || userInfo === null) {
+      setLoading(false);
+      handleDisplayErrorMessage("Application Error", "/", true);
+    }
+    if (!loginStatus) {
       setLoading(false);
       handleDisplayErrorMessage("User is not authorized", "/login", true);
     }
-    if (
-      (await countRoadmap()) >= 3 &&
-      !(await isUserPremium()) &&
-      mode === "create"
-    ) {
+    if (roadmapCount >= 3 && !premiumStatus && mode === "create") {
       setLoading(false);
       handleDisplayErrorMessage(
         "Roadmap limit reached for non-premium user",
@@ -281,7 +287,6 @@ const RoadmapCreatePage = (props) => {
         true
       );
     }
-    const userInfo = await getUserInformation();
     if (mode === "edit" || mode === "clone") {
       // check if state is available
       if (state !== null && state !== undefined) {
@@ -354,7 +359,6 @@ const RoadmapCreatePage = (props) => {
         }
       }
     }
-    setLoading(false);
 
     if (mode === "clone") {
       let timeDifference = undefined;
@@ -377,6 +381,7 @@ const RoadmapCreatePage = (props) => {
         })
       );
     }
+    setLoading(false);
   };
 
   const searchTags = () => {
