@@ -5,10 +5,10 @@ import { AnimatePresence, motion } from 'framer-motion';
 const SpinnerNeo = ({ className = "z-50", visible }) => {
   const variants = {
     fadeIntial: {
-      opacity: 0,
+      opacity: 0.5,
     },
     fadeAnimate: {
-      opacity: 0.75,
+      opacity: 0.5,
       transition: {
         duration: 0.3,
         ease: 'easeInOut'
