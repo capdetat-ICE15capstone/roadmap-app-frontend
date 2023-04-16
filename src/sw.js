@@ -1,6 +1,6 @@
 import { precacheAndRoute, cleanupOutdatedCaches } from "workbox-precaching";
 import { clientsClaim, skipWaiting } from "workbox-core"
-import { isServerResponding } from "./functions/userFunction";
+// import { isServerResponding } from "./functions/userFunction";
 
 cleanupOutdatedCaches()
 clientsClaim()
@@ -10,6 +10,7 @@ precacheAndRoute(myCache);
 console.warn("Service worker is now operable");
 
 self.addEventListener("install", (event) => {
+  console.log(self.skipWaiting)
   self.skipWaiting()
 })
 
@@ -27,11 +28,8 @@ self.addEventListener("push", (event) => {
 self.addEventListener("fetch", (event) => {
   event.respondWith(
     (async function () {
-      try {
-        return await fetch(event.request);
-      } catch (err) {
-        return caches.match(event.request);
-      }
+      const cachedResponse = await caches.match(event.request);
+      return cachedResponse || fetch(event.request);
     })(),
   );
 });
