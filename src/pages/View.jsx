@@ -50,7 +50,7 @@ export default function View() {
           setIsWarning(true);
           return;
         }
-        if (fetchedRoadmap.next_task === null) {
+        if (fetchedRoadmap.next_task === null || fetchedRoadmap.archive_date !== null) {
           setIsCompleted(true);
           setCurrentTask(
             { 'id': -1 }
