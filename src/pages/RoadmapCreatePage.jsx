@@ -25,7 +25,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { ReactComponent as NotiOff } from "../assets/notification/notiOff.svg";
 import { ReactComponent as NotiOn } from "../assets/notification/notiOn.svg";
 import { roundTimeToNearest30 } from "../functions/formatFunction";
-import { ReactComponent as QuestionMark } from "../assets/taskmodal/QuestionMark.svg"
+import { ReactComponent as QuestionMark } from "../assets/taskmodal/QuestionMark.svg";
 import { ReactComponent as Close } from "../assets/close.svg";
 
 const MAX_TASKS_NONPREMIUM = 16;
@@ -52,12 +52,23 @@ notificationDayOption.forEach((day) => {
   });
 });
 
-
-const TaskItem = ({ task, setEditTaskID, setModalState, disabled }) => {
+const TaskItem = ({
+  task,
+  setEditTaskID,
+  setModalState,
+  disabled,
+  isLastitem,
+}) => {
   // Task node Component
   return (
     <div className="relative break-words w-28">
-      <div className="flex after:h-1 after:w-full after:bg-black after:absolute after:top-[30px] after:z-10 justify-center">
+      <div
+        className={`flex after:h-1 after:w-full after:bg-black after:absolute after:top-[30px] after:z-0 after:translate-x-[30px] ${
+          isLastitem
+            ? "after:border-t-4 after:border-dashed after:border-black after:bg-transparent"
+            : ""
+        }`}
+      >
         <div className="flex">
           <div className="flex flex-col gap-2 items-center">
             <button
@@ -69,10 +80,15 @@ const TaskItem = ({ task, setEditTaskID, setModalState, disabled }) => {
               }}
               className="z-20 relative"
             >
-              <Check hidden={!disabled} className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2"/>
+              <Check
+                hidden={!disabled}
+                className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2"
+              />
               <CustomSVG
                 type={task.nodeShape}
-                className={`${disabled ? "fill-gray-400" : getTWFill(task.nodeColor)}`}
+                className={`${
+                  disabled ? "fill-gray-400" : getTWFill(task.nodeColor)
+                }`}
                 size={60}
                 isStrokeOn={true}
                 noScaleOnHover={disabled}
@@ -118,9 +134,15 @@ const DropDownMenu = ({
 
   return (
     <div className={`${className} z-40`}>
-      <button onClick={handleMenuShowUnshow} type="button" className="flex items-center">
-        <Icon className="w-9 h-9 hover:scale-125 transition duration-150" />
-        <span className="visible xs:hidden font-bold [@media(max-width:360px)]:hidden">Notification</span>
+      <button
+        onClick={handleMenuShowUnshow}
+        type="button"
+        className="flex items-center hover:scale-110 transition duration-150"
+      >
+        <Icon className="w-9 h-9" />
+        <span className="visible md:hidden font-bold [@media(max-width:360px)]:hidden">
+          Notification
+        </span>
       </button>
       {isMenuShowing ? (
         <AnimatePresence>
@@ -136,7 +158,7 @@ const DropDownMenu = ({
                   onClick={(event) =>
                     handleSetOption(event, optionValues[index])
                   }
-                  className={`font-bold whitespace-nowrap inline-block p-1 px-2 justify-center border hover:scale-125 duration-200 transition hover:bg-yellow-300 justify-self-center ${
+                  className={`font-bold whitespace-nowrap inline-block p-1 px-2 justify-center border hover:scale-110 duration-200 transition hover:bg-yellow-300 justify-self-center ${
                     optionComparer(optionValues[index], currentOption) === true
                       ? "bg-gray-300"
                       : "bg-white"
@@ -296,7 +318,7 @@ const RoadmapCreatePage = (props) => {
         // fetch the roadmap data
         // then set the data to variable
         // const tempRoadmap = await getRoadmap(id, 10000, mode === "clone"); //individual fetch is bugged
-        const tempRoadmap = await getRoadmap(id, 10000, true); 
+        const tempRoadmap = await getRoadmap(id, 10000, true);
         if (tempRoadmap === null) {
           setLoading(false);
           handleDisplayErrorMessage("Roadmap Loading Failed", "/home", true);
@@ -304,9 +326,9 @@ const RoadmapCreatePage = (props) => {
           const notificationObject = setUpNotification(tempRoadmap);
           if (mode === "edit") {
             if (userInfo.uid !== tempRoadmap.owner_id) {
-              setLoading(false)
+              setLoading(false);
               handleDisplayErrorMessage("User is not authorized", "/", true);
-            }         
+            }
             initialState.current = {
               name: tempRoadmap.name,
               description: tempRoadmap.description,
@@ -329,7 +351,7 @@ const RoadmapCreatePage = (props) => {
           setTags(tempRoadmap.tags);
           setNotiStatus(notificationObject);
           setLastId(highestID + 1);
-        } 
+        }
       }
     }
     setLoading(false);
@@ -376,7 +398,7 @@ const RoadmapCreatePage = (props) => {
     switch (status) {
       case "success":
         // user click save
-        console.log("success")
+        console.log("success");
         setHasUnsavedChanges(true);
         switch (submissionObject.id) {
           case -1:
@@ -396,7 +418,7 @@ const RoadmapCreatePage = (props) => {
                 task.hasFetched = true;
               }
               return task;
-            })
+            });
             break;
         }
         break;
@@ -531,7 +553,7 @@ const RoadmapCreatePage = (props) => {
           task.dueDate.getTime() !== taskIntersection.dueDate.getTime())
       ) {
         // edited task
-        console.log(`added task ${task.id} to edit list`)
+        console.log(`added task ${task.id} to edit list`);
         taskChange.edit.push(task);
         return;
       }
@@ -753,13 +775,11 @@ const RoadmapCreatePage = (props) => {
   const helpClick = () => {
     setShowHelp(!showHelp);
     setHelpPage(1);
-  }
+  };
 
-  const previousPageClick = () => 
-    setHelpPage(helpPage - 1);  
+  const previousPageClick = () => setHelpPage(helpPage - 1);
 
-  const nextPageCLick = () => 
-    setHelpPage(helpPage + 1);  
+  const nextPageCLick = () => setHelpPage(helpPage + 1);
 
   return (
     <>
@@ -810,7 +830,7 @@ const RoadmapCreatePage = (props) => {
         )
       ) : null}
 
-      <Spinner visible={loading}/>
+      <Spinner visible={loading} />
       <div className="h-full flex justify-center items-center flex-col m-auto max-w-5xl w-[90%] ">
         {/* <div className="text-4xl font-bold flex items-start"> */}
         <div className="flex w-full justify-between">
@@ -823,7 +843,10 @@ const RoadmapCreatePage = (props) => {
               ? "Clone"
               : null}{" "}
           </span>
-          <button onClick={helpClick} className="rounded-full w-32 inline xs:w-32 h-10 bg-nav-blue font-bold text-white">
+          <button
+            onClick={helpClick}
+            className="rounded-full w-32 inline xs:w-32 h-10 bg-nav-blue font-bold text-white"
+          >
             Help
           </button>
         </div>
@@ -832,12 +855,15 @@ const RoadmapCreatePage = (props) => {
           onSubmit={handleSubmit}
           className=" rounded-3xl w-full gap-3 border flex flex-col bg-white p-10 h-4/5 xs:h-2/3 m-3 shadow-lg border-gray-400"
         >
-          <div className="flex flex-col xs:flex-row justify-between items-center gap-2">
-            <label className="text-md font-bold block leading-none">
-              Roadmap Name
+          <div className="flex flex-col md:flex-row justify-between items-center gap-2">
+            <label className="hidden md:visible text-3xl font-bold md:block leading-none">
+              Name
+            </label>
+            <label className="visible text-md md:hidden font-bold block leading-none">
+              Roadmap name
             </label>
             <input
-              className="text-3xl focus:outline-none text-ellipsis font-bold w-full leading-none placeholder:font-extrabold text-center xs:text-left shadow-md border border-gray-400 rounded-lg"
+              className="text-3xl focus:outline-none text-ellipsis font-bold w-full leading-none placeholder:font-extrabold text-center md:text-left rounded-lg text-gray-400"
               value={RMName}
               onChange={handleNameChange}
               placeholder="UNTITLED"
@@ -857,22 +883,27 @@ const RoadmapCreatePage = (props) => {
               </div>
               {/* End of Notification Setting */}
               <div className="flex justify-center items-center">
-              <button
-                type="button"
-                onClick={() => setPublicModal(true)}
-                className="hover:scale-125 transition duration-150 flex items-center"
-              >
-                {isPublic ? (<>
-                  <Unlock className="w-9 h-9" />
-                  <span className="visible xs:hidden font-bold [@media(max-width:360px)]:hidden">Public</span>
-                </>
-                  
-                ) : (<>
-                  <Lock className="w-9 h-9" />
-                  <span className="visible xs:hidden font-bold [@media(max-width:360px)]:hidden">Private</span>
-                </>
-                )}
-              </button>
+                <button
+                  type="button"
+                  onClick={() => setPublicModal(true)}
+                  className="hover:scale-110 transition duration-150 flex items-center"
+                >
+                  {isPublic ? (
+                    <>
+                      <Unlock className="w-9 h-9" />
+                      <span className="visible md:hidden font-bold [@media(max-width:360px)]:hidden">
+                        Public
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <Lock className="w-9 h-9" />
+                      <span className="visible md:hidden font-bold [@media(max-width:360px)]:hidden">
+                        Private
+                      </span>
+                    </>
+                  )}
+                </button>
               </div>
             </div>
           </div>
@@ -920,7 +951,11 @@ const RoadmapCreatePage = (props) => {
                               key={task.id}
                               setEditTaskID={setEditTaskID}
                               setModalState={setModalState}
-                              disabled={index < 1 || tasks[index - 1].isDone && !tasks.isTempId}
+                              disabled={
+                                index < 1 ||
+                                (tasks[index - 1].isDone && !tasks.isTempId)
+                              }
+                              isLastitem={index === tasks.length - 1}
                             />
                           ) : (
                             <Draggable
@@ -939,9 +974,11 @@ const RoadmapCreatePage = (props) => {
                                     task={task}
                                     setEditTaskID={setEditTaskID}
                                     setModalState={setModalState}
+                                    isLastitem={index === tasks.length - 1}
                                     disabled={
                                       mode === "edit" &&
-                                      (index < 1 || tasks[index - 1].isDone && !tasks.id)
+                                      (index < 1 ||
+                                        (tasks[index - 1].isDone && !tasks.id))
                                     }
                                   />
                                 </div>
@@ -953,7 +990,7 @@ const RoadmapCreatePage = (props) => {
                       {provided.placeholder}
                       {/* End of task list */}
                       {/* Add button */}
-                      <div className="">
+                      <div className="flex">
                         <button
                           type="button"
                           disabled={isAddButtonDisabled()}
@@ -988,45 +1025,52 @@ const RoadmapCreatePage = (props) => {
           </div>
         </form>
       </div>
-      {showHelp && 
-      <div className="absolute flex flex-col left-0 justify-center items-center w-full h-full bg-gray-300 bg-opacity-[0.58] z-10">
-        <div className="flex justify-start items-center px-[23px] w-1/2 min-w-[220px] max-w-[790px] h-fit bg-[#00286E] rounded-t-[20px]">
-          <div className="flex items-center justify-between w-full my-4">
-            <div className="flex items-center w-fit">
-              <QuestionMark className="mr-[13px]"/>
-              <div className="font-inter font-bold text-3xl text-[#FFFFFF]">How to create a roadmap?</div>
+      {showHelp && (
+        <div className="absolute flex flex-col left-0 justify-center items-center w-full h-full bg-gray-300 bg-opacity-[0.58] z-10">
+          <div className="flex justify-start items-center px-[23px] w-1/2 min-w-[220px] max-w-[790px] h-fit bg-[#00286E] rounded-t-[20px]">
+            <div className="flex items-center justify-between w-full my-4">
+              <div className="flex items-center w-fit">
+                <QuestionMark className="mr-[13px]" />
+                <div className="font-inter font-bold text-3xl text-[#FFFFFF]">
+                  How to create a roadmap?
+                </div>
+              </div>
+              <button onClick={helpClick}>
+                <Close />
+              </button>
             </div>
-            <button onClick={helpClick}>
-              <Close />
-            </button>
+          </div>
+          <div className="flex w-1/2 min-w-[220px] max-w-[790px] h-fit bg-[#F0F3F4] rounded-b-[20px]">
+            <div className="flex flex-col w-full h-fit">
+              <div className="w-fit mx-10 my-8 font-inter font-bold text-xl text-[#333333] ">
+                {helpPage == 1 ? "Step 1: " : ""}
+                {helpPage == 2 ? "Step 2: " : ""}
+                {helpPage == 3 ? "Step 3: " : ""}
+                {helpPage == 4 ? "Step 4: " : ""}
+                {helpPage == 5 ? "Step 5: " : ""}
+              </div>
+              <div className="flex justify-end mb-8 px-4 w-full h-[43px]">
+                {helpPage != 1 && (
+                  <button
+                    onClick={previousPageClick}
+                    className="flex justify-center items-center text-[#525252] hover:text-[#FFFFFF] border border-[#525252] rounded-[30px] w-[90px] hover:bg-[#e30b0b] hover:border-none"
+                  >
+                    <div className="font-inter">Previous</div>
+                  </button>
+                )}
+                {helpPage != 5 && (
+                  <button
+                    onClick={nextPageCLick}
+                    className="flex justify-center items-center ml-4 text-[#FDFDFB] bg-[#00286E] hover:bg-[#038a1c] border rounded-[30px] w-[90px]"
+                  >
+                    <div className="font-inter">Next</div>
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
         </div>
-        <div className="flex w-1/2 min-w-[220px] max-w-[790px] h-fit bg-[#F0F3F4] rounded-b-[20px]">
-          <div className="flex flex-col w-full h-fit">
-            <div className="w-fit mx-10 my-8 font-inter font-bold text-xl text-[#333333] ">
-              {helpPage == 1? "Step 1: ":""}
-              {helpPage == 2? "Step 2: ":""}
-              {helpPage == 3? "Step 3: ":""}
-              {helpPage == 4? "Step 4: ":""}
-              {helpPage == 5? "Step 5: ":""}
-            </div>
-            <div className="flex justify-end mb-8 px-4 w-full h-[43px]">
-              {helpPage != 1 && 
-              <button onClick={previousPageClick} className="flex justify-center items-center text-[#525252] hover:text-[#FFFFFF] border border-[#525252] rounded-[30px] w-[90px] hover:bg-[#e30b0b] hover:border-none">
-                <div className="font-inter">
-                  Previous
-                </div>
-              </button>}
-              {helpPage != 5 && 
-              <button onClick={nextPageCLick} className="flex justify-center items-center ml-4 text-[#FDFDFB] bg-[#00286E] hover:bg-[#038a1c] border rounded-[30px] w-[90px]">
-                <div className="font-inter">
-                  Next
-                </div>
-              </button>}
-            </div>       
-          </div>
-        </div>
-      </div>}
+      )}
     </>
   );
 };
