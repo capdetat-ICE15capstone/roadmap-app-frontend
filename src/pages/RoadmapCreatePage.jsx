@@ -994,7 +994,7 @@ const RoadmapCreatePage = (props) => {
         </form>
       </div>
       {showHelp && 
-      <div className="absolute flex flex-col left-0 justify-center items-center w-full h-full bg-gray-300 bg-opacity-[0.58] z-10">
+      <div className="absolute flex flex-col left-0 justify-center items-center w-full h-full bg-gray-300 bg-opacity-[0.58] z-[100]">
         <div className="flex justify-start items-center px-[23px] w-1/2 min-w-[220px] max-w-[790px] h-fit bg-[#00286E] rounded-t-[20px]">
           <div className="flex items-center justify-between w-full my-4">
             <div className="flex items-center">
