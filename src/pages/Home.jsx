@@ -43,20 +43,24 @@ const Home = () => {
   }
 
   async function archiveRoadmap(rid) {
+    setIsArchiving(false);
     const route = `/roadmap/archive/${rid}`
     try {
       const response = await axiosInstance.put(route);
       console.log(response.data);
+      fetchData();
     } catch (error) {
       console.error(error);
     }
   }
 
   async function deleteRoadmap(rid) {
+    setIsDeleting(false);
     const route = `/roadmap/${rid}`
     try {
       const response = await axiosInstance.delete(route);
       console.log(response.data);
+      fetchData();
     } catch (error) {
       console.error(error);
     }
@@ -151,9 +155,9 @@ const Home = () => {
                         created_at={items.created_at}
                         edited_at={items.edited_at}
                         title={items.title}
-                        className="relative"
                         handleArchive={handleArchive}
                         handleDelete={handleDelete}
+                        isArchived={false}
                       />
                     </div>
                   )
@@ -165,8 +169,8 @@ const Home = () => {
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8">
                 {archivedRoadmapList.map((items, index) => {
                   return (
-                    <div key={index} className='hover:transform hover:scale-110 transition duration-150'>
-                      <Roadmap
+                    <div key={index}>
+                      <RoadmapPlus
                         owner_id={items.owner_id}
                         creator_id={items.creator_id}
                         owner_name={items.owner_name}
@@ -178,6 +182,8 @@ const Home = () => {
                         created_at={items.created_at}
                         edited_at={items.edited_at}
                         title={items.title}
+                        handleDelete={handleDelete}
+                        isArchived={true}
                       />
                     </div>
                   )

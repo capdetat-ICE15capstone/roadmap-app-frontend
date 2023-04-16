@@ -6,7 +6,7 @@ import { ReactComponent as DropdownIcon } from "../assets/roadmapDropdown_assets
 import { axiosInstance } from '../functions/axiosInstance';
 import Prompt from './Prompt';
 
-const Roadmap_home = ({ owner_id, owner_name, creator_id, creator_name, rid, views_count, stars_count, forks_count, created_at, edited_at, title, handleArchive, handleDelete }) => {
+const Roadmap_home = ({ owner_id, owner_name, creator_id, creator_name, rid, views_count, stars_count, forks_count, created_at, edited_at, title, handleArchive, handleDelete, isArchived }) => {
 
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
@@ -14,23 +14,33 @@ const Roadmap_home = ({ owner_id, owner_name, creator_id, creator_name, rid, vie
 
   return (
     <>
-      <div className='relative w-[240px] h-[232px] hover:transform hover:scale-110 transition duration-150'>
+      <div className='relative w-[240px] h-[232px] hover:transform hover:scale-110 transition duration-150 hover:Z-50'>
         <div className="absolute top-[146px] right-[14px]">
           <div className="flex flex-col justify-center">
             <button onMouseEnter={toggleMenu} className="flex rotate-90 justify-center items-center p-2 rounded-[20px] bg-white hover:bg-gray-300 transition-all">
               <DropdownIcon />
             </button>
             {isOpen && (
-              <div onMouseLeave={toggleMenu} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-18 flex flex-col bg-[#FFFFFF] rounded-xl shadow-md z-50 hover:scale-110 transition duration-150">
-                <button onClick={() => navigate(`/edit/${rid}`)} className="text-sm font-bold p-2 rounded-t-xl hover:bg-gray-300">
-                  Edit
-                </button>
-                <button onClick={() => handleArchive(rid)} className="text-sm font-bold p-2 hover:bg-gray-300">
-                  Archive
-                </button>
-                <button onClick={() => handleDelete(rid)} className="text-sm text-red-500 font-bold p-2 rounded-b-xl hover:bg-gray-300">
-                  Delete
-                </button>
+              <div onMouseLeave={toggleMenu} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-18 flex flex-col bg-[#FFFFFF] rounded-xl shadow-md hover:z-50 hover:scale-110 transition duration-150">
+                {!isArchived ? (
+                  <>
+                    <button onClick={() => navigate(`/edit/${rid}`)} className="text-sm font-bold p-2 rounded-t-xl hover:bg-gray-300">
+                      Edit
+                    </button>
+                    <button onClick={() => handleArchive(rid)} className="text-sm font-bold p-2 hover:bg-gray-300">
+                      Archive
+                    </button>
+                    <button onClick={() => handleDelete(rid)} className="text-sm text-red-500 font-bold p-2 rounded-b-xl hover:bg-gray-300">
+                      Delete
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button onClick={() => handleDelete(rid)} className="text-sm text-white font-bold p-2 rounded-xl hover:bg-red-500">
+                      Delete
+                    </button>
+                  </>
+                )}
               </div>
             )}
           </div>
