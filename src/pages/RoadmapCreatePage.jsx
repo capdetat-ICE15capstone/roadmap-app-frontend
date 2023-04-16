@@ -1043,7 +1043,7 @@ const RoadmapCreatePage = (props) => {
                   </div>
                   <img src={Step2} className="max-md:hidden"/>
                   <img src={Step2_md} className="max-xs:hidden md:hidden"/>
-                  <img src={Step2_xs} className="md:hidden"/>
+                  <img src={Step2_xs} className="xs:hidden"/>
                 </>
                 :<></>}
                 {helpPage == 3?
@@ -1055,26 +1055,26 @@ const RoadmapCreatePage = (props) => {
                     3.1 Name your task, and its description.
                   </div>                  
                   <img src={Step3_1} className="mb-4 max-md:hidden"/>
-                  <img src={Step3_1_md} className="max-xs:hidden md:hidden"/>
-                  <img src={Step3_1_xs} className="md:hidden"/>
+                  <img src={Step3_1_md} className="mb-4 max-xs:hidden md:hidden"/>
+                  <img src={Step3_1_xs} className="mb-4 xs:hidden"/>
                   <div className="mb-4">
                     3.2 Set the start, and the due date.
                   </div>                  
                   <img src={Step3_2} className="mb-4 max-md:hidden"/>
-                  <img src={Step3_2_md} className="max-xs:hidden md:hidden"/>
-                  <img src={Step3_2_xs} className="md:hidden"/>
+                  <img src={Step3_2_md} className="mb-4 max-xs:hidden md:hidden"/>
+                  <img src={Step3_2_xs} className="mb-4 xs:hidden"/>
                   <div className="mb-4">
                     3.3 Design the shape and the color of a task node.
                   </div>                  
                   <img src={Step3_3} className="mb-4 max-md:hidden"/>
-                  <img src={Step3_3_md} className="max-xs:hidden md:hidden"/>
-                  <img src={Step3_3_xs} className="md:hidden"/>
+                  <img src={Step3_3_md} className="mb-4 max-xs:hidden md:hidden"/>
+                  <img src={Step3_3_xs} className="mb-4 xs:hidden"/>
                   <div className="mb-4">
                     3.4 (Optional) Add the subtask.
                   </div>                  
                   <img src={Step3_4} className="mb-4 max-md:hidden"/>
-                  <img src={Step3_4_md} className="max-xs:hidden md:hidden"/>
-                  <img src={Step3_4_xs} className="md:hidden"/>
+                  <img src={Step3_4_md} className="mb-4 max-xs:hidden md:hidden"/>
+                  <img src={Step3_4_xs} className="mb-4 xs:hidden"/>
                   <div className="mb-4">
                     3.5 Click "Save" to keep it.
                   </div>
@@ -1096,7 +1096,7 @@ const RoadmapCreatePage = (props) => {
                   </div>
                   <img src={Step4} className="max-md:hidden"/>
                   <img src={Step4_md} className="max-xs:hidden md:hidden"/>
-                  <img src={Step4_xs} className="md:hidden"/>
+                  <img src={Step4_xs} className="xs:hidden"/>
                 </>
                 :<></>}
                 {helpPage == 5?
@@ -1106,7 +1106,7 @@ const RoadmapCreatePage = (props) => {
                   </div>
                   <img src={Step5} className="max-md:hidden"/>
                   <img src={Step5_md} className="max-xs:hidden md:hidden"/>
-                  <img src={Step5_xs} className="md:hidden"/>
+                  <img src={Step5_xs} className="xs:hidden"/>
                 </>
                 :<></>}
               </div>
