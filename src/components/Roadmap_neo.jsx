@@ -76,7 +76,7 @@ const Roadmap = ({ owner_id, owner_name, creator_name, rid, views_count, stars_c
       <>
         <div>
           <Link to={`/view/${rid}`} >
-            <div className='flex flex-col bg-white rounded-3xl shadow-md w-[240px] h-[232px] p-2'>
+            <div className='flex flex-col bg-white border border-gray-300 rounded-3xl shadow-md w-[242px] h-[232px] p-2'>
               <div className='flex flex-col bg-[#e6eefc] rounded-2xl'>
                 <div className='flex justify-center pt-8 px-8 space-x-[25px] w-full h-28 overflow-hidden'>
                   {roadmap.shapes.map((shape, index) => {
