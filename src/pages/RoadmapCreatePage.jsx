@@ -28,12 +28,6 @@ import { roundTimeToNearest30 } from "../functions/formatFunction";
 import { ReactComponent as QuestionMark } from "../assets/taskmodal/QuestionMark.svg"
 import { ReactComponent as Close } from "../assets/close.svg";
 
-// TODO: put a null check around getRoadmap and createRoadmap pls
-// BUG: spinner does not stop spinning in error
-// TODO: more styling
-// TODO: zigzag div
-// BUG: notification time
-
 const MAX_TASKS_NONPREMIUM = 16;
 const MAX_RMNAME_LENGTH = 30;
 const MAX_RMDESCRIPTION_LENGTH = 255;
@@ -250,7 +244,7 @@ const RoadmapCreatePage = (props) => {
     setLoading(true);
     if (!isUserLoggedIn()) {
       setLoading(false);
-      handleDisplayErrorMessage("User Unauthorized", "/login", true);
+      handleDisplayErrorMessage("User is not authorized", "/login", true);
     }
     if (
       (await countRoadmap()) >= 3 &&
@@ -259,7 +253,7 @@ const RoadmapCreatePage = (props) => {
     ) {
       setLoading(false);
       handleDisplayErrorMessage(
-        "Roadmap limit for non-premium used",
+        "Roadmap limit reached for non-premium user",
         "/",
         true
       );
@@ -843,8 +837,8 @@ const RoadmapCreatePage = (props) => {
             <label className="text-md font-bold block leading-none">
               Roadmap Name
             </label>
-            <textarea
-              className="text-3xl focus:outline-none text-ellipsis font-bold w-full leading-none placeholder:font-extrabold justify-center"
+            <input
+              className="text-3xl focus:outline-none text-ellipsis font-bold w-full leading-none placeholder:font-extrabold"
               value={RMName}
               rows="2"
               onChange={handleNameChange}
