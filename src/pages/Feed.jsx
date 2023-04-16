@@ -1,44 +1,172 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Roadmap from "../components/Roadmap";
+import RoadmapNeo from "../components/Roadmap_neo";
 import SearchBar from "../components/SearchBar";
-import { useNavigate } from "react-router-dom";
+import { ReactComponent as SearchIcon } from "../assets/searchIcon.svg";
+import { axiosInstance } from '../functions/axiosInstance';
+import Spinner from '../components/Spinner';
+import UserBanner from '../components/UserBanner';
+import Prompt from '../components/Prompt';
+
+import { getRoadmap, getRid, getTagRid, getUid, getUser } from '../functions/feedFunction';
+
+const DropdownMenuItem = (props) => {
+  const handleClick = () => {
+    props.onSelect(props.array);
+  }
+
+  return (
+    <a
+      href="#"
+      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+      onClick={handleClick}
+    >
+      {props.label}
+    </a>
+  );
+}
 
 const Feed = () => {
-
-  const [search, setSearch] = useState("");
-  const [roadmapArray, setRoadmapArray] = useState([]);
   const isMountedRef = useRef(false);
   const [isFetching, setIsFetching] = useState(false);
-  const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(false);
+  const toggleMenu = () => setIsOpen(!isOpen);
+  const [title, setTitle] = useState("Sort");
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    setRoadmapArray([]);
-    //fetchData();
-    setSearch(document.getElementById("InputSearch").value);
-    const searchValue = document.getElementById("InputSearch").value;
-    navigate('/search', { state: { userSearch: searchValue } });
-    console.log("search: " + document.getElementById("InputSearch").value);
-  };
+  const [currentRoadmapList, setCurrentRoadmapList] = useState([]);
+  const [currentUserList, setCurrentUserList] = useState([]);
+  const [hasFetched, setHasFetched] = useState(false);
 
-  //fetch roadmap data from API
-  const fetchData = async () => {
-    if (isFetching) return; // return if a fetch is already in progress
-    setIsFetching(true); // set isFetching to true to indicate a fetch is starting
-    try {
-      console.log("fetch")
-      const response = await fetch(`http://localhost:3000/multipleRoadmaps`);
-      const data = await response.json();
-      let newArray = [];
-      data.forEach((data) => {
-        newArray = newArray.concat(data.roadmapArray);
-      });
-      setRoadmapArray(prevArray => [...prevArray, ...newArray]);
-    } catch (error) {
-      console.log(error);
+  const [searchTypeName, setSearchTypeName] = useState("roadmap");
+  const [displayType, setDisplayType] = useState("roadmap");
+
+  // classify user input (roadmap(""), user("@""), tag("#""))
+  const classifyInput = (input) => {
+    // Search for USER case
+    if (input.charAt(0) === "@") {
+      const username = input.substring(1);
+      const type = "user"
+      console.log(`Searching for user ${username}`);
+      return type
+      // Search for TAG case  
+    } else if (input.charAt(0) === "#") {
+      const tag = input.substring(1);
+      const type = "tag"
+      console.log(`Searching for tag ${tag}`);
+      return type
+      // Search for ROADMAP case
+    } else {
+      const type = "roadmap"
+      console.log(`Searching for roadmap ${input}`);
+      return type
     }
-    setIsFetching(false); // set isFetching to false to indicate a fetch is complete
+  }
+
+  // naviage the user to SearchPage
+  const handleSubmit = () => {
+    const searchTerm = document.getElementById("InputSearch").value;
+    const searchType = classifyInput(searchTerm);
+
+    if (searchTerm === "") {;
+      getRecommendRoadmap();
+      setSearchTypeName('Roadmap');
+      return;
+    }
+
+    switch (true) {
+      case ('user' === searchType):
+        searchUser(searchTerm);
+        setSearchTypeName('User');
+        return;
+      case ('roadmap' === searchType):
+        searchRoadmap(searchTerm);
+        setSearchTypeName('Roadmap');
+        return;
+      case ('tag' === searchType):
+        searchWithTag(searchTerm);
+        setSearchTypeName('Roadmap');
+        return;
+      default:
+        return;
+    }
   };
+
+  async function searchRoadmap(searchValue) {
+    setIsFetching(true);
+    try {
+      const ridResponse = await getRid(searchValue); // use searchValue to get an array of rid
+      // case : rid is found => use rid to fetch for roadmap data and set roadmapFound to true
+      if (ridResponse.search_result && ridResponse.search_result.length > 0) {
+        console.log("found");
+        const ridString = ridResponse.search_result.join(`,`); // join members in ridData(array) together as a string
+        const response = await getRoadmap(encodeURIComponent(ridString));
+        setCurrentRoadmapList([...response]);
+        setDisplayType("roadmap");
+      } else {
+        console.log('not found');
+        // case : rid not found => don't fetch and set roadmapFound to false
+        setDisplayType("empty");
+      }
+      setIsFetching(false);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function searchUser(searchValue) {
+    setIsFetching(true);
+    try {
+      const uidResponse = await getUid(searchValue); // use searchValue to get an array of uid
+      // case : uid is found => use uid to fetch for user data and set userFound to true
+      if (uidResponse.search_result && uidResponse.search_result.length > 0) {
+        const uidString = encodeURIComponent(uidResponse.search_result.join(`,`));
+        const response = await getUser(uidString);
+        setCurrentUserList([...response]);
+        setDisplayType("user");
+        // case : uid not found => don't fetch and set userFound to false
+      } else {
+        setDisplayType("empty");
+      }
+      setIsFetching(false);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function searchWithTag(searchValue) {
+    setIsFetching(true);
+    try {
+      const ridResponse = await getTagRid(searchValue); // use searchValue to get an array of rid
+      // case : rid is found => use rid to fetch for roadmap data and set roadmapFound to true
+      if (ridResponse.search_result && ridResponse.search_result.length > 0) {
+        const ridString = encodeURIComponent(ridResponse.search_result.join(`,`));
+        const response = await getRoadmap(ridString);
+        setCurrentRoadmapList([...response]);
+        setDisplayType("roadmap");
+        // case : rid not found => don't fetch and set roadmapFound to false
+      } else {
+        setDisplayType("empty");
+      }
+      setIsFetching(false);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async function getRecommendRoadmap() {
+    if (hasFetched) {
+      setIsFetching(true);
+    }
+    setDisplayType("roadmap");
+    const route = "/feed/recommendation";
+    try {
+      const response = await axiosInstance.get(route);
+      setCurrentRoadmapList(response.data);
+      setHasFetched(true);
+      setIsFetching(false);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   // fetch data when page is changed and when feed is reloaded
   useEffect(() => {
@@ -47,46 +175,133 @@ const Feed = () => {
       isMountedRef.current = true;
       return;
     }
-    fetchData();
+    getRecommendRoadmap();
   }, []);
 
-  return (
-    <>
-      {/*Search bar*/}
-      <form className="mx-auto" id="searchForm" onSubmit={handleSubmit}>
-        <div
-          className="relative inline-block my-4"
-          onSubmit={handleSubmit}
-        >
-          <SearchBar />
-          <button type="submit" className="bg-[#00286E] hover:bg-[#011C4B] text-white font-bold appearance-none border rounded-3xl px-12 py-4 ml-2 leading-tight focus:outline-none focus:shadow-outline">
-            Search
-          </button>
-        </div>
-      </form>
-      {/*Search Result*/}
-      <div className="relative flex flex-wrap mx-4 overflow-y-scroll ">
-        {roadmapArray.map((roadmap, index) => (
-          <div key={index} className="w-full md:w-1/2 lg:w-1/3 xl:w-1/4 p-2">
-            <Roadmap
-              owner_id={roadmap.owner_id}
-              creator_id={roadmap.creator_id}
-              owner_name={roadmap.owner_name}
-              creator_name={roadmap.creator_name}
-              rid={roadmap.rid}
-              views_count={roadmap.views_count}
-              stars_count={roadmap.stars_count}
-              forks_count={roadmap.forks_count}
-              created_at={roadmap.created_at}
-              edited_at={roadmap.edited_at}
-              title={roadmap.title}
-            />
+  const DateAscending = (array) => {
+    console.log(array)
+    array.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+    setIsOpen(false);
+  }
+
+  const DateDecending = (array) => {
+    array.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    setIsOpen(false);
+  }
+
+  const ViewAscending = (array) => {
+    array.sort((a, b) => a.views_count - b.views_count);
+    setIsOpen(false);
+  }
+
+  const ViewDecending = (array) => {
+    array.sort((a, b) => b.views_count - a.views_count);
+    setIsOpen(false);
+  }
+
+  if (hasFetched) {
+    return (
+      <>
+        {/*Top (title & search bar)*/}
+        <div className='flex flex-col items-center h-full w-full bg-white'>
+          <div className='flex justify-between items-center w-4/5 h-10 mt-10 mx-8 mb-8 space-x-4'>
+            {/*Feed Title*/}
+            <div className='max-md:hidden flex j items-center shrink-0 h-full text-4xl font-extrabold text-nav-blue space-x-2'>
+              <SearchIcon className="flex h-8 w-8 fill-[#09275B]" />
+              <div className=''>
+                Feed
+              </div>
+            </div>
+            {/*Search bar*/}
+            <SearchBar onSubmit={() => handleSubmit()} />
+            <div className='flex flex-row items-center gap-2'>
+              <div className="relative">
+                <button
+                  className="bg-gray-300 py-2 px-4 rounded-md"
+                  onMouseEnter={toggleMenu}
+                >
+                  Sort
+                </button>
+                {isOpen && (
+                  <div
+                    className="absolute top-full left-1/2 tranfrom -translate-x-1/2 -translate-y-1/2 z-30 w-32 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 mt-2"
+                    role="menu"
+                    aria-orientation="vertical"
+                    aria-labelledby="menu-button"
+                    onMouseLeave={toggleMenu}
+                  >
+                    <DropdownMenuItem label="Newer" onSelect={DateAscending} array={currentRoadmapList} />
+                    <DropdownMenuItem label="Older" onSelect={DateDecending} array={currentRoadmapList} />
+                    <DropdownMenuItem label="More Views" onSelect={ViewAscending} array={currentRoadmapList} />
+                    <DropdownMenuItem label="Less Views" onSelect={ViewDecending} array={currentRoadmapList} />
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
-        ))}
-      </div>
-    </>
-  );
+          {/*Search Result*/}
+          {displayType === "roadmap" && (
+            <div className='flex flex-col h-full w-full items-center bg-white overflow-y-auto'>
+              <div className='flex flex-col justify-center items-center w-[90%] py-6 space-y-8'>
+                <div className='grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8'>
+                  {currentRoadmapList.map((roadmap, index) => {
+                    return (
+                      <RoadmapNeo
+                        key={index}
+                        owner_id={roadmap.owner_id}
+                        creator_id={roadmap.creator_id}
+                        owner_name={roadmap.owner_name}
+                        creator_name={roadmap.creator_name}
+                        rid={roadmap.rid}
+                        views_count={roadmap.views_count}
+                        stars_count={roadmap.stars_count}
+                        forks_count={roadmap.forks_count}
+                        created_at={roadmap.created_at}
+                        edited_at={roadmap.edited_at}
+                        title={roadmap.title}
+                      />
+                    )
+                  })}
+                  <div class="pb-4"></div>
+                </div>
+              </div>
+            </div>
+          )}
+          {displayType === "user" && (
+            <>
+              <div className='flex flex-col h-full w-full items-center bg-white overflow-y-auto'>
+                <div className='flex flex-col justify-center items-center w-[90%] py-6 space-y-8'>
+                  {currentUserList.map((user, index) => (
+                    <UserBanner
+                      key={index}
+                      uid={user.uid}
+                      username={user.username}
+                      profile_picture_id={user.profile_picture_id}
+                      exp={user.exp}
+                    />
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+          {displayType === "empty" && (
+            <>
+              <div className='flex flex-col h-full w-full items-center bg-white overflow-y-auto'>
+                <div className='flex flex-col justify-center items-center w-[90%] py-6 space-y-8'>
+                </div>
+              </div>
+              <Prompt title={"Error"} message={searchTypeName + ' Not Found'} positiveText="Return" positiveFunction={() => getRecommendRoadmap()} />
+            </>
+          )}
+        </div >
+        {isFetching && (
+          <Spinner />
+        )}
+      </>
+    );
+  } else {
+    return <Spinner />;
+  }
 };
 
 export default Feed;
-//                         npx json-server --watch json_server_test/db.json

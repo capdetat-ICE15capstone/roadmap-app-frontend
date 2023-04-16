@@ -19,7 +19,7 @@ export default defineConfig({
         type: "module",
       },
       workbox: {
-        globPatterns: ["**/*.{js,css,html,ico,png,svg,jsx}"],
+        globPatterns: ["**/*.{js,css,html,ico,png,svg,jpg,}"],
       },
       manifest: {
         "name": "Milemap",
@@ -43,4 +43,8 @@ export default defineConfig({
       }
     }),
   ],
+  server: {
+    host: true,
+    port: 5173
+  }
 });
