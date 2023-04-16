@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
+import { useLocation } from "react-router-dom";
 import RoadmapPlus from "../components/Roadmap_home";
 import Roadmap from "../components/Roadmap_neo";
 import Kurumi from "../assets/kurumi.jpg";
@@ -8,6 +9,7 @@ import { ReactComponent as DarkHomeIcon } from "../assets/dark_home_icon.svg";
 import SpinnerNeo from "../components/SpinnerNeo";
 import { axiosInstance } from "../functions/axiosInstance";
 import Prompt from "../components/Prompt";
+import HomeFirstLoginModal from "../components/HomeFirstLoginModal";
 
 const Home = () => {
 
@@ -23,6 +25,10 @@ const Home = () => {
   const [viewMode, setViewMode] = useState("roadmap");
 
   const hasFetchedRef = useRef(false);
+
+  const location = useLocation();
+  const firstLogin = location.state?.firstLogin;
+  const [isOpenFirstLoginModal, setIsOpenFirstLoginModal] = useState(firstLogin === true);
 
   const clickRoadmap = () => {
     setViewMode("roadmap")
@@ -199,7 +205,7 @@ const Home = () => {
             message="Are you sure that you want to permanently archive the selected roadmap?"
             positiveText="Yes"
             positiveFunction={() => archiveRoadmap(currentRid)}
-            negativeText="No"
+            negativeText="No" 
             negativeFunction={() => setIsArchiving(false)}
           />
           <Prompt
@@ -213,6 +219,7 @@ const Home = () => {
           />
           <SpinnerNeo visble={hasFetchedRef.current} />
         </div>
+        <HomeFirstLoginModal isOpen={isOpenFirstLoginModal} setIsOpen={setIsOpenFirstLoginModal}/>
       </>
     );
   }
