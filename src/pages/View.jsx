@@ -181,35 +181,14 @@ export default function View() {
     });
   }
 
-  const variants = {
-    fadeIntial: {
-      opacity: 0,
-    },
-    fadeAnimate: {
-      opacity: 1,
-      transition: {
-        duration: 0.3,
-        ease: 'easeInOut'
-      }
-    },
-    fadeExit: {
-      opacity: 0,
-      transition: {
-        duration: 0.3,
-        ease: 'easeInOut'
-      }
-    }
-  };
-
   return (
     <>
       <AnimatePresence>
         {roadmap.hasFetched && (
           <motion.div
-            initial="fadeInitial"
-            animate="fadeAnimate"
-            exit="fadeExit"
-            variants={variants}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             className='flex h-full overflow-y-auto py-6'
           >
             <div className="xs:w-[80%] max-xs:w-[90%] max-w-4xl flex-col space-y-6 m-auto">
