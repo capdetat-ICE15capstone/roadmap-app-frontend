@@ -28,13 +28,29 @@ import { roundTimeToNearest30 } from "../functions/formatFunction";
 import { ReactComponent as QuestionMark } from "../assets/taskmodal/QuestionMark.svg"
 import { ReactComponent as Close } from "../assets/close.svg";
 import Step1 from "../assets/helpCreateRoadmap_assets/step_1.jpg";
+import Step1_md from "../assets/helpCreateRoadmap_assets/step_1_md.jpg";
+import Step1_xs from "../assets/helpCreateRoadmap_assets/step_1_xs.jpg";
 import Step2 from "../assets/helpCreateRoadmap_assets/step_2.jpg";
+import Step2_md from "../assets/helpCreateRoadmap_assets/step_2_md.jpg";
+import Step2_xs from "../assets/helpCreateRoadmap_assets/step_2_xs.jpg";
 import Step3_1 from "../assets/helpCreateRoadmap_assets/step_3_1.jpg";
+import Step3_1_md from "../assets/helpCreateRoadmap_assets/step_3_1_md.jpg";
+import Step3_1_xs from "../assets/helpCreateRoadmap_assets/step_3_2_xs.jpg";
 import Step3_2 from "../assets/helpCreateRoadmap_assets/step_3_2.jpg";
+import Step3_2_md from "../assets/helpCreateRoadmap_assets/step_3_2_md.jpg";
+import Step3_2_xs from "../assets/helpCreateRoadmap_assets/step_3_2_xs.jpg";
 import Step3_3 from "../assets/helpCreateRoadmap_assets/step_3_3.jpg";
+import Step3_3_md from "../assets/helpCreateRoadmap_assets/step_3_3_md.jpg";
+import Step3_3_xs from "../assets/helpCreateRoadmap_assets/step_3_3_xs.jpg";
 import Step3_4 from "../assets/helpCreateRoadmap_assets/step_3_4.jpg";
+import Step3_4_md from "../assets/helpCreateRoadmap_assets/step_3_4_md.jpg";
+import Step3_4_xs from "../assets/helpCreateRoadmap_assets/step_3_4_xs.jpg";
 import Step4 from "../assets/helpCreateRoadmap_assets/step_4.jpg";
+import Step4_md from "../assets/helpCreateRoadmap_assets/step_4_md.jpg";
+import Step4_xs from "../assets/helpCreateRoadmap_assets/step_4_xs.jpg";
 import Step5 from "../assets/helpCreateRoadmap_assets/step_5.jpg";
+import Step5_md from "../assets/helpCreateRoadmap_assets/step_5_md.jpg";
+import Step5_xs from "../assets/helpCreateRoadmap_assets/step_5_xs.jpg";
 
 const MAX_TASKS_NONPREMIUM = 16;
 const MAX_RMNAME_LENGTH = 30;
@@ -994,10 +1010,10 @@ const RoadmapCreatePage = (props) => {
         </form>
       </div>
       {showHelp && 
-      <div className="absolute flex flex-col left-0 justify-center items-center w-full h-full bg-gray-300 bg-opacity-[0.58] z-[100]">
-        <div className="flex justify-start items-center px-[23px] w-1/2 min-w-[220px] max-w-[790px] h-fit bg-[#00286E] rounded-t-[20px]">
+      <div className="absolute flex flex-col left-0 justify-center items-center w-full h-full max-xs:max-h-full bg-gray-300 bg-opacity-[0.58] z-[100]">
+        <div className="flex justify-start items-center px-[23px] w-1/2 min-w-[292px] max-w-[790px] h-fit bg-[#00286E] rounded-t-[20px]">
           <div className="flex items-center justify-between w-full my-4">
-            <div className="flex items-center">
+            <div className="flex items-center justify-start">
               <QuestionMark className="mr-[13px]"/>
               <div className="font-inter font-bold text-3xl text-[#FFFFFF]">How to create a roadmap?</div>
             </div>
@@ -1006,16 +1022,18 @@ const RoadmapCreatePage = (props) => {
             </button>
           </div>
         </div>
-        <div className="flex w-1/2 min-w-[220px] max-w-[790px] h-fit bg-[#F0F3F4] rounded-b-[20px]">
-          <div className="flex flex-col w-full h-fit p-8">
-            <div className="flex flex-col w-fit h-fit max-h-[400px] mb-8 overflow-y-scroll overflow-x-hidden">
+        <div className="flex w-1/2 min-w-[292px] max-w-[790px] h-fit bg-[#F0F3F4] rounded-b-[20px]">
+          <div className="flex flex-col w-full min-h-fit max-h-[400px] max-xs:max-h-[300px] p-8">
+            <div className="flex flex-col w-fit max-h-[400px] mb-8 overflow-y-scroll overflow-x-hidden">
               <div className="font-inter font-bold text-xl text-[#333333] mb-4">
                 {helpPage == 1?
                 <>
                   <div className="mb-4">
                     Step 1: Name your roadmap at the UNTITLED placeholder. Fill your roadmap description.
                   </div>
-                  <img src={Step1}/>
+                  <img src={Step1} className="max-md:hidden"/>
+                  <img src={Step1_md} className="max-xs:hidden md:hidden"/>
+                  <img src={Step1_xs} className="xs:hidden"/>
                 </>
                 :<></>}
                 {helpPage == 2?
@@ -1023,7 +1041,9 @@ const RoadmapCreatePage = (props) => {
                   <div className="mb-4">
                     Step 2: Click at the Add button to create a task.
                   </div>
-                  <img src={Step2}/>
+                  <img src={Step2} className="max-md:hidden"/>
+                  <img src={Step2_md} className="max-xs:hidden md:hidden"/>
+                  <img src={Step2_xs} className="md:hidden"/>
                 </>
                 :<></>}
                 {helpPage == 3?
@@ -1034,23 +1054,31 @@ const RoadmapCreatePage = (props) => {
                   <div className="mb-4">
                     3.1 Name your task, and its description.
                   </div>                  
-                  <img src={Step3_1} className="mb-4"/>
+                  <img src={Step3_1} className="mb-4 max-md:hidden"/>
+                  <img src={Step3_1_md} className="max-xs:hidden md:hidden"/>
+                  <img src={Step3_1_xs} className="md:hidden"/>
                   <div className="mb-4">
                     3.2 Set the start, and the due date.
                   </div>                  
-                  <img src={Step3_2} className="mb-4"/>
+                  <img src={Step3_2} className="mb-4 max-md:hidden"/>
+                  <img src={Step3_2_md} className="max-xs:hidden md:hidden"/>
+                  <img src={Step3_2_xs} className="md:hidden"/>
                   <div className="mb-4">
                     3.3 Design the shape and the color of a task node.
                   </div>                  
-                  <img src={Step3_3} className="mb-4"/>
+                  <img src={Step3_3} className="mb-4 max-md:hidden"/>
+                  <img src={Step3_3_md} className="max-xs:hidden md:hidden"/>
+                  <img src={Step3_3_xs} className="md:hidden"/>
                   <div className="mb-4">
                     3.4 (Optional) Add the subtask.
                   </div>                  
-                  <img src={Step3_4} className="mb-4"/>
+                  <img src={Step3_4} className="mb-4 max-md:hidden"/>
+                  <img src={Step3_4_md} className="max-xs:hidden md:hidden"/>
+                  <img src={Step3_4_xs} className="md:hidden"/>
                   <div className="mb-4">
                     3.5 Click "Save" to keep it.
                   </div>
-                  <div className="text-[#FF0000] mb-4">
+                  <div className="text-[#FF0000]">
                     *** Recreate the tasks until finish
                   </div>                          
                 </>
@@ -1066,7 +1094,9 @@ const RoadmapCreatePage = (props) => {
                   <div className="mb-4">
                     4.2 Set the privacy of a roadmap.
                   </div>
-                  <img src={Step4}/>
+                  <img src={Step4} className="max-md:hidden"/>
+                  <img src={Step4_md} className="max-xs:hidden md:hidden"/>
+                  <img src={Step4_xs} className="md:hidden"/>
                 </>
                 :<></>}
                 {helpPage == 5?
@@ -1074,7 +1104,9 @@ const RoadmapCreatePage = (props) => {
                   <div className="mb-4">
                     Step 5: Click "Save" button to publish the roadmap to the system.
                   </div>
-                  <img src={Step5}/>
+                  <img src={Step5} className="max-md:hidden"/>
+                  <img src={Step5_md} className="max-xs:hidden md:hidden"/>
+                  <img src={Step5_xs} className="md:hidden"/>
                 </>
                 :<></>}
               </div>
