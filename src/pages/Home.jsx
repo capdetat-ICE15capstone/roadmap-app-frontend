@@ -20,8 +20,10 @@ const Home = () => {
   const [username, setUsername] = useState('');
   const [level, setLevel] = useState('');
   const [bio, setBio] = useState('');
-  const [roadmap, setRoadmap] = useState({});
+  const [roadmap, setRoadmap] = useState([]);  
+  const [archiveRoadmap, setArchiveRoadmap] = useState([]);
   let roadmapList = [];
+  let archiveRoadmapList = [];
 
   function shortenString(str, maxLength) {
     if (str == null)
@@ -68,13 +70,13 @@ const Home = () => {
       setLevel(Math.round(response.data.profile.exp/100));
       setBio(response.data.profile.bio);
       setRoadmap(response.data.roadmaps);
+      setArchiveRoadmap(response.data.archived_roadmaps)
       setIsPremium(response.data.profile.is_premium);
     }
     fetchData();
   }, []);
 
-  const roadmapArray = Array.from(roadmap)
-  roadmapArray.forEach((items, index) => {
+  roadmap.forEach((items, index) => {
     if (index >= 3 && !isPremium) 
       return;
     roadmapList.push(<Roadmap key={index}
@@ -94,6 +96,24 @@ const Home = () => {
       deleteFunction={deleteRoadmap}/>)
     })  
 
+  archiveRoadmap.forEach((items, index) => {
+    archiveRoadmapList.push(<Roadmap key={index}
+      owner_id={items.owner_id}
+      creator_id={items.creator_id}
+      owner_name={items.owner_name}
+      creator_name={items.creator_name}
+      rid={items.rid}
+      views_count={items.views_count}
+      stars_count={items.stars_count}
+      forks_count={items.forks_count}
+      created_at={items.created_at}
+      edited_at={items.edited_at}
+      title={items.title}
+      isActive={isActive} 
+      isOwner={true} 
+      deleteFunction={deleteRoadmap}/>)
+    })  
+    
   useEffect(() => {
     if (roadmapList.length >= 3 && !isPremium) 
       setIsLimit(true)
@@ -113,7 +133,7 @@ const Home = () => {
         </div>
         <div className="flex flex-col w-3/4 m-auto mt-[133px]">
           <div className="flex w-full justify-center">
-            <div className="flex justify-between justify-self-center border border-[#D9D9D9] min-w-[260px] w-3/4 rounded-[30px] mb-8">
+            <div className="flex justify-between justify-self-center bg-[#FFFFFF] border border-[#D9D9D9] min-w-[260px] w-3/4 rounded-[30px] mb-8">
               <div className="flex flex-col justify-start w-1/2">
                 <div className="flex flex-wrap items-center mx-6 mr-12 justify-start h-fit my-[20px]">
                   <div className="relative mr-4">
@@ -121,7 +141,7 @@ const Home = () => {
                       {username}
                     </div>
                   </div>
-                  <div className="flex justify-between bg-[#034DCF] text-white font-bold h-fit rounded-[30px]">
+                  {data && <div className="flex justify-between bg-[#034DCF] text-white font-bold h-fit rounded-[30px]">
                     <div className="flex mx-[10px] justify-start items-center">
                       <div className="font-inter text-[#FFFFFF]">
                         Level:
@@ -132,7 +152,7 @@ const Home = () => {
                         {level}
                       </div>
                     </div>               
-                  </div>
+                  </div>}
                 </div>
                 <div className="flex flex-col">
                   <div className="mx-6 mt-[10px] mb-[20px]">
@@ -159,7 +179,7 @@ const Home = () => {
                 <div>
                   <RoadmapCreate isLimit={isLimit} onClick={promptPremium} />
                 </div>}
-                  {roadmapList}
+                {isRoadmap? roadmapList : archiveRoadmapList}
               </div>
             </div>
           </div>

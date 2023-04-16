@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link, useNavigate } from "react-router-dom";
 import placeholderImage from "../assets/roadmap_assets/Placeholder_Image.png"
 import { ReactComponent as EyeIcon } from "../assets/roadmap_assets/eye_Icon.svg"
 import { ReactComponent as ShareIcon } from "../assets/roadmap_assets/Share.svg"
 import { ReactComponent as LikeIcon } from "../assets/roadmap_assets/ThumbsUp.svg"
-
+import { axiosInstance } from '../functions/axiosInstance';
+import { shortenString } from '../functions/formatFunction';
+import { nodeShapeGenerator } from '../functions/viewFunction';
 const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_count, stars_count, forks_count, created_at, edited_at, title }) => {
 
   //parameters of roadmap
@@ -44,63 +46,116 @@ const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_co
     navigate(`/home/${owner_id}`);
   };
 
-  return (
-    <>
-      <div>
-        <Link to={`/view/${rid}`} >
-          <div className='flex flex-col bg-white rounded-3xl shadow-md w-[280px] h-[300px] p-2 space-y-1 hover:transform hover:scale-110 transition duration-150'>
-            <div className='relative'>
-              <img src={placeholderImage} className="rounded-2xl h-full w-full" />
-              <div className='absolute bottom-[5%] left-[5%] text-xs font-bold'>
-                {creator_name}
+  const [roadmap, setRoadmap] = useState();
+  const [isFetched, setIsFetched] = useState(false);
+
+  function fetchRoadmap() {
+    axiosInstance.get(`/roadmap/${rid}`)
+      .then(response => {
+        // console.log(response.data);
+        setRoadmap(response.data);
+        setIsFetched(true);
+      })
+      .catch(error => {
+        console.error(error);
+      })
+  }
+
+  const isMountedRef = useRef(false);
+
+  useEffect(() => {
+    if (!isMountedRef.current) {
+      isMountedRef.current = true;
+      return;
+    }
+    fetchRoadmap();
+  }, []);
+
+  if (isFetched) {
+    return (
+      <>
+        <div>
+          <Link to={`/view/${rid}`} >
+            <div className='flex flex-col bg-white rounded-3xl shadow-md w-60 p-2 hover:transform hover:scale-110 transition duration-150'>
+              <div className='flex flex-col bg-[#e6eefc] rounded-2xl'>
+                <div className='flex justify-center pt-8 px-8 space-x-[25px] w-full h-24 overflow-hidden'>
+                  {roadmap.shapes.map((shape, index) => {
+                    const zIndex = 10 - index;
+                    return (
+                      <div key={index} className="relative" style={{ zIndex }}>
+                        <div className="absolute top-[40%] -left-1/4 transform -translate-x-1/2 -translate-y-1/2 -z-10">
+                          {(index > '0') && <hr className="w-[75px] h-1 bg-black border-0" />}
+                        </div>
+                        <div className="absolute top-1/2 left-[100%] transform -translate-x-1/2 -translate-y-3/4 -z-10">
+                          {(index === (shape.length - 1)) && <hr className="w-[75px] h-1 border-0 opacity-0" />}
+                        </div>
+                        <div className='relative'>
+                          <button value={index} className=''>
+                            {nodeShapeGenerator(shape, roadmap.colors[index], index, roadmap.shapes.length)}
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                <div className='flex flex-nowrap justify-between p-2'>
+                  <div className='text-xs font-bold'>
+                    {creator_name}
+                  </div>
+                  <div className='text-xs text-gray-600'>
+                    Updated: {edited_at_format}
+                  </div>
+                </div>
               </div>
-              <div className='absolute bottom-[5%] right-[5%] text-xs text-gray-600'>
-                Last updated: {edited_at_format}
+              <div className='flex flex-col flex-nowrap space-y-1 m-1'>
+                <div className=' flex flex-row justify-between items-center'>
+                  <div className=' text-md font-bold truncate w-[100%]'>
+                    {title ? title : "no name"}
+                  </div>
+                </div>
+                <div className='flex flex-row flex-nowrap justify-between items-center'>
+                  <div className='flex flex-row'>
+                    <div className='flex-nowrap text-xs'>
+                      Owner :
+                    </div>
+                    <span className='z-10 text-xs hover:text-blue-600 ml-1 truncate' onClick={handleClick}>
+                      {owner_name}
+                    </span>
+                  </div>
+                  <div className='flex-nowrap w-1/2 text-xs text-gray-500'>
+                    Created : {created_at_format}
+                  </div>
+                </div>
+                <div className='flex flex-row flex-nowrap justify-between items-center'>
+                  <div className='static flex flex-row items-center left-[5%] space-x-1'>
+                    <EyeIcon className="flex stroke-1 stroke-gray-700" />
+                    <div className='text-xs text-gray-700'>
+                      : {views_count} views
+                    </div>
+                  </div>
+                  <div className='z-10 static flex flex-row justify-center space-x-4 text-xs right-[5%]'>
+                    <div className='z-10 flex flex-row items-center space-x-1'>
+                      <ShareIcon />
+                      <div className='text-xs text-gray-700'>
+                        : {forks_count}
+                      </div>
+                    </div>
+                    <div className='z-10 flex flex-row items-center space-x-1'>
+                      <LikeIcon />
+                      <div className='text-xs text-gray-700'>
+                        : {stars_count}
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            <div className='flex flex-col space-y-1 m-1'>
-              {/**/}
-              <div className=' flex flex-row justify-between items-center'>
-                <div className=' text-md font-bold truncate w-[65%]'>
-                  {title}
-                </div>
-                <div className='z-10 flex flex-row justify-center space-x-4 text-xs w-[35%]'>
-                  <div className='z-10 flex flex-row items-center'>
-                    <ShareIcon /> : {forks_count}
-                  </div>
-                  <div className='z-10 flex flex-row items-center'>
-                    <LikeIcon /> : {stars_count}
-                  </div>
-                </div>
-              </div>
-              {/**/}
-              <div className='flex flex-row justify-between items-center'>
-                <div className='flex flex-row'>
-                  <div className='text-sm'>
-                    Owner :
-                  </div>
-                  <button className='z-10 text-sm hover:text-blue-600 ml-1 ' onClick={handleClick}>
-                    {owner_name}
-                  </button>
-                </div>
-                <div className='text-xs text-gray-500'>
-                  Created : {created_at_format}
-                </div>
-              </div>
-              <div className='flex flex-row items-center'>
-                <span>
-                  <EyeIcon className="flex stroke-1 stroke-gray-700 w-3/4 h-3/4 " />
-                </span>
-                <div className='text-xs text-gray-700'>
-                  : {views_count} views
-                </div>
-              </div>
-            </div>
-          </div>
-        </Link>
-      </div>
-    </>
-  );
+          </Link>
+        </div>
+      </>
+    );
+  }
+
 };
 
 export default Roadmap;

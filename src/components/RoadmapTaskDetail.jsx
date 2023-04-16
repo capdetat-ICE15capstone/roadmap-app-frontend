@@ -57,7 +57,7 @@ function RoadmapTaskDetail({ task, handleTaskUpdate, handleIsSaving, handleIsCom
                 {(displaySaveButton) && (
                   <button
                     onClick={handleIsSaving}
-                    className="bg-sub-blue sm:w-28 w-full text-white px-4 py-2 font-semilight rounded-full text-sm font-bold self-center h-10 truncate transition ease-in-out hover:bg-nav-blue duration-300"
+                    className="bg-sub-blue sm:w-28 w-full text-white px-4 py-2 font-semilight rounded-full text-sm font-bold self-center h-10 truncate transition ease-in-out hover:bg-nav-blue hover:scale-105 hover:z-10 duration-200"
                     type="button"
                   >
                     Save
@@ -66,7 +66,7 @@ function RoadmapTaskDetail({ task, handleTaskUpdate, handleIsSaving, handleIsCom
                 {(displayCompleteButton) && (
                   <button
                     onClick={handleIsCompleting}
-                    className="bg-nav-blue sm:w-28 w-full text-white px-4 py-2 font-semilight rounded-full text-sm font-bold self-center h-10 truncate transition ease-in-out hover:bg-black duration-300"
+                    className="bg-nav-blue sm:w-28 w-full text-white px-4 py-2 font-semilight rounded-full text-sm font-bold self-center h-10 truncate transition ease-in-out hover:bg-black hover:scale-105 hover:z-10 duration-200"
                     type="button"
                   >
                     Complete

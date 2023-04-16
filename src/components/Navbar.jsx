@@ -7,7 +7,6 @@ import { ReactComponent as FeedLogo } from "../assets/navbar_assets/feed_icon.sv
 import { ReactComponent as HomeLogo } from "../assets/navbar_assets/home_icon.svg"
 import { ReactComponent as CalendarLogo } from "../assets/navbar_assets/calendar_icon.svg"
 import { ReactComponent as SettingLogo } from "../assets/navbar_assets/setting_icon.svg"
-import { ReactComponent as UserLogo } from "../assets/navbar_assets/username_icon.svg"
 import { ReactComponent as BookIcon } from "../assets/navbar_assets/book_icon.svg"
 import { ReactComponent as Logout } from "../assets/shapes/logout.svg";
 const NavItem = (props) => {
@@ -32,7 +31,7 @@ const Navbar = () => {
   return (
     <>
       <div className="fixed flex max-xs:flex-col xs:flex-row-reverse h-full w-full">
-        <div className="flex xs:hidden max-xs:visible drop-shadow-[0_2px_5px_rgba(0,0,0,0.25)]">
+        <div className="flex xs:hidden max-xs:visible">
           <div className="flex items-center justify-between bg-nav-blue w-full h-16">
             <div className="flex items-center h-full ml-4 space-x-2">
               <Logo className="p-2" />
@@ -45,17 +44,17 @@ const Navbar = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col flex-grow bg-gradient-to-br from-gray-50 to-gray-100 overflow-x-hidden">
+        <div className="flex flex-col flex-grow bg-white overflow-x-hidden">
           <Outlet />
         </div>
-        <div className="flex xs:hidden max-xs:visible bg-nav-blue drop-shadow-[0_2px_5px_rgba(0,0,0,0.25)]">
+        <div className="flex xs:hidden max-xs:visible bg-nav-blue">
           <NavItem SvgIcon={HomeLogo} displayName="Home" baseColor="bg-nav-blue" to="/" />
           <NavItem SvgIcon={FeedLogo} displayName="Feed" baseColor="bg-nav-blue" to="/feed" />
           <NavItem SvgIcon={BookIcon} displayName="Quest" baseColor="bg-nav-blue" to="/quest" />
           <NavItem SvgIcon={CalendarLogo} displayName="Shop" baseColor="bg-nav-blue" to="/shop" />
           <NavItem SvgIcon={SettingLogo} displayName="Setting" baseColor="bg-nav-blue" to="/setting" />
         </div>
-        <div className="max-xs:hidden flex flex-col items-center justify-between max-md:w-18 md:w-[180px] bg-nav-blue shrink-0 drop-shadow-[0_2px_5px_rgba(0,0,0,0.25)]">
+        <div className="max-xs:hidden flex flex-col items-center justify-between max-md:w-18 md:w-[180px] bg-nav-blue shrink-0">
           <div className="w-full">
             <div className="w-full flex justify-center items-center bg-base-blue px-4 space-x-4">
               <Logo className="my-2" />
