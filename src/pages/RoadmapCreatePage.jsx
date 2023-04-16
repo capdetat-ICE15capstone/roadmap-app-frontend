@@ -27,6 +27,14 @@ import { ReactComponent as NotiOn } from "../assets/notification/notiOn.svg";
 import { roundTimeToNearest30 } from "../functions/formatFunction";
 import { ReactComponent as QuestionMark } from "../assets/taskmodal/QuestionMark.svg"
 import { ReactComponent as Close } from "../assets/close.svg";
+import Step1 from "../assets/helpCreateRoadmap_assets/step_1.jpg";
+import Step2 from "../assets/helpCreateRoadmap_assets/step_2.jpg";
+import Step3_1 from "../assets/helpCreateRoadmap_assets/step_3_1.jpg";
+import Step3_2 from "../assets/helpCreateRoadmap_assets/step_3_2.jpg";
+import Step3_3 from "../assets/helpCreateRoadmap_assets/step_3_3.jpg";
+import Step3_4 from "../assets/helpCreateRoadmap_assets/step_3_4.jpg";
+import Step4 from "../assets/helpCreateRoadmap_assets/step_4.jpg";
+import Step5 from "../assets/helpCreateRoadmap_assets/step_5.jpg";
 
 const MAX_TASKS_NONPREMIUM = 16;
 const MAX_RMNAME_LENGTH = 30;
@@ -989,7 +997,7 @@ const RoadmapCreatePage = (props) => {
       <div className="absolute flex flex-col left-0 justify-center items-center w-full h-full bg-gray-300 bg-opacity-[0.58] z-10">
         <div className="flex justify-start items-center px-[23px] w-1/2 min-w-[220px] max-w-[790px] h-fit bg-[#00286E] rounded-t-[20px]">
           <div className="flex items-center justify-between w-full my-4">
-            <div className="flex items-center w-fit">
+            <div className="flex items-center">
               <QuestionMark className="mr-[13px]"/>
               <div className="font-inter font-bold text-3xl text-[#FFFFFF]">How to create a roadmap?</div>
             </div>
@@ -999,15 +1007,79 @@ const RoadmapCreatePage = (props) => {
           </div>
         </div>
         <div className="flex w-1/2 min-w-[220px] max-w-[790px] h-fit bg-[#F0F3F4] rounded-b-[20px]">
-          <div className="flex flex-col w-full h-fit">
-            <div className="w-fit mx-10 my-8 font-inter font-bold text-xl text-[#333333] ">
-              {helpPage == 1? "Step 1: ":""}
-              {helpPage == 2? "Step 2: ":""}
-              {helpPage == 3? "Step 3: ":""}
-              {helpPage == 4? "Step 4: ":""}
-              {helpPage == 5? "Step 5: ":""}
+          <div className="flex flex-col w-full h-fit p-8">
+            <div className="flex flex-col w-fit h-fit max-h-[400px] mb-8 overflow-y-scroll overflow-x-hidden">
+              <div className="font-inter font-bold text-xl text-[#333333] mb-4">
+                {helpPage == 1?
+                <>
+                  <div className="mb-4">
+                    Step 1: Name your roadmap at the UNTITLED placeholder. Fill your roadmap description.
+                  </div>
+                  <img src={Step1}/>
+                </>
+                :<></>}
+                {helpPage == 2?
+                <>
+                  <div className="mb-4">
+                    Step 2: Click at the Add button to create a task.
+                  </div>
+                  <img src={Step2}/>
+                </>
+                :<></>}
+                {helpPage == 3?
+                <>
+                  <div>
+                    Step 3:
+                  </div>
+                  <div className="mb-4">
+                    3.1 Name your task, and its description.
+                  </div>                  
+                  <img src={Step3_1} className="mb-4"/>
+                  <div className="mb-4">
+                    3.2 Set the start, and the due date.
+                  </div>                  
+                  <img src={Step3_2} className="mb-4"/>
+                  <div className="mb-4">
+                    3.3 Design the shape and the color of a task node.
+                  </div>                  
+                  <img src={Step3_3} className="mb-4"/>
+                  <div className="mb-4">
+                    3.4 (Optional) Add the subtask.
+                  </div>                  
+                  <img src={Step3_4} className="mb-4"/>
+                  <div className="mb-4">
+                    3.5 Click "Save" to keep it.
+                  </div>
+                  <div className="text-[#FF0000] mb-4">
+                    *** Recreate the tasks until finish
+                  </div>                          
+                </>
+                :<></>}
+                {helpPage == 4?
+                <>
+                  <div className="mb-4">
+                    Step 4:
+                  </div>
+                  <div className="mb-4">
+                    4.1 Set the notification time.
+                  </div>
+                  <div className="mb-4">
+                    4.2 Set the privacy of a roadmap.
+                  </div>
+                  <img src={Step4}/>
+                </>
+                :<></>}
+                {helpPage == 5?
+                <>
+                  <div className="mb-4">
+                    Step 5: Click "Save" button to publish the roadmap to the system.
+                  </div>
+                  <img src={Step5}/>
+                </>
+                :<></>}
+              </div>
             </div>
-            <div className="flex justify-end mb-8 px-4 w-full h-[43px]">
+            <div className="flex justify-end w-full h-[43px]">
               {helpPage != 1 && 
               <button onClick={previousPageClick} className="flex justify-center items-center text-[#525252] hover:text-[#FFFFFF] border border-[#525252] rounded-[30px] w-[90px] hover:bg-[#e30b0b] hover:border-none">
                 <div className="font-inter">
