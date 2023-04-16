@@ -47,13 +47,13 @@ function Prompt({ visible, title, message, positiveText, negativeText, positiveF
       {visible && (
         <>
           <motion.div
-            className="fixed inset-0 z-50"
+            className="fixed inset-0 z-[1000]"
             initial="initial"
             animate="animate"
             exit="exit"
             variants={variants}
           >
-            <div className="absolute inset-0 z-10 flex items-center justify-center">
+            <div className="absolute inset-0 flex items-center justify-center">
               <div className="flex flex-col rounded-xl bg-white shadow-lg max-w-md max-xs:max-w-xs">
                 <div className="flex flex-col rounded-t-xl bg-gradient-to-b from-blue-900 to-main-blue">
                   <div className={`${title ? 'visible' : 'hidden'} text-xl text-white font-bold mx-4 my-2`}>

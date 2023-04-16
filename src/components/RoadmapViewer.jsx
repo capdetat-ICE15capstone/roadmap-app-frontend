@@ -55,7 +55,7 @@ function RoadmapViewer({ tasks, currentTaskID, handleTaskView }) {
                         </div>
                       )}
                       {(index > currentTaskIndex) && (
-                        <div className='text-3xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-md text-center select-none z-50 pointer-events-none'>
+                        <div className='text-3xl absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-md text-center select-none z-50 pointer-events-none'>
                           🔒
                         </div>
                       )}
