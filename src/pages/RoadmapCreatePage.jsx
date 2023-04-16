@@ -119,13 +119,13 @@ const DropDownMenu = ({
   return (
     <div className={`${className} z-40`}>
       <button onClick={handleMenuShowUnshow} type="button" className="flex items-center">
-        <Icon className="w-9 h-9" />
-        <span className="visible xs:hidden font-bold">Notification</span>
+        <Icon className="w-9 h-9 hover:scale-125 transition duration-150" />
+        <span className="visible xs:hidden font-bold [@media(max-width:360px)]:hidden">Notification</span>
       </button>
       {isMenuShowing ? (
         <AnimatePresence>
           <motion.div
-            className="absolute bg-white border rounded-md flex flex-col left-0 xs:left-auto xs:right-0"
+            className="absolute bg-white border rounded-md flex flex-col left-0 xs:left-auto xs:right-0 [@media(max-width:360px)]:-left-full"
             initial={{ y: "-50%", opacity: 0, scale: 0 }}
             animate={{ y: "0%", opacity: 1, scale: 1 }}
             exit={{ y: "-50%", opacity: 0, scale: 0 }}
@@ -811,7 +811,7 @@ const RoadmapCreatePage = (props) => {
       ) : null}
 
       <Spinner visible={loading}/>
-      <div className="h-full flex justify-center items-center flex-col m-auto max-w-5xl w-[90%]">
+      <div className="h-full flex justify-center items-center flex-col m-auto max-w-5xl w-[90%] ">
         {/* <div className="text-4xl font-bold flex items-start"> */}
         <div className="flex w-full justify-between">
           <span className="text-4xl font-bold">
@@ -830,14 +830,14 @@ const RoadmapCreatePage = (props) => {
         {/* </div> */}
         <form
           onSubmit={handleSubmit}
-          className=" rounded-3xl w-full gap-3 border flex flex-col bg-white p-10 h-4/5 xs:h-2/3 m-3"
+          className=" rounded-3xl w-full gap-3 border flex flex-col bg-white p-10 h-4/5 xs:h-2/3 m-3 shadow-lg border-gray-400"
         >
           <div className="flex flex-col xs:flex-row justify-between items-center gap-2">
             <label className="text-md font-bold block leading-none">
               Roadmap Name
             </label>
             <input
-              className="text-3xl focus:outline-none text-ellipsis font-bold w-full leading-none placeholder:font-extrabold text-center xs:text-left border rounded-lg"
+              className="text-3xl focus:outline-none text-ellipsis font-bold w-full leading-none placeholder:font-extrabold text-center xs:text-left shadow-md border border-gray-400 rounded-lg"
               value={RMName}
               onChange={handleNameChange}
               placeholder="UNTITLED"
@@ -852,7 +852,7 @@ const RoadmapCreatePage = (props) => {
                   setOption={setNotiStatus}
                   optionComparer={compareNotificationChange}
                   Icon={notiStatus.on === true ? NotiOn : NotiOff}
-                  className="z-10 hover:scale-125 transition duration-150"
+                  className="z-10"
                 />
               </div>
               {/* End of Notification Setting */}
@@ -864,12 +864,12 @@ const RoadmapCreatePage = (props) => {
               >
                 {isPublic ? (<>
                   <Unlock className="w-9 h-9" />
-                  <span className="visible xs:hidden font-bold">Public</span>
+                  <span className="visible xs:hidden font-bold [@media(max-width:360px)]:hidden">Public</span>
                 </>
                   
                 ) : (<>
                   <Lock className="w-9 h-9" />
-                  <span className="visible xs:hidden font-bold">Private</span>
+                  <span className="visible xs:hidden font-bold [@media(max-width:360px)]:hidden">Private</span>
                 </>
                 )}
               </button>
