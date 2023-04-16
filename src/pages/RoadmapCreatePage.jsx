@@ -117,9 +117,10 @@ const DropDownMenu = ({
   };
 
   return (
-    <div className={`${className} w-9 h-9 z-40`}>
-      <button onClick={handleMenuShowUnshow} type="button">
+    <div className={`${className} z-40`}>
+      <button onClick={handleMenuShowUnshow} type="button" className="flex items-center">
         <Icon className="w-9 h-9" />
+        <span className="visible xs:hidden font-bold">Notification</span>
       </button>
       {isMenuShowing ? (
         <AnimatePresence>
@@ -171,7 +172,7 @@ const RoadmapCreatePage = (props) => {
   const [RMDesc, setRMDesc] = useState("");
   const [tasks, setTasks] = useState([]);
   const [modalState, setModalState] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [editTaskID, setEditTaskID] = useState(0);
   const [lastId, setLastId] = useState(0);
   const [isPublic, setPublic] = useState(true);
@@ -265,8 +266,10 @@ const RoadmapCreatePage = (props) => {
         // set up the data to variable
         const notificationObject = setUpNotification(state.roadmap);
         if (mode === "edit") {
-          if (userInfo.uid !== state.roadmap.owner_id)
+          if (userInfo.uid !== state.roadmap.owner_id) {
+            setLoading(false);
             handleDisplayErrorMessage("User is not authorized", "/", true);
+          }
           initialState.current = {
             name: state.roadmap.name,
             description: state.roadmap.description,
@@ -516,10 +519,6 @@ const RoadmapCreatePage = (props) => {
       const taskIntersection = initState.find(
         (inittask) => task.id === inittask.id
       );
-      console.log(taskIntersection);
-
-      // if (taskIntersection === undefined) return;
-      console.log(taskIntersection);
       console.log(task.nodeShape);
       console.log(taskIntersection.nodeShape);
       if (
@@ -811,7 +810,7 @@ const RoadmapCreatePage = (props) => {
         )
       ) : null}
 
-      {loading && <Spinner />}
+      <Spinner visible={loading}/>
       <div className="h-full flex justify-center items-center flex-col m-auto max-w-5xl w-[90%]">
         {/* <div className="text-4xl font-bold flex items-start"> */}
         <div className="flex w-full justify-between">
@@ -838,15 +837,14 @@ const RoadmapCreatePage = (props) => {
               Roadmap Name
             </label>
             <input
-              className="text-3xl focus:outline-none text-ellipsis font-bold w-full leading-none placeholder:font-extrabold"
+              className="text-3xl focus:outline-none text-ellipsis font-bold w-full leading-none placeholder:font-extrabold text-center xs:text-left border rounded-lg"
               value={RMName}
-              rows="2"
               onChange={handleNameChange}
               placeholder="UNTITLED"
             />
             <div className="flex gap-2 justify-evenly">
               {/* Notification Setting */}
-              <div className="relative flex justify-center items-center after:content-['_Publicity'] after:font-bold xs:after:content-none">
+              <div className="relative flex justify-center items-center">
                 <DropDownMenu
                   optionValues={notificationOption.optionValues}
                   options={notificationOption.options}
@@ -858,16 +856,21 @@ const RoadmapCreatePage = (props) => {
                 />
               </div>
               {/* End of Notification Setting */}
-              <div className="flex justify-center items-center after:content-['_Notification'] after:font-bold xs:after:content-none">
+              <div className="flex justify-center items-center">
               <button
                 type="button"
                 onClick={() => setPublicModal(true)}
-                className=""
+                className="hover:scale-125 transition duration-150 flex items-center"
               >
-                {isPublic ? (
-                  <Unlock className="w-9 h-9 hover:scale-125 transition duration-150" />
-                ) : (
-                  <Lock className="w-9 h-9 hover:scale-125 transition duration-150" />
+                {isPublic ? (<>
+                  <Unlock className="w-9 h-9" />
+                  <span className="visible xs:hidden font-bold">Public</span>
+                </>
+                  
+                ) : (<>
+                  <Lock className="w-9 h-9" />
+                  <span className="visible xs:hidden font-bold">Private</span>
+                </>
                 )}
               </button>
               </div>
@@ -917,7 +920,7 @@ const RoadmapCreatePage = (props) => {
                               key={task.id}
                               setEditTaskID={setEditTaskID}
                               setModalState={setModalState}
-                              disabled={index < 1 || tasks[index - 1].isDone}
+                              disabled={index < 1 || tasks[index - 1].isDone && !tasks.isTempId}
                             />
                           ) : (
                             <Draggable
@@ -938,7 +941,7 @@ const RoadmapCreatePage = (props) => {
                                     setModalState={setModalState}
                                     disabled={
                                       mode === "edit" &&
-                                      (index < 1 || tasks[index - 1].isDone)
+                                      (index < 1 || tasks[index - 1].isDone && !tasks.id)
                                     }
                                   />
                                 </div>
