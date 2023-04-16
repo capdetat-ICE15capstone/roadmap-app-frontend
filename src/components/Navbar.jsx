@@ -44,7 +44,7 @@ const Navbar = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col flex-grow bg-white overflow-x-hidden">
+        <div className="flex flex-col flex-grow bg-white overflow-x-hidden z-20">
           <Outlet />
         </div>
         <div className="flex xs:hidden max-xs:visible bg-nav-blue">
