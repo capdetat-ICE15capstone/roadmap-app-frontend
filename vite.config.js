@@ -12,14 +12,14 @@ export default defineConfig({
       strategies: "injectManifest",
       srcDir: "src",
       filename: "sw.js",
-      includeAssets: ["favicon.ico", "apple-touch-icon.png"],
+      includeAssets: ["favicon.ico", "apple-touch-icon.png", "**/*.jpg", "**/*.png", "**/*.jpeg"],
       registerType: "autoUpdate",
       devOptions: {
         enabled: true,
         type: "module",
       },
       workbox: {
-        globPatterns: ["**/*.{js,css,html,ico,png,svg,jpg,}"],
+        globPatterns: ["**/*"],
       },
       manifest: {
         "name": "Milemap",
@@ -29,12 +29,14 @@ export default defineConfig({
             {
                 "src": "/android-chrome-192x192.png",
                 "sizes": "192x192",
-                "type": "image/png"
+                "type": "image/png",
+                "purpose": "maskable"
             },
             {
                 "src": "/android-chrome-512x512.png",
                 "sizes": "512x512",
-                "type": "image/png"
+                "type": "image/png",
+                "purpose": "maskable"
             }
         ],
         "theme_color": "#ffffff",
