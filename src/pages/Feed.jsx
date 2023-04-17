@@ -247,9 +247,8 @@ const Feed = () => {
                 <div className='grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8'>
                   {currentRoadmapList.map((roadmap, index) => {
                     return (
-                      <div className='hover:transform hover:scale-110 transition duration-150'>
+                      <div key={index} className='hover:transform hover:scale-110 transition duration-150'>
                         <RoadmapNeo
-                          key={index}
                           owner_id={roadmap.owner_id}
                           creator_id={roadmap.creator_id}
                           owner_name={roadmap.owner_name}
