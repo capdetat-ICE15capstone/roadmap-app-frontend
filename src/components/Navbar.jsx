@@ -30,30 +30,26 @@ const NavItem = (props) => {
 }
 
 const Navbar = () => {
-  const [data, setData] = useState(null);
   const [isPremium, setIsPremium] = useState(false);
   const isMountedRef = useRef(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await axiosInstance.get('/home/me');
-        setData(response.data);  
-        setIsPremium(response.data.profile.is_premium)
-        isMountedRef.current = true;
-      } catch (error) {
-        console.error(error);
-      }
+  const checkIsPremium = async () => {
+    try {
+      const response = await axiosInstance.get('/home/me');
+      setIsPremium(response.data.profile.is_premium);
+    } catch (error) {
+      console.error(error);
     }
-    fetchData();
-  }, [isMountedRef.current]);
+  }
 
   useEffect(() => {
     if (!isMountedRef.current) {
       isMountedRef.current = true;
+    } else {
       return;
     }
-  }, [isMountedRef.current]);
+    checkIsPremium();
+  }, []);
 
   return (
     <>
@@ -72,9 +68,9 @@ const Navbar = () => {
           </div>
         </div>
         <div className="flex flex-col flex-grow bg-gray-50 z-20">
-          {!isPremium && data &&
+          {!isPremium &&
             <div className="flex justify-center z-40">
-              <div className="flex w-2/3 h-[100px] mx-auto bg-nav-blue">
+              <div className="flex w-full h-[100px] mx-auto bg-nav-blue">
 
               </div>
             </div>}
