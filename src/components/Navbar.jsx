@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Outlet, NavLink } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 // Image/Logo SVG
 import { ReactComponent as Logo } from "../assets/logo.svg"
@@ -30,7 +31,9 @@ const NavItem = (props) => {
 }
 
 const Navbar = () => {
-  const [isPremium, setIsPremium] = useState(false);
+  const navigate = useNavigate();
+
+  const [isPremium, setIsPremium] = useState(true);
   const isMountedRef = useRef(false);
 
   const checkIsPremium = async () => {
@@ -99,7 +102,7 @@ const Navbar = () => {
               <NavItem SvgIcon={SettingLogo} displayName="Setting" baseColor="bg-nav-blue" to="/setting" />
             </div>
           </div>
-          <button className="w-full" onClick={() => localStorage.removeItem('token')}>
+          <button className="w-full" onClick={() => {localStorage.removeItem('token'); navigate('/login')}}>
             <NavItem SvgIcon={Logout} displayName="Log Out" baseColor="bg-base-blue" to="/login" />
           </button>
         </div>
