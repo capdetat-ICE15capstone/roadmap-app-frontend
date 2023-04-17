@@ -6,6 +6,7 @@ import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Shop from "./pages/Shop";
+import HomeOtherUser from "./pages/HomeOtherUser";
 
 const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
@@ -58,7 +59,7 @@ function App() {
                 </Suspense>
               }
             ></Route>
-            <Route path="/" element={<Navbar />}>
+            <Route path="/" key="my-home" element={<Navbar />}>
               <Route
                 path="/"
                 element={
@@ -74,7 +75,7 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Suspense fallback={<Spinner />}>
-                      <Home />
+                      <HomeOtherUser />
                     </Suspense>
                   </ProtectedRoute>
                 }
@@ -91,6 +92,7 @@ function App() {
               ></Route>
               <Route
                 path="create"
+                key="other-home"
                 element={
                   <ProtectedRoute>
                     <Suspense fallback={<Spinner />}>

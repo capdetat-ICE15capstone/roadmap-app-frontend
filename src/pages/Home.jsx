@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import RoadmapPlus from "../components/Roadmap_home";
 import RoadmapNeo from "../components/Roadmap_neo";
 import Kurumi from "../assets/kurumi.jpg";
