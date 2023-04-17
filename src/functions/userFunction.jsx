@@ -1,10 +1,15 @@
 import { axiosInstance } from "./axiosInstance";
 
-export const isUserPremium = async () => {
-    // check whether or not the user is premium
-    // return true if the user is premium
-    // return false if the user is not logged in or the user is not premium
-    return false; // PLACEHOLDER PLS DONT LAUGH
+const DEFAULT_TIMEOUT = 3000;
+
+export const isUserPremium = async (timeout=DEFAULT_TIMEOUT) => {
+  try {
+    const response = await axiosInstance.get('/home/me', {timeout: timeout});
+    return (response.data.profile.is_premium);
+  } catch (error) {
+    console.error(error);
+    return null
+  }
 }
 
 export const isUserLoggedIn = async (timeout = 0) => {
@@ -23,24 +28,23 @@ export const isUserLoggedIn = async (timeout = 0) => {
   }
 };
 
-export const isServerResponding = async (url="/") => {
+export const isServerResponding = async (url="/", timeout=DEFAULT_TIMEOUT) => {
   try {
-    await axiosInstance.get(url)
+    await axiosInstance.get(url, {timeout:timeout})
   } catch (error) {
     return false;
   }
-
   
   return true;
 };
 
 
-export const getUserInformation = async () => {
+export const getUserInformation = async (timeout=DEFAULT_TIMEOUT) => {
   try {
-    const res = await axiosInstance.get("/user/");
-    return res;
+    const res = await axiosInstance.get("/user/", {timeout:timeout});
+    return res.data;
   } catch (error) {
-    console.error(error)
-    throw error
+    console.error(error);
+    return null
   }
 }

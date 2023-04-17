@@ -5,13 +5,14 @@ import { ReactComponent as DeleteButton } from "../assets/deleteButton.svg";
 import { ReactComponent as ArrowIcon } from "../assets/taskmodal/arrow.svg";
 import { ReactComponent as CalendarIcon } from "../assets/taskmodal/calendar.svg";
 import { ReactComponent as TrashIcon } from "../assets/taskmodal/trash.svg";
-import { ReactComponent as WhiteTrash } from "../assets/taskmodal/whiteTrash.svg"
+import { ReactComponent as WhiteTrash } from "../assets/taskmodal/whiteTrash.svg";
 import DatePicker from "react-datepicker";
 import Spinner from "./Spinner";
 import { CustomSVG, allNodeColor } from "./CustomSVG";
 import TwoButtonModal from "./TwoButtonModal";
 import { getTask } from "../functions/roadmapFunction";
 import { roundTimeToNearest30 } from "../functions/formatFunction";
+import { motion } from "framer-motion";
 
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -26,6 +27,11 @@ import "react-datepicker/dist/react-datepicker.css";
 const MAX_NAME_LENGTH = 30;
 const MAX_DESCRIPTION_LENGTH = 255;
 const MAX_SUBTASK_LENGTH = 30;
+const taskModalVariants = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+};
 
 const TaskModal = ({ oldData, editTaskCallBack }) => {
   const initialState = useRef({ ...oldData });
@@ -87,9 +93,9 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
           nodeColor: nodeColor.name,
           nodeShape: nodeShape,
           startDate: startDate,
-          dueDate: dueDate, 
-          subtasks: subtasks
-        }
+          dueDate: dueDate,
+          subtasks: subtasks,
+        };
       }
       setLoading(false);
     }
@@ -171,24 +177,29 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
   const onSubtaskTextEdit = (newValue, id) => {
     setSubTasks(
       subtasks.map((subtask) =>
-        subtask.id === id ? { ...subtask, detail: newValue.length > MAX_SUBTASK_LENGTH ? subtask.detail : newValue } : { ...subtask }
+        subtask.id === id
+          ? {
+              ...subtask,
+              detail:
+                newValue.length > MAX_SUBTASK_LENGTH
+                  ? subtask.detail
+                  : newValue,
+            }
+          : { ...subtask }
       )
     );
   };
 
-  const onSubTaskCheckboxChange = (newValue, id) => {
-    setSubTasks(
-      subtasks.map((subtask) =>
-        subtask.id === id ? { ...subtask, status: newValue } : { ...subtask }
-      )
-    );
-  };
+  // const onSubTaskCheckboxChange = (newValue, id) => {
+  //   setSubTasks(
+  //     subtasks.map((subtask) =>
+  //       subtask.id === id ? { ...subtask, status: newValue } : { ...subtask }
+  //     )
+  //   );
+  // };
 
   const checkTaskChange = () => {
     // compare previous data (may not be first) with latest data
-
-    console.log(initialState.current.nodeColor)
-    console.log(nodeColor.name); 
 
     if (
       initialState.current.name !== name ||
@@ -200,13 +211,12 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
     ) {
       return true;
     }
-
     return false;
   };
 
   const checkSubtaskChange = () => {
     let subtaskChange = { add: [], edit: [], delete: [] };
-    initialState.current.subtasks = initialState.current.subtasks ?? [] 
+    initialState.current.subtasks = initialState.current.subtasks ?? [];
 
     initialState.current.subtasks.forEach((initsubtask) => {
       const intersection = subtasks.find(
@@ -226,7 +236,9 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
     });
 
     subtasks.forEach((subtask) => {
-      const intersection = initialState.current.subtasks.find((initsubtask) => initsubtask.id === subtask.id)
+      const intersection = initialState.current.subtasks.find(
+        (initsubtask) => initsubtask.id === subtask.id
+      );
       if (intersection === undefined) {
         // added subtask
         subtaskChange.add.push(subtask.id);
@@ -235,21 +247,27 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
     return subtaskChange;
   };
 
-  const handleDetectChangeBeforeClose = () => {
-    // use to check whether the task has changed
-    // if change is detected but user press close
-    // set the display unsaved change modal to true
+  const isChangeDetected = () => {
+    // return true for change
     const check = checkSubtaskChange();
     const subtaskChange =
       check.add.length !== 0 ||
       check.edit.length !== 0 ||
       check.delete.length !== 0;
 
-    if (checkTaskChange() || subtaskChange) {
+    return checkTaskChange() || subtaskChange;
+  };
+
+  const handleDetectChangeBeforeClose = () => {
+    // use to check whether the task has changed
+    // if change is detected but user press close
+    // set the display unsaved change modal to true
+
+    if (isChangeDetected()) {
       setUnSavedModal(true);
       return;
     }
-    
+
     editTaskCallBack(taskWasFetched ? "fetch" : "failed", generateTaskData());
   };
 
@@ -272,7 +290,12 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    editTaskCallBack("success", generateTaskData());
+    // if no change, go to fetch or failed condition
+    // if change, go to success immediately
+    editTaskCallBack(
+      isChangeDetected() || oldData.id === -1 ? "success" : "fetch",
+      generateTaskData()
+    );
   };
 
   return (
@@ -305,9 +328,15 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
           darkButtonText: " Cancel",
         }}
       />
-
-      <form onSubmit={handleSubmit}>
-        <div className="justify-center items-center flex overflow-y-auto fixed inset-0 z-20 outline-none focus:outline-none py-3">
+      <motion.form
+        onSubmit={handleSubmit}
+        variants={taskModalVariants}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        className="z-50"
+      >
+        <div className="justify-center items-center flex overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none py-3">
           <div className="relative w-11/12 md:w-5/6 my-6 mx-auto xl:w-2/3 2xl:w-1/2 max-h-screen">
             {/*content*/}
             {loading && <Spinner className="z-30 absolute rounded-xl" />}
@@ -317,7 +346,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                 className={`flex justify-between py-4 px-5 xl:py-8 border-b border-solid border-slate-200 rounded-t-2xl transition duration-300 items-center bg-white`}
               >
                 <div className={`${oldData.id === -1 ? "" : "w-[50px]"}`}></div>
-                <h3 className="text-4xl font-semibold text-black">
+                <h3 className="text-4xl font-semibold text-black flex justify-center">
                   {oldData.id === -1 ? "Create" : "Edit"} TASK
                 </h3>
                 {oldData.id === -1 ? (
@@ -346,9 +375,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                     onChange={(e) => handleNameChange(e)}
                   ></input>
 
-                  <label className="font-inter font-bold">
-                    Description
-                  </label>
+                  <label className="font-inter font-bold">Description</label>
                   <textarea
                     className="border-2 border-gray-300 rounded-md my-1 grow placeholder:italic placeholder:justify-start px-1 font-inter"
                     value={description}
@@ -378,7 +405,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                     </div>
                     <div className="w-full flex justify-between gap-3">
                       <label className="self-center font-inter font-bold">
-                        Due 
+                        Due
                       </label>
                       <div className="basis-10/12 ">
                         <DatePicker
@@ -541,7 +568,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
           </div>
         </div>
         <div className="opacity-25 fixed inset-0 z-10 bg-black"></div>
-      </form>
+      </motion.form>
     </>
   );
 };
