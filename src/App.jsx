@@ -2,13 +2,11 @@ import "./App.css";
 import Navbar from "./components/Navbar";
 import Spinner from "./components/Spinner";
 import NoPage from "./pages/NoPage";
-import { BrowserRouter, Route, Routes, Navigate, useLocation } from "react-router-dom";
-import { lazy, Suspense, useState, useEffect } from "react";
-import HomeOtherUser from "./pages/HomeOtherUser";
-import { isServerResponding, isUserLoggedIn } from "./functions/userFunction";
-import { axiosInstance } from "./functions/axiosInstance";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { lazy, Suspense } from "react";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Shop from "./pages/Shop";
+import HomeOtherUser from "./pages/HomeOtherUser";
 
 const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
@@ -23,65 +21,7 @@ const Introduction = lazy(() => import("./pages/Introduction"));
 const Activity = lazy(() => import("./pages/Activity"));
 const SearchPage = lazy(() => import("./pages/SearchPage"));
 
-function UnProtectedRoute({ children }) {
-  const route = '/user/'
-  const [authStatus, setAuthStatus] = useState(null);
-
-  console.log(children);
-  axiosInstance.get(route)
-    .then(response => {
-      console.log(response);
-      setAuthStatus(true);
-    })
-    .catch(error => {
-      console.error(error);
-      setAuthStatus(false);
-    })
-
-  if (authStatus == null) {
-    return <Spinner />;
-  } else if (authStatus === true) {
-    return <Navigate replace to="/" />;
-  } else {
-    return children;
-  }
-}
-
 function App() {
-  /*
-  let [fetched, setFetched] = useState(false);
-  let [isLoggedIn, setIsLoggedIn] = useState(false);
-
-  useEffect (() => {
-    const fetchData = async () => {
-      setIsLoggedIn(await isUserLoggedIn());
-      setFetched(true);
-    }
-    fetchData();
-  }, [location.pathname]);
-
-  const ProtectedRoute = ({children}) => {
-    if (!isLoggedIn) {
-      return <Navigate to="/intro" replace />;
-    }
-
-    return children;
-  }
-
-  const UnProtectedRoute = ({children}) => {
-    if (isLoggedIn) {
-      return <Navigate to="/" replace />;
-    }
-
-    return children;
-  }
-
-  if (!fetched) return <Spinner />;
-
-  console.log(window.location.pathname);
-  console.log(isLoggedIn);
-  */
-
   return (
     <>
       <BrowserRouter>
@@ -90,21 +30,17 @@ function App() {
             <Route
               path="/signup"
               element={
-                <UnProtectedRoute>
-                  <Suspense fallback={<Spinner />}>
-                    <Signup />
-                  </Suspense>
-                </UnProtectedRoute>
+                <Suspense fallback={<Spinner />}>
+                  <Signup />
+                </Suspense>
               }
             ></Route>
             <Route
               path="/login"
               element={
-                <UnProtectedRoute>
-                  <Suspense fallback={<Spinner />}>
-                    <Login />
-                  </Suspense>
-                </UnProtectedRoute>
+                <Suspense fallback={<Spinner />}>
+                  <Login />
+                </Suspense>
               }
             ></Route>
             <Route
@@ -119,11 +55,11 @@ function App() {
               path="/premium"
               element={
                 <Suspense fallback={<Spinner />}>
-                  <Introduction wantPremium={true}/>
+                  <Introduction wantPremium={true} />
                 </Suspense>
               }
             ></Route>
-            <Route path="/" element={<Navbar />}>
+            <Route path="/" key="my-home" element={<Navbar />}>
               <Route
                 path="/"
                 element={
@@ -135,11 +71,11 @@ function App() {
                 }
               ></Route>
               <Route
-                path="home/:uid"
+                path="home/:other_uid"
                 element={
                   <ProtectedRoute>
                     <Suspense fallback={<Spinner />}>
-                      <FriendHome />             
+                      <HomeOtherUser />
                     </Suspense>
                   </ProtectedRoute>
                 }
@@ -156,6 +92,7 @@ function App() {
               ></Route>
               <Route
                 path="create"
+                key="other-home"
                 element={
                   <ProtectedRoute>
                     <Suspense fallback={<Spinner />}>
@@ -243,15 +180,15 @@ function App() {
                   </ProtectedRoute>
                 }
               /><Route
-              path="shop"
-              element={
-                <ProtectedRoute>
-                  <Suspense fallback={<Spinner />}>
-                    <Shop />{" "}
-                  </Suspense>
-                </ProtectedRoute>
-              }
-            />
+                path="shop"
+                element={
+                  <ProtectedRoute>
+                    <Suspense fallback={<Spinner />}>
+                      <Shop />{" "}
+                    </Suspense>
+                  </ProtectedRoute>
+                }
+              />
               <Route path="/404" element={<NoPage />} />
               <Route path="*" element={
                 <ProtectedRoute>

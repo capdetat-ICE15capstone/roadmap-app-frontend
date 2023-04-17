@@ -11,8 +11,8 @@ const RoadmapDropdown = ({onDelete}) => {
     return (
         <>
             <div className="flex flex-col justify-center">
-                <button onClick={handleClick} className="flex justify-center items-center w-[20px] h-[20px] mb-4 rounded-[20px] hover:bg-[rgb(238,234,234)]">                
-                    <DropdownIcon/>
+                <button onClick={handleClick} className="flex rotate-90 justify-center items-center p-2 rounded-[20px] bg-white hover:bg-gray-300 transition-all">                
+                    <DropdownIcon />
                 </button>
                 {isOpen && 
                 <div className="flex flex-col mb-8 -ml-28 bg-[#FFFFFF] font-bold appearance-none border rounded-xl leading-tight w-60 h-36 z-10">

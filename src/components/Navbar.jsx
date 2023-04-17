@@ -44,13 +44,13 @@ const Navbar = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col flex-grow bg-white overflow-x-hidden">
+        <div className="flex flex-col flex-grow bg-gray-50 overflow-x-hidden z-20">
           <Outlet />
         </div>
         <div className="flex xs:hidden max-xs:visible bg-nav-blue">
           <NavItem SvgIcon={HomeLogo} displayName="Home" baseColor="bg-nav-blue" to="/" />
           <NavItem SvgIcon={FeedLogo} displayName="Feed" baseColor="bg-nav-blue" to="/feed" />
-          <NavItem SvgIcon={BookIcon} displayName="Quest" baseColor="bg-nav-blue" to="/quest" />
+          <NavItem SvgIcon={BookIcon} displayName="Quest" baseColor="bg-nav-blue" to="/activity" />
           <NavItem SvgIcon={CalendarLogo} displayName="Shop" baseColor="bg-nav-blue" to="/shop" />
           <NavItem SvgIcon={SettingLogo} displayName="Setting" baseColor="bg-nav-blue" to="/setting" />
         </div>
@@ -65,7 +65,7 @@ const Navbar = () => {
             <div className="flex flex-col">
               <NavItem SvgIcon={HomeLogo} displayName="Home" baseColor="bg-nav-blue" to="/" />
               <NavItem SvgIcon={FeedLogo} displayName="Feed" baseColor="bg-nav-blue" to="/feed" />
-              <NavItem SvgIcon={BookIcon} displayName="Quest" baseColor="bg-nav-blue" to="/quest" />
+              <NavItem SvgIcon={BookIcon} displayName="Quest" baseColor="bg-nav-blue" to="/activity" />
               <NavItem SvgIcon={CalendarLogo} displayName="Shop" baseColor="bg-nav-blue" to="/shop" />
               <NavItem SvgIcon={SettingLogo} displayName="Setting" baseColor="bg-nav-blue" to="/setting" />
             </div>

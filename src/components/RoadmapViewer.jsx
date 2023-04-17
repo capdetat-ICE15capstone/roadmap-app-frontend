@@ -32,7 +32,7 @@ function RoadmapViewer({ tasks, currentTaskID, handleTaskView }) {
         <div className='flex pl-12 pt-8 pb-12 space-x-[25px]'>
           {
             tasks.map((task, index) => {
-              const zIndex = task.length - index;
+              const zIndex = tasks.length - index;
               return (
                 <div key={index} className="relative" style={{ zIndex }}>
                   <div className="absolute top-1/2 -left-1/4 transform -translate-x-1/2 -translate-y-3/4 -z-10">
@@ -55,7 +55,7 @@ function RoadmapViewer({ tasks, currentTaskID, handleTaskView }) {
                         </div>
                       )}
                       {(index > currentTaskIndex) && (
-                        <div className='text-3xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-md text-center select-none z-50 pointer-events-none'>
+                        <div className='text-3xl absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 text-md text-center select-none z-50 pointer-events-none'>
                           🔒
                         </div>
                       )}
