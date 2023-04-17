@@ -6,7 +6,7 @@ import { ReactComponent as LikeIcon } from '../assets/shapes/like.svg';
 import { ReactComponent as LikeHilightIcon } from '../assets/shapes/like_hilight.svg';
 import { ReactComponent as ForkIcon } from '../assets/shapes/fork.svg';
 
-function RoadmapDetail({ roadmap, isOwner, likeCount, isLiked, isCompleted, handleLike }) {
+function RoadmapDetail({ roadmap, isOwner, likeCount, isLiked, isCompleted, isArchived, handleLike }) {
   const navigate = useNavigate();
 
   const [visible, setVisible] = useState();
@@ -20,7 +20,7 @@ function RoadmapDetail({ roadmap, isOwner, likeCount, isLiked, isCompleted, hand
               {roadmap.name} {isCompleted ? '✓' : ''}
             </div>
             <div className="flex sm:justify-end sm:space-x-1 max-sm:space-x-2 max-sm:w-full h-9 shrink-0">
-              {isOwner === true && (
+              {(isOwner || isArchived) && (
                 <>
                   <div className="flex sm:w-24 max-sm:flex-1 justify-center items-center space-x-2 bg-gray-600 text-white px-4 py-2 font-semilight rounded-full text-sm font-bold truncate pointer-events-none">
                     {(!isLiked) ? (
@@ -32,7 +32,7 @@ function RoadmapDetail({ roadmap, isOwner, likeCount, isLiked, isCompleted, hand
                       {likeCount}
                     </span>
                   </div>
-                  <button onClick={() => navigate(`/edit/${roadmap.rid}`)} className={`${(isCompleted) ? 'bg-gray-700 pointer-events-none' : 'bg-sub-blue'} flex max-sm:flex-1 sm:w-24  justify-center items-center text-white px-4 py-2 font-semilight rounded-full text-sm font-bold transition ease-in-out hover:bg-nav-blue hover:scale-105 hover:z-10 duration-200`} type="button">
+                  <button onClick={() => navigate(`/edit/${roadmap.rid}`)} className={`${(isCompleted || isArchived) ? 'bg-gray-700 pointer-events-none' : 'bg-sub-blue'} flex max-sm:flex-1 sm:w-24  justify-center items-center text-white px-4 py-2 font-semilight rounded-full text-sm font-bold transition ease-in-out hover:bg-nav-blue hover:scale-105 hover:z-10 duration-200`} type="button">
                     Edit
                   </button>
                   <button
@@ -41,7 +41,7 @@ function RoadmapDetail({ roadmap, isOwner, likeCount, isLiked, isCompleted, hand
                     onMouseOver={() => setVisible(true)}
                     onMouseOut={() => setVisible(false)}
                   >
-                    i
+                      i
                   </button>
                 </>
               )}
