@@ -1,5 +1,12 @@
 import React from "react";
+import { motion } from "framer-motion";
 import { ReactComponent as Question } from "../assets/taskmodal/questionMark.svg";
+
+const taskModalVariants = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+};
 
 function TwoButtonModal({
   isOpen,
@@ -10,8 +17,15 @@ function TwoButtonModal({
   oneButton = false,
 }) {
   return (
-    <div
-      className={`fixed z-[60] inset-0 overflow-y-auto ${isOpen ? "" : "hidden"}`}
+    <motion.div
+      variants={taskModalVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      key="twobuttonmodal"
+      className={`fixed z-[60] inset-0 overflow-y-auto ${
+        isOpen ? "" : "hidden"
+      }`}
     >
       <div className="flex items-center justify-center min-h-screen">
         <div className="fixed inset-0 bg-gray-500 opacity-75"></div>
@@ -35,7 +49,7 @@ function TwoButtonModal({
               >
                 {textField.lightButtonText ?? "Light"}
               </button>
-            ) }
+            )}
             <button
               className="text-white font-semibold bg-blue-900 px-4 py-2 rounded"
               onClick={onDarkPress}
@@ -45,7 +59,7 @@ function TwoButtonModal({
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

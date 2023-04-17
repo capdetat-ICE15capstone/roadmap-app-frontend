@@ -1,6 +1,8 @@
 import { axiosInstance } from "./axiosInstance";
 
-export const isUserPremium = async (timeout=1000) => {
+const DEFAULT_TIMEOUT = 3000;
+
+export const isUserPremium = async (timeout=DEFAULT_TIMEOUT) => {
   try {
     const response = await axiosInstance.get('/home/me', {timeout: timeout});
     return (response.data.profile.is_premium);
@@ -26,7 +28,7 @@ export const isUserLoggedIn = async (timeout = 0) => {
   }
 };
 
-export const isServerResponding = async (url="/", timeout=1000) => {
+export const isServerResponding = async (url="/", timeout=DEFAULT_TIMEOUT) => {
   try {
     await axiosInstance.get(url, {timeout:timeout})
   } catch (error) {
@@ -37,7 +39,7 @@ export const isServerResponding = async (url="/", timeout=1000) => {
 };
 
 
-export const getUserInformation = async (timeout=1000) => {
+export const getUserInformation = async (timeout=DEFAULT_TIMEOUT) => {
   try {
     const res = await axiosInstance.get("/user/", {timeout:timeout});
     return res.data;
