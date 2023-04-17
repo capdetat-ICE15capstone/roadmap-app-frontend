@@ -265,7 +265,7 @@ const Feed = () => {
                       </div>
                     )
                   })}
-                  <div class="pb-4"></div>
+                  <div className="pb-4"></div>
                 </div>
               </div>
             </div>
