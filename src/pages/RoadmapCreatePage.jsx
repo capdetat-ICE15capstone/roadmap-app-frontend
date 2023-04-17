@@ -8,23 +8,51 @@ import {
   countRoadmap,
 } from "../functions/roadmapFunction.jsx";
 import Spinner from "../components/Spinner";
-import { isUserLoggedIn, isUserPremium } from "../functions/userFunction";
+import {
+  getUserInformation,
+  isUserLoggedIn,
+  isUserPremium,
+} from "../functions/userFunction";
 import { CustomSVG, getTWFill } from "../components/CustomSVG";
 import { ReactComponent as AddButton } from "../assets/addButton.svg";
+import { ReactComponent as Lock } from "../assets/cec_page/lock.svg";
+import { ReactComponent as Unlock } from "../assets/cec_page/unlock.svg";
 import TwoButtonModal from "../components/TwoButtonModal";
-import { ReactComponent as Check } from "../assets/check.svg";
+import { ReactComponent as TaskLock } from "../assets/cec_page/taskLock.svg";
 import { DragDropContext, Draggable } from "react-beautiful-dnd";
 import { StrictModeDroppable } from "../components/StrictModeDroppable";
 import { AnimatePresence, motion } from "framer-motion";
 import { ReactComponent as NotiOff } from "../assets/notification/notiOff.svg";
 import { ReactComponent as NotiOn } from "../assets/notification/notiOn.svg";
 import { roundTimeToNearest30 } from "../functions/formatFunction";
-
-// TODO: put a null check around getRoadmap and createRoadmap pls
-// BUG: spinner does not stop spinning in error
-// TODO: more styling
-// TODO: zigzag div
-// BUG: notification time
+import { ReactComponent as QuestionMark } from "../assets/taskmodal/QuestionMark.svg";
+import { ReactComponent as Close } from "../assets/close.svg";
+import { useIsSM } from "../hooks/useMediaQuery";
+import Step1 from "../assets/helpCreateRoadmap_assets/step_1.jpg";
+import Step1_md from "../assets/helpCreateRoadmap_assets/step_1_md.jpg";
+import Step1_xs from "../assets/helpCreateRoadmap_assets/step_1_xs.jpg";
+import Step2 from "../assets/helpCreateRoadmap_assets/step_2.jpg";
+import Step2_md from "../assets/helpCreateRoadmap_assets/step_2_md.jpg";
+import Step2_xs from "../assets/helpCreateRoadmap_assets/step_2_xs.jpg";
+import Step3_1 from "../assets/helpCreateRoadmap_assets/step_3_1.jpg";
+import Step3_1_md from "../assets/helpCreateRoadmap_assets/step_3_1_md.jpg";
+import Step3_1_xs from "../assets/helpCreateRoadmap_assets/step_3_2_xs.jpg";
+import Step3_2 from "../assets/helpCreateRoadmap_assets/step_3_2.jpg";
+import Step3_2_md from "../assets/helpCreateRoadmap_assets/step_3_2_md.jpg";
+import Step3_2_xs from "../assets/helpCreateRoadmap_assets/step_3_2_xs.jpg";
+import Step3_3 from "../assets/helpCreateRoadmap_assets/step_3_3.jpg";
+import Step3_3_md from "../assets/helpCreateRoadmap_assets/step_3_3_md.jpg";
+import Step3_3_xs from "../assets/helpCreateRoadmap_assets/step_3_3_xs.jpg";
+import Step3_4 from "../assets/helpCreateRoadmap_assets/step_3_4.jpg";
+import Step3_4_md from "../assets/helpCreateRoadmap_assets/step_3_4_md.jpg";
+import Step3_4_xs from "../assets/helpCreateRoadmap_assets/step_3_4_xs.jpg";
+import Step4 from "../assets/helpCreateRoadmap_assets/step_4.jpg";
+import Step4_md from "../assets/helpCreateRoadmap_assets/step_4_md.jpg";
+import Step4_xs from "../assets/helpCreateRoadmap_assets/step_4_xs.jpg";
+import Step5 from "../assets/helpCreateRoadmap_assets/step_5.jpg";
+import Step5_md from "../assets/helpCreateRoadmap_assets/step_5_md.jpg";
+import Step5_xs from "../assets/helpCreateRoadmap_assets/step_5_xs.jpg";
+import SpinnerNeo from "../components/SpinnerNeo";
 
 const MAX_TASKS_NONPREMIUM = 16;
 const MAX_RMNAME_LENGTH = 30;
@@ -33,6 +61,11 @@ const notificationDayOption = [1, 3, 5, 7, 14];
 const notificationOption = {
   options: ["No notification"],
   optionValues: [{ on: false, detail: { day: 0, beforeDueDate: false } }],
+};
+const modalAnimationVariants = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
 };
 
 notificationDayOption.forEach((day) => {
@@ -50,11 +83,23 @@ notificationDayOption.forEach((day) => {
   });
 });
 
-const TaskItem = ({ task, setEditTaskID, setModalState, disabled }) => {
+const TaskItem = ({
+  task,
+  setEditTaskID,
+  setModalState,
+  disabled,
+  isLastitem,
+}) => {
   // Task node Component
   return (
-    <div className="relative break-words w-28">
-      <div className="flex after:h-1 after:w-full after:bg-black after:absolute after:top-[30px] after:-z-10 justify-center">
+    <div className={`relative break-words w-28 z-10`}>
+      <div
+        className={`flex after:h-1 after:w-full  after:top-[30px] ${
+          isLastitem
+            ? "after:border-t-4 after:border-dashed after:border-black after:bg-transparent after:overflow-hidden after:relative after:translate-x-0"
+            : "after:bg-black after:absolute after:z-10 after:translate-x-[30px]"
+        }`}
+      >
         <div className="flex">
           <div className="flex flex-col gap-2 items-center">
             <button
@@ -64,11 +109,17 @@ const TaskItem = ({ task, setEditTaskID, setModalState, disabled }) => {
                 setEditTaskID(task.id);
                 setModalState(true);
               }}
+              className="z-20 relative focus:outline-none"
             >
-              <Check hidden={!disabled} className="absolute" />
+              <TaskLock
+                hidden={!disabled}
+                className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 h-8 w-8"
+              />
               <CustomSVG
                 type={task.nodeShape}
-                className={`${getTWFill(task.nodeColor)}`}
+                className={`${
+                  disabled ? "fill-gray-400" : getTWFill(task.nodeColor)
+                }`}
                 size={60}
                 isStrokeOn={true}
                 noScaleOnHover={disabled}
@@ -113,17 +164,25 @@ const DropDownMenu = ({
   };
 
   return (
-    <div className={className}>
-      <button onClick={handleMenuShowUnshow} type="button">
-        <Icon />
+    <div className={`${className} z-40`}>
+      <button
+        onClick={handleMenuShowUnshow}
+        type="button"
+        className="flex items-center hover:scale-110 transition duration-150"
+      >
+        <Icon className="w-9 h-9" />
+        <span className="visible md:hidden font-bold [@media(max-width:360px)]:hidden">
+          Notification
+        </span>
       </button>
-      {isMenuShowing ? (
-        <AnimatePresence>
+      <AnimatePresence mode="wait">
+        {isMenuShowing ? (
           <motion.div
-            className="absolute bg-white border rounded-md flex flex-col right-0"
+            key={"notification_menu"}
+            className="absolute bg-white border rounded-md flex flex-col left-0 xs:left-auto xs:right-0 [@media(max-width:360px)]:-left-full"
             initial={{ y: "-50%", opacity: 0, scale: 0 }}
             animate={{ y: "0%", opacity: 1, scale: 1 }}
-            exit={{ y: "-50%", opacity: 0, scale: 0 }}
+            exit={{opacity: 0, y:"10%"}}
           >
             {options.map((option, index) => {
               return (
@@ -131,7 +190,7 @@ const DropDownMenu = ({
                   onClick={(event) =>
                     handleSetOption(event, optionValues[index])
                   }
-                  className={`font-bold whitespace-nowrap inline-block p-1 px-2 justify-center border hover:scale-125 duration-200 transition hover:bg-yellow-300 justify-self-center ${
+                  className={`font-bold whitespace-nowrap inline-block p-1 px-2 justify-center border hover:scale-110 duration-200 transition hover:bg-yellow-300 justify-self-center ${
                     optionComparer(optionValues[index], currentOption) === true
                       ? "bg-gray-300"
                       : "bg-white"
@@ -144,8 +203,8 @@ const DropDownMenu = ({
               );
             })}
           </motion.div>
-        </AnimatePresence>
-      ) : null}
+        ) : null}
+      </AnimatePresence>
     </div>
   );
 };
@@ -158,7 +217,7 @@ const RoadmapCreatePage = (props) => {
     isPublic: true,
     tasks: [],
     tags: [],
-    notiStatus: {on:false}
+    notiStatus: { on: false },
   });
   const { mode } = props; // props from parent
   const { state } = useLocation(); // state from previous page, including fetched roadmap data
@@ -167,7 +226,7 @@ const RoadmapCreatePage = (props) => {
   const [RMDesc, setRMDesc] = useState("");
   const [tasks, setTasks] = useState([]);
   const [modalState, setModalState] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [editTaskID, setEditTaskID] = useState(0);
   const [lastId, setLastId] = useState(0);
   const [isPublic, setPublic] = useState(true);
@@ -179,10 +238,18 @@ const RoadmapCreatePage = (props) => {
   const [publicModal, setPublicModal] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [errorModal, setErrorModal] = useState(false);
-  const [errorHandle, setErrorHandle] = useState({message: "", redirectTo: null});
-  const [discardModal, setDiscardModal] = useState(false)
-  
+  const [errorHandle, setErrorHandle] = useState({
+    message: "",
+    redirectTo: null,
+  });
+  const [discardModal, setDiscardModal] = useState(false);
+  const [premium, setPremium] = useState(false);
+  const isSM = useIsSM();
+  const [showHelp, setShowHelp] = useState(false);
+  const [helpPage, setHelpPage] = useState(1);
+
   useEffect(() => {
+    console.log("Setting up roadmap");
     setUpRoadmap();
   }, []);
 
@@ -232,19 +299,46 @@ const RoadmapCreatePage = (props) => {
   };
 
   const setUpRoadmap = async () => {
-    if (await countRoadmap() >= 3 && !(await isUserPremium()) && mode === "create") {
-      handleDisplayErrorMessage("Roadmap limit for non-premium used","/", true)
+    setLoading(true);
+
+    const loginStatus = await isUserLoggedIn();
+    const roadmapCount = await countRoadmap();
+    const premiumStatus = await isUserPremium();
+    const userInfo = await getUserInformation();
+
+    if (roadmapCount === null || premiumStatus === null || userInfo === null) {
+      setLoading(false);
+      handleDisplayErrorMessage("Application Error", "/", true);
     }
+    if (!loginStatus) {
+      setLoading(false);
+      handleDisplayErrorMessage("User is not authorized", "/login", true);
+    }
+    if (
+      roadmapCount >= 3 &&
+      !premiumStatus &&
+      (mode === "create" || mode === "clone")
+    ) {
+      setLoading(false);
+      handleDisplayErrorMessage(
+        "Roadmap limit reached for non-premium user",
+        "/",
+        true
+      );
+    }
+
+    setPremium(premiumStatus);
+
     if (mode === "edit" || mode === "clone") {
-      // check whether the user could view this page
-      if (!isUserLoggedIn()) {
-        handleDisplayErrorMessage("User Unauthorized", "/login", true)
-      }  
       // check if state is available
       if (state !== null && state !== undefined) {
         // set up the data to variable
         const notificationObject = setUpNotification(state.roadmap);
         if (mode === "edit") {
+          if (userInfo.uid !== state.roadmap.owner_id) {
+            setLoading(false);
+            handleDisplayErrorMessage("User is not authorized", "/", true);
+          }
           initialState.current = {
             name: state.roadmap.name,
             description: state.roadmap.description,
@@ -270,16 +364,18 @@ const RoadmapCreatePage = (props) => {
       } else {
         // fetch the roadmap data
         // then set the data to variable
-        setLoading(true);
-        const tempRoadmap = await getRoadmap(id, 10000, mode === "clone");
-        // console.log(tempRoadmap);
+        // const tempRoadmap = await getRoadmap(id, 10000, mode === "clone"); //individual fetch is bugged
+        const tempRoadmap = await getRoadmap(id, 10000, true);
         if (tempRoadmap === null) {
           setLoading(false);
-          // alert("error");
-          handleDisplayErrorMessage("Roadmap Loading Failed", "/home", true)
-        } else  {
+          handleDisplayErrorMessage("Roadmap Loading Failed", "/home", true);
+        } else {
           const notificationObject = setUpNotification(tempRoadmap);
           if (mode === "edit") {
+            if (userInfo.uid !== tempRoadmap.owner_id) {
+              setLoading(false);
+              handleDisplayErrorMessage("User is not authorized", "/", true);
+            }
             initialState.current = {
               name: tempRoadmap.name,
               description: tempRoadmap.description,
@@ -303,7 +399,6 @@ const RoadmapCreatePage = (props) => {
           setNotiStatus(notificationObject);
           setLastId(highestID + 1);
         }
-        setLoading(false);
       }
     }
 
@@ -311,11 +406,15 @@ const RoadmapCreatePage = (props) => {
       let timeDifference = undefined;
       setTasks((tasks) =>
         tasks.map((task) => {
-          timeDifference |= (new Date()).getTime() - task.startDate.getTime() 
+          timeDifference |= new Date().getTime() - task.startDate.getTime();
           task.isDone = false;
           task.isTempId = true;
-          task.startDate = roundTimeToNearest30(new Date(task.startDate.getTime() + timeDifference))
-          task.dueDate = roundTimeToNearest30(new Date(task.dueDate.getTime() + timeDifference))
+          task.startDate = roundTimeToNearest30(
+            new Date(task.startDate.getTime() + timeDifference)
+          );
+          task.dueDate = roundTimeToNearest30(
+            new Date(task.dueDate.getTime() + timeDifference)
+          );
           task.subtasks.map((subtask) => {
             subtask.isTempId = true;
             return subtask;
@@ -324,6 +423,7 @@ const RoadmapCreatePage = (props) => {
         })
       );
     }
+    setLoading(false);
   };
 
   const searchTags = () => {
@@ -345,6 +445,7 @@ const RoadmapCreatePage = (props) => {
     switch (status) {
       case "success":
         // user click save
+        console.log("success");
         setHasUnsavedChanges(true);
         switch (submissionObject.id) {
           case -1:
@@ -359,11 +460,18 @@ const RoadmapCreatePage = (props) => {
                 task.id === submissionObject.id ? submissionObject : task
               )
             );
+            initialState.current.tasks.map((task) => {
+              if (task.id === submissionObject.id) {
+                task.hasFetched = true;
+              }
+              return task;
+            });
             break;
         }
         break;
       case "fetch":
         // task was fetched but not edited
+        console.log("fetch");
         setTasks(
           tasks.map((task) =>
             task.id === submissionObject.id ? submissionObject : task
@@ -380,6 +488,7 @@ const RoadmapCreatePage = (props) => {
         break;
       case "delete":
         // user click delete task button
+        console.log("delete");
         setHasUnsavedChanges(true);
         setTasks((tasks) =>
           tasks.filter((task) => task.id !== submissionObject.id)
@@ -398,7 +507,7 @@ const RoadmapCreatePage = (props) => {
   };
 
   const isAddButtonDisabled = () => {
-    return !isUserPremium() && tasks.length >= MAX_TASKS_NONPREMIUM;
+    return !premium && tasks.length >= MAX_TASKS_NONPREMIUM;
   };
 
   const handleNameChange = (event) => {
@@ -479,10 +588,8 @@ const RoadmapCreatePage = (props) => {
       const taskIntersection = initState.find(
         (inittask) => task.id === inittask.id
       );
-      console.log(taskIntersection);
-
-      // if (taskIntersection === undefined) return;
-
+      console.log(task.nodeShape);
+      console.log(taskIntersection.nodeShape);
       if (
         taskIntersection.hasFetched === true &&
         (task.name !== taskIntersection.name ||
@@ -493,6 +600,7 @@ const RoadmapCreatePage = (props) => {
           task.dueDate.getTime() !== taskIntersection.dueDate.getTime())
       ) {
         // edited task
+        console.log(`added task ${task.id} to edit list`);
         taskChange.edit.push(task);
         return;
       }
@@ -577,34 +685,29 @@ const RoadmapCreatePage = (props) => {
     reportError
   ) => {
     if (mode === "create" || mode === "clone") {
-      if (
-        (await createRoadmap(roadmapObject, taskChange, subtaskChange, reportError)) === null
-      ) {
-        return false;
-      }
-      return true;
+      return await createRoadmap(
+        roadmapObject,
+        taskChange,
+        subtaskChange,
+        tagChanges,
+        reportError
+      );
     } else if (mode === "edit") {
-      if (
-        (await editRoadmap(
-          id,
-          roadmapObject,
-          taskChange,
-          subtaskChange,
-          relationChange,
-          tagChanges,
-          reportError
-        )) === null
-      ) {
-        return false;
-      }
-      return true;
+      return await editRoadmap(
+        id,
+        roadmapObject,
+        taskChange,
+        subtaskChange,
+        relationChange,
+        tagChanges,
+        reportError
+      );
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // let taskChange = { add: [], edit: [], delete: [] };
     let subTaskChange = { add: [], edit: [], delete: [] };
     let taskRelationChange = null;
 
@@ -644,74 +747,90 @@ const RoadmapCreatePage = (props) => {
         ? newTaskRelation
         : null;
 
-    const completeRoadmap = {
-      id: id ?? null,
-      name: RMName,
-      description: RMDesc,
-      // tasks: tasks,
-      isPublic: isPublic,
-      notificationInfo: notiStatus,
-    };
-
     const tagChanges = compareTagChange();
 
-    console.log("roadmap change");
-    console.log(roadmapChange);
-    console.log("task");
-    console.log(taskChange);
-    console.log("subtask");
-    console.log(subTaskChange);
-    console.log("relation change");
-    console.log(taskRelationChange);
-    console.log("tag change");
-    console.log(tagChanges);
+    // console.log("roadmap change");
+    // console.log(roadmapChange);
+    // console.log("task");
+    // console.log(taskChange);
+    // console.log("subtask");
+    // console.log(subTaskChange);
+    // console.log("relation change");
+    // console.log(taskRelationChange);
+    // console.log("tag change");
+    // console.log(tagChanges);
 
-    // Begin the spinner
     setLoading(true);
-    // await generateNotificationObjects();
-    if (
-      await handleSendingApi(
-        roadmapChange,
-        taskChange,
-        subTaskChange,
-        taskRelationChange,
-        tagChanges,
-        handleDisplayErrorMessage
-      )
-    )
-      navigate("/");
+    const response = await handleSendingApi(
+      roadmapChange,
+      taskChange,
+      subTaskChange,
+      taskRelationChange,
+      tagChanges,
+      handleDisplayErrorMessage
+    );
     setLoading(false);
-    // navigate("/");
+    if (response !== null && response !== undefined) {
+      if (mode === "create" || mode === "clone") {
+        try {
+          navigate(`/view/${response.roadmap.rid}`);
+        } catch (error) {
+          console.error(error);
+          handleDisplayErrorMessage("Error navigating to view page", "/", true);
+        }
+      } else {
+        try {
+          navigate(`/view/${id}`);
+        } catch (error) {
+          console.error(error);
+          handleDisplayErrorMessage("Error navigating to view page", "/", true);
+        }
+      }
+    }
   };
 
   const handleDiscard = () => {
     navigate(0);
   };
 
-  const handleDisplayErrorMessage = (error, redirectTo=null, selfGenerateError=false) => {
+  const handleDisplayErrorMessage = (
+    error,
+    redirectTo = null,
+    selfGenerateError = false
+  ) => {
     if (selfGenerateError === true) {
-      setErrorHandle({message: error, redirectTo: redirectTo});
+      setErrorHandle({ message: error, redirectTo: redirectTo });
     } else {
       if (error.response !== undefined && error.response !== null) {
-        if (error.response.status === 401) 
-          redirectTo = "/login";
-        setErrorHandle({message: error.response.data.detail, redirectTo: redirectTo})
+        if (error.response.status === 401) redirectTo = "/login";
+        setErrorHandle({
+          message: error.response.data.detail,
+          redirectTo: redirectTo,
+        });
       } else {
-        setErrorHandle({message: error.message, redirectTo: redirectTo})
+        setErrorHandle({ message: error.message, redirectTo: redirectTo });
       }
     }
     setErrorModal(true);
-  }
+  };
 
   const handleErrorRedirect = () => {
-    if (errorHandle.redirectTo !== null)
-      navigate(errorHandle.redirectTo);
-    else 
-      setErrorModal(false)
-  }
+    if (errorHandle.redirectTo !== null) navigate(errorHandle.redirectTo);
+    else setErrorModal(false);
+  };
+
+  const helpClick = () => {
+    setShowHelp(!showHelp);
+    setHelpPage(1);
+  };
+
+  const previousPageClick = () => setHelpPage(helpPage - 1);
+
+  const nextPageCLick = () => setHelpPage(helpPage + 1);
 
   return (
     <>
+
       <TwoButtonModal
         isOpen={publicModal}
         onLightPress={() => setPublicModal(false)}
@@ -725,6 +844,7 @@ const RoadmapCreatePage = (props) => {
           darkButtonText: "OK",
         }}
       />
+
       <TwoButtonModal
         isOpen={errorModal}
         onDarkPress={handleErrorRedirect}
@@ -736,6 +856,7 @@ const RoadmapCreatePage = (props) => {
         }}
         oneButton={true}
       />
+      
       <TwoButtonModal
         isOpen={discardModal}
         onLightPress={() => setDiscardModal(false)}
@@ -747,6 +868,8 @@ const RoadmapCreatePage = (props) => {
           darkButtonText: "OK",
         }}
       />
+
+      <AnimatePresence mode="wait">
       {modalState ? (
         // id -1 is passed as a temp id to let the modal know it's in create mode, otherwise it's in edit mode
         editTaskID == -1 ? (
@@ -758,13 +881,13 @@ const RoadmapCreatePage = (props) => {
           />
         )
       ) : null}
+      </AnimatePresence>
 
-      {loading && <Spinner />}
-      <div className="h-full w-full flex justify-center">
-        <form onSubmit={handleSubmit} className="h-full w-4/5 max-w-4xl">
-        <div className="text-4xl font-bold mt-10 flex items-center">
-        <div className="flex flex-col">
-          <span className="font-inter text-3xl">
+      <SpinnerNeo visible={loading} />
+      <div className="h-full flex justify-center items-center flex-col m-auto max-w-5xl w-[90%] ">
+        {/* <div className="text-4xl font-bold flex items-start"> */}
+        <div className="flex w-full justify-between">
+          <span className="text-4xl font-bold">
             {mode === "create"
               ? "Create"
               : mode === "edit"
@@ -772,77 +895,99 @@ const RoadmapCreatePage = (props) => {
               : mode === "clone"
               ? "Clone"
               : null}{" "}
-            roadmap
           </span>
-          <div className="h-2">
-            <hr className="h-0.5 bg-nav-blue w-[120%]"></hr>
-          </div>
+          <button
+            onClick={helpClick}
+            className="rounded-full w-32 inline xs:w-32 h-10 bg-nav-blue font-bold text-white"
+          >
+            Help
+          </button>
         </div>
-      </div>
-          <div className="flex my-4 justify-between">
+        {/* </div> */}
+        <form
+          onSubmit={handleSubmit}
+          className={`rounded-3xl w-full ${
+            isSM ? "gap-3" : "gap-2"
+          } flex flex-col bg-white p-10 min-h-[80%] xs:min-h-[60%] m-3 shadow-lg shadow-gray-400 border-gray-400`}
+        >
+          <div className="flex flex-col md:flex-row justify-between items-center gap-2">
+            <label className="hidden md:visible text-3xl font-bold md:block leading-none">
+              Name
+            </label>
+            <label className="visible text-md md:hidden font-bold block leading-none">
+              Roadmap name
+            </label>
             <input
-              className="text-2xl focus:outline-none font-inter w-full placeholder:font-extrabold"
-              type="text"
+              className="text-3xl focus:outline-none text-ellipsis font-bold w-full leading-none placeholder:font-extrabold text-center md:text-left rounded-lg text-gray-400"
               value={RMName}
               onChange={handleNameChange}
               placeholder="UNTITLED"
             />
-            <div className="flex ">
-              <button
-                type="button"
-                disabled={isPublic}
-                onClick={() => setPublicModal(true)}
-                className="bg-white disabled:bg-blue-100 h-10 w-28 text-md p-2 rounded-l-full border shadow shadow-gray-400"
-              >
-                Public
-              </button>
-              <button
-                type="button"
-                disabled={!isPublic}
-                onClick={() => setPublicModal(true)}
-                className="h-10 w-28 bg-white disabled:bg-blue-100 text-md p-2 rounded-r-full border-y border-r shadow shadow-gray-400"
-              >
-                Private
-              </button>
+            <div className="flex gap-2 justify-evenly">
+              {/* Notification Setting */}
+              <div className="relative flex justify-center items-center">
+                <DropDownMenu
+                  optionValues={notificationOption.optionValues}
+                  options={notificationOption.options}
+                  currentOption={notiStatus}
+                  setOption={setNotiStatus}
+                  optionComparer={compareNotificationChange}
+                  Icon={notiStatus.on === true ? NotiOn : NotiOff}
+                  className="z-10"
+                />
+              </div>
+              {/* End of Notification Setting */}
+              <div className="flex justify-center items-center">
+                <button
+                  type="button"
+                  onClick={() => setPublicModal(true)}
+                  className="hover:scale-110 transition duration-150 flex items-center"
+                >
+                  {isPublic ? (
+                    <>
+                      <Unlock className="w-9 h-9" />
+                      <span className="visible md:hidden font-bold [@media(max-width:360px)]:hidden">
+                        Public
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <Lock className="w-9 h-9" />
+                      <span className="visible md:hidden font-bold [@media(max-width:360px)]:hidden">
+                        Private
+                      </span>
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
 
-          {
+          {tags.length > 0 && tags.length <= 3 ? (
             <motion.div className="text-gray-400">
               Tags: {tags.join(", ")}
             </motion.div>
-          }
+          ) : tags.length > 3 ? (
+            <motion.div className="text-gray-400">
+              Tags: {`${tags.slice(0, 3).join(", ")}, +${tags.length - 3}`}
+            </motion.div>
+          ) : null}
 
-          <label className="text-xl font-bold ">
-            Roadmap Description{" "}
-          </label>
-          <div className="my-2">
+          <div className="">
+            <label className="text-md font-bold">Roadmap Description </label>
             <textarea
-              className="border rounded-lg border-gray-400 block text-xl font-thin p-1 w-full focus:outline-none shadow-lg "
-              rows="4"
+              className="rounded-lg border-gray-400 text-gray-400 block text-md p-1 w-full focus:outline-none shadow-lg shadow-gray-300 placeholder:text-italic"
+              rows={isSM ? "3" : "2"}
               cols="60"
               value={RMDesc}
               onChange={handleDescriptionChange}
+              placeholder="Enter roadmap description..."
             ></textarea>
           </div>
 
-          <div className="h-1/2">
-            {/* Notification Setting */}
-
-            <div className="relative">
-              <DropDownMenu
-                optionValues={notificationOption.optionValues}
-                options={notificationOption.options}
-                currentOption={notiStatus}
-                setOption={setNotiStatus}
-                optionComparer={compareNotificationChange}
-                Icon={notiStatus.on === true ? NotiOn : NotiOff}
-                className="absolute z-10 right-6 top-6"
-              />
-            </div>
-            {/* End of Notification Setting */}
+          <div className="grow max-h-[60%] min-h-[30%]">
             {/* Giant task box */}
-            <div className="flex overflow-x-auto flex-col justify-center bg-blue-100 my-4 border-2 shadow-xl border-gray-300 rounded-3xl items-start h-2/3 p-4 pl-8 pr-16 relative max-w-full w-full z-0">
+            <div className="flex overflow-x-auto relative flex-col justify-center bg-blue-100 shadow-xl h-full border-gray-300 rounded-3xl items-start p-4 pl-8 pr-16 z-0">
               <DragDropContext onDragEnd={handleOrderSwitch}>
                 <StrictModeDroppable droppableId="tasks" direction="horizontal">
                   {(provided) => (
@@ -854,13 +999,18 @@ const RoadmapCreatePage = (props) => {
                       {/* Task list */}
                       {tasks.map((task, index) => {
                         {
-                          return mode === "edit" && (index < 1 || tasks[index-1].isDone) ? (
+                          return mode === "edit" &&
+                            (index < 1 || tasks[index - 1].isDone) ? (
                             <TaskItem
                               task={task}
                               key={task.id}
                               setEditTaskID={setEditTaskID}
                               setModalState={setModalState}
-                              disabled={index < 1 || tasks[index-1].isDone}
+                              disabled={
+                                index < 1 ||
+                                (tasks[index - 1].isDone && !tasks.isTempId)
+                              }
+                              isLastitem={index === tasks.length - 1}
                             />
                           ) : (
                             <Draggable
@@ -879,7 +1029,12 @@ const RoadmapCreatePage = (props) => {
                                     task={task}
                                     setEditTaskID={setEditTaskID}
                                     setModalState={setModalState}
-                                    disabled={mode === "edit" && (index < 1 || tasks[index-1].isDone)}
+                                    isLastitem={index === tasks.length - 1}
+                                    disabled={
+                                      mode === "edit" &&
+                                      (index < 1 ||
+                                        (tasks[index - 1].isDone && !tasks.id))
+                                    }
                                   />
                                 </div>
                               )}
@@ -890,13 +1045,13 @@ const RoadmapCreatePage = (props) => {
                       {provided.placeholder}
                       {/* End of task list */}
                       {/* Add button */}
-                      <div className="">
+                      <div className="flex z-40">
                         <button
                           type="button"
                           disabled={isAddButtonDisabled()}
                           onClick={initializeTaskCreator}
                         >
-                          <AddButton className="h-10 w-auto" />
+                          <AddButton className="h-10 w-10 translate-y-1" />
                         </button>
                       </div>
                     </div>
@@ -905,27 +1060,271 @@ const RoadmapCreatePage = (props) => {
               </DragDropContext>
             </div>
             {/* End of Task box */}
-
-            <div className="relative">
-              <div className="absolute right-0 w-full xs:w-auto flex gap-2">
-                <button
-                  className="bg-transparent inline border-gray-800 w-full font-bold xs:w-32 text-gray-800 h-10 rounded-full border m-0"
-                  type="button"
-                  onClick={() => setDiscardModal(true)}
-                >
-                  Discard
-                </button>
-                <button
-                  className="rounded-full w-full inline xs:w-32 h-10 bg-nav-blue font-bold text-white"
-                  type="submit"
-                >
-                  Save
-                </button>
-              </div>
+          </div>
+          <div className="justify-end flex">
+            <div className="right-0 w-full xs:w-auto flex gap-2">
+              <button
+                className="bg-transparent inline border-gray-800 w-full font-bold xs:w-32 text-gray-800 h-10 rounded-full border m-0"
+                type="button"
+                onClick={() => setDiscardModal(true)}
+              >
+                Discard
+              </button>
+              <button
+                className="rounded-full w-full inline xs:w-32 h-10 bg-nav-blue font-bold text-white"
+                type="submit"
+              >
+                Save
+              </button>
             </div>
           </div>
         </form>
       </div>
+      {showHelp && (
+        <div className="absolute flex flex-col left-0 justify-center items-center w-full h-full max-xs:max-h-full bg-gray-300 bg-opacity-[0.58] z-[100]">
+          <div className="flex justify-start items-center px-[23px] w-1/2 min-w-[292px] max-w-[790px] h-fit bg-[#00286E] rounded-t-[20px]">
+            <div className="flex items-center justify-between w-full my-4">
+              <div className="flex items-center justify-start">
+                <QuestionMark className="mr-[13px]" />
+                {mode == "create" ? (
+                  <div className="font-inter font-bold text-3xl text-[#FFFFFF]">
+                    Create a roadmap
+                  </div>
+                ) : (
+                  <></>
+                )}
+                {mode == "edit" ? (
+                  <div className="font-inter font-bold text-3xl text-[#FFFFFF]">
+                    Edit a roadmap
+                  </div>
+                ) : (
+                  <></>
+                )}
+                {mode == "clone" ? (
+                  <div className="font-inter font-bold text-3xl text-[#FFFFFF]">
+                    Clone a roadmap
+                  </div>
+                ) : (
+                  <></>
+                )}
+              </div>
+              <button onClick={helpClick}>
+                <Close />
+              </button>
+            </div>
+          </div>
+          <div className="flex w-1/2 min-w-[292px] max-w-[790px] h-fit bg-[#F0F3F4] rounded-b-[20px]">
+            <div className="flex flex-col w-full min-h-fit max-h-[400px] max-xs:max-h-[300px] p-8">
+              <div className="flex flex-col w-fit max-h-[400px] mb-8 overflow-y-auto">
+                <div className="font-inter font-bold text-xl text-[#333333] mb-4">
+                  {mode == "create" ? (
+                    <>
+                      {helpPage == 1 ? (
+                        <>
+                          <div className="mb-4">
+                            Step 1: Name your roadmap at the UNTITLED
+                            placeholder. Fill your roadmap description.
+                          </div>
+                          <img src={Step1} className="max-md:hidden" />
+                          <img
+                            src={Step1_md}
+                            className="max-xs:hidden md:hidden"
+                          />
+                          <img src={Step1_xs} className="xs:hidden" />
+                        </>
+                      ) : (
+                        <></>
+                      )}
+                      {helpPage == 2 ? (
+                        <>
+                          <div className="mb-4">
+                            Step 2: Click at the Add button to create a task.
+                          </div>
+                          <img src={Step2} className="max-md:hidden" />
+                          <img
+                            src={Step2_md}
+                            className="max-xs:hidden md:hidden"
+                          />
+                          <img src={Step2_xs} className="xs:hidden" />
+                        </>
+                      ) : (
+                        <></>
+                      )}
+                      {helpPage == 3 ? (
+                        <>
+                          <div>Step 3:</div>
+                          <div className="mb-4">
+                            3.1 Name your task, and its description.
+                          </div>
+                          <img src={Step3_1} className="mb-4 max-md:hidden" />
+                          <img
+                            src={Step3_1_md}
+                            className="mb-4 max-xs:hidden md:hidden"
+                          />
+                          <img src={Step3_1_xs} className="mb-4 xs:hidden" />
+                          <div className="mb-4">
+                            3.2 Set the start, and the due date.
+                          </div>
+                          <img src={Step3_2} className="mb-4 max-md:hidden" />
+                          <img
+                            src={Step3_2_md}
+                            className="mb-4 max-xs:hidden md:hidden"
+                          />
+                          <img src={Step3_2_xs} className="mb-4 xs:hidden" />
+                          <div className="mb-4">
+                            3.3 Design the shape and the color of a task node.
+                          </div>
+                          <img src={Step3_3} className="mb-4 max-md:hidden" />
+                          <img
+                            src={Step3_3_md}
+                            className="mb-4 max-xs:hidden md:hidden"
+                          />
+                          <img src={Step3_3_xs} className="mb-4 xs:hidden" />
+                          <div className="mb-4">
+                            3.4 (Optional) Add the subtask.
+                          </div>
+                          <img src={Step3_4} className="mb-4 max-md:hidden" />
+                          <img
+                            src={Step3_4_md}
+                            className="mb-4 max-xs:hidden md:hidden"
+                          />
+                          <img src={Step3_4_xs} className="mb-4 xs:hidden" />
+                          <div className="mb-4">
+                            3.5 Click "Save" to keep it.
+                          </div>
+                          <div className="text-[#FF0000]">
+                            *** Recreate the tasks until finish
+                          </div>
+                        </>
+                      ) : (
+                        <></>
+                      )}
+                      {helpPage == 4 ? (
+                        <>
+                          <div className="mb-4">Step 4:</div>
+                          <div className="mb-4">
+                            4.1 Set the notification time.
+                          </div>
+                          <div className="mb-4">
+                            4.2 Set the privacy of a roadmap.
+                          </div>
+                          <img src={Step4} className="max-md:hidden" />
+                          <img
+                            src={Step4_md}
+                            className="max-xs:hidden md:hidden"
+                          />
+                          <img src={Step4_xs} className="xs:hidden" />
+                        </>
+                      ) : (
+                        <></>
+                      )}
+                      {helpPage == 5 ? (
+                        <>
+                          <div className="mb-4">
+                            Step 5: Click "Save" button to publish the roadmap
+                            to the system.
+                          </div>
+                          <img src={Step5} className="max-md:hidden" />
+                          <img
+                            src={Step5_md}
+                            className="max-xs:hidden md:hidden"
+                          />
+                          <img src={Step5_xs} className="xs:hidden" />
+                        </>
+                      ) : (
+                        <></>
+                      )}
+                    </>
+                  ) : (
+                    <></>
+                  )}
+                  {mode == "edit" ? (
+                    <div className="flex flex-col">
+                      <div className="font-inter font-bold text-xl text-[#333333] mb-6">
+                        The concept is similar to creating a roadmap, but there
+                        are some constraints for editing.
+                      </div>
+                      <div className="flex flex-col mb-6">
+                        <div className="font-inter font-bold text-xl text-[#FF0000]">
+                          Things that you can edit
+                        </div>
+                        <div className="font-inter font-medium text-lg text-[#333333]">
+                          1. Roadmap Title
+                        </div>
+                        <div className="font-inter font-medium text-lg text-[#333333]">
+                          2. Roadmap Description
+                        </div>
+                        <div className="font-inter font-medium text-lg text-[#333333]">
+                          3. Task (not in progress)
+                        </div>
+                        <div className="font-inter font-medium text-lg text-[#333333]">
+                          4. Notification
+                        </div>
+                        <div className="font-inter font-medium text-lg text-[#333333]">
+                          5. Privacy
+                        </div>
+                      </div>
+                      <div className="flex flex-col">
+                        <div className="font-inter font-bold text-xl text-[#FF0000]">
+                          Things that you cannot edit
+                        </div>
+                        <div className="font-inter font-medium text-lg text-[#333333]">
+                          1. Archived Roadmaps
+                        </div>
+                        <div className="font-inter font-medium text-lg text-[#333333] mb-4">
+                          2. Task (in progress or completed)
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <></>
+                  )}
+                  {mode == "clone" ? (
+                    <div className="flex flex-col">
+                      <div className="font-inter font-bold text-xl text-[#333333] mb-6">
+                        When you clone a roadmap, you are also able to edit the
+                        roadmap at the same time; it is like you create the same
+                        roadmap as others, but edit some options.
+                      </div>
+                      <div className="font-inter font-bold text-xl text-[#333333]">
+                        However, for non-premium users, they can only clone a
+                        roadmap if they own less than three roadmaps otherwise
+                        they cannot.
+                      </div>
+                    </div>
+                  ) : (
+                    <></>
+                  )}
+                </div>
+              </div>
+              <div className="flex justify-end w-full h-[43px]">
+                {mode == "create" ? (
+                  <>
+                    {helpPage != 1 && (
+                      <button
+                        onClick={previousPageClick}
+                        className="flex justify-center items-center text-[#525252] hover:text-[#FFFFFF] border border-[#525252] rounded-[30px] w-[90px] hover:bg-[#e30b0b] hover:border-none"
+                      >
+                        <div className="font-inter">Previous</div>
+                      </button>
+                    )}
+                    {helpPage != 5 && (
+                      <button
+                        onClick={nextPageCLick}
+                        className="flex justify-center items-center ml-4 text-[#FDFDFB] bg-[#00286E] hover:bg-[#038a1c] border rounded-[30px] w-[90px]"
+                      >
+                        <div className="font-inter">Next</div>
+                      </button>
+                    )}
+                  </>
+                ) : (
+                  <></>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 };

@@ -50,7 +50,7 @@ export default function View() {
           setIsWarning(true);
           return;
         }
-        if (fetchedRoadmap.next_task === null) {
+        if (fetchedRoadmap.next_task === null || fetchedRoadmap.archive_date !== null) {
           setIsCompleted(true);
           setCurrentTask(
             { 'id': -1 }
@@ -138,6 +138,7 @@ export default function View() {
   useEffect(() => {
     if (!isMountedRef.current) {
       isMountedRef.current = true;
+    } else {
       return;
     }
     fetchRoadmap();
@@ -181,35 +182,14 @@ export default function View() {
     });
   }
 
-  const variants = {
-    fadeIntial: {
-      opacity: 0,
-    },
-    fadeAnimate: {
-      opacity: 1,
-      transition: {
-        duration: 0.3,
-        ease: 'easeInOut'
-      }
-    },
-    fadeExit: {
-      opacity: 0,
-      transition: {
-        duration: 0.3,
-        ease: 'easeInOut'
-      }
-    }
-  };
-
   return (
     <>
       <AnimatePresence>
         {roadmap.hasFetched && (
           <motion.div
-            initial="fadeInitial"
-            animate="fadeAnimate"
-            exit="fadeExit"
-            variants={variants}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
             className='flex h-full overflow-y-auto py-6'
           >
             <div className="xs:w-[80%] max-xs:w-[90%] max-w-4xl flex-col space-y-6 m-auto">
@@ -231,15 +211,9 @@ export default function View() {
                   </div>
                 </div>
               </div>
-              <div className='flex flex-col rounded-3xl bg-white drop-shadow-[0_2px_5px_rgba(0,0,0,0.25)] p-4 space-y-6'>
+              <div className='flex flex-col rounded-3xl bg-white border border-gray-300 drop-shadow-[0_2px_5px_rgba(0,0,0,0.25)] p-4 space-y-6'>
                 <RoadmapDetail
-                  roadmapName={roadmap.name}
-                  roadmapID={roadmap.rid}
-                  roadmapPrivacy={roadmap.is_private}
-                  roadmapViewCount={roadmap.views_count}
-                  roadmapForkCount={roadmap.forks_count}
-                  roadmapEditDate={roadmap.edited_at}
-                  roadmapDescription={roadmap.description}
+                  roadmap={roadmap}
                   isOwner={isOwner}
                   likeCount={likeCount}
                   isLiked={isLiked}

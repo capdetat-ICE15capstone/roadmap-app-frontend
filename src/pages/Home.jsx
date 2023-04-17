@@ -1,244 +1,292 @@
-import React, { useEffect, useState } from "react";
-import Roadmap from "../components/Roadmap";
+import React, { useEffect, useState, useRef } from "react";
+import { useLocation, useParams } from 'react-router-dom';
+import RoadmapPlus from "../components/Roadmap_home";
+import RoadmapNeo from "../components/Roadmap_neo";
 import Kurumi from "../assets/kurumi.jpg";
 import RoadmapCreate from "../components/RoadmapCreate";
 import RoadmapToggle from "../components/RoadmapToggle";
-import Spinner from "../components/Spinner";
 import { ReactComponent as DarkHomeIcon } from "../assets/dark_home_icon.svg";
-import { ReactComponent as BinIcon } from "../assets/Bin.svg" 
-import { Link } from "react-router-dom";
+import SpinnerNeo from "../components/SpinnerNeo";
 import { axiosInstance } from "../functions/axiosInstance";
+import Prompt from "../components/Prompt";
+import HomeFirstLoginModal from "../components/HomeFirstLoginModal";
 
 const Home = () => {
-  const [data, setData] = useState(null);
-  const [isRoadmap, setIsRoadmap] = useState(true);
-  const [isDeleteClick, setIsDeleteClick] = useState(false);
-  const [isActive, setIsActive] = useState(true);
-  const [showPremium, setShowPremium] = useState(false);
-  const [isLimit, setIsLimit] = useState(false);  
-  const [isPremium, setIsPremium] = useState(false);
-  const [username, setUsername] = useState('');
-  const [level, setLevel] = useState('');
-  const [bio, setBio] = useState('');
-  const [roadmap, setRoadmap] = useState([]);  
-  const [archiveRoadmap, setArchiveRoadmap] = useState([]);
-  let roadmapList = [];
-  let archiveRoadmapList = [];
+  const { other_uid } = useParams();
 
-  function shortenString(str, maxLength) {
-    if (str == null)
-      return ""
-    if (str.length > maxLength) {
-      // Shorten the string to the maximum length
-      str = str.slice(0, maxLength) + '...';
-    }
-    return str;
-  }
+  const [profile, setPofile] = useState();
+
+  const [roadmapList, setRoadmapList] = useState();
+  const [archivedRoadmapList, setArchivedRoadmapList] = useState();
+  const [currentRid, setCurrentRid] = useState();
+
+  const [isArchiving, setIsArchiving] = useState();
+  const [isDeleting, setIsDeleting] = useState();
+
+  const [viewMode, setViewMode] = useState("roadmap");
+
+  const hasFetchedRef = useRef(false);
+  const isOtherProfile = useRef(false);
+
+  const location = useLocation();
+  const firstLogin = location.state?.firstLogin;
+  const [isOpenFirstLoginModal, setIsOpenFirstLoginModal] = useState(firstLogin === true);
 
   const clickRoadmap = () => {
-    setIsRoadmap(true)
-    setIsActive(true)  
+    setViewMode("roadmap")
   }
 
   const clickArchive = () => {
-    setIsRoadmap(false)
-    setIsActive(false)
+    setViewMode("archive");
   }
 
-  const deleteRoadmap = () => 
-    setIsDeleteClick(!isDeleteClick)
+  function handleArchive(rid) {
+    setIsArchiving(true);
+    setCurrentRid(rid);
+  }
 
-  const promptPremium = () => 
-    setShowPremium(!showPremium)  
+  function handleDelete(rid) {
+    setIsDeleting(true);
+    setCurrentRid(rid);
+  }
 
-  const getHomeData = async () => {
-    // check whether user is logged-in
-    const route = `/home/me`
+  async function archiveRoadmap(rid) {
+    setIsArchiving(false);
+    const route = `/roadmap/archive/${rid}`
     try {
-        let response = await axiosInstance.get(route, { timeout: 10000 });
-        return response;
+      const response = await axiosInstance.put(route);
+      console.log(response.data);
+      fetchData();
     } catch (error) {
-        console.error("Fail GetHomeData()");
+      console.error(error);
     }
   }
 
-  useEffect (() => {
-    const fetchData = async () => {
-      const response = await getHomeData();
-      setData(response.data);
-      setUsername(response.data.profile.username);
-      setLevel(Math.round(response.data.profile.exp/100));
-      setBio(response.data.profile.bio);
-      setRoadmap(response.data.roadmaps);
-      setArchiveRoadmap(response.data.archived_roadmaps)
-      setIsPremium(response.data.profile.is_premium);
+  async function deleteRoadmap(rid) {
+    setIsDeleting(false);
+    const route = `/roadmap/${rid}`
+    try {
+      const response = await axiosInstance.delete(route);
+      console.log(response.data);
+      fetchData();
+    } catch (error) {
+      console.error(error);
     }
-    fetchData();
+  }
+
+  const fetchOtherData = async (other_uid) => {
+    try {
+      const response = await axiosInstance(`/home/view/${other_uid}`);
+      console.log(response.data);
+
+      setPofile(response.data.profile);
+      setRoadmapList(response.data.roadmaps);
+      setArchivedRoadmapList(response.data.archived_roadmaps);
+
+      hasFetchedRef.current = true;
+      isOtherProfile.current = true;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const fetchData = async () => {
+    try {
+      const response = await axiosInstance.get('/home/me');
+      console.log(response.data);
+
+      setPofile(response.data.profile);
+      setRoadmapList(response.data.roadmaps);
+      setArchivedRoadmapList(response.data.archived_roadmaps);
+
+      console.log(response.data.profile.is_premium);
+
+      hasFetchedRef.current = true;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  const isMountedRef = useRef(false);
+
+  useEffect(() => {
+    if (!isMountedRef.current) {
+      isMountedRef.current = true;
+    } else {
+      return;
+    }
+    if (other_uid !== undefined) {
+      fetchOtherData(other_uid)
+    } else {
+      fetchData();
+    }
   }, []);
 
-  roadmap.forEach((items, index) => {
-    if (index >= 3 && !isPremium) 
-      return;
-    roadmapList.push(<Roadmap key={index}
-      owner_id={items.owner_id}
-      creator_id={items.creator_id}
-      owner_name={items.owner_name}
-      creator_name={items.creator_name}
-      rid={items.rid}
-      views_count={items.views_count}
-      stars_count={items.stars_count}
-      forks_count={items.forks_count}
-      created_at={items.created_at}
-      edited_at={items.edited_at}
-      title={items.title}
-      isActive={isActive} 
-      isOwner={true} 
-      deleteFunction={deleteRoadmap}/>)
-    })  
+  if (hasFetchedRef.current) {
+    return (
+      <>
+        <div className='flex flex-col items-center w-full h-full space-y-8 overflow-y-scroll'>
+          <div className='flex w-4/5 h-10 mt-10 mx-8 space-x-4'>
+            <div className='flex items-center shrink-0 h-full text-4xl font-extrabold text-nav-blue space-x-2'>
+              <DarkHomeIcon className='h-10 w-10' />
+              <div>
+                Home
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col items-center w-4/5 bg-[#FFFFFF] border border-[#D9D9D9] shadow-md rounded-3xl">
+            <div className="flex flex-col-reverse sm:flex-row items-center justify-between">
+              <div className="flex flex-col space-y-2 p-4">
+                <div className="flex items-center space-x-2">
+                  <div className="font-bold text-2xl text-[#09275B]">
+                    {profile.username}
+                  </div>
+                  <div className="flex justify-between bg-[#034DCF] text-white font-bold rounded-full py-1 px-1 w-28">
+                    <div className="flex mx-3 justify-start items-center">
+                      <div className="font-inter text-[#FFFFFF]">
+                        LVL.
+                      </div>
+                    </div>
+                    <div className="flex mx-3 justify-start items-center">
+                      <div className="font-inter text-[#FFFFFF]">
+                        {Math.floor(profile.exp * 0.01)}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex">
+                  {profile.bio}
+                </div>
+              </div>
+              <div className="flex justify-center items-center max-w-[200px] max-h-[200px] p-4">
+                <img src={Kurumi} className="rounded-full" />
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col w-4/5">
+            <RoadmapToggle showRoadmap={clickRoadmap} showArchive={clickArchive} isRoadmap={(viewMode === "roadmap")} />
+          </div>
+          <div className='flex flex-col justify-center items-center pb-16 w-[90%]'>
+            <div className={`${(viewMode === "roadmap") ? 'visible' : 'hidden'}`}>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8">
+                {roadmapList.map((items, index) => {
+                  if (isOtherProfile.current === false) {
+                    return (
+                      <div key={index}>
+                        <RoadmapPlus
+                          owner_id={items.owner_id}
+                          creator_id={items.creator_id}
+                          owner_name={items.owner_name}
+                          creator_name={items.creator_name}
+                          rid={items.rid}
+                          views_count={items.views_count}
+                          stars_count={items.stars_count}
+                          forks_count={items.forks_count}
+                          created_at={items.created_at}
+                          edited_at={items.edited_at}
+                          title={items.title}
+                          handleArchive={handleArchive}
+                          handleDelete={handleDelete}
+                          isArchived={false}
+                        />
+                      </div>
+                    )
+                  } else {
+                    return (
+                      <div key={index} className='hover:transform hover:scale-110 transition duration-150'>
+                        <RoadmapNeo
+                          owner_id={items.owner_id}
+                          creator_id={items.creator_id}
+                          owner_name={items.owner_name}
+                          creator_name={items.creator_name}
+                          rid={items.rid}
+                          views_count={items.views_count}
+                          stars_count={items.stars_count}
+                          forks_count={items.forks_count}
+                          created_at={items.created_at}
+                          edited_at={items.edited_at}
+                          title={items.title}
+                        />
+                      </div>
+                    )
+                  }
 
-  archiveRoadmap.forEach((items, index) => {
-    archiveRoadmapList.push(<Roadmap key={index}
-      owner_id={items.owner_id}
-      creator_id={items.creator_id}
-      owner_name={items.owner_name}
-      creator_name={items.creator_name}
-      rid={items.rid}
-      views_count={items.views_count}
-      stars_count={items.stars_count}
-      forks_count={items.forks_count}
-      created_at={items.created_at}
-      edited_at={items.edited_at}
-      title={items.title}
-      isActive={isActive} 
-      isOwner={true} 
-      deleteFunction={deleteRoadmap}/>)
-    })  
-    
-  useEffect(() => {
-    if (roadmapList.length >= 3 && !isPremium) 
-      setIsLimit(true)
-  },[roadmapList])
-
-  return (
-    <>
-      {!data && <Spinner />}
-      <div className="flex flex-col h-screen overflow-scroll overflow-x-hidden">
-        <div className="relative flex top-[59px] left-[38px] w-fit h-fit">
-          <div className="mr-[13px]">
-            <DarkHomeIcon/>
-          </div>          
-          <div className="font-inter font-bold text-3xl text-[#09275B]">
-            Home
+                })}
+                <RoadmapCreate isPremium={profile.is_premium} roadmapAmount={roadmapList.length} />
+              </div>
+            </div>
+            <div className={`${(viewMode === "archive") ? 'visible' : 'hidden'}`}>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8">
+                {archivedRoadmapList.map((items, index) => {
+                  if (isOtherProfile.current === false) {
+                    return (
+                      <div key={index}>
+                        <RoadmapPlus
+                          owner_id={items.owner_id}
+                          creator_id={items.creator_id}
+                          owner_name={items.owner_name}
+                          creator_name={items.creator_name}
+                          rid={items.rid}
+                          views_count={items.views_count}
+                          stars_count={items.stars_count}
+                          forks_count={items.forks_count}
+                          created_at={items.created_at}
+                          edited_at={items.edited_at}
+                          title={items.title}
+                          handleDelete={handleDelete}
+                          isArchived={true}
+                        />
+                      </div>
+                    )
+                  } else {
+                    return (
+                      <div key={index} className='hover:transform hover:scale-110 transition duration-150'>
+                        <RoadmapNeo
+                          owner_id={items.owner_id}
+                          creator_id={items.creator_id}
+                          owner_name={items.owner_name}
+                          creator_name={items.creator_name}
+                          rid={items.rid}
+                          views_count={items.views_count}
+                          stars_count={items.stars_count}
+                          forks_count={items.forks_count}
+                          created_at={items.created_at}
+                          edited_at={items.edited_at}
+                          title={items.title}
+                        />
+                      </div>
+                    )
+                  }
+                })}
+              </div>
+            </div>
           </div>
         </div>
-        <div className="flex flex-col w-3/4 m-auto mt-[133px]">
-          <div className="flex w-full justify-center">
-            <div className="flex justify-between justify-self-center bg-[#FFFFFF] border border-[#D9D9D9] min-w-[260px] w-3/4 rounded-[30px] mb-8">
-              <div className="flex flex-col justify-start w-1/2">
-                <div className="flex flex-wrap items-center mx-6 mr-12 justify-start h-fit my-[20px]">
-                  <div className="relative mr-4">
-                    <div className="font-inter font-bold text-lg text-[#09275B]">
-                      {username}
-                    </div>
-                  </div>
-                  {data && <div className="flex justify-between bg-[#034DCF] text-white font-bold h-fit rounded-[30px]">
-                    <div className="flex mx-[10px] justify-start items-center">
-                      <div className="font-inter text-[#FFFFFF]">
-                        Level:
-                      </div>
-                    </div>     
-                    <div className="flex mx-[10px] justify-start items-center">
-                      <div className="font-inter text-[#FFFFFF]">
-                        {level}
-                      </div>
-                    </div>               
-                  </div>}
-                </div>
-                <div className="flex flex-col">
-                  <div className="mx-6 mt-[10px] mb-[20px]">
-                    <div className="font-inter font-light">
-                      {shortenString(bio, 25)}
-                    </div>
-                  </div>
-                </div>              
-              </div>
-              <div className="flex justify-end w-fit max-w-[200px] h-fit max-h-[200px] ml-4">
-                <img src={Kurumi} className="rounded-full border border-[#5f4545]"/>
-              </div>
-            </div>
-          </div>
-          <div className="flex w-full justify-center">
-            <div className="flex w-3/4 justify-start">
-              <RoadmapToggle showRoadmap={clickRoadmap} showArchive={clickArchive} isRoadmap={isRoadmap}/>
-            </div>            
-          </div>          
-          <div className="flex w-full justify-center">
-            <div className="flex w-3/4 justify-start">
-              <div className="flex flex-wrap justify-start items-start w-fit max-w-[1152px] h-fit m-0">
-                {isRoadmap && 
-                <div>
-                  <RoadmapCreate isLimit={isLimit} onClick={promptPremium} />
-                </div>}
-                {isRoadmap? roadmapList : archiveRoadmapList}
-              </div>
-            </div>
-          </div>
-        </div>        
-        {isDeleteClick && 
-        <div className="absolute flex flex-col left-0 justify-center items-center w-full h-full bg-gray-300 bg-opacity-[0.58] z-10">
-          <div className="flex justify-start items-center pl-[23px] w-1/2 min-w-[220px] max-w-[790px] h-fit bg-[#00286E] rounded-t-[20px]">
-            <div className="flex items-center my-4">
-              <BinIcon className="mr-[13px]"/>
-              <div className="font-inter font-bold text-3xl text-[#FFFFFF]">Confirm Deletion</div>
-            </div>
-          </div>
-          <div className="flex w-1/2 min-w-[220px] max-w-[790px] h-fit bg-[#F0F3F4] rounded-b-[20px]">
-            <div className="flex flex-col h-fit">
-              <div className="w-fit mx-10 my-8 font-inter font-bold text-xl text-[#333333] ">Are you sure that you want to permanently delete the selected roadmap?</div>
-              <div className="flex justify-end mb-8 px-4 w-full h-[43px]">
-                <button onClick={deleteRoadmap} className="flex justify-center items-center mr-[13px] text-[#525252] hover:text-[#FFFFFF] border border-[#525252] rounded-[30px] w-[90px] hover:bg-[#e30b0b] hover:border-none">
-                  <div className="font-inter">
-                    Cancel
-                  </div>
-                </button>
-                <button onClick={deleteRoadmap} className="flex justify-center items-center text-[#FDFDFB] bg-[#00286E] hover:bg-[#038a1c] border rounded-[30px] w-[90px]">
-                  <div className="font-inter">
-                    Delete
-                  </div>
-                </button>
-              </div>       
-            </div>
-          </div>
-        </div>}
-        {(isLimit && showPremium) &&
-        <div className="absolute flex flex-col left-0 justify-center items-center w-full h-full bg-gray-300 bg-opacity-[0.58] z-10">
-          <div className="flex justify-start items-center pl-[23px] w-1/2 min-w-[220px] max-w-[790px] h-fit bg-[#00286E] rounded-t-[20px]">
-            <div className="flex items-center my-4">
-              <BinIcon className="mr-[13px]"/>
-              <div className="font-inter font-bold text-3xl text-[#FFFFFF]">Number of roadmaps owned capped!</div>
-            </div>
-          </div>
-          <div className="flex w-1/2 min-w-[220px] max-w-[790px] h-fit bg-[#F0F3F4] rounded-b-[20px]">
-            <div className="flex flex-col h-fit">
-              <div className="w-fit mx-10 my-8 font-inter font-bold text-xl text-[#333333] ">You have reach the limit of roadmap owned. Please buy premium to gain access to more roadmaps.</div>
-              <div className="flex justify-end mb-8 px-4 w-full h-[43px]">
-                <button onClick={promptPremium} className="flex justify-center items-center mr-[13px] text-[#525252] hover:text-[#FFFFFF] border border-[#525252] rounded-[30px] w-[90px] hover:bg-[#e30b0b] hover:border-none">
-                  <div className="font-inter">
-                    Cancel
-                  </div>
-                </button>
-                <Link onClick={promptPremium} to={'/premium'} className="flex justify-center items-center text-[#FDFDFB] bg-[#00286E] hover:bg-[#038a1c] border rounded-[30px] w-[90px]">
-                  <div className="font-inter">
-                    Ok
-                  </div>
-                </Link>
-              </div>       
-            </div>
-          </div>
-        </div>}
-      </div>
-    </>
-  );
+        <div className="z-50">
+          <Prompt
+            visible={isArchiving}
+            title="Archiving Roadmap"
+            message="Are you sure that you want to permanently archive the selected roadmap?"
+            positiveText="Yes"
+            positiveFunction={() => archiveRoadmap(currentRid)}
+            negativeText="No" 
+            negativeFunction={() => setIsArchiving(false)}
+          />
+          <Prompt
+            visible={isDeleting}
+            title="Deleting Roadmap"
+            message="Are you sure that you want to permanently delete the selected roadmap?"
+            positiveText="Yes"
+            positiveFunction={() => deleteRoadmap(currentRid)}
+            negativeText="No"
+            negativeFunction={() => setIsDeleting(false)}
+          />
+          <SpinnerNeo visble={hasFetchedRef.current} />
+        </div>
+        <HomeFirstLoginModal isOpen={isOpenFirstLoginModal} setIsOpen={setIsOpenFirstLoginModal}/>
+      </>
+    );
+  }
 };
 
 export default Home;

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { axiosInstance } from '../functions/axiosInstance';
 
 import Prompt from '../components/Prompt';
-import Spinner from '../components/Spinner';
+import SpinnerNeo from '../components/SpinnerNeo';
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -274,12 +274,8 @@ export default function Signup() {
           </div>
         </div>
       </div>
-      {isWarning && (
-        <Prompt title="Signup Failed" message={failMessage} positiveText="Try again" positiveFunction={() => setIsWarning(false)} />
-      )}
-      {isLoading && (
-        <Spinner />
-      )}
+      <Prompt visible={isWarning} title="Signup Failed" message={failMessage} positiveText="Try again" positiveFunction={() => setIsWarning(false)} />
+      <SpinnerNeo visible={isLoading} />
     </>
   )
 }

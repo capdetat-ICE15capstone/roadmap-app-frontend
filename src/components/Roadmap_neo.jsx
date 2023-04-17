@@ -1,14 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link, useNavigate } from "react-router-dom";
-import placeholderImage from "../assets/roadmap_assets/Placeholder_Image.png"
 import { ReactComponent as EyeIcon } from "../assets/roadmap_assets/eye_Icon.svg"
 import { ReactComponent as ShareIcon } from "../assets/roadmap_assets/Share.svg"
 import { ReactComponent as LikeIcon } from "../assets/roadmap_assets/ThumbsUp.svg"
 import { axiosInstance } from '../functions/axiosInstance';
-import { shortenString } from '../functions/formatFunction';
 import { nodeShapeGenerator } from '../functions/viewFunction';
-const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_count, stars_count, forks_count, created_at, edited_at, title }) => {
+import RoadmapDropdown from "../components/RoadmapDropdown";
+
+const Roadmap = ({ owner_id, owner_name, creator_name, rid, views_count, stars_count, forks_count, created_at, edited_at, title }) => {
 
   //parameters of roadmap
   Roadmap.propTypes = {
@@ -66,6 +66,7 @@ const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_co
   useEffect(() => {
     if (!isMountedRef.current) {
       isMountedRef.current = true;
+    } else {
       return;
     }
     fetchRoadmap();
@@ -76,14 +77,14 @@ const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_co
       <>
         <div>
           <Link to={`/view/${rid}`} >
-            <div className='flex flex-col bg-white rounded-3xl shadow-md w-60 p-2 hover:transform hover:scale-110 transition duration-150'>
+            <div className='flex flex-col bg-white border border-gray-300 rounded-3xl shadow-md w-[242px] h-[232px] p-2'>
               <div className='flex flex-col bg-[#e6eefc] rounded-2xl'>
-                <div className='flex justify-center pt-8 px-8 space-x-[25px] w-full h-24 overflow-hidden'>
+                <div className='flex justify-center pt-8 px-8 space-x-[25px] w-full h-28 overflow-hidden'>
                   {roadmap.shapes.map((shape, index) => {
-                    const zIndex = 10 - index;
+                    const zIndex = roadmap.shapes.length - index;
                     return (
                       <div key={index} className="relative" style={{ zIndex }}>
-                        <div className="absolute top-[40%] -left-1/4 transform -translate-x-1/2 -translate-y-1/2 -z-10">
+                        <div className="absolute top-[30%] -left-1/4 transform -translate-x-1/2 -translate-y-1/2 -z-10">
                           {(index > '0') && <hr className="w-[75px] h-1 bg-black border-0" />}
                         </div>
                         <div className="absolute top-1/2 left-[100%] transform -translate-x-1/2 -translate-y-3/4 -z-10">
@@ -98,7 +99,7 @@ const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_co
                     );
                   })}
                 </div>
-                <div className='flex flex-nowrap justify-between p-2'>
+                <div className='flex flex-nowrap justify-between pb-2 px-2'>
                   <div className='text-xs font-bold'>
                     {creator_name}
                   </div>
@@ -107,23 +108,18 @@ const Roadmap = ({ owner_id, creator_id, owner_name, creator_name, rid, views_co
                   </div>
                 </div>
               </div>
-              <div className='flex flex-col flex-nowrap space-y-1 m-1'>
+              <div className='flex flex-col pt-[2px] flex-nowrap space-y-1 m-1'>
                 <div className=' flex flex-row justify-between items-center'>
                   <div className=' text-md font-bold truncate w-[100%]'>
                     {title ? title : "no name"}
                   </div>
                 </div>
-                <div className='flex flex-row flex-nowrap justify-between items-center'>
-                  <div className='flex flex-row'>
-                    <div className='flex-nowrap text-xs'>
-                      Owner :
-                    </div>
-                    <span className='z-10 text-xs hover:text-blue-600 ml-1 truncate' onClick={handleClick}>
-                      {owner_name}
-                    </span>
+                <div className='flex flex-row flex-nowrap justify-between items-center space-x-1'>
+                  <div className='flex flex-row text-xs'>
+                    <span className='mr-1'>{"Owner: "}</span><span className='hover:text-blue-600 truncate' onClick={handleClick}>{owner_name}</span>
                   </div>
-                  <div className='flex-nowrap w-1/2 text-xs text-gray-500'>
-                    Created : {created_at_format}
+                  <div className='flex-nowrap w-1/2 text-xs text-gray-500 text-right'>
+                    Created: {created_at_format}
                   </div>
                 </div>
                 <div className='flex flex-row flex-nowrap justify-between items-center'>
