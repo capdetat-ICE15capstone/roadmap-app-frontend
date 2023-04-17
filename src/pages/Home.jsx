@@ -112,6 +112,7 @@ const Home = () => {
   useEffect(() => {
     if (!isMountedRef.current) {
       isMountedRef.current = true;
+    } else {
       return;
     }
     if (other_uid !== undefined) {

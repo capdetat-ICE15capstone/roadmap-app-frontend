@@ -12,6 +12,7 @@ function ProtectedRoute({ children }) {
   useEffect(() => {
     if (!isMountedRef.current) {
       isMountedRef.current = true;
+    } else {
       return;
     }
     axiosInstance.get(route)

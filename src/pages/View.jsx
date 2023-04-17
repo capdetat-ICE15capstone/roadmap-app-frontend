@@ -138,6 +138,7 @@ export default function View() {
   useEffect(() => {
     if (!isMountedRef.current) {
       isMountedRef.current = true;
+    } else {
       return;
     }
     fetchRoadmap();
