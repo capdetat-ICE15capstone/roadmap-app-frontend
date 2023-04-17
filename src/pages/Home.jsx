@@ -76,6 +76,10 @@ const Home = () => {
 
   const fetchOtherData = async (other_uid) => {
     try {
+      if (await fetchMyUid() === parseInt(other_uid)) {
+        fetchData();
+        return;
+      }
       const response = await axiosInstance(`/home/view/${other_uid}`);
       console.log(response.data);
 
@@ -93,17 +97,24 @@ const Home = () => {
   const fetchData = async () => {
     try {
       const response = await axiosInstance.get('/home/me');
-      console.log(response.data);
 
       setPofile(response.data.profile);
       setRoadmapList(response.data.roadmaps);
       setArchivedRoadmapList(response.data.archived_roadmaps);
 
-      console.log(response.data.profile.is_premium);
-
       hasFetchedRef.current = true;
     } catch (error) {
       console.error(error);
+    }
+  }
+
+  const fetchMyUid = async () => {
+    try {
+      const response = await axiosInstance.get('/user/');
+      return response.data.uid;
+    } catch (error) {
+      console.error(error);
+      return null;
     }
   }
 
@@ -169,22 +180,12 @@ const Home = () => {
           <div className='flex flex-col justify-center items-center pb-16 w-[90%]'>
             <div className={`${(viewMode === "roadmap") ? 'visible' : 'hidden'}`}>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8">
-                {roadmapList.map((items, index) => {
+                {roadmapList.map((roadmap, index) => {
                   if (isOtherProfile.current === false) {
                     return (
-                      <div key={index}>
+                      <div key={roadmap.rid}>
                         <RoadmapPlus
-                          owner_id={items.owner_id}
-                          creator_id={items.creator_id}
-                          owner_name={items.owner_name}
-                          creator_name={items.creator_name}
-                          rid={items.rid}
-                          views_count={items.views_count}
-                          stars_count={items.stars_count}
-                          forks_count={items.forks_count}
-                          created_at={items.created_at}
-                          edited_at={items.edited_at}
-                          title={items.title}
+                          roadmap={roadmap}
                           handleArchive={handleArchive}
                           handleDelete={handleDelete}
                           isArchived={false}
@@ -193,19 +194,9 @@ const Home = () => {
                     )
                   } else {
                     return (
-                      <div key={index} className='hover:transform hover:scale-110 transition duration-150'>
+                      <div key={roadmap.rid} className='hover:transform hover:scale-110 transition duration-150'>
                         <RoadmapNeo
-                          owner_id={items.owner_id}
-                          creator_id={items.creator_id}
-                          owner_name={items.owner_name}
-                          creator_name={items.creator_name}
-                          rid={items.rid}
-                          views_count={items.views_count}
-                          stars_count={items.stars_count}
-                          forks_count={items.forks_count}
-                          created_at={items.created_at}
-                          edited_at={items.edited_at}
-                          title={items.title}
+                          roadmap={roadmap}
                         />
                       </div>
                     )
@@ -217,22 +208,12 @@ const Home = () => {
             </div>
             <div className={`${(viewMode === "archive") ? 'visible' : 'hidden'}`}>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8">
-                {archivedRoadmapList.map((items, index) => {
+                {archivedRoadmapList.map((roadmap, index) => {
                   if (isOtherProfile.current === false) {
                     return (
                       <div key={index}>
                         <RoadmapPlus
-                          owner_id={items.owner_id}
-                          creator_id={items.creator_id}
-                          owner_name={items.owner_name}
-                          creator_name={items.creator_name}
-                          rid={items.rid}
-                          views_count={items.views_count}
-                          stars_count={items.stars_count}
-                          forks_count={items.forks_count}
-                          created_at={items.created_at}
-                          edited_at={items.edited_at}
-                          title={items.title}
+                          roadmap={roadmap}
                           handleDelete={handleDelete}
                           isArchived={true}
                         />
@@ -242,17 +223,7 @@ const Home = () => {
                     return (
                       <div key={index} className='hover:transform hover:scale-110 transition duration-150'>
                         <RoadmapNeo
-                          owner_id={items.owner_id}
-                          creator_id={items.creator_id}
-                          owner_name={items.owner_name}
-                          creator_name={items.creator_name}
-                          rid={items.rid}
-                          views_count={items.views_count}
-                          stars_count={items.stars_count}
-                          forks_count={items.forks_count}
-                          created_at={items.created_at}
-                          edited_at={items.edited_at}
-                          title={items.title}
+                          roadmap={roadmap}
                         />
                       </div>
                     )
@@ -269,7 +240,7 @@ const Home = () => {
             message="Are you sure that you want to permanently archive the selected roadmap?"
             positiveText="Yes"
             positiveFunction={() => archiveRoadmap(currentRid)}
-            negativeText="No" 
+            negativeText="No"
             negativeFunction={() => setIsArchiving(false)}
           />
           <Prompt
@@ -283,7 +254,7 @@ const Home = () => {
           />
           <SpinnerNeo visble={hasFetchedRef.current} />
         </div>
-        <HomeFirstLoginModal isOpen={isOpenFirstLoginModal} setIsOpen={setIsOpenFirstLoginModal}/>
+        <HomeFirstLoginModal isOpen={isOpenFirstLoginModal} setIsOpen={setIsOpenFirstLoginModal} />
       </>
     );
   }
