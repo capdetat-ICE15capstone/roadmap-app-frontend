@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Outlet, NavLink } from 'react-router-dom';
 
 // Image/Logo SVG
@@ -9,6 +9,8 @@ import { ReactComponent as CalendarLogo } from "../assets/navbar_assets/calendar
 import { ReactComponent as SettingLogo } from "../assets/navbar_assets/setting_icon.svg"
 import { ReactComponent as BookIcon } from "../assets/navbar_assets/book_icon.svg"
 import { ReactComponent as Logout } from "../assets/shapes/logout.svg";
+import { axiosInstance } from "../functions/axiosInstance";
+
 const NavItem = (props) => {
   return (
     <>
@@ -28,6 +30,31 @@ const NavItem = (props) => {
 }
 
 const Navbar = () => {
+  const [data, setData] = useState(null);
+  const [isPremium, setIsPremium] = useState(false);
+  const isMountedRef = useRef(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axiosInstance.get('/home/me');
+        setData(response.data);  
+        setIsPremium(response.data.profile.is_premium)
+        isMountedRef.current = true;
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    fetchData();
+  }, [isMountedRef.current]);
+
+  useEffect(() => {
+    if (!isMountedRef.current) {
+      isMountedRef.current = true;
+      return;
+    }
+  }, [isMountedRef.current]);
+
   return (
     <>
       <div className="fixed flex max-xs:flex-col xs:flex-row-reverse h-full w-full">
@@ -44,7 +71,13 @@ const Navbar = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col flex-grow bg-gray-50 overflow-x-hidden z-20">
+        <div className="flex flex-col flex-grow bg-gray-50 z-20">
+          {!isPremium && data &&
+            <div className="flex justify-center z-40">
+              <div className="flex w-2/3 h-[100px] mx-auto bg-nav-blue">
+
+              </div>
+            </div>}
           <Outlet />
         </div>
         <div className="flex xs:hidden max-xs:visible bg-nav-blue">
