@@ -790,7 +790,13 @@ const RoadmapCreatePage = (props) => {
   };
 
   const handleDiscard = () => {
-    navigate(0);
+    setRMName(initialState.current.name);
+    setRMDesc(initialState.current.description)
+    setPublic(initialState.current.isPublic);
+    setTasks(initialState.current.tasks);
+    setTags(initialState.current.tags);
+    setNotiStatus(initialState.current.notiStatus);
+    setHasUnsavedChanges(false);
   };
 
   const handleDisplayErrorMessage = (
