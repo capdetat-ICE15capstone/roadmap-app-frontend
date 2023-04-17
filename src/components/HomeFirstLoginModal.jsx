@@ -40,9 +40,9 @@ const HomeFirstLoginModal = ({isOpen, setIsOpen}) => {
                         </div>
                         {/* Title */}
                         <div className="py-2 px-5 lg:py-2 flex justify-between">
-                            <diiv className="my-auto mx-6 text-lg">
+                            <div className="my-auto mx-6 text-lg">
                                 Fill in your bio in the Setting page
-                            </diiv>
+                            </div>
                             <div className="flex p-4 rounded-b gap-3 justify justify-end">
                                 <button
                                     className="text-black border border-black background-transparent rounded-full font-bold uppercase text-sm h-10 w-24 "
