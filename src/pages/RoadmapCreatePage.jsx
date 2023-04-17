@@ -61,11 +61,11 @@ const TaskItem = ({
 }) => {
   // Task node Component
   return (
-    <div className="relative break-words w-28">
+    <div className="relative break-words w-28 z-10">
       <div
-        className={`flex after:h-1 after:w-full after:bg-black after:absolute after:top-[30px] after:z-0 after:translate-x-[30px] ${
+        className={`flex after:h-1 after:w-full after:bg-black after:absolute after:top-[30px] after:z-10 after:translate-x-[30px] ${
           isLastitem
-            ? "after:border-t-4 after:border-dashed after:border-black after:bg-transparent"
+            ? "after:border-t-4 after:border-dashed after:border-black after:bg-transparent after:overflow-clip"
             : ""
         }`}
       >
@@ -858,7 +858,7 @@ const RoadmapCreatePage = (props) => {
         {/* </div> */}
         <form
           onSubmit={handleSubmit}
-          className=" rounded-3xl w-full gap-3 border flex flex-col bg-white p-10 h-4/5 xs:h-2/3 m-3 shadow-lg border-gray-400"
+          className=" rounded-3xl w-full gap-3 flex flex-col bg-white p-10 h-4/5 xs:h-2/3 m-3 shadow-lg shadow-gray-400 border-gray-400"
         >
           <div className="flex flex-col md:flex-row justify-between items-center gap-2">
             <label className="hidden md:visible text-3xl font-bold md:block leading-none">
@@ -926,7 +926,7 @@ const RoadmapCreatePage = (props) => {
           <div className="">
             <label className="text-md font-bold">Roadmap Description </label>
             <textarea
-              className="border rounded-lg border-gray-400 block text-md font-thin p-1 w-full focus:outline-none shadow-lg placeholder:text-italic"
+              className="rounded-lg border-gray-400 block text-md p-1 w-full focus:outline-none shadow-lg shadow-gray-300 placeholder:text-italic"
               rows="3"
               cols="60"
               value={RMDesc}
@@ -937,7 +937,7 @@ const RoadmapCreatePage = (props) => {
 
           <div className="grow">
             {/* Giant task box */}
-            <div className="flex overflow-x-auto flex-col justify-center bg-blue-100 border-2 shadow-xl h-full border-gray-300 rounded-3xl items-start p-4 pl-8 pr-16 z-0">
+            <div className="flex overflow-x-auto relative flex-col justify-center bg-blue-100 shadow-xl h-full border-gray-300 rounded-3xl items-start p-4 pl-8 pr-16 z-0">
               <DragDropContext onDragEnd={handleOrderSwitch}>
                 <StrictModeDroppable droppableId="tasks" direction="horizontal">
                   {(provided) => (
@@ -995,13 +995,13 @@ const RoadmapCreatePage = (props) => {
                       {provided.placeholder}
                       {/* End of task list */}
                       {/* Add button */}
-                      <div className="flex">
+                      <div className="flex z-40">
                         <button
                           type="button"
                           disabled={isAddButtonDisabled()}
                           onClick={initializeTaskCreator}
                         >
-                          <AddButton className="h-10 w-auto" />
+                          <AddButton className="h-10 w-10" />
                         </button>
                       </div>
                     </div>
