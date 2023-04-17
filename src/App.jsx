@@ -70,11 +70,11 @@ function App() {
                 }
               ></Route>
               <Route
-                path="home/:uid"
+                path="home/:other_uid"
                 element={
                   <ProtectedRoute>
                     <Suspense fallback={<Spinner />}>
-                      <FriendHome />
+                      <Home />
                     </Suspense>
                   </ProtectedRoute>
                 }

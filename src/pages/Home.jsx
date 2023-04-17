@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useLocation } from "react-router-dom";
+import { useNavigate, useParams } from 'react-router-dom';
 import RoadmapPlus from "../components/Roadmap_home";
-import Roadmap from "../components/Roadmap_neo";
+import RoadmapNeo from "../components/Roadmap_neo";
 import Kurumi from "../assets/kurumi.jpg";
 import RoadmapCreate from "../components/RoadmapCreate";
 import RoadmapToggle from "../components/RoadmapToggle";
@@ -12,6 +12,7 @@ import Prompt from "../components/Prompt";
 import HomeFirstLoginModal from "../components/HomeFirstLoginModal";
 
 const Home = () => {
+  const { other_uid } = useParams();
 
   const [profile, setPofile] = useState();
 
@@ -25,6 +26,7 @@ const Home = () => {
   const [viewMode, setViewMode] = useState("roadmap");
 
   const hasFetchedRef = useRef(false);
+  const isOtherProfile = useRef(false);
 
   const location = useLocation();
   const firstLogin = location.state?.firstLogin;
@@ -72,9 +74,25 @@ const Home = () => {
     }
   }
 
+  const fetchOtherData = async (other_uid) => {
+    try {
+      const response = await axiosInstance(`/home/view/${other_uid}`);
+      console.log(response.data);
+
+      setPofile(response.data.profile);
+      setRoadmapList(response.data.roadmaps);
+      setArchivedRoadmapList(response.data.archived_roadmaps);
+
+      hasFetchedRef.current = true;
+      isOtherProfile.current = true;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   const fetchData = async () => {
     try {
-      const response = await axiosInstance('/home/me');
+      const response = await axiosInstance.get('/home/me');
       console.log(response.data);
 
       setPofile(response.data.profile);
@@ -96,7 +114,11 @@ const Home = () => {
       isMountedRef.current = true;
       return;
     }
-    fetchData();
+    if (other_uid !== undefined) {
+      fetchOtherData(other_uid)
+    } else {
+      fetchData();
+    }
   }, []);
 
   if (hasFetchedRef.current) {
@@ -147,26 +169,47 @@ const Home = () => {
             <div className={`${(viewMode === "roadmap") ? 'visible' : 'hidden'}`}>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8">
                 {roadmapList.map((items, index) => {
-                  return (
-                    <div key={index}>
-                      <RoadmapPlus
-                        owner_id={items.owner_id}
-                        creator_id={items.creator_id}
-                        owner_name={items.owner_name}
-                        creator_name={items.creator_name}
-                        rid={items.rid}
-                        views_count={items.views_count}
-                        stars_count={items.stars_count}
-                        forks_count={items.forks_count}
-                        created_at={items.created_at}
-                        edited_at={items.edited_at}
-                        title={items.title}
-                        handleArchive={handleArchive}
-                        handleDelete={handleDelete}
-                        isArchived={false}
-                      />
-                    </div>
-                  )
+                  if (isOtherProfile.current === false) {
+                    return (
+                      <div key={index}>
+                        <RoadmapPlus
+                          owner_id={items.owner_id}
+                          creator_id={items.creator_id}
+                          owner_name={items.owner_name}
+                          creator_name={items.creator_name}
+                          rid={items.rid}
+                          views_count={items.views_count}
+                          stars_count={items.stars_count}
+                          forks_count={items.forks_count}
+                          created_at={items.created_at}
+                          edited_at={items.edited_at}
+                          title={items.title}
+                          handleArchive={handleArchive}
+                          handleDelete={handleDelete}
+                          isArchived={false}
+                        />
+                      </div>
+                    )
+                  } else {
+                    return (
+                      <div key={index} className='hover:transform hover:scale-110 transition duration-150'>
+                        <RoadmapNeo
+                          owner_id={items.owner_id}
+                          creator_id={items.creator_id}
+                          owner_name={items.owner_name}
+                          creator_name={items.creator_name}
+                          rid={items.rid}
+                          views_count={items.views_count}
+                          stars_count={items.stars_count}
+                          forks_count={items.forks_count}
+                          created_at={items.created_at}
+                          edited_at={items.edited_at}
+                          title={items.title}
+                        />
+                      </div>
+                    )
+                  }
+
                 })}
                 <RoadmapCreate isPremium={profile.is_premium} roadmapAmount={roadmapList.length} />
               </div>
@@ -174,25 +217,45 @@ const Home = () => {
             <div className={`${(viewMode === "archive") ? 'visible' : 'hidden'}`}>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8">
                 {archivedRoadmapList.map((items, index) => {
-                  return (
-                    <div key={index}>
-                      <RoadmapPlus
-                        owner_id={items.owner_id}
-                        creator_id={items.creator_id}
-                        owner_name={items.owner_name}
-                        creator_name={items.creator_name}
-                        rid={items.rid}
-                        views_count={items.views_count}
-                        stars_count={items.stars_count}
-                        forks_count={items.forks_count}
-                        created_at={items.created_at}
-                        edited_at={items.edited_at}
-                        title={items.title}
-                        handleDelete={handleDelete}
-                        isArchived={true}
-                      />
-                    </div>
-                  )
+                  if (isOtherProfile.current === false) {
+                    return (
+                      <div key={index}>
+                        <RoadmapPlus
+                          owner_id={items.owner_id}
+                          creator_id={items.creator_id}
+                          owner_name={items.owner_name}
+                          creator_name={items.creator_name}
+                          rid={items.rid}
+                          views_count={items.views_count}
+                          stars_count={items.stars_count}
+                          forks_count={items.forks_count}
+                          created_at={items.created_at}
+                          edited_at={items.edited_at}
+                          title={items.title}
+                          handleDelete={handleDelete}
+                          isArchived={true}
+                        />
+                      </div>
+                    )
+                  } else {
+                    return (
+                      <div key={index} className='hover:transform hover:scale-110 transition duration-150'>
+                        <RoadmapNeo
+                          owner_id={items.owner_id}
+                          creator_id={items.creator_id}
+                          owner_name={items.owner_name}
+                          creator_name={items.creator_name}
+                          rid={items.rid}
+                          views_count={items.views_count}
+                          stars_count={items.stars_count}
+                          forks_count={items.forks_count}
+                          created_at={items.created_at}
+                          edited_at={items.edited_at}
+                          title={items.title}
+                        />
+                      </div>
+                    )
+                  }
                 })}
               </div>
             </div>
