@@ -213,13 +213,7 @@ export default function View() {
               </div>
               <div className='flex flex-col rounded-3xl bg-white border border-gray-300 drop-shadow-[0_2px_5px_rgba(0,0,0,0.25)] p-4 space-y-6'>
                 <RoadmapDetail
-                  roadmapName={roadmap.name}
-                  roadmapID={roadmap.rid}
-                  roadmapPrivacy={roadmap.is_private}
-                  roadmapViewCount={roadmap.views_count}
-                  roadmapForkCount={roadmap.forks_count}
-                  roadmapEditDate={roadmap.edited_at}
-                  roadmapDescription={roadmap.description}
+                  roadmap={roadmap}
                   isOwner={isOwner}
                   likeCount={likeCount}
                   isLiked={isLiked}
