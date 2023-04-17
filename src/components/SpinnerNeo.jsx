@@ -31,7 +31,7 @@ const SpinnerNeo = ({ className = "z-50", visible }) => {
           animate="fadeAnimate"
           exit="fadeExit"
           variants={variants}
-          className={`fixed bg-black opacity-0 flex justify-center inset-0 w-full h-full ${className}`}
+          className={`fixed bg-gray-600 opacity-0 flex justify-center inset-0 w-full h-full ${className}`}
         >
           <Logo className="animate-spin h-1/3 w-1/3 self-center justify-self-center"></Logo>
         </motion.div>
