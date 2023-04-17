@@ -66,6 +66,7 @@ const Roadmap = ({ owner_id, owner_name, creator_name, rid, views_count, stars_c
   useEffect(() => {
     if (!isMountedRef.current) {
       isMountedRef.current = true;
+    } else {
       return;
     }
     fetchRoadmap();

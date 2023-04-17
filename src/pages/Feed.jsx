@@ -173,6 +173,7 @@ const Feed = () => {
     // use to stop fetching twice when feed page is reloaded
     if (!isMountedRef.current) {
       isMountedRef.current = true;
+    } else {
       return;
     }
     getRecommendRoadmap();
