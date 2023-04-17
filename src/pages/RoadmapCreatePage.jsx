@@ -94,10 +94,10 @@ const TaskItem = ({
   return (
     <div className={`relative break-words w-28 z-10`}>
       <div
-        className={`flex after:h-1 after:w-full after:bg-black after:absolute after:top-[30px] after:z-10 after:translate-x-[30px] ${
+        className={`flex after:h-1 after:w-full  after:top-[30px] ${
           isLastitem
             ? "after:border-t-4 after:border-dashed after:border-black after:bg-transparent after:overflow-hidden after:relative after:translate-x-0"
-            : ""
+            : "after:bg-black after:absolute after:z-10 after:translate-x-[30px]"
         }`}
       >
         <div className="flex">
@@ -109,7 +109,7 @@ const TaskItem = ({
                 setEditTaskID(task.id);
                 setModalState(true);
               }}
-              className="z-20 relative"
+              className="z-20 relative focus:outline-none"
             >
               <TaskLock
                 hidden={!disabled}
@@ -182,7 +182,7 @@ const DropDownMenu = ({
             className="absolute bg-white border rounded-md flex flex-col left-0 xs:left-auto xs:right-0 [@media(max-width:360px)]:-left-full"
             initial={{ y: "-50%", opacity: 0, scale: 0 }}
             animate={{ y: "0%", opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, y: "10%" }}
+            exit={{opacity: 0, y:"10%"}}
           >
             {options.map((option, index) => {
               return (
@@ -830,6 +830,7 @@ const RoadmapCreatePage = (props) => {
 
   return (
     <>
+
       <TwoButtonModal
         isOpen={publicModal}
         onLightPress={() => setPublicModal(false)}
@@ -855,7 +856,7 @@ const RoadmapCreatePage = (props) => {
         }}
         oneButton={true}
       />
-
+      
       <TwoButtonModal
         isOpen={discardModal}
         onLightPress={() => setDiscardModal(false)}
@@ -869,20 +870,17 @@ const RoadmapCreatePage = (props) => {
       />
 
       <AnimatePresence mode="wait">
-        {modalState ? (
-          // id -1 is passed as a temp id to let the modal know it's in create mode, otherwise it's in edit mode
-          editTaskID == -1 ? (
-            <TaskModal
-              oldData={{ id: -1 }}
-              editTaskCallBack={editTaskCallBack}
-            />
-          ) : (
-            <TaskModal
-              oldData={tasks.find((task) => task.id === editTaskID)}
-              editTaskCallBack={editTaskCallBack}
-            />
-          )
-        ) : null}
+      {modalState ? (
+        // id -1 is passed as a temp id to let the modal know it's in create mode, otherwise it's in edit mode
+        editTaskID == -1 ? (
+          <TaskModal oldData={{ id: -1 }} editTaskCallBack={editTaskCallBack} />
+        ) : (
+          <TaskModal
+            oldData={tasks.find((task) => task.id === editTaskID)}
+            editTaskCallBack={editTaskCallBack}
+          />
+        )
+      ) : null}
       </AnimatePresence>
 
       <SpinnerNeo visible={loading} />
@@ -987,7 +985,7 @@ const RoadmapCreatePage = (props) => {
             ></textarea>
           </div>
 
-          <div className="grow max-h-[50%] min-h-[30%]">
+          <div className="grow max-h-[60%] min-h-[30%]">
             {/* Giant task box */}
             <div className="flex overflow-x-auto relative flex-col justify-center bg-blue-100 shadow-xl h-full border-gray-300 rounded-3xl items-start p-4 pl-8 pr-16 z-0">
               <DragDropContext onDragEnd={handleOrderSwitch}>
