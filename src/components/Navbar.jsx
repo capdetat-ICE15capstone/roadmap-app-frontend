@@ -70,7 +70,7 @@ const Navbar = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col flex-grow bg-gray-50 z-20">
+        <div className="flex flex-col flex-grow overflow-x-hidden bg-gray-50 z-20">
           {!isPremium &&
             <div className="flex justify-center z-40">
               <div className="flex w-full h-[100px] mx-auto bg-nav-blue">
