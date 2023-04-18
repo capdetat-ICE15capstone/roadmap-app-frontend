@@ -161,6 +161,7 @@ const Feed = () => {
     try {
       const response = await axiosInstance.get(route);
       setCurrentRoadmapList(response.data);
+      console.log(response.data);
       setHasFetched(true);
       setIsFetching(false);
     } catch (error) {
@@ -249,17 +250,18 @@ const Feed = () => {
                     return (
                       <div key={index} className='hover:transform hover:scale-110 transition duration-150'>
                         <RoadmapNeo
-                          owner_id={roadmap.owner_id}
-                          creator_id={roadmap.creator_id}
-                          owner_name={roadmap.owner_name}
-                          creator_name={roadmap.creator_name}
-                          rid={roadmap.rid}
-                          views_count={roadmap.views_count}
-                          stars_count={roadmap.stars_count}
-                          forks_count={roadmap.forks_count}
-                          created_at={roadmap.created_at}
-                          edited_at={roadmap.edited_at}
-                          title={roadmap.title}
+                          // owner_id={roadmap.owner_id}
+                          // creator_id={roadmap.creator_id}
+                          // owner_name={roadmap.owner_name}
+                          // creator_name={roadmap.creator_name}
+                          // rid={roadmap.rid}
+                          // views_count={roadmap.views_count}
+                          // stars_count={roadmap.stars_count}
+                          // forks_count={roadmap.forks_count}
+                          // created_at={roadmap.created_at}
+                          // edited_at={roadmap.edited_at}
+                          // title={roadmap.title}
+                          roadmap={roadmap}
                         />
                       </div>
                     )

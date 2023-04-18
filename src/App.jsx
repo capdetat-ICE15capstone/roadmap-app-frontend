@@ -6,14 +6,12 @@ import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Shop from "./pages/Shop";
-import HomeOtherUser from "./pages/HomeOtherUser";
 
 const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
 const View = lazy(() => import("./pages/View"));
 const RoadmapCreatePage = lazy(() => import("./pages/RoadmapCreatePage"));
 const Home = lazy(() => import("./pages/Home"));
-const FriendHome = lazy(() => import("./pages/HomeOtherUser"));
 const Feed = lazy(() => import("./pages/Feed"));
 const Setting = lazy(() => import("./pages/Setting"));
 const Profile = lazy(() => import("./pages/Profile"));
@@ -59,13 +57,13 @@ function App() {
                 </Suspense>
               }
             ></Route>
-            <Route path="/" key="my-home" element={<Navbar />}>
+            <Route path="/" element={<Navbar />}>
               <Route
                 path="/"
                 element={
                   <ProtectedRoute>
                     <Suspense fallback={<Spinner />}>
-                      <Home />
+                      <Home key="my-home" />
                     </Suspense>
                   </ProtectedRoute>
                 }
@@ -75,7 +73,7 @@ function App() {
                 element={
                   <ProtectedRoute>
                     <Suspense fallback={<Spinner />}>
-                      <HomeOtherUser />
+                      <Home key="other-home" />
                     </Suspense>
                   </ProtectedRoute>
                 }

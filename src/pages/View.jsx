@@ -29,6 +29,7 @@ export default function View() {
 
   const [isOwner, setIsOwner] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [isArchived, setIsArchived] = useState(false);
   const [saveButton, setSaveButton] = useState(true);
   const [completeButton, setCompleteButton] = useState(false);
 
@@ -50,7 +51,12 @@ export default function View() {
           setIsWarning(true);
           return;
         }
-        if (fetchedRoadmap.next_task === null || fetchedRoadmap.archive_date !== null) {
+        if (fetchedRoadmap.archive_date !== null) {
+          setIsArchived(true);
+          setCurrentTask(
+            { 'id': -1 }
+          );
+        } else if (fetchedRoadmap.next_task === null) {
           setIsCompleted(true);
           setCurrentTask(
             { 'id': -1 }
@@ -218,12 +224,11 @@ export default function View() {
                   likeCount={likeCount}
                   isLiked={isLiked}
                   isCompleted={isCompleted}
+                  isArchived={isArchived}
                   handleLike={handleLike}
                 />
-                <RoadmapViewer tasks={roadmap.tasks} currentTaskID={currentTask.id} handleTaskView={(task) => { setCurrentViewTask(task); setIsViewingTask(true) }} />
-                {(!isCompleted) && (
-                  <RoadmapTaskDetail task={currentTask} handleTaskUpdate={(task) => setCurrentTask(task)} handleIsSaving={() => setIsSaving(true)} handleIsCompleting={() => setIsCompleting(true)} isOwner={isOwner} displaySaveButton={saveButton} displayCompleteButton={completeButton} />
-                )}
+                <RoadmapViewer isArchived={isArchived} tasks={roadmap.tasks} currentTaskID={currentTask.id} handleTaskView={(task) => { setCurrentViewTask(task); setIsViewingTask(true) }} />
+                <RoadmapTaskDetail isCompleted={isCompleted} isArchived={isArchived} task={currentTask} handleTaskUpdate={(task) => setCurrentTask(task)} handleIsSaving={() => setIsSaving(true)} handleIsCompleting={() => setIsCompleting(true)} isOwner={isOwner} displaySaveButton={saveButton} displayCompleteButton={completeButton} />
               </div>
             </div>
           </motion.div>
