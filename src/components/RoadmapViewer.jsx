@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { nodeShapeGenerator } from '../functions/viewFunction';
 import { convertDateTimeString, shortenString } from '../functions/formatFunction';
 
-function RoadmapViewer({ tasks, currentTaskID, handleTaskView }) {
+function RoadmapViewer({ tasks, currentTaskID, handleTaskView, isArchived }) {
 
   const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
   const [hoveredTask, setHoveredTask] = useState({ id: 0 });
@@ -49,7 +49,7 @@ function RoadmapViewer({ tasks, currentTaskID, handleTaskView }) {
                       value={index}
                       onClick={() => handleTaskView(task)}
                     >
-                      {(index < currentTaskIndex || (index === currentTaskIndex && currentTaskID === -1)) && (
+                      {(index < currentTaskIndex || (index === currentTaskIndex && currentTaskID === -1)) && !isArchived && (
                         <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[60%] text-3xl text-center select-none z-50 pointer-events-none'>
                           ✓
                         </div>
