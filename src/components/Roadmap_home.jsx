@@ -78,7 +78,7 @@ const Roadmap_home = ({ roadmap, handleArchive, handleDelete, isArchived }) => {
                 <DropdownIcon />
               </button>
               {isOpen && (
-                <div onMouseLeave={toggleMenu} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-18 flex flex-col bg-[#FFFFFF] rounded-xl shadow-md hover:z-50 hover:scale-110 transition duration-150">
+                <div onMouseLeave={toggleMenu} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-18 flex flex-col bg-[#FFFFFF] rounded-xl shadow-md z-50 hover:scale-110 transition duration-150">
                   {!isArchived ? (
                     <>
                       <button onClick={() => navigate(`/edit/${roadmap.rid}`)} className="text-sm font-bold p-2 rounded-t-xl hover:bg-gray-300">
@@ -87,7 +87,7 @@ const Roadmap_home = ({ roadmap, handleArchive, handleDelete, isArchived }) => {
                       <button onClick={() => handleArchive(roadmap.rid)} className="text-sm font-bold p-2 hover:bg-gray-300">
                         Archive
                       </button>
-                      <button onClick={() => handleDelete(roadmap.rid)} className="text-sm text-red-500 font-bold p-2 rounded-b-xl hover:bg-gray-300">
+                      <button onClick={() => handleDelete(roadmap.rid)} className="text-sm text-red-500 font-bold p-2 rounded-b-xl hover:bg-red-500 hover:text-white">
                         Delete
                       </button>
                     </>
