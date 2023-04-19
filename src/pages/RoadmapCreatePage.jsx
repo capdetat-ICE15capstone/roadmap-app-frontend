@@ -797,6 +797,7 @@ const RoadmapCreatePage = (props) => {
     setTags(initialState.current.tags);
     setNotiStatus(initialState.current.notiStatus);
     setHasUnsavedChanges(false);
+    setDiscardModal(false);
   };
 
   const handleDisplayErrorMessage = (
@@ -868,7 +869,7 @@ const RoadmapCreatePage = (props) => {
         onDarkPress={handleDiscard}
         textField={{
           title: `Discard Change?`,
-          body: "Are you sure you want to discard change? (The page is going to reload)",
+          body: "Are you sure you want to discard change?",
           lightButtonText: "Cancel",
           darkButtonText: "OK",
         }}
