@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import RoadmapPlus from "../components/Roadmap_home";
 import RoadmapNeo from "../components/Roadmap_neo";
-import Kurumi from "../assets/kurumi.jpg";
 import RoadmapCreate from "../components/RoadmapCreate";
 import RoadmapToggle from "../components/RoadmapToggle";
 import { ReactComponent as DarkHomeIcon } from "../assets/dark_home_icon.svg";
@@ -10,9 +9,13 @@ import SpinnerNeo from "../components/SpinnerNeo";
 import { axiosInstance } from "../functions/axiosInstance";
 import Prompt from "../components/Prompt";
 import HomeFirstLoginModal from "../components/HomeFirstLoginModal";
+import { getProfilePictureSrc } from "../components/SettingProfileImageSelector";
+import { motion } from 'framer-motion';
 
 const Home = () => {
   const { other_uid } = useParams();
+
+  const navigate = useNavigate();
 
   const [profile, setPofile] = useState();
 
@@ -22,6 +25,8 @@ const Home = () => {
 
   const [isArchiving, setIsArchiving] = useState();
   const [isDeleting, setIsDeleting] = useState();
+  const [isWarning, setIsWarning] = useState();
+  const [errorMessage, setErrorMessage] = useState("");
 
   const [viewMode, setViewMode] = useState("roadmap");
 
@@ -31,14 +36,6 @@ const Home = () => {
   const location = useLocation();
   const firstLogin = location.state?.firstLogin;
   const [isOpenFirstLoginModal, setIsOpenFirstLoginModal] = useState(firstLogin === true);
-
-  const clickRoadmap = () => {
-    setViewMode("roadmap")
-  }
-
-  const clickArchive = () => {
-    setViewMode("archive");
-  }
 
   function handleArchive(rid) {
     setIsArchiving(true);
@@ -58,7 +55,9 @@ const Home = () => {
       console.log(response.data);
       fetchData();
     } catch (error) {
-      console.error(error);
+      console.error(error.message);
+      setErrorMessage(error.message);
+      setIsWarning(true);
     }
   }
 
@@ -70,7 +69,9 @@ const Home = () => {
       console.log(response.data);
       fetchData();
     } catch (error) {
-      console.error(error);
+      console.error(error.message);
+      setErrorMessage(error.message);
+      setIsWarning(true);
     }
   }
 
@@ -90,7 +91,9 @@ const Home = () => {
       hasFetchedRef.current = true;
       isOtherProfile.current = true;
     } catch (error) {
-      console.error(error);
+      console.error(error.message);
+      setErrorMessage(error.message);
+      setIsWarning(true);
     }
   }
 
@@ -102,9 +105,13 @@ const Home = () => {
       setRoadmapList(response.data.roadmaps);
       setArchivedRoadmapList(response.data.archived_roadmaps);
 
+      console.log()
+
       hasFetchedRef.current = true;
     } catch (error) {
-      console.error(error);
+      console.error(error.message);
+      setErrorMessage(error.message);
+      setIsWarning(true);
     }
   }
 
@@ -114,6 +121,9 @@ const Home = () => {
       return response.data.uid;
     } catch (error) {
       console.error(error);
+      console.error(error.message);
+      setErrorMessage(error.message);
+      setIsWarning(true);
       return null;
     }
   }
@@ -170,12 +180,12 @@ const Home = () => {
                 </div>
               </div>
               <div className="flex justify-center items-center max-w-[200px] max-h-[200px] p-4">
-                <img src={Kurumi} className="rounded-full" />
+                <img className='rounded-full' src={getProfilePictureSrc(profile.profile_picture_id)} />
               </div>
             </div>
           </div>
           <div className="flex flex-col w-4/5">
-            <RoadmapToggle showRoadmap={clickRoadmap} showArchive={clickArchive} isRoadmap={(viewMode === "roadmap")} />
+            <RoadmapToggle showRoadmap={() => setViewMode("roadmap")} showArchive={() => setViewMode("archive")} isRoadmap={(viewMode === "roadmap")} />
           </div>
           <div className='flex flex-col justify-center items-center pb-16 w-[90%]'>
             <div className={`${(viewMode === "roadmap") ? 'visible' : 'hidden'}`}>
@@ -221,7 +231,10 @@ const Home = () => {
                     )
                   } else {
                     return (
-                      <div key={index} className='hover:transform hover:scale-110 transition duration-150'>
+                      <div
+                        key={index}
+                        className='hover:transform hover:scale-110 transition duration-150'
+                      >
                         <RoadmapNeo
                           roadmap={roadmap}
                         />
@@ -255,8 +268,11 @@ const Home = () => {
           <SpinnerNeo visble={hasFetchedRef.current} />
         </div>
         <HomeFirstLoginModal isOpen={isOpenFirstLoginModal} setIsOpen={setIsOpenFirstLoginModal} />
+        <Prompt visible={isWarning} title="Error" message={errorMessage} positiveText="return" positiveFunction={() => { setIsWarning(false); navigate(-1); }} />
       </>
     );
+  } else {
+    return <Prompt visible={isWarning} title="Error" message={errorMessage} positiveText="return" positiveFunction={() => { setIsWarning(false); navigate(-1); }} />
   }
 };
 
