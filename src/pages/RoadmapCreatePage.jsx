@@ -94,7 +94,7 @@ const TaskItem = ({
   return (
     <div className={`relative break-words w-28 z-10`}>
       <div
-        className={`flex after:h-1 after:w-full  after:top-[30px] ${
+        className={`flex after:h-1 after:w-full after:top-[30px] ${
           isLastitem
             ? "after:border-t-4 after:border-dashed after:border-black after:bg-transparent after:overflow-hidden after:relative after:translate-x-0"
             : "after:bg-black after:absolute after:z-10 after:translate-x-[30px]"
@@ -890,7 +890,7 @@ const RoadmapCreatePage = (props) => {
       </AnimatePresence>
 
       <SpinnerNeo visible={loading} />
-      <div className="h-full flex justify-center items-center flex-col m-auto max-w-5xl w-[90%] ">
+      <div className="flex justify-center items-center flex-col m-auto max-w-5xl w-[90%]">
         {/* <div className="text-4xl font-bold flex items-start"> */}
         <div className="flex w-full justify-between">
           <span className="text-4xl font-bold">
@@ -912,9 +912,7 @@ const RoadmapCreatePage = (props) => {
         {/* </div> */}
         <form
           onSubmit={handleSubmit}
-          className={`rounded-3xl w-full ${
-            isSM ? "gap-3" : "gap-2"
-          } flex flex-col bg-white p-10 min-h-[80%] xs:min-h-[60%] m-3 shadow-lg shadow-gray-400 border-gray-400`}
+          className={`rounded-3xl w-full gap-3 flex flex-col bg-white p-10 min-h-[80%] xs:min-h-[60%] m-3 shadow-lg shadow-gray-400 border-gray-400`}
         >
           <div className="flex flex-col md:flex-row justify-between items-center gap-2">
             <label className="hidden md:visible text-3xl font-bold md:block leading-none">
@@ -983,7 +981,7 @@ const RoadmapCreatePage = (props) => {
             <label className="text-md font-bold">Roadmap Description </label>
             <textarea
               className="rounded-lg border-gray-400 text-gray-400 block text-md p-1 w-full focus:outline-none shadow-lg shadow-gray-300 placeholder:text-italic"
-              rows={isSM ? "3" : "2"}
+              rows="3"
               cols="60"
               value={RMDesc}
               onChange={handleDescriptionChange}
@@ -991,7 +989,7 @@ const RoadmapCreatePage = (props) => {
             ></textarea>
           </div>
 
-          <div className="grow max-h-[60%] min-h-[30%]">
+          <div className="grow max-h-[60%] min-h-[200px]">
             {/* Giant task box */}
             <div className="flex overflow-x-auto relative flex-col justify-center bg-blue-100 shadow-xl h-full border-gray-300 rounded-3xl items-start p-4 pl-8 pr-16 z-0">
               <DragDropContext onDragEnd={handleOrderSwitch}>
@@ -1026,7 +1024,7 @@ const RoadmapCreatePage = (props) => {
                             >
                               {(provided) => (
                                 <div
-                                  className="flex items-center"
+                                  className="flex items-center h-full"
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
                                   ref={provided.innerRef}
