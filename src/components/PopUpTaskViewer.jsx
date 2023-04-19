@@ -75,7 +75,7 @@ function PopUpTaskViewer({ visible, task, handleCloseWindow }) {
                   </div>
                 </div>
                 <div className='flex flex-col xs:w-1/2 max-xs:w-full  p-4 bg-[#f5f8fd] xs:rounded-r-2xl max-xs:rounded-b-2xl justify-end'>
-                  <div className='flex flex-col justify-center space-y-4 text-sm break-all'>
+                  <div className='flex flex-col justify-center space-y-2 text-sm break-all'>
                     {task.subtasks.map((subtask, index) => {
                       return (
                         <label key={index} className='flex items-center'>
