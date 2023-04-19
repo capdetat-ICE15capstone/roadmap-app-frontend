@@ -92,16 +92,16 @@ const TaskItem = ({
 }) => {
   // Task node Component
   return (
-    <div className={`relative break-words w-28 z-10`}>
+    <div className={`relative h-full break-words w-28 z-10`}>
       <div
-        className={`flex after:h-1 after:w-full after:top-[30px] ${
+        className={`h-full after:h-1 after:w-full after:top-[30px] after:absolute after:translate-x-12 ${
           isLastitem
-            ? "after:border-t-4 after:border-dashed after:border-black after:bg-transparent after:overflow-hidden after:relative after:translate-x-0"
-            : "after:bg-black after:absolute after:z-10 after:translate-x-[30px]"
+            ? "after:border-t-4 after:border-dashed after:border-black after:bg-transparent "
+            : "after:bg-black after:z-10 "
         }`}
       >
-        <div className="flex">
-          <div className="flex flex-col gap-2 items-center">
+        <div className="flex h-full">
+          <div className="flex flex-col gap-2 items-center h-full justify-center">
             <button
               type="button"
               disabled={disabled}
@@ -125,8 +125,8 @@ const TaskItem = ({
                 noScaleOnHover={disabled}
               />
             </button>
-            <div className="w-4/5 absolute bottom-0 translate-y-[calc(100%_+_10px)]">
-              <span className="block font-bold mx-auto text-center leading-5 font-nunito-sans">
+            <div className="flex w-28 grow">
+              <span className="block font-bold w-full text-center leading-5 font-nunito-sans my-auto">
                 {task.name === "" ? "Milestone" : task.name}
               </span>
             </div>
@@ -182,7 +182,7 @@ const DropDownMenu = ({
             className="absolute bg-white border rounded-md flex flex-col left-0 xs:left-auto xs:right-0 [@media(max-width:360px)]:-left-full"
             initial={{ y: "-50%", opacity: 0, scale: 0 }}
             animate={{ y: "0%", opacity: 1, scale: 1 }}
-            exit={{opacity: 0, y:"10%"}}
+            exit={{ opacity: 0, y: "10%" }}
           >
             {options.map((option, index) => {
               return (
@@ -791,7 +791,7 @@ const RoadmapCreatePage = (props) => {
 
   const handleDiscard = () => {
     setRMName(initialState.current.name);
-    setRMDesc(initialState.current.description)
+    setRMDesc(initialState.current.description);
     setPublic(initialState.current.isPublic);
     setTasks(initialState.current.tasks);
     setTags(initialState.current.tags);
@@ -836,7 +836,6 @@ const RoadmapCreatePage = (props) => {
 
   return (
     <>
-
       <TwoButtonModal
         isOpen={publicModal}
         onLightPress={() => setPublicModal(false)}
@@ -862,7 +861,7 @@ const RoadmapCreatePage = (props) => {
         }}
         oneButton={true}
       />
-      
+
       <TwoButtonModal
         isOpen={discardModal}
         onLightPress={() => setDiscardModal(false)}
@@ -876,17 +875,20 @@ const RoadmapCreatePage = (props) => {
       />
 
       <AnimatePresence mode="wait">
-      {modalState ? (
-        // id -1 is passed as a temp id to let the modal know it's in create mode, otherwise it's in edit mode
-        editTaskID == -1 ? (
-          <TaskModal oldData={{ id: -1 }} editTaskCallBack={editTaskCallBack} />
-        ) : (
-          <TaskModal
-            oldData={tasks.find((task) => task.id === editTaskID)}
-            editTaskCallBack={editTaskCallBack}
-          />
-        )
-      ) : null}
+        {modalState ? (
+          // id -1 is passed as a temp id to let the modal know it's in create mode, otherwise it's in edit mode
+          editTaskID == -1 ? (
+            <TaskModal
+              oldData={{ id: -1 }}
+              editTaskCallBack={editTaskCallBack}
+            />
+          ) : (
+            <TaskModal
+              oldData={tasks.find((task) => task.id === editTaskID)}
+              editTaskCallBack={editTaskCallBack}
+            />
+          )
+        ) : null}
       </AnimatePresence>
 
       <SpinnerNeo visible={loading} />
@@ -991,7 +993,7 @@ const RoadmapCreatePage = (props) => {
 
           <div className="grow max-h-[60%] min-h-[200px]">
             {/* Giant task box */}
-            <div className="flex overflow-x-auto relative flex-col justify-center bg-blue-100 shadow-xl h-full border-gray-300 rounded-3xl items-start p-4 pl-8 pr-16 z-0">
+            <div className="flex overflow-x-auto relative flex-col justify-center bg-blue-100 shadow-xl h-full border-gray-300 rounded-3xl items-start p-10 pl-8 pr-16 z-0">
               <DragDropContext onDragEnd={handleOrderSwitch}>
                 <StrictModeDroppable droppableId="tasks" direction="horizontal">
                   {(provided) => (
@@ -1049,13 +1051,14 @@ const RoadmapCreatePage = (props) => {
                       {provided.placeholder}
                       {/* End of task list */}
                       {/* Add button */}
-                      <div className="flex z-40">
+                      <div className={`flex self-start ${tasks.length > 0 ? "w-28" : ""} justify-center`}>
                         <button
                           type="button"
                           disabled={isAddButtonDisabled()}
                           onClick={initializeTaskCreator}
+                          className="translate-y-[12px] translate-x-3"
                         >
-                          <AddButton className="h-10 w-10 translate-y-1" />
+                          <AddButton className="h-10 w-10" />
                         </button>
                       </div>
                     </div>
