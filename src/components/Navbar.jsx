@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Outlet, NavLink } from 'react-router-dom';
+import { Outlet, NavLink, Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
 
 // Image/Logo SVG
@@ -71,12 +71,17 @@ const Navbar = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col flex-grow overflow-x-hidden bg-gray-50 z-20">
+        <div className="flex flex-col flex-grow bg-gray-50 z-20 overflow-y-auto">
           {!isPremium &&
             <div className="flex justify-center z-40">
-              <div className="flex w-full h-[100px] mx-auto bg-nav-blue">
-
-              </div>
+              <Link to={`/premium`} className="relative flex flex-col w-2/3 h-[100px] px-6 mx-auto bg-nav-blue">
+                <div className="flex w-full h-full justify-start items-center font-inter font-semibold text-5xl text-[#FFFFFF]">
+                  Bored of ad display?
+                </div>
+                <div className="flex w-full h-full justify-end items-center font-inter font-semibold text-2xl text-[#FFFFFF]">
+                  What are you waiting for, buy premium
+                </div>  
+              </Link>
             </div>}
           <Outlet />
         </div>
