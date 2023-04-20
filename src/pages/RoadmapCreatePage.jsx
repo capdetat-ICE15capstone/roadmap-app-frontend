@@ -908,7 +908,7 @@ const RoadmapCreatePage = (props) => {
       <SpinnerNeo visible={loading} />
       <div className="flex justify-center items-center flex-col m-auto max-w-5xl w-[90%]">
         {/* <div className="text-4xl font-bold flex items-start"> */}
-        <div className="flex w-full justify-between">
+        <div className="flex w-full justify-between mt-10">
           <span className="text-4xl text-nav-blue font-extrabold">
             {mode === "create"
               ? "Create"
