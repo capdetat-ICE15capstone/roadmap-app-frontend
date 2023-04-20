@@ -147,12 +147,7 @@ export const CustomSVG = ({
 };
 
 export const allNodeColor = [
-  {
-    name: "gray",
-    twfill: "fill-gray-400",
-    twtext: "text-gray-400",
-    twbg: "bg-gray-400",
-  },
+  
   {
     name: "red",
     twfill: "fill-red-400",
@@ -206,15 +201,15 @@ export const allNodeColor = [
 export const getTWFill = (n) => {
   // n is the string of color name such as "pink", "violet" etc.
   const result = allNodeColor.find(({ name }) => name === n);
-  return result !== undefined ? result.twfill : "fill-black";
+  return result !== undefined ? result.twfill : allNodeColor[0].twfill;
 };
 
 export const getTWText = (n) => {
   const result = allNodeColor.find(({ name }) => name === n);
-  return result !== undefined ? result.twtext : "text-black";
+  return result !== undefined ? result.twtext : allNodeColor[0].twtext;
 };
 
 export const getTWbg = (n) => {
   const result = allNodeColor.find(({ name }) => name === n);
-  return result !== undefined ? result.twbg : "bg-black";
+  return result !== undefined ? result.twbg : allNodeColor[0].twbg;
 };

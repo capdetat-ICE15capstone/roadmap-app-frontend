@@ -24,6 +24,7 @@ import { StrictModeDroppable } from "../components/StrictModeDroppable";
 import { AnimatePresence, motion } from "framer-motion";
 import { ReactComponent as NotiOff } from "../assets/notification/notiOff.svg";
 import { ReactComponent as NotiOn } from "../assets/notification/notiOn.svg";
+import NotiButton from "../components/NotiButton";
 import { roundTimeToNearest30 } from "../functions/formatFunction";
 import { ReactComponent as QuestionMark } from "../assets/taskmodal/QuestionMark.svg";
 import { ReactComponent as Close } from "../assets/close.svg";
@@ -53,6 +54,7 @@ import Step5 from "../assets/helpCreateRoadmap_assets/step_5.jpg";
 import Step5_md from "../assets/helpCreateRoadmap_assets/step_5_md.jpg";
 import Step5_xs from "../assets/helpCreateRoadmap_assets/step_5_xs.jpg";
 import SpinnerNeo from "../components/SpinnerNeo";
+import LockUnlockButton from "../components/LockUnlockButton";
 
 const MAX_TASKS_NONPREMIUM = 16;
 const MAX_RMNAME_LENGTH = 30;
@@ -92,16 +94,16 @@ const TaskItem = ({
 }) => {
   // Task node Component
   return (
-    <div className={`relative break-words w-28 z-10`}>
+    <div className={`relative h-full break-words w-28 z-10`}>
       <div
-        className={`flex after:h-1 after:w-full  after:top-[30px] ${
+        className={`h-full after:h-1 after:w-full after:top-[30px] after:absolute after:translate-x-12 ${
           isLastitem
-            ? "after:border-t-4 after:border-dashed after:border-black after:bg-transparent after:overflow-hidden after:relative after:translate-x-0"
-            : "after:bg-black after:absolute after:z-10 after:translate-x-[30px]"
+            ? "after:border-t-4 after:border-dashed after:border-black after:bg-transparent "
+            : "after:bg-black after:z-10 "
         }`}
       >
-        <div className="flex">
-          <div className="flex flex-col gap-2 items-center">
+        <div className="flex h-full">
+          <div className="flex flex-col gap-2 items-center h-full justify-center">
             <button
               type="button"
               disabled={disabled}
@@ -125,8 +127,8 @@ const TaskItem = ({
                 noScaleOnHover={disabled}
               />
             </button>
-            <div className="w-4/5 absolute bottom-0 translate-y-[calc(100%_+_10px)]">
-              <span className="block font-bold mx-auto text-center leading-5 font-nunito-sans">
+            <div className="flex w-28 grow">
+              <span className="block font-bold w-full text-center leading-5 font-nunito-sans my-auto">
                 {task.name === "" ? "Milestone" : task.name}
               </span>
             </div>
@@ -168,11 +170,21 @@ const DropDownMenu = ({
       <button
         onClick={handleMenuShowUnshow}
         type="button"
-        className="flex items-center hover:scale-110 transition duration-150"
+        className={`flex p-2 border-2 gap-1 items-center rounded-full hover:scale-110 transition duration-150 ${
+          isMenuShowing ? "animate-bounce" : ""
+        } ${currentOption.on ? "border-nav-blue" : "bg-nav-blue border-white"}`}
       >
-        <Icon className="w-9 h-9" />
-        <span className="visible md:hidden font-bold [@media(max-width:360px)]:hidden">
-          Notification
+        {Icon}
+        <span
+          className={`visible md:hidden font-bold [@media(max-width:360px)]:hidden ${
+            currentOption.on ? "text-nav-blue" : "text-white"
+          }`}
+        >
+          {currentOption.on
+            ? `${currentOption.detail.day}d: ${
+                currentOption.detail.beforeDueDate ? "Due" : "Start"
+              }`
+            : "Off"}
         </span>
       </button>
       <AnimatePresence mode="wait">
@@ -182,7 +194,7 @@ const DropDownMenu = ({
             className="absolute bg-white border rounded-md flex flex-col left-0 xs:left-auto xs:right-0 [@media(max-width:360px)]:-left-full"
             initial={{ y: "-50%", opacity: 0, scale: 0 }}
             animate={{ y: "0%", opacity: 1, scale: 1 }}
-            exit={{opacity: 0, y:"10%"}}
+            exit={{ opacity: 0, y: "10%" }}
           >
             {options.map((option, index) => {
               return (
@@ -192,8 +204,8 @@ const DropDownMenu = ({
                   }
                   className={`font-bold whitespace-nowrap inline-block p-1 px-2 justify-center border hover:scale-110 duration-200 transition hover:bg-yellow-300 justify-self-center ${
                     optionComparer(optionValues[index], currentOption) === true
-                      ? "bg-gray-300"
-                      : "bg-white"
+                      ? "bg-nav-blue text-white"
+                      : "bg-white text-nav-blue"
                   }`}
                   type="button"
                   key={JSON.stringify(optionValues[index])}
@@ -435,6 +447,7 @@ const RoadmapCreatePage = (props) => {
       }
     });
 
+    allTags = [...new Set(allTags)];
     console.log(allTags);
     setTags(allTags);
   };
@@ -790,7 +803,14 @@ const RoadmapCreatePage = (props) => {
   };
 
   const handleDiscard = () => {
-    navigate(0);
+    setRMName(initialState.current.name);
+    setRMDesc(initialState.current.description);
+    setPublic(initialState.current.isPublic);
+    setTasks(initialState.current.tasks);
+    setTags(initialState.current.tags);
+    setNotiStatus(initialState.current.notiStatus);
+    setHasUnsavedChanges(false);
+    setDiscardModal(false);
   };
 
   const handleDisplayErrorMessage = (
@@ -830,7 +850,6 @@ const RoadmapCreatePage = (props) => {
 
   return (
     <>
-
       <TwoButtonModal
         isOpen={publicModal}
         onLightPress={() => setPublicModal(false)}
@@ -856,38 +875,41 @@ const RoadmapCreatePage = (props) => {
         }}
         oneButton={true}
       />
-      
+
       <TwoButtonModal
         isOpen={discardModal}
         onLightPress={() => setDiscardModal(false)}
         onDarkPress={handleDiscard}
         textField={{
           title: `Discard Change?`,
-          body: "Are you sure you want to discard change? (The page is going to reload)",
+          body: "Are you sure you want to discard change?",
           lightButtonText: "Cancel",
           darkButtonText: "OK",
         }}
       />
 
       <AnimatePresence mode="wait">
-      {modalState ? (
-        // id -1 is passed as a temp id to let the modal know it's in create mode, otherwise it's in edit mode
-        editTaskID == -1 ? (
-          <TaskModal oldData={{ id: -1 }} editTaskCallBack={editTaskCallBack} />
-        ) : (
-          <TaskModal
-            oldData={tasks.find((task) => task.id === editTaskID)}
-            editTaskCallBack={editTaskCallBack}
-          />
-        )
-      ) : null}
+        {modalState ? (
+          // id -1 is passed as a temp id to let the modal know it's in create mode, otherwise it's in edit mode
+          editTaskID == -1 ? (
+            <TaskModal
+              oldData={{ id: -1 }}
+              editTaskCallBack={editTaskCallBack}
+            />
+          ) : (
+            <TaskModal
+              oldData={tasks.find((task) => task.id === editTaskID)}
+              editTaskCallBack={editTaskCallBack}
+            />
+          )
+        ) : null}
       </AnimatePresence>
 
       <SpinnerNeo visible={loading} />
-      <div className="h-full flex justify-center items-center flex-col m-auto max-w-5xl w-[90%] ">
+      <div className="flex justify-center items-center flex-col m-auto max-w-5xl w-[90%]">
         {/* <div className="text-4xl font-bold flex items-start"> */}
-        <div className="flex w-full justify-between">
-          <span className="text-4xl font-bold">
+        <div className="flex w-full justify-between mt-10">
+          <span className="text-4xl text-nav-blue font-extrabold">
             {mode === "create"
               ? "Create"
               : mode === "edit"
@@ -906,15 +928,13 @@ const RoadmapCreatePage = (props) => {
         {/* </div> */}
         <form
           onSubmit={handleSubmit}
-          className={`rounded-3xl w-full ${
-            isSM ? "gap-3" : "gap-2"
-          } flex flex-col bg-white p-10 min-h-[80%] xs:min-h-[60%] m-3 shadow-lg shadow-gray-400 border-gray-400`}
+          className={`rounded-3xl w-full gap-3 flex flex-col bg-white p-10 min-h-[80%] xs:min-h-[60%] m-3 shadow-lg shadow-gray-400 border-gray-400`}
         >
           <div className="flex flex-col md:flex-row justify-between items-center gap-2">
-            <label className="hidden md:visible text-3xl font-bold md:block leading-none">
+            <label className="hidden md:visible text-3xl font-bold md:block leading-none text-nav-blue">
               Name
             </label>
-            <label className="visible text-md md:hidden font-bold block leading-none">
+            <label className="visible text-md md:hidden font-bold block leading-none text-nav-blue">
               Roadmap name
             </label>
             <input
@@ -932,7 +952,13 @@ const RoadmapCreatePage = (props) => {
                   currentOption={notiStatus}
                   setOption={setNotiStatus}
                   optionComparer={compareNotificationChange}
-                  Icon={notiStatus.on === true ? NotiOn : NotiOff}
+                  Icon={
+                    <NotiButton
+                      notiStatus={notiStatus}
+                      className="w-6 h-6"
+                      fillColor={notiStatus.on ? "#00286E" : "white"}
+                    />
+                  }
                   className="z-10"
                 />
               </div>
@@ -941,23 +967,15 @@ const RoadmapCreatePage = (props) => {
                 <button
                   type="button"
                   onClick={() => setPublicModal(true)}
-                  className="hover:scale-110 transition duration-150 flex items-center"
+                  className={`hover:scale-110 flex gap-1 transition duration-150 items-center border-nav-blue rounded-full border-2 p-2 ${
+                    publicModal === true ? "animate-bounce" : ""
+                  } ${!isPublic ? "bg-white" : "bg-nav-blue"}`}
                 >
-                  {isPublic ? (
-                    <>
-                      <Unlock className="w-9 h-9" />
-                      <span className="visible md:hidden font-bold [@media(max-width:360px)]:hidden">
-                        Public
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <Lock className="w-9 h-9" />
-                      <span className="visible md:hidden font-bold [@media(max-width:360px)]:hidden">
-                        Private
-                      </span>
-                    </>
-                  )}
+                  <LockUnlockButton
+                    isLock={isPublic}
+                    className="w-6 h-6"
+                    fillColor={!isPublic ? "#00286E" : "white"}
+                  />
                 </button>
               </div>
             </div>
@@ -974,10 +992,10 @@ const RoadmapCreatePage = (props) => {
           ) : null}
 
           <div className="">
-            <label className="text-md font-bold">Roadmap Description </label>
+            <label className="text-md font-bold text-nav-blue">Roadmap Description </label>
             <textarea
               className="rounded-lg border-gray-400 text-gray-400 block text-md p-1 w-full focus:outline-none shadow-lg shadow-gray-300 placeholder:text-italic"
-              rows={isSM ? "3" : "2"}
+              rows="3"
               cols="60"
               value={RMDesc}
               onChange={handleDescriptionChange}
@@ -985,9 +1003,9 @@ const RoadmapCreatePage = (props) => {
             ></textarea>
           </div>
 
-          <div className="grow max-h-[60%] min-h-[30%]">
+          <div className="grow max-h-[60%] min-h-[200px]">
             {/* Giant task box */}
-            <div className="flex overflow-x-auto relative flex-col justify-center bg-blue-100 shadow-xl h-full border-gray-300 rounded-3xl items-start p-4 pl-8 pr-16 z-0">
+            <div className="flex overflow-x-auto relative flex-col justify-center bg-blue-100 shadow-xl h-full border-gray-300 rounded-3xl items-start p-10 pl-8 pr-16 z-0">
               <DragDropContext onDragEnd={handleOrderSwitch}>
                 <StrictModeDroppable droppableId="tasks" direction="horizontal">
                   {(provided) => (
@@ -1020,7 +1038,7 @@ const RoadmapCreatePage = (props) => {
                             >
                               {(provided) => (
                                 <div
-                                  className="flex items-center"
+                                  className="flex items-center h-full"
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
                                   ref={provided.innerRef}
@@ -1045,13 +1063,18 @@ const RoadmapCreatePage = (props) => {
                       {provided.placeholder}
                       {/* End of task list */}
                       {/* Add button */}
-                      <div className="flex z-40">
+                      <div
+                        className={`flex self-start ${
+                          tasks.length > 0 ? "w-28" : ""
+                        } justify-center`}
+                      >
                         <button
                           type="button"
                           disabled={isAddButtonDisabled()}
                           onClick={initializeTaskCreator}
+                          className="translate-y-[12px] translate-x-3"
                         >
-                          <AddButton className="h-10 w-10 translate-y-1" />
+                          <AddButton className="h-10 w-10" />
                         </button>
                       </div>
                     </div>
@@ -1064,7 +1087,7 @@ const RoadmapCreatePage = (props) => {
           <div className="justify-end flex">
             <div className="right-0 w-full xs:w-auto flex gap-2">
               <button
-                className="bg-transparent inline border-gray-800 w-full font-bold xs:w-32 text-gray-800 h-10 rounded-full border m-0"
+                className="bg-transparent inline border-nav-blue text-nav-blue w-full font-bold xs:w-32 h-10 rounded-full border-2  m-0"
                 type="button"
                 onClick={() => setDiscardModal(true)}
               >

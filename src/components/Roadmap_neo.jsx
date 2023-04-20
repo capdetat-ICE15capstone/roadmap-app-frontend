@@ -1,59 +1,53 @@
 import React, { useEffect, useRef, useState } from 'react';
-import PropTypes from 'prop-types';
 import { Link, useNavigate } from "react-router-dom";
 import { ReactComponent as EyeIcon } from "../assets/roadmap_assets/eye_Icon.svg"
 import { ReactComponent as ShareIcon } from "../assets/roadmap_assets/Share.svg"
 import { ReactComponent as LikeIcon } from "../assets/roadmap_assets/ThumbsUp.svg"
 import { axiosInstance } from '../functions/axiosInstance';
 import { nodeShapeGenerator } from '../functions/viewFunction';
-import RoadmapDropdown from "../components/RoadmapDropdown";
+import { motion } from 'framer-motion';
 
-const Roadmap = ({ owner_id, owner_name, creator_name, rid, views_count, stars_count, forks_count, created_at, edited_at, title }) => {
+const Roadmap = ({ roadmap }) => {
 
-  //parameters of roadmap
-  Roadmap.propTypes = {
-    owner_id: PropTypes.number,
-    creator_id: PropTypes.number,
-    owner_name: PropTypes.string,
-    creator_name: PropTypes.string,
-    rid: PropTypes.number,
-    views_count: PropTypes.number,
-    stars_count: PropTypes.number,
-    forks_count: PropTypes.number,
-    created_at: PropTypes.string,
-    edited_at: PropTypes.string,
-    title: PropTypes.string
-  };
+  const [createDate, setCreateDate] = useState();
+  const [editDate, setEditDate] = useState();
 
-  // change created_at to dd/mm/yy format
-  const date = new Date(created_at);
-  const day = date.getUTCDate();
-  const month = date.getUTCMonth() + 1;
-  const year = date.getUTCFullYear().toString().substr(-2);
-  const created_at_format = `${day}/${month}/${year}`;
+  // change date to dd/mm/yy format
+  function convertDate(dateInput) {
+    const date = new Date(dateInput);
+    const day = date.getUTCDate();
+    const month = date.getUTCMonth() + 1;
+    const year = date.getUTCFullYear().toString().substr(-2);
+    return `${day}/${month}/${year}`;
+  }
 
-  // change edited_at to dd/mm/yy format
-  const date2 = new Date(edited_at);
-  const day2 = date2.getUTCDate();
-  const month2 = date2.getUTCMonth() + 1;
-  const year2 = date2.getUTCFullYear().toString().substr(-2);
-  const edited_at_format = `${day2}/${month2}/${year2}`;
+  useEffect(() => {
+    // change created_at to dd/mm/yy format
+    setCreateDate(convertDate(roadmap.created_at));
+
+    // change edited_at to dd/mm/yy format
+    setEditDate(convertDate(roadmap.edited_at));
+
+    // update roadmap preview
+    fetchRoadmap();
+  }, [roadmap])
 
   //navigage to roadmap owner's home page on click
   const navigate = useNavigate();
+
   const handleClick = (event) => {
     event.preventDefault();
-    navigate(`/home/${owner_id}`);
+    navigate(`/home/${roadmap.owner_id}`);
   };
 
-  const [roadmap, setRoadmap] = useState();
+  const [fetchedRoadmap, setFetchedRoadmap] = useState();
   const [isFetched, setIsFetched] = useState(false);
 
   function fetchRoadmap() {
-    axiosInstance.get(`/roadmap/${rid}`)
+    axiosInstance.get(`/roadmap/${roadmap.rid}`)
       .then(response => {
         // console.log(response.data);
-        setRoadmap(response.data);
+        setFetchedRoadmap(response.data);
         setIsFetched(true);
       })
       .catch(error => {
@@ -66,6 +60,7 @@ const Roadmap = ({ owner_id, owner_name, creator_name, rid, views_count, stars_c
   useEffect(() => {
     if (!isMountedRef.current) {
       isMountedRef.current = true;
+    } else {
       return;
     }
     fetchRoadmap();
@@ -74,13 +69,21 @@ const Roadmap = ({ owner_id, owner_name, creator_name, rid, views_count, stars_c
   if (isFetched) {
     return (
       <>
-        <div>
-          <Link to={`/view/${rid}`} >
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{
+            type: "easeInOut",
+            duration: "0.3"
+          }}
+        >
+          <Link to={`/view/${roadmap.rid}`} >
             <div className='flex flex-col bg-white border border-gray-300 rounded-3xl shadow-md w-[242px] h-[232px] p-2'>
               <div className='flex flex-col bg-[#e6eefc] rounded-2xl'>
                 <div className='flex justify-center pt-8 px-8 space-x-[25px] w-full h-28 overflow-hidden'>
-                  {roadmap.shapes.map((shape, index) => {
-                    const zIndex = roadmap.shapes.length - index;
+                  {fetchedRoadmap.shapes.map((shape, index) => {
+                    if (index > 4) return;
+                    const zIndex = fetchedRoadmap.shapes.length - index;
                     return (
                       <div key={index} className="relative" style={{ zIndex }}>
                         <div className="absolute top-[30%] -left-1/4 transform -translate-x-1/2 -translate-y-1/2 -z-10">
@@ -91,7 +94,7 @@ const Roadmap = ({ owner_id, owner_name, creator_name, rid, views_count, stars_c
                         </div>
                         <div className='relative'>
                           <button value={index} className=''>
-                            {nodeShapeGenerator(shape, roadmap.colors[index], index, roadmap.shapes.length)}
+                            {nodeShapeGenerator(shape, fetchedRoadmap.colors[index], index, fetchedRoadmap.shapes.length)}
                           </button>
                         </div>
                       </div>
@@ -100,45 +103,45 @@ const Roadmap = ({ owner_id, owner_name, creator_name, rid, views_count, stars_c
                 </div>
                 <div className='flex flex-nowrap justify-between pb-2 px-2'>
                   <div className='text-xs font-bold'>
-                    {creator_name}
+                    {roadmap.creator_name}
                   </div>
                   <div className='text-xs text-gray-600'>
-                    Updated: {edited_at_format}
+                    Updated: {editDate}
                   </div>
                 </div>
               </div>
               <div className='flex flex-col pt-[2px] flex-nowrap space-y-1 m-1'>
                 <div className=' flex flex-row justify-between items-center'>
                   <div className=' text-md font-bold truncate w-[100%]'>
-                    {title ? title : "no name"}
+                    {roadmap.title ? roadmap.title : "no name"}
                   </div>
                 </div>
                 <div className='flex flex-row flex-nowrap justify-between items-center space-x-1'>
                   <div className='flex flex-row text-xs'>
-                    <span className='mr-1'>{"Owner: "}</span><span className='hover:text-blue-600 truncate' onClick={handleClick}>{owner_name}</span>
+                    <span className='mr-1'>{"Owner: "}</span><span className='hover:text-blue-600 truncate' onClick={handleClick}>{roadmap.owner_name}</span>
                   </div>
                   <div className='flex-nowrap w-1/2 text-xs text-gray-500 text-right'>
-                    Created: {created_at_format}
+                    Created: {createDate}
                   </div>
                 </div>
                 <div className='flex flex-row flex-nowrap justify-between items-center'>
                   <div className='static flex flex-row items-center left-[5%] space-x-1'>
                     <EyeIcon className="flex stroke-1 stroke-gray-700" />
                     <div className='text-xs text-gray-700'>
-                      : {views_count} views
+                      : {roadmap.views_count} views
                     </div>
                   </div>
                   <div className='z-10 static flex flex-row justify-center space-x-4 text-xs right-[5%]'>
                     <div className='z-10 flex flex-row items-center space-x-1'>
                       <ShareIcon />
                       <div className='text-xs text-gray-700'>
-                        : {forks_count}
+                        : {roadmap.forks_count}
                       </div>
                     </div>
                     <div className='z-10 flex flex-row items-center space-x-1'>
                       <LikeIcon />
                       <div className='text-xs text-gray-700'>
-                        : {stars_count}
+                        : {roadmap.stars_count}
                       </div>
                     </div>
                   </div>
@@ -146,7 +149,7 @@ const Roadmap = ({ owner_id, owner_name, creator_name, rid, views_count, stars_c
               </div>
             </div>
           </Link>
-        </div>
+        </motion.div>
       </>
     );
   }

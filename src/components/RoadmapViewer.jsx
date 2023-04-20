@@ -1,45 +1,40 @@
 import React, { useState, useEffect } from 'react'
 import { nodeShapeGenerator } from '../functions/viewFunction';
 import { convertDateTimeString, shortenString } from '../functions/formatFunction';
+import { ReactComponent as Pin } from "../assets/shapes/Pointer.svg";
 
-function RoadmapViewer({ tasks, currentTaskID, handleTaskView }) {
+function RoadmapViewer({ roadmap, currentTaskID, handleTaskView, isArchived }) {
 
   const [currentTaskIndex, setCurrentTaskIndex] = useState(0);
-  const [hoveredTask, setHoveredTask] = useState({ id: 0 });
-  const [visible, setVisible] = useState();
-
-  const handleMouseOver = (task) => {
-    setHoveredTask(task);
-  };
 
   useEffect(() => {
     if (currentTaskID === -1) {
-      setCurrentTaskIndex(tasks.length - 1);
+      setCurrentTaskIndex(roadmap.tasks.length - 1);
     } else {
       let reachedCurrentTask = false;
-      tasks.forEach((task, index) => {
+      roadmap.tasks.forEach((task, index) => {
         if (task.id === currentTaskID) {
           reachedCurrentTask = true;
           setCurrentTaskIndex(index);
         }
       });
     }
-  }, [tasks])
+  }, [roadmap])
 
   return (
-    <div className='relative bg-[#e6eefc] rounded-2xl p-20'>
-      <div className='absolute top-1/2 right-1/2 transform translate-x-1/2 -translate-y-1/2 flex flex-col w-full overflow-x-auto'>
+    <div className='bg-[#e6eefc] rounded-2xl'>
+      <div className='flex flex-col w-full overflow-x-auto p-4'>
         <div className='flex pl-12 pt-8 pb-12 space-x-[25px]'>
           {
-            tasks.map((task, index) => {
-              const zIndex = tasks.length - index;
+            roadmap.tasks.map((task, index) => {
+              const zIndex = roadmap.tasks.length - index;
               return (
                 <div key={index} className="relative" style={{ zIndex }}>
                   <div className="absolute top-1/2 -left-1/4 transform -translate-x-1/2 -translate-y-3/4 -z-10">
                     {(index > '0') && <hr className="w-[75px] h-1 bg-black border-0" />}
                   </div>
                   <div className="absolute top-1/2 left-[100%] transform -translate-x-1/2 -translate-y-3/4 -z-10">
-                    {(index === (tasks.length - 1)) && <hr className="w-[75px] h-1 border-0 opacity-0" />}
+                    {(index === (roadmap.tasks.length - 1)) && <hr className="w-[75px] h-1 border-0 opacity-0" />}
                   </div>
                   <div className='absolute -bottom-1/3 left-1/2 transform -translate-x-1/2 translate-y-1/2 text-xs text-center self-center font-bold'>
                     {shortenString(task.name, 14)}
@@ -49,9 +44,31 @@ function RoadmapViewer({ tasks, currentTaskID, handleTaskView }) {
                       value={index}
                       onClick={() => handleTaskView(task)}
                     >
-                      {(index < currentTaskIndex || (index === currentTaskIndex && currentTaskID === -1)) && (
-                        <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[60%] text-3xl text-center select-none z-50 pointer-events-none'>
-                          ✓
+                      {(index < currentTaskIndex || (index === currentTaskIndex && currentTaskID === -1)) && !isArchived && (
+                        <>
+                          <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[60%] text-3xl text-center select-none z-50 pointer-events-none'>
+                            ✓
+                          </div>
+                        </>
+                      )}
+                      {(roadmap.tasks_stars[index] === 1) && (
+                        <div className='absolute -top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl text-center select-none z-50 pointer-events-none'>
+                          <span className='text-sm'>⭐</span>
+                        </div>
+                      )}
+                      {(roadmap.tasks_stars[index] === 2) && (
+                        <div className='absolute -top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2  text-3xl text-center select-none z-50 pointer-events-none'>
+                          <span className='text-sm'>⭐⭐</span>
+                        </div>
+                      )}
+                      {(roadmap.tasks_stars[index] === 3) && (
+                        <div className='absolute -top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl text-center select-none z-50 pointer-events-none'>
+                          <span className='text-sm'>⭐⭐⭐</span>
+                        </div>
+                      )}
+                      {(index === currentTaskIndex) && (
+                        <div className='absolute -top-1/3 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-3xl text-center select-none z-50 pointer-events-none'>
+                          <Pin className='w-6 h-6'/>
                         </div>
                       )}
                       {(index > currentTaskIndex) && (
@@ -66,18 +83,6 @@ function RoadmapViewer({ tasks, currentTaskID, handleTaskView }) {
               );
             })
           }
-        </div>
-      </div>
-      <div className={`opacity-0 transition-opacity duration-300 ${visible && 'opacity-95'}`}>
-        <div className='absolute -top-[25%] left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none w-full p-4 bg-white drop-shadow-[0_2px_3px_rgba(0,0,0,0.15)] rounded-xl overflow-visible'>
-          <div className='flex space-x-4 text-xs'>
-            <div>
-              TID: {hoveredTask.id}
-            </div>
-            <div>
-              Due date: {convertDateTimeString(hoveredTask.dueDate)}
-            </div>
-          </div>
         </div>
       </div>
     </div>

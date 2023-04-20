@@ -3,16 +3,16 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { axiosInstance } from "../functions/axiosInstance";
 import { getRoadmap } from '../functions/roadmapFunction';
-import { likeRoadmap, unlikeRoadmap, calculateExp, calculateGuagePercentage } from '../functions/viewFunction';
+import { likeRoadmap, unlikeRoadmap, calculateGuagePercentage } from '../functions/viewFunction';
 import RoadmapViewer from '../components/RoadmapViewer';
 import SpinnerNeo from '../components/SpinnerNeo';
 import Prompt from '../components/Prompt';
 import RoadmapDetail from '../components/RoadmapDetail';
 import RoadmapTaskDetail from '../components/RoadmapTaskDetail';
 import PopUpTaskViewer from '../components/PopUpTaskViewer';
+import { getProfilePictureSrc } from '../components/SettingProfileImageSelector';
 
-import { ReactComponent as BookIcon } from "../assets/shapes/book_icon.svg"
-import { ReactComponent as UserLogo } from "../assets/shapes/username_icon.svg"
+import { ReactComponent as RoadmapIcon } from "../assets/shapes/roadmap.svg"
 import { AnimatePresence, motion } from 'framer-motion';
 
 export default function View() {
@@ -26,9 +26,12 @@ export default function View() {
   const [isLoading, setIsLoading] = useState(true);
   const [isCompleting, setIsCompleting] = useState(false);
   const [isViewingTask, setIsViewingTask] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const [isOwner, setIsOwner] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
+  const [isArchived, setIsArchived] = useState(false);
+  const [isEmpty, setIsEmpty] = useState(false);
   const [saveButton, setSaveButton] = useState(true);
   const [completeButton, setCompleteButton] = useState(false);
 
@@ -40,84 +43,76 @@ export default function View() {
   const [roadmap, setRoadmap] = useState({ 'hasFetched': false });
   const [ownerProfile, setOwnerProfile] = useState();
 
-  function fetchRoadmap() {
-    getRoadmap(roadmap_id)
-      .then((response) => {
-        const fetchedRoadmap = response;
-        if (fetchedRoadmap === null) {
-          console.error("Roadmap fetching failed.");
-          setIsLoading(false);
-          setIsWarning(true);
-          return;
-        }
-        if (fetchedRoadmap.next_task === null || fetchedRoadmap.archive_date !== null) {
-          setIsCompleted(true);
-          setCurrentTask(
-            { 'id': -1 }
-          );
-        } else {
-          const currentNodeID = fetchedRoadmap.next_task.tid;
-          fetchedRoadmap.tasks.forEach((task) => {
-            if (task.id === currentNodeID) {
-              setCurrentTask(task);
-              if (task.subtasks.length === 0) {
-                setSaveButton(false);
-              } else {
-                setSaveButton(true);
-              }
-              let isReadyToComplete = true;
-              task.subtasks.forEach((subtask) => {
-                if (!subtask.status) {
-                  isReadyToComplete = false;
-                }
-              });
-              setCompleteButton(isReadyToComplete);
-            }
-          });
-        }
-        setLikeCount(fetchedRoadmap.stars_count);
-        let route = `/user/`;
-        axiosInstance.get(route)
-          .then((response) => {
-            const user_id = response.data.uid;
-            if (user_id === fetchedRoadmap.owner_id) {
-              setIsOwner(true);
+  async function fetchRoadmap(rid) {
+    try {
+      const fetchedRoadmap = await getRoadmap(rid);
+      if (fetchedRoadmap.tasks.length === 0) {
+        setIsEmpty(true);
+        setIsCompleted(true);
+        setCurrentTask(
+          { 'id': -1 }
+        );
+      } else if (fetchedRoadmap.archive_date !== null) {
+        setIsArchived(true);
+        setCurrentTask(
+          { 'id': -1 }
+        );
+      } else if (fetchedRoadmap.next_task === null) {
+        setIsCompleted(true);
+        setCurrentTask(
+          { 'id': -1 }
+        );
+      } else if (fetchedRoadmap.tasks.length === 0) {
+        setIsCompleted(true);
+        setCurrentTask(
+          { 'id': -1 }
+        );
+      } else {
+        const currentNodeID = fetchedRoadmap.next_task.tid;
+        fetchedRoadmap.tasks.forEach((task) => {
+          if (task.id === currentNodeID) {
+            setCurrentTask(task);
+            if (task.subtasks.length === 0) {
+              setSaveButton(false);
             } else {
-              setIsOwner(false);
+              setSaveButton(true);
             }
-            route = "/feed/user?uids=" + fetchedRoadmap.owner_id;
-            axiosInstance.get(route)
-              .then((response) => {
-                setOwnerProfile(response.data[0]);
-                setExp(calculateGuagePercentage(response.data[0].exp));
+            let isReadyToComplete = true;
+            task.subtasks.forEach((subtask) => {
+              if (!subtask.status) {
+                isReadyToComplete = false;
+              }
+            });
+            setCompleteButton(isReadyToComplete);
+          }
+        });
+      }
+      setLikeCount(fetchedRoadmap.stars_count);
 
-                route = `/roadmap/like/?rid=${roadmap_id}`;
-                axiosInstance.get(route)
-                  .then((response) => {
-                    setIsLiked(Boolean(response.data.liked.toLowerCase() === 'true'));
-                    setIsLoading(false);
-                    const temp = { ...fetchedRoadmap };
-                    temp.hasFetched = true;
-                    setRoadmap(temp);
-                  })
-                  .catch((error) => {
-                    console.error(error);
-                    setIsWarning(true);
-                  });
-              })
-              .catch((error) => {
-                console.error(error);
-              });
-          })
-          .catch((error) => {
-            console.error(error);
-            setIsWarning(true);
-          });
-      })
-      .catch((error) => {
-        console.error(error);
-        setIsWarning(true);
-      });
+      const userResponse = await axiosInstance.get(`/user/`);
+      if (userResponse.data.uid === fetchedRoadmap.owner_id) {
+        setIsOwner(true);
+      } else {
+        setIsOwner(false);
+      }
+      const userProfileResponse = await axiosInstance.get(`/feed/user?uids=${fetchedRoadmap.owner_id}`);
+      setOwnerProfile(userProfileResponse.data[0]);
+      setExp(calculateGuagePercentage(userProfileResponse.data[0].exp));
+
+      const userLikeResponse = await axiosInstance.get(`/roadmap/like/?rid=${roadmap_id}`);
+      setIsLiked(Boolean(userLikeResponse.data.liked.toLowerCase() === 'true'));
+      setIsLoading(false);
+
+      const temp = { ...fetchedRoadmap };
+      temp.hasFetched = true;
+      setRoadmap(temp);
+
+    } catch (error) {
+      console.error(error.message);
+      setErrorMessage(error.message);
+      setIsWarning(true);
+      setIsLoading(false);
+    }
   }
 
   function handleLike() {
@@ -138,47 +133,50 @@ export default function View() {
   useEffect(() => {
     if (!isMountedRef.current) {
       isMountedRef.current = true;
+    } else {
       return;
     }
-    fetchRoadmap();
+    fetchRoadmap(roadmap_id);
   }, []);
 
-  function completeTask() {
+  async function completeTask() {
     setIsLoading(true);
     setIsCompleting(false);
-    const experiencePoints = calculateExp(currentTask.dueDate);
-    const route = `/task/complete?tid=${currentTask.id}&added_exp=${experiencePoints}`;
-    axiosInstance.put(route)
-      .then((response) => {
-        console.log(response);
-        fetchRoadmap();
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    try {
+      const response = await axiosInstance.put(`/task/complete?tid=${currentTask.id}`);
+      console.log(response);
+      fetchRoadmap(roadmap_id);
+    } catch (error) {
+      console.error(error.message);
+      setErrorMessage(error.message);
+      setIsWarning(true);
+      setIsLoading(false);
+    }
   }
 
   function updateSubtasks() {
     setIsSaving(false);
     setIsLoading(true);
-
-    const route = `/subtask/`;
     currentTask.subtasks.forEach((subtask) => {
-      console.log(subtask);
-      axiosInstance.put(route, {
+      updateEachSubtask(subtask);
+    });
+    fetchRoadmap(roadmap_id);
+    setIsLoading(false);
+  }
+
+  async function updateEachSubtask(subtask) {
+    try {
+      const response = await axiosInstance.put(`/subtask/`, {
         "title": subtask.detail,
         "stid": subtask.id,
         "is_done": subtask.status
-      })
-        .then((response) => {
-          console.log(response.data);
-          fetchRoadmap();
-        })
-        .catch((error) => {
-          setIsLoading(false);
-          console.log(error);
-        });
-    });
+      });
+      console.log(response.data);
+    } catch (error) {
+      console.error(error.message);
+      setErrorMessage(error.message);
+      setIsWarning(true);
+    }
   }
 
   return (
@@ -194,11 +192,11 @@ export default function View() {
             <div className="xs:w-[80%] max-xs:w-[90%] max-w-4xl flex-col space-y-6 m-auto">
               <div className='flex justify-between items-center space-x-6'>
                 <div className='flex items-center space-x-2'>
-                  <BookIcon />
+                  <RoadmapIcon className='h-10 w-10' />
                   <span className='max-sm:hidden text-4xl font-extrabold text-nav-blue'>VIEW</span>
                 </div>
                 <div className='flex w-full justify-center items-center bg-base-blue drop-shadow-[0_2px_5px_rgba(0,0,0,0.25)] rounded-3xl p-2 space-x-2  max-w-sm'>
-                  <UserLogo className='w-8 h-8' />
+                  <img className='w-8 h-8 rounded-full' src={getProfilePictureSrc(ownerProfile.profile_picture_id)} />
                   <div className='flex flex-col'>
                     <span className='text-xs font-bold text-white'>{ownerProfile.username}</span>
                     <span className='text-xs font-bold text-white'>LVL. {Math.floor(0.01 * ownerProfile.exp)}</span>
@@ -212,23 +210,16 @@ export default function View() {
               </div>
               <div className='flex flex-col rounded-3xl bg-white border border-gray-300 drop-shadow-[0_2px_5px_rgba(0,0,0,0.25)] p-4 space-y-6'>
                 <RoadmapDetail
-                  roadmapName={roadmap.name}
-                  roadmapID={roadmap.rid}
-                  roadmapPrivacy={roadmap.is_private}
-                  roadmapViewCount={roadmap.views_count}
-                  roadmapForkCount={roadmap.forks_count}
-                  roadmapEditDate={roadmap.edited_at}
-                  roadmapDescription={roadmap.description}
+                  roadmap={roadmap}
                   isOwner={isOwner}
                   likeCount={likeCount}
                   isLiked={isLiked}
                   isCompleted={isCompleted}
+                  isArchived={isArchived}
                   handleLike={handleLike}
                 />
-                <RoadmapViewer tasks={roadmap.tasks} currentTaskID={currentTask.id} handleTaskView={(task) => { setCurrentViewTask(task); setIsViewingTask(true) }} />
-                {(!isCompleted) && (
-                  <RoadmapTaskDetail task={currentTask} handleTaskUpdate={(task) => setCurrentTask(task)} handleIsSaving={() => setIsSaving(true)} handleIsCompleting={() => setIsCompleting(true)} isOwner={isOwner} displaySaveButton={saveButton} displayCompleteButton={completeButton} />
-                )}
+                <RoadmapViewer isArchived={isArchived} roadmap={roadmap} currentTaskID={currentTask.id} handleTaskView={(task) => { setCurrentViewTask(task); setIsViewingTask(true) }} />
+                <RoadmapTaskDetail isEmpty={isEmpty} isCompleted={isCompleted} isArchived={isArchived} task={currentTask} handleTaskUpdate={(task) => setCurrentTask(task)} handleIsSaving={() => setIsSaving(true)} handleIsCompleting={() => setIsCompleting(true)} isOwner={isOwner} displaySaveButton={saveButton} displayCompleteButton={completeButton} />
               </div>
             </div>
           </motion.div>
@@ -237,7 +228,7 @@ export default function View() {
       <Prompt visible={isSaving} title="Confirm saving" message={"Are you sure you want to save?"} positiveText="Yes" negativeText="No" positiveFunction={updateSubtasks} negativeFunction={() => setIsSaving(false)} />
       <Prompt visible={isCompleting} title="Confirm completing" message={"Are you sure you want to complete this task? (You won't be able to come back to this task again after completion."} positiveText="Yes" negativeText="No" positiveFunction={completeTask} negativeFunction={() => setIsCompleting(false)} />
       <PopUpTaskViewer visible={isViewingTask} task={currentViewTask} handleCloseWindow={() => setIsViewingTask(false)} />
-      <Prompt visible={isWarning} title="Error" message={"Roadmap fetching failed"} positiveText="return" positiveFunction={() => { fetchRoadmap(); setIsWarning(false); navigate(-1); }} />
+      <Prompt visible={isWarning} title="Error" message={errorMessage} positiveText="return" positiveFunction={() => { fetchRoadmap(); setIsWarning(false); navigate(-1); }} />
       <SpinnerNeo visible={isLoading} />
     </>
   )
