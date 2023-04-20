@@ -202,7 +202,7 @@ const Home = () => {
               <div className='flex flex-col justify-center items-center pb-16 w-[90%]'>
                 <div className={`${(viewMode === "roadmap") ? 'visible' : 'hidden'}`}>
                   <div className="grid sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8">
-                    {roadmapList.map((roadmap, index) => {
+                    {roadmapList.map((roadmap) => {
                       if (isOtherProfile.current === false) {
                         return (
                           <div key={roadmap.rid}>
