@@ -187,7 +187,7 @@ export default function View() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className='flex h-full overflow-y-auto py-6'
+            className='flex h-full w-full overflow-y-auto py-6'
           >
             <div className="xs:w-[80%] max-xs:w-[90%] max-w-4xl flex-col space-y-6 m-auto">
               <div className='flex justify-between items-center space-x-6'>
