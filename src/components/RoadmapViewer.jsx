@@ -28,6 +28,9 @@ function RoadmapViewer({ roadmap, currentTaskID, handleTaskView, isArchived }) {
           {
             roadmap.tasks.map((task, index) => {
               const zIndex = roadmap.tasks.length - index;
+              if (task === null) {
+                return;
+              }
               return (
                 <div key={index} className="relative" style={{ zIndex }}>
                   <div className="absolute top-1/2 -left-1/4 transform -translate-x-1/2 -translate-y-3/4 -z-10">
