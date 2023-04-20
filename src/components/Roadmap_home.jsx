@@ -76,7 +76,7 @@ const Roadmap_home = ({ roadmap, handleArchive, handleDelete, isArchived }) => {
         whileInView={{ opacity: 1 }}
         transition={{
           type: "easeInOut",
-          duration: "0.5"
+          duration: "1"
         }}
       >
         <div className='relative w-[240px] h-[232px] hover:transform hover:scale-110 transition duration-150 hover:Z-50'>
