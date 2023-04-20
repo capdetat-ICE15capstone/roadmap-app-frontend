@@ -6,6 +6,7 @@ import { axiosInstance } from '../functions/axiosInstance';
 import Spinner from '../components/Spinner';
 import UserBanner from '../components/UserBanner';
 import Prompt from '../components/Prompt';
+import { motion } from 'framer-motion';
 
 import { getRoadmap, getRid, getTagRid, getUid, getUser } from '../functions/feedFunction';
 
@@ -205,7 +206,15 @@ const Feed = () => {
     return (
       <>
         {/*Top (title & search bar)*/}
-        <div className='flex flex-col items-center h-full w-full bg-white'>
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{
+            type: "easeInOut",
+            duration: "0.3"
+          }}
+          className='flex flex-col items-center h-full w-full'
+        >
           <div className='flex justify-between items-center w-4/5 h-10 mt-10 mx-8 mb-8 space-x-4'>
             {/*Feed Title*/}
             <div className='max-md:hidden flex j items-center shrink-0 h-full text-4xl font-extrabold text-nav-blue space-x-2'>
@@ -243,7 +252,7 @@ const Feed = () => {
           </div>
           {/*Search Result*/}
           {displayType === "roadmap" && (
-            <div className='flex flex-col h-full w-full items-center bg-white overflow-y-auto'>
+            <div className='flex flex-col h-full w-full items-center overflow-y-auto'>
               <div className='flex flex-col justify-center items-center w-[90%] py-6 space-y-8'>
                 <div className='grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8'>
                   {currentRoadmapList.map((roadmap, index) => {
@@ -289,7 +298,7 @@ const Feed = () => {
               <Prompt title={"Error"} message={searchTypeName + ' Not Found'} positiveText="Return" positiveFunction={() => getRecommendRoadmap()} />
             </>
           )}
-        </div >
+        </motion.div >
         {isFetching && (
           <Spinner />
         )}
