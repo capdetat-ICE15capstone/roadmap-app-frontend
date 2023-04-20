@@ -181,7 +181,7 @@ const DropDownMenu = ({
           }`}
         >
           {currentOption.on
-            ? `${currentOption.detail.day}: ${
+            ? `${currentOption.detail.day}d: ${
                 currentOption.detail.beforeDueDate ? "Due" : "Start"
               }`
             : "Off"}
@@ -204,8 +204,8 @@ const DropDownMenu = ({
                   }
                   className={`font-bold whitespace-nowrap inline-block p-1 px-2 justify-center border hover:scale-110 duration-200 transition hover:bg-yellow-300 justify-self-center ${
                     optionComparer(optionValues[index], currentOption) === true
-                      ? "bg-gray-300"
-                      : "bg-white"
+                      ? "bg-nav-blue text-white"
+                      : "bg-white text-nav-blue"
                   }`}
                   type="button"
                   key={JSON.stringify(optionValues[index])}
@@ -447,6 +447,7 @@ const RoadmapCreatePage = (props) => {
       }
     });
 
+    allTags = [...new Set(allTags)];
     console.log(allTags);
     setTags(allTags);
   };
@@ -908,7 +909,7 @@ const RoadmapCreatePage = (props) => {
       <div className="flex justify-center items-center flex-col m-auto max-w-5xl w-[90%]">
         {/* <div className="text-4xl font-bold flex items-start"> */}
         <div className="flex w-full justify-between">
-          <span className="text-4xl font-bold">
+          <span className="text-4xl text-nav-blue font-extrabold">
             {mode === "create"
               ? "Create"
               : mode === "edit"
@@ -930,10 +931,10 @@ const RoadmapCreatePage = (props) => {
           className={`rounded-3xl w-full gap-3 flex flex-col bg-white p-10 min-h-[80%] xs:min-h-[60%] m-3 shadow-lg shadow-gray-400 border-gray-400`}
         >
           <div className="flex flex-col md:flex-row justify-between items-center gap-2">
-            <label className="hidden md:visible text-3xl font-bold md:block leading-none">
+            <label className="hidden md:visible text-3xl font-bold md:block leading-none text-nav-blue">
               Name
             </label>
-            <label className="visible text-md md:hidden font-bold block leading-none">
+            <label className="visible text-md md:hidden font-bold block leading-none text-nav-blue">
               Roadmap name
             </label>
             <input
@@ -991,7 +992,7 @@ const RoadmapCreatePage = (props) => {
           ) : null}
 
           <div className="">
-            <label className="text-md font-bold">Roadmap Description </label>
+            <label className="text-md font-bold text-nav-blue">Roadmap Description </label>
             <textarea
               className="rounded-lg border-gray-400 text-gray-400 block text-md p-1 w-full focus:outline-none shadow-lg shadow-gray-300 placeholder:text-italic"
               rows="3"
