@@ -234,8 +234,8 @@ const Feed = () => {
                   >
                     <DropdownMenuItem label="Newer" onSelect={DateAscending} array={currentRoadmapList} />
                     <DropdownMenuItem label="Older" onSelect={DateDecending} array={currentRoadmapList} />
-                    <DropdownMenuItem label="More Views" onSelect={ViewAscending} array={currentRoadmapList} />
-                    <DropdownMenuItem label="Less Views" onSelect={ViewDecending} array={currentRoadmapList} />
+                    <DropdownMenuItem label="More Views" onSelect={ViewDecending} array={currentRoadmapList} />
+                    <DropdownMenuItem label="Less Views" onSelect={ViewAscending} array={currentRoadmapList} />
                   </div>
                 )}
               </div>

@@ -70,12 +70,11 @@ const Roadmap = ({ roadmap }) => {
     return (
       <>
         <motion.div
-          initial={{ scale: 0.9 }}
-          whileInView={{ scale: 1 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           transition={{
-            type: "spring",
-            stiffness: 260,
-            damping: 20,
+            type: "easeInOut",
+            duration: "0.3"
           }}
         >
           <Link to={`/view/${roadmap.rid}`} >
