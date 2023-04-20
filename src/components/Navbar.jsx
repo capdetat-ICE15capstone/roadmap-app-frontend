@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Outlet, NavLink } from 'react-router-dom';
+import { Outlet, NavLink, Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
+import { motion } from 'framer-motion';
 
 // Image/Logo SVG
 import { ReactComponent as Logo } from "../assets/logo.svg"
@@ -71,12 +72,30 @@ const Navbar = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col flex-grow overflow-x-hidden bg-gray-50 z-20">
+        <div className="flex flex-col flex-grow bg-gray-50 z-20 overflow-y-auto">
           {!isPremium &&
             <div className="flex justify-center z-40">
-              <div className="flex w-full h-[100px] mx-auto bg-nav-blue">
-
-              </div>
+              <Link to={`/premium`} className="relative flex flex-col w-2/3 h-[100px] px-6 mx-auto bg-nav-blue">
+                <motion.div className="flex w-full h-full justify-start items-center font-inter font-semibold text-5xl text-[#FFFFFF]" 
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{
+                  type: "easeInOut",
+                  duration: "0.5"
+                }}>
+                  Bored of ad display?
+                </motion.div>
+                <motion.div className="flex w-full h-full justify-end items-center font-inter font-semibold text-2xl text-[#FFFFFF]"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{
+                  type: "easeInOut",
+                  delay: "0.5",
+                  duration: "0.5"
+                }}>
+                  What are you waiting for, buy premium
+                </motion.div>  
+              </Link>
             </div>}
           <Outlet />
         </div>
