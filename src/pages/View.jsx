@@ -12,7 +12,7 @@ import RoadmapTaskDetail from '../components/RoadmapTaskDetail';
 import PopUpTaskViewer from '../components/PopUpTaskViewer';
 import { getProfilePictureSrc } from '../components/SettingProfileImageSelector';
 
-import { ReactComponent as BookIcon } from "../assets/shapes/book_icon.svg"
+import { ReactComponent as RoadmapIcon } from "../assets/shapes/roadmap.svg"
 import { AnimatePresence, motion } from 'framer-motion';
 
 export default function View() {
@@ -42,7 +42,6 @@ export default function View() {
   const [currentViewTask, setCurrentViewTask] = useState();
   const [roadmap, setRoadmap] = useState({ 'hasFetched': false });
   const [ownerProfile, setOwnerProfile] = useState();
-  const [ownerImageID, setOwnerImageID] = useState();
 
   async function fetchRoadmap(rid) {
     try {
@@ -193,7 +192,7 @@ export default function View() {
             <div className="xs:w-[80%] max-xs:w-[90%] max-w-4xl flex-col space-y-6 m-auto">
               <div className='flex justify-between items-center space-x-6'>
                 <div className='flex items-center space-x-2'>
-                  <BookIcon />
+                  <RoadmapIcon className='h-10 w-10' />
                   <span className='max-sm:hidden text-4xl font-extrabold text-nav-blue'>VIEW</span>
                 </div>
                 <div className='flex w-full justify-center items-center bg-base-blue drop-shadow-[0_2px_5px_rgba(0,0,0,0.25)] rounded-3xl p-2 space-x-2  max-w-sm'>
