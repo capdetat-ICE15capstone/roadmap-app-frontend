@@ -98,7 +98,7 @@ const Navbar = () => {
               </Link>
             }
           </div>
-          <div className="flex w-full h-full overflow-y-auto">
+          <div className="overflow-y-auto">
             <Outlet />
           </div>
         </div>
