@@ -145,7 +145,14 @@ const Home = () => {
 
   if (hasFetchedRef.current) {
     return (
-      <>
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{
+          type: "easeInOut",
+          duration: "0.3"
+        }}
+      >
         <div className='flex flex-col items-center w-full h-full space-y-8 overflow-y-scroll'>
           <div className='flex w-4/5 h-10 mt-10 mx-8 space-x-4'>
             <div className='flex items-center shrink-0 h-full text-4xl font-extrabold text-nav-blue space-x-2'>
@@ -272,7 +279,7 @@ const Home = () => {
         </div>
         <HomeFirstLoginModal isOpen={isOpenFirstLoginModal} setIsOpen={setIsOpenFirstLoginModal} />
         <Prompt visible={isWarning} title="Error" message={errorMessage} positiveText="return" positiveFunction={() => { setIsWarning(false); navigate(-1); }} />
-      </>
+      </motion.div>
     );
   } else {
     return <Prompt visible={isWarning} title="Error" message={errorMessage} positiveText="return" positiveFunction={() => { setIsWarning(false); navigate(-1); }} />
