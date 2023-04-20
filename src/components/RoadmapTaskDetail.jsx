@@ -1,9 +1,19 @@
 import React from 'react'
 import { convertDateTimeString } from '../functions/formatFunction';
 
-function RoadmapTaskDetail({ task, handleTaskUpdate, handleIsSaving, handleIsCompleting, isOwner, displaySaveButton, displayCompleteButton, isArchived, isCompleted }) {
+function RoadmapTaskDetail({ task, handleTaskUpdate, handleIsSaving, handleIsCompleting, isOwner, displaySaveButton, displayCompleteButton, isArchived, isCompleted, isEmpty }) {
 
-  if (isCompleted) {
+  if (isEmpty) {
+    return (
+      <>
+        <div className='flex flex-col bg-[#e6eefc] rounded-2xl space-y-4 h-58 w-full p-4'>
+          <div className='text-xl text-center text-gray-500 font-extrabold self-center break-words'>
+            This roadmap is empty.
+          </div>
+        </div>
+      </>
+    )
+  } else if (isCompleted) {
     return (
       <>
         <div className='flex flex-col bg-[#e6eefc] rounded-2xl space-y-4 h-58 w-full p-4'>
