@@ -24,6 +24,7 @@ import { StrictModeDroppable } from "../components/StrictModeDroppable";
 import { AnimatePresence, motion } from "framer-motion";
 import { ReactComponent as NotiOff } from "../assets/notification/notiOff.svg";
 import { ReactComponent as NotiOn } from "../assets/notification/notiOn.svg";
+import NotiButton from "../components/NotiButton";
 import { roundTimeToNearest30 } from "../functions/formatFunction";
 import { ReactComponent as QuestionMark } from "../assets/taskmodal/QuestionMark.svg";
 import { ReactComponent as Close } from "../assets/close.svg";
@@ -53,6 +54,7 @@ import Step5 from "../assets/helpCreateRoadmap_assets/step_5.jpg";
 import Step5_md from "../assets/helpCreateRoadmap_assets/step_5_md.jpg";
 import Step5_xs from "../assets/helpCreateRoadmap_assets/step_5_xs.jpg";
 import SpinnerNeo from "../components/SpinnerNeo";
+import LockUnlockButton from "../components/LockUnlockButton";
 
 const MAX_TASKS_NONPREMIUM = 16;
 const MAX_RMNAME_LENGTH = 30;
@@ -168,11 +170,21 @@ const DropDownMenu = ({
       <button
         onClick={handleMenuShowUnshow}
         type="button"
-        className="flex items-center hover:scale-110 transition duration-150"
+        className={`flex p-2 border-2 gap-1 items-center rounded-full hover:scale-110 transition duration-150 ${
+          isMenuShowing ? "animate-bounce" : ""
+        } ${currentOption.on ? "border-nav-blue" : "bg-nav-blue border-white"}`}
       >
-        <Icon className="w-9 h-9" />
-        <span className="visible md:hidden font-bold [@media(max-width:360px)]:hidden">
-          Notification
+        {Icon}
+        <span
+          className={`visible md:hidden font-bold [@media(max-width:360px)]:hidden ${
+            currentOption.on ? "text-nav-blue" : "text-white"
+          }`}
+        >
+          {currentOption.on
+            ? `${currentOption.detail.day}: ${
+                currentOption.detail.beforeDueDate ? "Due" : "Start"
+              }`
+            : "Off"}
         </span>
       </button>
       <AnimatePresence mode="wait">
@@ -939,7 +951,13 @@ const RoadmapCreatePage = (props) => {
                   currentOption={notiStatus}
                   setOption={setNotiStatus}
                   optionComparer={compareNotificationChange}
-                  Icon={notiStatus.on === true ? NotiOn : NotiOff}
+                  Icon={
+                    <NotiButton
+                      notiStatus={notiStatus}
+                      className="w-6 h-6"
+                      fillColor={notiStatus.on ? "#00286E" : "white"}
+                    />
+                  }
                   className="z-10"
                 />
               </div>
@@ -948,23 +966,15 @@ const RoadmapCreatePage = (props) => {
                 <button
                   type="button"
                   onClick={() => setPublicModal(true)}
-                  className="hover:scale-110 transition duration-150 flex items-center"
+                  className={`hover:scale-110 flex gap-1 transition duration-150 items-center border-nav-blue rounded-full border-2 p-2 ${
+                    publicModal === true ? "animate-bounce" : ""
+                  } ${!isPublic ? "bg-white" : "bg-nav-blue"}`}
                 >
-                  {isPublic ? (
-                    <>
-                      <Unlock className="w-9 h-9" />
-                      <span className="visible md:hidden font-bold [@media(max-width:360px)]:hidden">
-                        Public
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <Lock className="w-9 h-9" />
-                      <span className="visible md:hidden font-bold [@media(max-width:360px)]:hidden">
-                        Private
-                      </span>
-                    </>
-                  )}
+                  <LockUnlockButton
+                    isLock={isPublic}
+                    className="w-6 h-6"
+                    fillColor={!isPublic ? "#00286E" : "white"}
+                  />
                 </button>
               </div>
             </div>
@@ -1052,7 +1062,11 @@ const RoadmapCreatePage = (props) => {
                       {provided.placeholder}
                       {/* End of task list */}
                       {/* Add button */}
-                      <div className={`flex self-start ${tasks.length > 0 ? "w-28" : ""} justify-center`}>
+                      <div
+                        className={`flex self-start ${
+                          tasks.length > 0 ? "w-28" : ""
+                        } justify-center`}
+                      >
                         <button
                           type="button"
                           disabled={isAddButtonDisabled()}
@@ -1072,7 +1086,7 @@ const RoadmapCreatePage = (props) => {
           <div className="justify-end flex">
             <div className="right-0 w-full xs:w-auto flex gap-2">
               <button
-                className="bg-transparent inline border-gray-800 w-full font-bold xs:w-32 text-gray-800 h-10 rounded-full border m-0"
+                className="bg-transparent inline border-nav-blue text-nav-blue w-full font-bold xs:w-32 h-10 rounded-full border-2  m-0"
                 type="button"
                 onClick={() => setDiscardModal(true)}
               >
