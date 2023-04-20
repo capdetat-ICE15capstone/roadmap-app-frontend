@@ -285,7 +285,7 @@ const Home = () => {
         </>
       }
       <Prompt visible={isWarning} title="Error" message={errorMessage} positiveText="return" positiveFunction={() => { setIsWarning(false); navigate(-1); }} />
-      <SpinnerNeo visible={!hasFetchedRef.current} />
+      <SpinnerNeo visible={!hasFetchedRef.current}/>
     </>
   );
 };

@@ -98,7 +98,7 @@ const Navbar = () => {
               </Link>
             }
           </div>
-          <div className="overflow-y-auto">
+          <div className="overflow-y-auto z-10">
             <Outlet />
           </div>
         </div>
