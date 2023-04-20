@@ -6,6 +6,7 @@ import { ReactComponent as LikeIcon } from "../assets/roadmap_assets/ThumbsUp.sv
 import { axiosInstance } from '../functions/axiosInstance';
 import { nodeShapeGenerator } from '../functions/viewFunction';
 import { ReactComponent as DropdownIcon } from "../assets/roadmapDropdown_assets/dropdown_icon.svg"
+import { motion } from 'framer-motion';
 
 const Roadmap_home = ({ roadmap, handleArchive, handleDelete, isArchived }) => {
 
@@ -70,7 +71,14 @@ const Roadmap_home = ({ roadmap, handleArchive, handleDelete, isArchived }) => {
 
   if (isFetched) {
     return (
-      <>
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{
+          type: "easeInOut",
+          duration: "1"
+        }}
+      >
         <div className='relative w-[240px] h-[232px] hover:transform hover:scale-110 transition duration-150 hover:Z-50'>
           <div className="absolute top-[146px] right-[14px]">
             <div className="flex flex-col justify-center">
@@ -177,7 +185,7 @@ const Roadmap_home = ({ roadmap, handleArchive, handleDelete, isArchived }) => {
             </Link>
           </div>
         </div>
-      </>
+      </motion.div>
     )
   }
 };

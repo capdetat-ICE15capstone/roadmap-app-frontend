@@ -12,7 +12,7 @@ import RoadmapTaskDetail from '../components/RoadmapTaskDetail';
 import PopUpTaskViewer from '../components/PopUpTaskViewer';
 import { getProfilePictureSrc } from '../components/SettingProfileImageSelector';
 
-import { ReactComponent as BookIcon } from "../assets/shapes/book_icon.svg"
+import { ReactComponent as RoadmapIcon } from "../assets/shapes/roadmap.svg"
 import { AnimatePresence, motion } from 'framer-motion';
 
 export default function View() {
@@ -31,6 +31,7 @@ export default function View() {
   const [isOwner, setIsOwner] = useState(false);
   const [isCompleted, setIsCompleted] = useState(false);
   const [isArchived, setIsArchived] = useState(false);
+  const [isEmpty, setIsEmpty] = useState(false);
   const [saveButton, setSaveButton] = useState(true);
   const [completeButton, setCompleteButton] = useState(false);
 
@@ -41,12 +42,17 @@ export default function View() {
   const [currentViewTask, setCurrentViewTask] = useState();
   const [roadmap, setRoadmap] = useState({ 'hasFetched': false });
   const [ownerProfile, setOwnerProfile] = useState();
-  const [ownerImageID, setOwnerImageID] = useState();
 
   async function fetchRoadmap(rid) {
     try {
       const fetchedRoadmap = await getRoadmap(rid);
-      if (fetchedRoadmap.archive_date !== null) {
+      if (fetchedRoadmap.tasks.length === 0) {
+        setIsEmpty(true);
+        setIsCompleted(true);
+        setCurrentTask(
+          { 'id': -1 }
+        );
+      } else if (fetchedRoadmap.archive_date !== null) {
         setIsArchived(true);
         setCurrentTask(
           { 'id': -1 }
@@ -186,11 +192,11 @@ export default function View() {
             <div className="xs:w-[80%] max-xs:w-[90%] max-w-4xl flex-col space-y-6 m-auto">
               <div className='flex justify-between items-center space-x-6'>
                 <div className='flex items-center space-x-2'>
-                  <BookIcon />
+                  <RoadmapIcon className='h-10 w-10' />
                   <span className='max-sm:hidden text-4xl font-extrabold text-nav-blue'>VIEW</span>
                 </div>
                 <div className='flex w-full justify-center items-center bg-base-blue drop-shadow-[0_2px_5px_rgba(0,0,0,0.25)] rounded-3xl p-2 space-x-2  max-w-sm'>
-                  <img className='w-8 h-8 rounded-full' src={getProfilePictureSrc(ownerProfile.profile_picture_id)}  />
+                  <img className='w-8 h-8 rounded-full' src={getProfilePictureSrc(ownerProfile.profile_picture_id)} />
                   <div className='flex flex-col'>
                     <span className='text-xs font-bold text-white'>{ownerProfile.username}</span>
                     <span className='text-xs font-bold text-white'>LVL. {Math.floor(0.01 * ownerProfile.exp)}</span>
@@ -213,7 +219,7 @@ export default function View() {
                   handleLike={handleLike}
                 />
                 <RoadmapViewer isArchived={isArchived} roadmap={roadmap} currentTaskID={currentTask.id} handleTaskView={(task) => { setCurrentViewTask(task); setIsViewingTask(true) }} />
-                <RoadmapTaskDetail isCompleted={isCompleted} isArchived={isArchived} task={currentTask} handleTaskUpdate={(task) => setCurrentTask(task)} handleIsSaving={() => setIsSaving(true)} handleIsCompleting={() => setIsCompleting(true)} isOwner={isOwner} displaySaveButton={saveButton} displayCompleteButton={completeButton} />
+                <RoadmapTaskDetail isEmpty={isEmpty} isCompleted={isCompleted} isArchived={isArchived} task={currentTask} handleTaskUpdate={(task) => setCurrentTask(task)} handleIsSaving={() => setIsSaving(true)} handleIsCompleting={() => setIsCompleting(true)} isOwner={isOwner} displaySaveButton={saveButton} displayCompleteButton={completeButton} />
               </div>
             </div>
           </motion.div>

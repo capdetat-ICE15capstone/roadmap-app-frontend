@@ -3,34 +3,19 @@ import RoadmapNeo from "../components/Roadmap_neo";
 import SearchBar from "../components/SearchBar";
 import { ReactComponent as SearchIcon } from "../assets/searchIcon.svg";
 import { axiosInstance } from '../functions/axiosInstance';
-import Spinner from '../components/Spinner';
 import UserBanner from '../components/UserBanner';
 import Prompt from '../components/Prompt';
+import { motion } from 'framer-motion';
+import DropdownMenuItem from '../components/DropdownMenuItem';
 
-import { getRoadmap, getRid, getTagRid, getUid, getUser } from '../functions/feedFunction';
-
-const DropdownMenuItem = (props) => {
-  const handleClick = () => {
-    props.onSelect(props.array);
-  }
-
-  return (
-    <a
-      href="#"
-      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-      onClick={handleClick}
-    >
-      {props.label}
-    </a>
-  );
-}
+import { getRoadmap, getRid, getTagRid, getUid, getUser, classifyInput } from '../functions/feedFunction';
+import SpinnerNeo from '../components/SpinnerNeo';
 
 const Feed = () => {
   const isMountedRef = useRef(false);
   const [isFetching, setIsFetching] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const toggleMenu = () => setIsOpen(!isOpen);
-  const [title, setTitle] = useState("Sort");
 
   const [currentRoadmapList, setCurrentRoadmapList] = useState([]);
   const [currentUserList, setCurrentUserList] = useState([]);
@@ -39,29 +24,6 @@ const Feed = () => {
   const [searchTypeName, setSearchTypeName] = useState("roadmap");
   const [displayType, setDisplayType] = useState("roadmap");
 
-  // classify user input (roadmap(""), user("@""), tag("#""))
-  const classifyInput = (input) => {
-    // Search for USER case
-    if (input.charAt(0) === "@") {
-      const username = input.substring(1);
-      const type = "user"
-      console.log(`Searching for user ${username}`);
-      return type
-      // Search for TAG case  
-    } else if (input.charAt(0) === "#") {
-      const tag = input.substring(1);
-      const type = "tag"
-      console.log(`Searching for tag ${tag}`);
-      return type
-      // Search for ROADMAP case
-    } else {
-      const type = "roadmap"
-      console.log(`Searching for roadmap ${input}`);
-      return type
-    }
-  }
-
-  // naviage the user to SearchPage
   const handleSubmit = () => {
     const searchTerm = document.getElementById("InputSearch").value;
     const searchType = classifyInput(searchTerm);
@@ -153,9 +115,7 @@ const Feed = () => {
   }
 
   async function getRecommendRoadmap() {
-    if (hasFetched) {
-      setIsFetching(true);
-    }
+    setIsFetching(true);
     setDisplayType("roadmap");
     const route = "/feed/recommendation";
     try {
@@ -201,103 +161,109 @@ const Feed = () => {
     setIsOpen(false);
   }
 
-  if (hasFetched) {
-    return (
-      <>
-        {/*Top (title & search bar)*/}
-        <div className='flex flex-col items-center h-full w-full bg-white'>
-          <div className='flex justify-between items-center w-4/5 h-10 mt-10 mx-8 mb-8 space-x-4'>
-            {/*Feed Title*/}
-            <div className='max-md:hidden flex j items-center shrink-0 h-full text-4xl font-extrabold text-nav-blue space-x-2'>
-              <SearchIcon className="flex h-8 w-8 fill-[#09275B]" />
-              <div className=''>
-                Feed
+  return (
+    <>
+      {hasFetched &&
+        <>
+          {/*Top (title & search bar)*/}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{
+              type: "easeInOut",
+              duration: "0.3"
+            }}
+            className='flex flex-col items-center h-full w-full'
+          >
+            <div className='flex justify-between items-center w-4/5 h-10 mt-10 mx-8 mb-8 space-x-4'>
+              {/*Feed Title*/}
+              <div className='max-md:hidden flex j items-center shrink-0 h-full text-4xl font-extrabold text-nav-blue space-x-2'>
+                <SearchIcon className="flex h-8 w-8 fill-[#09275B]" />
+                <div className=''>
+                  Feed
+                </div>
               </div>
-            </div>
-            {/*Search bar*/}
-            <SearchBar onSubmit={() => handleSubmit()} />
-            <div className='flex flex-row items-center gap-2'>
-              <div className="relative">
-                <button
-                  className="bg-gray-300 py-2 px-4 rounded-md"
-                  onMouseEnter={toggleMenu}
-                >
-                  Sort
-                </button>
-                {isOpen && (
-                  <div
-                    className="absolute top-full left-1/2 tranfrom -translate-x-1/2 -translate-y-1/2 z-30 w-32 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 mt-2"
-                    role="menu"
-                    aria-orientation="vertical"
-                    aria-labelledby="menu-button"
-                    onMouseLeave={toggleMenu}
+              {/*Search bar*/}
+              <SearchBar onSubmit={() => handleSubmit()} />
+              <div className='flex flex-row items-center gap-2'>
+                <div className="relative">
+                  <button
+                    className="bg-gray-300 py-2 px-4 rounded-md"
+                    onMouseEnter={toggleMenu}
                   >
-                    <DropdownMenuItem label="Newer" onSelect={DateAscending} array={currentRoadmapList} />
-                    <DropdownMenuItem label="Older" onSelect={DateDecending} array={currentRoadmapList} />
-                    <DropdownMenuItem label="More Views" onSelect={ViewAscending} array={currentRoadmapList} />
-                    <DropdownMenuItem label="Less Views" onSelect={ViewDecending} array={currentRoadmapList} />
+                    Sort
+                  </button>
+                  {isOpen && (
+                    <div
+                      className="absolute top-full left-1/2 tranfrom -translate-x-1/2 -translate-y-1/2 z-30 w-32 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 mt-2"
+                      role="menu"
+                      aria-orientation="vertical"
+                      aria-labelledby="menu-button"
+                      onMouseLeave={toggleMenu}
+                    >
+                      <DropdownMenuItem label="Newer" onSelect={DateAscending} array={currentRoadmapList} />
+                      <DropdownMenuItem label="Older" onSelect={DateDecending} array={currentRoadmapList} />
+                      <DropdownMenuItem label="More Views" onSelect={ViewDecending} array={currentRoadmapList} />
+                      <DropdownMenuItem label="Less Views" onSelect={ViewAscending} array={currentRoadmapList} />
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+            {/*Search Result*/}
+            {displayType === "roadmap" && (
+              <div className='flex flex-col h-full w-full items-center overflow-y-auto'>
+                <div className='flex flex-col justify-center items-center w-[90%] py-6 space-y-8'>
+                  <div className='grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8'>
+                    {currentRoadmapList.map((roadmap, index) => {
+                      return (
+                        <div
+                          key={index}
+                          className='hover:transform hover:scale-110 transition duration-150'
+                        >
+                          <RoadmapNeo
+                            roadmap={roadmap}
+                          />
+                        </div>
+                      )
+                    })}
+                    <div className="pb-4"></div>
                   </div>
-                )}
+                </div>
               </div>
-            </div>
-          </div>
-          {/*Search Result*/}
-          {displayType === "roadmap" && (
-            <div className='flex flex-col h-full w-full items-center bg-white overflow-y-auto'>
-              <div className='flex flex-col justify-center items-center w-[90%] py-6 space-y-8'>
-                <div className='grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8'>
-                  {currentRoadmapList.map((roadmap, index) => {
-                    return (
-                      <div
+            )}
+            {displayType === "user" && (
+              <>
+                <div className='flex flex-col h-full w-full items-center bg-white overflow-y-auto'>
+                  <div className='flex flex-col justify-center items-center w-[90%] py-6 space-y-8'>
+                    {currentUserList.map((user, index) => (
+                      <UserBanner
                         key={index}
-                        className='hover:transform hover:scale-110 transition duration-150'
-                      >
-                        <RoadmapNeo
-                          roadmap={roadmap}
-                        />
-                      </div>
-                    )
-                  })}
-                  <div className="pb-4"></div>
+                        uid={user.uid}
+                        username={user.username}
+                        profile_picture_id={user.profile_picture_id}
+                        exp={user.exp}
+                      />
+                    ))}
+                  </div>
                 </div>
-              </div>
-            </div>
-          )}
-          {displayType === "user" && (
-            <>
-              <div className='flex flex-col h-full w-full items-center bg-white overflow-y-auto'>
-                <div className='flex flex-col justify-center items-center w-[90%] py-6 space-y-8'>
-                  {currentUserList.map((user, index) => (
-                    <UserBanner
-                      key={index}
-                      uid={user.uid}
-                      username={user.username}
-                      profile_picture_id={user.profile_picture_id}
-                      exp={user.exp}
-                    />
-                  ))}
+              </>
+            )}
+            {displayType === "empty" && (
+              <>
+                <div className='flex flex-col h-full w-full items-center overflow-y-auto'>
+                  <div className='flex flex-col justify-center items-center w-[90%] py-6 space-y-8'>
+                  </div>
                 </div>
-              </div>
-            </>
-          )}
-          {displayType === "empty" && (
-            <>
-              <div className='flex flex-col h-full w-full items-center bg-white overflow-y-auto'>
-                <div className='flex flex-col justify-center items-center w-[90%] py-6 space-y-8'>
-                </div>
-              </div>
-              <Prompt title={"Error"} message={searchTypeName + ' Not Found'} positiveText="Return" positiveFunction={() => getRecommendRoadmap()} />
-            </>
-          )}
-        </div >
-        {isFetching && (
-          <Spinner />
-        )}
-      </>
-    );
-  } else {
-    return <Spinner />;
-  }
+                <Prompt visible={true} title={"Error"} message={searchTypeName + ' Not Found'} positiveText="Return" positiveFunction={() => getRecommendRoadmap()} />
+              </>
+            )}
+          </motion.div >
+        </>
+      }
+      <SpinnerNeo visible={isFetching} />
+    </>
+  );
 };
 
 export default Feed;

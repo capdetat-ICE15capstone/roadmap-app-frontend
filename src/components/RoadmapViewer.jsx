@@ -9,7 +9,7 @@ function RoadmapViewer({ roadmap, currentTaskID, handleTaskView, isArchived }) {
 
   useEffect(() => {
     if (currentTaskID === -1) {
-      setCurrentTaskIndex(tasks.length - 1);
+      setCurrentTaskIndex(roadmap.tasks.length - 1);
     } else {
       let reachedCurrentTask = false;
       roadmap.tasks.forEach((task, index) => {
