@@ -9,6 +9,7 @@ import { ReactComponent as HomeLogo } from "../assets/navbar_assets/home_icon.sv
 import { ReactComponent as CalendarLogo } from "../assets/navbar_assets/calendar_icon.svg"
 import { ReactComponent as SettingLogo } from "../assets/navbar_assets/setting_icon.svg"
 import { ReactComponent as BookIcon } from "../assets/navbar_assets/book_icon.svg"
+import { ReactComponent as ShopIcon } from "../assets/shapes/shopping_bag_white.svg"
 import { ReactComponent as Logout } from "../assets/shapes/logout.svg";
 import { axiosInstance } from "../functions/axiosInstance";
 
@@ -82,8 +83,8 @@ const Navbar = () => {
         <div className="flex xs:hidden max-xs:visible bg-nav-blue">
           <NavItem SvgIcon={HomeLogo} displayName="Home" baseColor="bg-nav-blue" to="/" />
           <NavItem SvgIcon={FeedLogo} displayName="Feed" baseColor="bg-nav-blue" to="/feed" />
-          <NavItem SvgIcon={BookIcon} displayName="Quest" baseColor="bg-nav-blue" to="/activity" />
-          <NavItem SvgIcon={CalendarLogo} displayName="Shop" baseColor="bg-nav-blue" to="/shop" />
+          <NavItem SvgIcon={BookIcon} displayName="Activity" baseColor="bg-nav-blue" to="/activity" />
+          <NavItem SvgIcon={ShopIcon} displayName="Shop" baseColor="bg-nav-blue" to="/shop" />
           <NavItem SvgIcon={SettingLogo} displayName="Setting" baseColor="bg-nav-blue" to="/setting" />
         </div>
         <div className="max-xs:hidden flex flex-col items-center justify-between max-md:w-18 md:w-[180px] bg-nav-blue shrink-0">
@@ -97,8 +98,8 @@ const Navbar = () => {
             <div className="flex flex-col">
               <NavItem SvgIcon={HomeLogo} displayName="Home" baseColor="bg-nav-blue" to="/" />
               <NavItem SvgIcon={FeedLogo} displayName="Feed" baseColor="bg-nav-blue" to="/feed" />
-              <NavItem SvgIcon={BookIcon} displayName="Quest" baseColor="bg-nav-blue" to="/activity" />
-              <NavItem SvgIcon={CalendarLogo} displayName="Shop" baseColor="bg-nav-blue" to="/shop" />
+              <NavItem SvgIcon={BookIcon} displayName="Activity" baseColor="bg-nav-blue" to="/activity" />
+              <NavItem SvgIcon={ShopIcon} displayName="Shop" baseColor="bg-nav-blue" to="/shop" />
               <NavItem SvgIcon={SettingLogo} displayName="Setting" baseColor="bg-nav-blue" to="/setting" />
             </div>
           </div>
