@@ -155,32 +155,35 @@ const Home = () => {
               </div>
             </div>
           </div>
-          <div className="flex flex-col items-center w-4/5 bg-[#FFFFFF] border border-[#D9D9D9] shadow-md rounded-3xl">
+          <div className={`flex flex-col items-center w-4/5 bg-[#FFFFFF] border border-[#D9D9D9] shadow-md rounded-3xl`}>
             <div className="flex flex-col-reverse sm:flex-row items-center justify-between">
               <div className="flex flex-col space-y-2 p-4">
                 <div className="flex items-center space-x-2">
-                  <div className="font-bold text-2xl text-[#09275B]">
+                  <div className={`${profile.is_premium ? 'bg-gradient-to-br from-[#E5BA73] to-[#C58940] bg-clip-text text-transparent' : 'text-sub-blue'} font-bold text-2xl`}>
                     {profile.username}
                   </div>
-                  <div className="flex justify-between bg-[#034DCF] text-white font-bold rounded-full py-1 px-1 w-28">
-                    <div className="flex mx-3 justify-start items-center">
+                  <div className={`${profile.is_premium ? 'bg-gradient-to-br from-[#FAEAB1] to-[#E5BA73]' : 'bg-sub-blue'} flex justify-between text-white font-bold rounded-full py-1 px-1 w-28`}>
+                    <div className="flex mx-2 justify-start items-center">
                       <div className="font-inter text-[#FFFFFF]">
                         LVL.
                       </div>
                     </div>
-                    <div className="flex mx-3 justify-start items-center">
+                    <div className="flex mx-2 justify-start items-center">
                       <div className="font-inter text-[#FFFFFF]">
                         {Math.floor(profile.exp * 0.01)}
                       </div>
                     </div>
                   </div>
                 </div>
-                <div className="flex">
+                <div className={`flex`}>
                   {profile.bio}
                 </div>
               </div>
               <div className="flex justify-center items-center max-w-[200px] max-h-[200px] p-4">
-                <img className='rounded-full' src={getProfilePictureSrc(profile.profile_picture_id)} />
+                <img
+                  className={`${profile.is_premium && 'bg-gradient-to-br from-[#FAEAB1] to-[#E5BA73] p-1'} rounded-full`}
+                  src={getProfilePictureSrc(profile.profile_picture_id)}
+                />
               </div>
             </div>
           </div>
