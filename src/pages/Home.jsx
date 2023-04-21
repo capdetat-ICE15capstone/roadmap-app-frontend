@@ -120,7 +120,6 @@ const Home = () => {
       const response = await axiosInstance.get('/user/');
       return response.data.uid;
     } catch (error) {
-      console.error(error);
       console.error(error.message);
       setErrorMessage(error.message);
       setIsWarning(true);

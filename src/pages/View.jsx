@@ -209,7 +209,7 @@ export default function View() {
                 </div>
               </div>
             </div>
-            <div className='flex flex-col h-full w-full items-center py-4 overflow-y-auto'>
+            <div className='flex flex-col h-full w-full items-center py- overflow-y-auto'>
               <div className="w-4/5 flex-col justify-center space-y-6">
                 <div className='flex flex-col rounded-3xl bg-white border border-gray-300 drop-shadow-[0_2px_5px_rgba(0,0,0,0.25)] p-4 space-y-6'>
                   <RoadmapDetail
@@ -224,6 +224,7 @@ export default function View() {
                   <RoadmapViewer isArchived={isArchived} roadmap={roadmap} currentTaskID={currentTask.id} handleTaskView={(task) => { setCurrentViewTask(task); setIsViewingTask(true) }} />
                   <RoadmapTaskDetail isEmpty={isEmpty} isCompleted={isCompleted} isArchived={isArchived} task={currentTask} handleTaskUpdate={(task) => setCurrentTask(task)} handleIsSaving={() => setIsSaving(true)} handleIsCompleting={() => setIsCompleting(true)} isOwner={isOwner} displaySaveButton={saveButton} displayCompleteButton={completeButton} />
                 </div>
+                <div className="pb-4" />
               </div>
             </div>
           </motion.div>
