@@ -1,8 +1,9 @@
 # syntax=docker/dockerfile:1
-FROM node:gallium-alpine3.17
+FROM node:19-alpine
 WORKDIR /app
-COPY . .
+COPY package*.json ./
 RUN npm install
-EXPOSE 5173
+COPY . .
+EXPOSE 4173
 RUN npm run build
-CMD [ "npm", "run", "preview"]
+CMD [ "npm", "run", "preview" ] 

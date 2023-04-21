@@ -26,7 +26,7 @@ import { ReactComponent as NotiOff } from "../assets/notification/notiOff.svg";
 import { ReactComponent as NotiOn } from "../assets/notification/notiOn.svg";
 import NotiButton from "../components/NotiButton";
 import { roundTimeToNearest30 } from "../functions/formatFunction";
-import { ReactComponent as QuestionMark } from "../assets/taskmodal/QuestionMark.svg";
+import { ReactComponent as QuestionMark } from "../assets/taskmodal/questionMark.svg";
 import { ReactComponent as Close } from "../assets/close.svg";
 import { useIsSM } from "../hooks/useMediaQuery";
 import Step1 from "../assets/helpCreateRoadmap_assets/step_1.jpg";
