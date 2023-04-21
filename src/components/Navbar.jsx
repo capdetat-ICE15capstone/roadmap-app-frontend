@@ -46,6 +46,14 @@ const Navbar = () => {
       console.error(error);
     }
   }
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    if (localStorage.getItem('saved_email') !== null && localStorage.getItem('saved_password') !== null) {
+      localStorage.removeItem('saved_email');
+      localStorage.removeItem('saved_password');
+    }
+    navigate('/login');
+  }
 
   useEffect(() => {
     if (!isMountedRef.current) {
@@ -125,7 +133,7 @@ const Navbar = () => {
               <NavItem SvgIcon={SettingLogo} displayName="Setting" baseColor="bg-nav-blue" to="/setting" />
             </div>
           </div>
-          <button className="w-full" onClick={() => { localStorage.removeItem('token'); navigate('/login') }}>
+          <button className="w-full" onClick={() => handleLogout()}>
             <NavItem SvgIcon={Logout} displayName="Log Out" baseColor="bg-base-blue" to="/login" />
           </button>
         </div>
