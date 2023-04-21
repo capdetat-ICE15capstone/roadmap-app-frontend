@@ -10,7 +10,7 @@ function ShopItem({ item, handleSelect }) {
   return (
     <>
       <motion.div
-        className='flex flex-col bg-white rounded-2xl shadow-md p-2 w-60'
+        className='flex flex-col bg-white border border-gray-300 rounded-2xl shadow-md p-2 w-60'
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         transition={{
