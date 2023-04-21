@@ -209,7 +209,7 @@ export default function View() {
                 </div>
               </div>
             </div>
-            <div className='flex flex-col h-full w-full items-center py- overflow-y-auto'>
+            <div className='flex flex-col h-full w-full items-center py-4 overflow-y-auto'>
               <div className="w-4/5 flex-col justify-center space-y-6">
                 <div className='flex flex-col rounded-3xl bg-white border border-gray-300 drop-shadow-[0_2px_5px_rgba(0,0,0,0.25)] p-4 space-y-6'>
                   <RoadmapDetail
