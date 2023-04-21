@@ -4,7 +4,7 @@ import { ReactComponent as SearchIcon } from "../assets/searchIcon.svg";
 const SearchBar = ({ onSubmit }) => {
   return (
     <>
-      <form className='flex space-x-2 relative' onSubmit={onSubmit}>
+      <form className='flex space-x-2 relative' onSubmit={(e) => {e.preventDefault(); onSubmit();}}>
         <input
           id="InputSearch"
           type="text"

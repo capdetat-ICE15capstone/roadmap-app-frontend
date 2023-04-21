@@ -6,6 +6,7 @@ import { ReactComponent as LikeIcon } from "../assets/roadmap_assets/ThumbsUp.sv
 import { axiosInstance } from '../functions/axiosInstance';
 import { nodeShapeGenerator } from '../functions/viewFunction';
 import { ReactComponent as DropdownIcon } from "../assets/roadmapDropdown_assets/dropdown_icon.svg"
+import { motion } from 'framer-motion';
 
 const Roadmap_home = ({ roadmap, handleArchive, handleDelete, isArchived }) => {
 
@@ -70,7 +71,14 @@ const Roadmap_home = ({ roadmap, handleArchive, handleDelete, isArchived }) => {
 
   if (isFetched) {
     return (
-      <>
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{
+          type: "easeInOut",
+          duration: "1"
+        }}
+      >
         <div className='relative w-[240px] h-[232px] hover:transform hover:scale-110 transition duration-150 hover:Z-50'>
           <div className="absolute top-[146px] right-[14px]">
             <div className="flex flex-col justify-center">
@@ -78,7 +86,7 @@ const Roadmap_home = ({ roadmap, handleArchive, handleDelete, isArchived }) => {
                 <DropdownIcon />
               </button>
               {isOpen && (
-                <div onMouseLeave={toggleMenu} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-18 flex flex-col bg-[#FFFFFF] rounded-xl shadow-md hover:z-50 hover:scale-110 transition duration-150">
+                <div onMouseLeave={toggleMenu} className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-18 flex flex-col bg-[#FFFFFF] rounded-xl shadow-md z-50 hover:scale-110 transition duration-150">
                   {!isArchived ? (
                     <>
                       <button onClick={() => navigate(`/edit/${roadmap.rid}`)} className="text-sm font-bold p-2 rounded-t-xl hover:bg-gray-300">
@@ -87,7 +95,7 @@ const Roadmap_home = ({ roadmap, handleArchive, handleDelete, isArchived }) => {
                       <button onClick={() => handleArchive(roadmap.rid)} className="text-sm font-bold p-2 hover:bg-gray-300">
                         Archive
                       </button>
-                      <button onClick={() => handleDelete(roadmap.rid)} className="text-sm text-red-500 font-bold p-2 rounded-b-xl hover:bg-gray-300">
+                      <button onClick={() => handleDelete(roadmap.rid)} className="text-sm text-red-500 font-bold p-2 rounded-b-xl hover:bg-red-500 hover:text-white">
                         Delete
                       </button>
                     </>
@@ -177,7 +185,7 @@ const Roadmap_home = ({ roadmap, handleArchive, handleDelete, isArchived }) => {
             </Link>
           </div>
         </div>
-      </>
+      </motion.div>
     )
   }
 };

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Outlet, NavLink } from 'react-router-dom';
+import { Outlet, NavLink, Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
+import { motion } from 'framer-motion';
 
 // Image/Logo SVG
 import { ReactComponent as Logo } from "../assets/logo.svg"
@@ -9,6 +10,7 @@ import { ReactComponent as HomeLogo } from "../assets/navbar_assets/home_icon.sv
 import { ReactComponent as CalendarLogo } from "../assets/navbar_assets/calendar_icon.svg"
 import { ReactComponent as SettingLogo } from "../assets/navbar_assets/setting_icon.svg"
 import { ReactComponent as BookIcon } from "../assets/navbar_assets/book_icon.svg"
+import { ReactComponent as ShopIcon } from "../assets/shapes/shopping_bag_white.svg"
 import { ReactComponent as Logout } from "../assets/shapes/logout.svg";
 import { axiosInstance } from "../functions/axiosInstance";
 
@@ -70,25 +72,46 @@ const Navbar = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col flex-grow overflow-x-hidden bg-gray-50 z-20">
-          {!isPremium &&
-            <div className="flex justify-center z-40">
-              <div className="flex w-full h-[100px] mx-auto bg-nav-blue">
-
-              </div>
-            </div>}
-          <Outlet />
+        <div className="flex flex-col flex-grow h-full bg-gray-50 overflow-x-hidden">
+          <div className="flex justify-center bg-nav-blue">
+            {!isPremium &&
+              <Link to={`/premium`} className="relative flex flex-col w-2/3 h-[100px] px-6 mx-auto bg-base-blue">
+                <motion.div className="flex w-full h-full justify-start items-center font-inter font-semibold text-5xl text-[#FFFFFF]"
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  transition={{
+                    type: "easeInOut",
+                    duration: "0.5"
+                  }}>
+                  Bored of ad display?
+                </motion.div>
+                <motion.div className="flex w-full h-full justify-end items-center font-inter font-semibold text-2xl text-[#FFFFFF]"
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  transition={{
+                    type: "easeInOut",
+                    delay: "0.5",
+                    duration: "0.5"
+                  }}>
+                  What are you waiting for, buy premium
+                </motion.div>
+              </Link>
+            }
+          </div>
+          <div className="overflow-y-auto z-20">
+            <Outlet />
+          </div>
         </div>
         <div className="flex xs:hidden max-xs:visible bg-nav-blue">
           <NavItem SvgIcon={HomeLogo} displayName="Home" baseColor="bg-nav-blue" to="/" />
           <NavItem SvgIcon={FeedLogo} displayName="Feed" baseColor="bg-nav-blue" to="/feed" />
-          <NavItem SvgIcon={BookIcon} displayName="Quest" baseColor="bg-nav-blue" to="/activity" />
-          <NavItem SvgIcon={CalendarLogo} displayName="Shop" baseColor="bg-nav-blue" to="/shop" />
+          <NavItem SvgIcon={BookIcon} displayName="Activity" baseColor="bg-nav-blue" to="/activity" />
+          <NavItem SvgIcon={ShopIcon} displayName="Shop" baseColor="bg-nav-blue" to="/shop" />
           <NavItem SvgIcon={SettingLogo} displayName="Setting" baseColor="bg-nav-blue" to="/setting" />
         </div>
         <div className="max-xs:hidden flex flex-col items-center justify-between max-md:w-18 md:w-[180px] bg-nav-blue shrink-0">
           <div className="w-full">
-            <div className="w-full flex justify-center items-center bg-base-blue px-4 space-x-4">
+            <div className="w-full flex justify-center items-center bg-base-blue px-4 space-x-4 h-[100px]">
               <Logo className="my-2" />
               <div className=" w-[60%] max-md:hidden text-white text-xl font-bold">
                 MileMap
@@ -97,12 +120,12 @@ const Navbar = () => {
             <div className="flex flex-col">
               <NavItem SvgIcon={HomeLogo} displayName="Home" baseColor="bg-nav-blue" to="/" />
               <NavItem SvgIcon={FeedLogo} displayName="Feed" baseColor="bg-nav-blue" to="/feed" />
-              <NavItem SvgIcon={BookIcon} displayName="Quest" baseColor="bg-nav-blue" to="/activity" />
-              <NavItem SvgIcon={CalendarLogo} displayName="Shop" baseColor="bg-nav-blue" to="/shop" />
+              <NavItem SvgIcon={BookIcon} displayName="Activity" baseColor="bg-nav-blue" to="/activity" />
+              <NavItem SvgIcon={ShopIcon} displayName="Shop" baseColor="bg-nav-blue" to="/shop" />
               <NavItem SvgIcon={SettingLogo} displayName="Setting" baseColor="bg-nav-blue" to="/setting" />
             </div>
           </div>
-          <button className="w-full" onClick={() => {localStorage.removeItem('token'); navigate('/login')}}>
+          <button className="w-full" onClick={() => { localStorage.removeItem('token'); navigate('/login') }}>
             <NavItem SvgIcon={Logout} displayName="Log Out" baseColor="bg-base-blue" to="/login" />
           </button>
         </div>

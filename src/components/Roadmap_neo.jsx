@@ -5,6 +5,7 @@ import { ReactComponent as ShareIcon } from "../assets/roadmap_assets/Share.svg"
 import { ReactComponent as LikeIcon } from "../assets/roadmap_assets/ThumbsUp.svg"
 import { axiosInstance } from '../functions/axiosInstance';
 import { nodeShapeGenerator } from '../functions/viewFunction';
+import { motion } from 'framer-motion';
 
 const Roadmap = ({ roadmap }) => {
 
@@ -23,7 +24,7 @@ const Roadmap = ({ roadmap }) => {
   useEffect(() => {
     // change created_at to dd/mm/yy format
     setCreateDate(convertDate(roadmap.created_at));
-  
+
     // change edited_at to dd/mm/yy format
     setEditDate(convertDate(roadmap.edited_at));
 
@@ -68,7 +69,14 @@ const Roadmap = ({ roadmap }) => {
   if (isFetched) {
     return (
       <>
-        <div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{
+            type: "easeInOut",
+            duration: "0.3"
+          }}
+        >
           <Link to={`/view/${roadmap.rid}`} >
             <div className='flex flex-col bg-white border border-gray-300 rounded-3xl shadow-md w-[242px] h-[232px] p-2'>
               <div className='flex flex-col bg-[#e6eefc] rounded-2xl'>
@@ -141,7 +149,7 @@ const Roadmap = ({ roadmap }) => {
               </div>
             </div>
           </Link>
-        </div>
+        </motion.div>
       </>
     );
   }

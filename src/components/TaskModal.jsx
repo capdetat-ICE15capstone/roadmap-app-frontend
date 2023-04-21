@@ -107,7 +107,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
     setName(taskObj.name);
     setDescription(taskObj.description);
     setSubTasks(taskObj.subtasks);
-    setNodeColor(allNodeColor.find(({ name }) => name === taskObj.nodeColor));
+    setNodeColor(allNodeColor.find(({ name }) => name === taskObj.nodeColor) ?? allNodeColor[0]);
     setNodeShape(taskObj.nodeShape);
     setStartDate(taskObj.startDate);
     setdueDate(taskObj.dueDate);
@@ -150,7 +150,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
   };
 
   const handleNodeColorChange = (event) => {
-    setNodeColor(allNodeColor.find(({ name }) => name === event.target.value));
+    setNodeColor(allNodeColor.find(({ name }) => name === event.target.value) ?? allNodeColor[0]);
   };
 
   const handleNodeShapeChange = (event, shapeType) => {
