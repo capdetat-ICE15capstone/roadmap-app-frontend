@@ -504,7 +504,7 @@ const Setting = () => {
 
     const deleteAccount = () => {
         console.log("delete account");
-        updateSetting("/account/deactivate/");
+        updateSetting("/account/deactivate");
     }
 
     const updatePrivacy = () => {

@@ -72,7 +72,7 @@ const Navbar = () => {
             </div>
           </div>
         </div>
-        <div className="flex flex-col flex-grow h-full bg-gray-50 overflow-x-hidden">
+        <div className="flex flex-col flex-grow h-full bg-white overflow-x-hidden">
           <div className="flex justify-center bg-nav-blue">
             {!isPremium &&
               <Link to={`/premium`} className="relative flex flex-col w-2/3 h-[100px] px-6 mx-auto bg-base-blue">
