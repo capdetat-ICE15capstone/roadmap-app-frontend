@@ -187,39 +187,43 @@ export default function View() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className='flex h-full w-full overflow-y-auto py-6'
+            className='flex flex-col h-full w-full items-center' 
           >
-            <div className="xs:w-[80%] max-xs:w-[90%] max-w-4xl flex-col space-y-6 m-auto">
-              <div className='flex justify-between items-center space-x-6'>
-                <div className='flex items-center space-x-2'>
-                  <RoadmapIcon className='h-10 w-10' />
-                  <span className='max-sm:hidden text-4xl font-extrabold text-nav-blue'>VIEW</span>
+            <div className='flex justify-between items-center w-4/5 h-10 mt-10 mx-8 mb-8 space-x-4'>
+              <div className='max-md:hidden flex j items-center shrink-0 h-full text-4xl font-extrabold text-nav-blue space-x-2'>
+                <RoadmapIcon className="flex h-8 w-8 fill-[#09275B]" />
+                <div className=''>
+                  View
                 </div>
-                <div className='flex w-full justify-center items-center bg-base-blue drop-shadow-[0_2px_5px_rgba(0,0,0,0.25)] rounded-3xl p-2 space-x-2  max-w-sm'>
-                  <img className='w-8 h-8 rounded-full' src={getProfilePictureSrc(ownerProfile.profile_picture_id)} />
-                  <div className='flex flex-col'>
-                    <span className='text-xs font-bold text-white'>{ownerProfile.username}</span>
-                    <span className='text-xs font-bold text-white'>LVL. {Math.floor(0.01 * ownerProfile.exp)}</span>
-                  </div>
-                  <div className={`flex flex-auto relative bg-gray-500 rounded-2xl h-8`}>
-                    <div className={`${isOwner ? 'bg-[#F43054]' : 'bg-gray-700'} h-full rounded-2xl transition-all duration-500 ease-in-out`} style={{ width: `${exp}%` }}>
-                      <span className="text-white w-full text-lg font-bold text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">{exp} / 100</span>
-                    </div>
+              </div>
+              <div className='flex w-full items-center bg-base-blue drop-shadow-[0_2px_5px_rgba(0,0,0,0.25)] rounded-3xl p-2 space-x-2  max-w-sm'>
+                <img className='w-8 h-8 rounded-full' src={getProfilePictureSrc(ownerProfile.profile_picture_id)} />
+                <div className='flex flex-col'>
+                  <span className='text-xs font-bold text-white'>{ownerProfile.username}</span>
+                  <span className='text-xs font-bold text-white'>LVL. {Math.floor(0.01 * ownerProfile.exp)}</span>
+                </div>
+                <div className={`flex flex-auto relative bg-gray-500 rounded-2xl h-8`}>
+                  <div className={`${isOwner ? 'bg-[#F43054]' : 'bg-gray-700'} h-full rounded-2xl transition-all duration-500 ease-in-out`} style={{ width: `${exp}%` }}>
+                    <span className="text-white w-full text-lg font-bold text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">{exp} / 100</span>
                   </div>
                 </div>
               </div>
-              <div className='flex flex-col rounded-3xl bg-white border border-gray-300 drop-shadow-[0_2px_5px_rgba(0,0,0,0.25)] p-4 space-y-6'>
-                <RoadmapDetail
-                  roadmap={roadmap}
-                  isOwner={isOwner}
-                  likeCount={likeCount}
-                  isLiked={isLiked}
-                  isCompleted={isCompleted}
-                  isArchived={isArchived}
-                  handleLike={handleLike}
-                />
-                <RoadmapViewer isArchived={isArchived} roadmap={roadmap} currentTaskID={currentTask.id} handleTaskView={(task) => { setCurrentViewTask(task); setIsViewingTask(true) }} />
-                <RoadmapTaskDetail isEmpty={isEmpty} isCompleted={isCompleted} isArchived={isArchived} task={currentTask} handleTaskUpdate={(task) => setCurrentTask(task)} handleIsSaving={() => setIsSaving(true)} handleIsCompleting={() => setIsCompleting(true)} isOwner={isOwner} displaySaveButton={saveButton} displayCompleteButton={completeButton} />
+            </div>
+            <div className='flex flex-col h-full w-full items-center py-4 overflow-y-auto'>
+              <div className="w-4/5 flex-col justify-center space-y-6">
+                <div className='flex flex-col rounded-3xl bg-white border border-gray-300 drop-shadow-[0_2px_5px_rgba(0,0,0,0.25)] p-4 space-y-6'>
+                  <RoadmapDetail
+                    roadmap={roadmap}
+                    isOwner={isOwner}
+                    likeCount={likeCount}
+                    isLiked={isLiked}
+                    isCompleted={isCompleted}
+                    isArchived={isArchived}
+                    handleLike={handleLike}
+                  />
+                  <RoadmapViewer isArchived={isArchived} roadmap={roadmap} currentTaskID={currentTask.id} handleTaskView={(task) => { setCurrentViewTask(task); setIsViewingTask(true) }} />
+                  <RoadmapTaskDetail isEmpty={isEmpty} isCompleted={isCompleted} isArchived={isArchived} task={currentTask} handleTaskUpdate={(task) => setCurrentTask(task)} handleIsSaving={() => setIsSaving(true)} handleIsCompleting={() => setIsCompleting(true)} isOwner={isOwner} displaySaveButton={saveButton} displayCompleteButton={completeButton} />
+                </div>
               </div>
             </div>
           </motion.div>
