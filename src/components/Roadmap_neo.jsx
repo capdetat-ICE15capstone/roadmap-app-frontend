@@ -112,7 +112,7 @@ const Roadmap = ({ roadmap }) => {
               </div>
               <div className='flex flex-col pt-[2px] flex-nowrap space-y-1 m-1'>
                 <div className=' flex flex-row justify-between items-center'>
-                  <div className=' text-md font-bold truncate w-[100%]'>
+                  <div className=' text-md font-bold truncate'>
                     {roadmap.title ? roadmap.title : "no name"}
                   </div>
                 </div>
@@ -120,7 +120,7 @@ const Roadmap = ({ roadmap }) => {
                   <div className='flex flex-row text-xs'>
                     <span className='mr-1'>{"Owner: "}</span><span className='hover:text-blue-600 truncate' onClick={handleClick}>{roadmap.owner_name}</span>
                   </div>
-                  <div className='flex-nowrap w-1/2 text-xs text-gray-500 text-right'>
+                  <div className='flex-nowrap shrink-0 text-xs text-gray-500 text-right'>
                     Created: {createDate}
                   </div>
                 </div>
