@@ -17,15 +17,22 @@ import Img9 from "../assets/intro/9.svg";
 import Img10 from "../assets/intro/10.svg";
 import Logo from "../assets/intro/logo.svg";
 import MileMap from "../assets/intro/MileMap.svg";
+import { ReactComponent as RecRoadmap1 } from "../assets/intro/recRoadmap1.svg";
+import { ReactComponent as RecRoadmap2 } from "../assets/intro/recRoadmap2.svg";
+import { ReactComponent as RecRoadmap3 } from "../assets/intro/recRoadmap3.svg";
+import { ReactComponent as RecRoadmap4 } from "../assets/intro/recRoadmap4.svg";
+import { ReactComponent as RecRoadmap5 } from "../assets/intro/recRoadmap5.svg";
 
 const itemVariant = {
   initial: { y: 100, opacity: 0 },
   whileInView: { y: 0, opacity: 1 },
+  whileHover: { scale: 1.1 },
   exit: { y: 100, opacity: 0 },
   transition: {
     type: "spring",
     stiffness: 260,
     damping: 20,
+    duration: 100
   },
 };
 
@@ -86,65 +93,28 @@ const secondRowData = [
   },
 ];
 
+const FakeRoadmap = ({ SvgPanel }) => {
+  return (
+    <motion.div
+      variants={itemVariant}
+      initial="initial"
+      whileInView="whileInView"
+      exit="exit"
+      transition="transition"
+      whileHover="whileHover"
+    >
+      <Link to="/login">
+        <SvgPanel />
+      </Link>
+    </motion.div>
+  );
+};
+
 const RecommendedRoadmap = React.forwardRef((props, ref) => {
   // component for displaying 4 roadmap at the footer
 
   // get 4 roadmap data
   // fake data
-  const RMdata = [
-    {
-      owner_id: 50,
-      creator_id: 50,
-      owner_name: "gg",
-      creator_name: "gg",
-      rid: 212,
-      views_count: 23,
-      stars_count: 0,
-      forks_count: 0,
-      created_at: "2023-04-15T14:59:05",
-      edited_at: "2023-04-17T09:39:44",
-      title: "How to train your dragon",
-    },
-    {
-      owner_id: 50,
-      creator_id: 50,
-      owner_name: "gg",
-      creator_name: "gg",
-      rid: 212,
-      views_count: 23,
-      stars_count: 0,
-      forks_count: 0,
-      created_at: "2023-04-15T14:59:05",
-      edited_at: "2023-04-17T09:39:44",
-      title: "How to train your dragon",
-    },
-    {
-      owner_id: 50,
-      creator_id: 50,
-      owner_name: "gg",
-      creator_name: "gg",
-      rid: 212,
-      views_count: 23,
-      stars_count: 0,
-      forks_count: 0,
-      created_at: "2023-04-15T14:59:05",
-      edited_at: "2023-04-17T09:39:44",
-      title: "How to train your dragon",
-    },
-    {
-      owner_id: 50,
-      creator_id: 50,
-      owner_name: "gg",
-      creator_name: "gg",
-      rid: 212,
-      views_count: 23,
-      stars_count: 0,
-      forks_count: 0,
-      created_at: "2023-04-15T14:59:05",
-      edited_at: "2023-04-17T09:39:44",
-      title: "How to train your dragon",
-    },
-  ];
 
   return (
     <div
@@ -155,21 +125,12 @@ const RecommendedRoadmap = React.forwardRef((props, ref) => {
         Recommended Roadmap
       </div>
       <div>
-        <div className="flex justify-center flex-wrap">
-          {RMdata.map((roadmap, index) => {
-            return (
-              <motion.div
-                key={roadmap.rid}
-                variants={itemVariant}
-                initial="initial"
-                whileInView="whileInView"
-                exit="exit"
-                transition="transition"
-              >
-                <Roadmap {...roadmap} />
-              </motion.div>
-            );
-          })}
+        <div className="flex justify-evenly flex-wrap">
+          <FakeRoadmap SvgPanel={RecRoadmap1} />
+          <FakeRoadmap SvgPanel={RecRoadmap2} />
+          <FakeRoadmap SvgPanel={RecRoadmap3} />
+          <FakeRoadmap SvgPanel={RecRoadmap4} />
+          <FakeRoadmap SvgPanel={RecRoadmap5} />
         </div>
       </div>
     </div>
