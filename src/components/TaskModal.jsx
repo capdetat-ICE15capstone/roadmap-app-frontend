@@ -300,43 +300,17 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
 
   return (
     <>
-      <TwoButtonModal
-        isOpen={deleteModal}
-        onLightPress={() => setDeleteModal(false)}
-        onDarkPress={() => editTaskCallBack("delete", oldData)}
-        textField={{
-          title: "Confirm Deletion",
-          body: "Deleting task will permanantly remove it from your roadmap?",
-          lightButtonText: "Cancel",
-          darkButtonText: "Delete",
-        }}
-        Icon={WhiteTrash}
-      />
-      <TwoButtonModal
-        isOpen={unSavedModal}
-        onLightPress={() =>
-          editTaskCallBack(
-            taskWasFetched ? "fetch" : "failed",
-            generateTaskData()
-          )
-        }
-        onDarkPress={() => setUnSavedModal(false)}
-        textField={{
-          title: "Unsaved Change",
-          body: "Are you sure you want to discard the change of a task?",
-          lightButtonText: "Ok",
-          darkButtonText: " Cancel",
-        }}
-      />
+    
       <motion.form
         onSubmit={handleSubmit}
         variants={taskModalVariants}
         initial="initial"
         animate="animate"
         exit="exit"
-        className="z-50"
+
       >
-        <div className="justify-center items-center flex overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none py-3">
+        <div className="opacity-25 fixed inset-0 bg-black"></div>
+        <div className="justify-center items-center flex overflow-y-auto fixed inset-0 outline-none focus:outline-none py-3">
           <div className="relative w-11/12 md:w-5/6 my-6 mx-auto xl:w-2/3 2xl:w-1/2 max-h-screen">
             {/*content*/}
             {loading && <Spinner className="z-30 absolute rounded-xl" />}
@@ -567,8 +541,35 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
             </div>
           </div>
         </div>
-        <div className="opacity-25 fixed inset-0 z-10 bg-black"></div>
       </motion.form>
+      <TwoButtonModal
+        isOpen={deleteModal}
+        onLightPress={() => setDeleteModal(false)}
+        onDarkPress={() => editTaskCallBack("delete", oldData)}
+        textField={{
+          title: "Confirm Deletion",
+          body: "Deleting task will permanantly remove it from your roadmap?",
+          lightButtonText: "Cancel",
+          darkButtonText: "Delete",
+        }}
+        Icon={WhiteTrash}
+      />
+      <TwoButtonModal
+        isOpen={unSavedModal}
+        onLightPress={() =>
+          editTaskCallBack(
+            taskWasFetched ? "fetch" : "failed",
+            generateTaskData()
+          )
+        }
+        onDarkPress={() => setUnSavedModal(false)}
+        textField={{
+          title: "Unsaved Change",
+          body: "Are you sure you want to discard the change of a task?",
+          lightButtonText: "Ok",
+          darkButtonText: " Cancel",
+        }}
+      />
     </>
   );
 };

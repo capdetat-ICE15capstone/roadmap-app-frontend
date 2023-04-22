@@ -64,11 +64,6 @@ const notificationOption = {
   options: ["No notification"],
   optionValues: [{ on: false, detail: { day: 0, beforeDueDate: false } }],
 };
-const modalAnimationVariants = {
-  initial: { opacity: 0 },
-  animate: { opacity: 1 },
-  exit: { opacity: 0 },
-};
 
 notificationDayOption.forEach((day) => {
   return [true, false].forEach((beforeDueDate) => {
@@ -94,6 +89,7 @@ const TaskItem = ({
 }) => {
   // Task node Component
   return (
+    <div className="flex">
     <div className={`relative h-full break-words w-28 z-10`}>
       <div
         className={`h-full after:h-1 after:w-full after:top-[30px] after:absolute after:translate-x-12 ${
@@ -136,6 +132,7 @@ const TaskItem = ({
         </div>
       </div>
     </div>
+    </div>
   );
 };
 
@@ -146,13 +143,24 @@ const DropDownMenu = ({
   setOption,
   optionComparer,
   Icon,
-  className,
+  className="",
+  taskModalState
 }) => {
   const [isMenuShowing, setIsMenuShowing] = useState(false);
+  const prevState = useRef(false);
 
   useEffect(() => {
     optionValues = optionValues ?? options;
   }, []);
+
+  useEffect(() => {
+    if (taskModalState === true) {
+      prevState.current = isMenuShowing;
+      setIsMenuShowing(false);
+    } else {
+      setIsMenuShowing(prevState.current);
+    }
+  }, [taskModalState])
 
   const handleMenuShowUnshow = (event) => {
     event.preventDefault();
@@ -166,7 +174,7 @@ const DropDownMenu = ({
   };
 
   return (
-    <div className={`${className} z-40`}>
+    <div className={`${className}`}>
       <button
         onClick={handleMenuShowUnshow}
         type="button"
@@ -191,7 +199,7 @@ const DropDownMenu = ({
         {isMenuShowing ? (
           <motion.div
             key={"notification_menu"}
-            className="absolute bg-white border rounded-md flex flex-col left-0 xs:left-auto xs:right-0 [@media(max-width:360px)]:-left-full"
+            className="absolute bg-white border rounded-md flex flex-col left-0 xs:left-auto xs:right-0 [@media(max-width:360px)]:-left-full z-10"
             initial={{ y: "-50%", opacity: 0, scale: 0 }}
             animate={{ y: "0%", opacity: 1, scale: 1 }}
             exit={{ opacity: 0, y: "10%" }}
@@ -850,62 +858,6 @@ const RoadmapCreatePage = (props) => {
 
   return (
     <>
-      <TwoButtonModal
-        isOpen={publicModal}
-        onLightPress={() => setPublicModal(false)}
-        onDarkPress={handlePublicityChange}
-        textField={{
-          title: `Change to ${isPublic ? '"private"' : '"public"'}?`,
-          body: `Are you sure you want to change the roadmap to ${
-            isPublic ? '"private"' : '"public"'
-          }?`,
-          lightButtonText: "Cancel",
-          darkButtonText: "OK",
-        }}
-      />
-
-      <TwoButtonModal
-        isOpen={errorModal}
-        onDarkPress={handleErrorRedirect}
-        textField={{
-          title: "Error",
-          body: errorHandle.message,
-          lightButtonText: "Cancel",
-          darkButtonText: "OK",
-        }}
-        oneButton={true}
-      />
-
-      <TwoButtonModal
-        isOpen={discardModal}
-        onLightPress={() => setDiscardModal(false)}
-        onDarkPress={handleDiscard}
-        textField={{
-          title: `Discard Change?`,
-          body: "Are you sure you want to discard change?",
-          lightButtonText: "Cancel",
-          darkButtonText: "OK",
-        }}
-      />
-
-      <AnimatePresence mode="wait">
-        {modalState ? (
-          // id -1 is passed as a temp id to let the modal know it's in create mode, otherwise it's in edit mode
-          editTaskID == -1 ? (
-            <TaskModal
-              oldData={{ id: -1 }}
-              editTaskCallBack={editTaskCallBack}
-            />
-          ) : (
-            <TaskModal
-              oldData={tasks.find((task) => task.id === editTaskID)}
-              editTaskCallBack={editTaskCallBack}
-            />
-          )
-        ) : null}
-      </AnimatePresence>
-
-      <SpinnerNeo visible={loading} />
       <div className="flex justify-center items-center flex-col m-auto max-w-5xl w-[90%]">
         {/* <div className="text-4xl font-bold flex items-start"> */}
         <div className="flex w-full justify-between mt-10">
@@ -959,7 +911,7 @@ const RoadmapCreatePage = (props) => {
                       fillColor={notiStatus.on ? "#00286E" : "white"}
                     />
                   }
-                  className="z-10"
+                  taskModalState={modalState}
                 />
               </div>
               {/* End of Notification Setting */}
@@ -1010,7 +962,7 @@ const RoadmapCreatePage = (props) => {
                 <StrictModeDroppable droppableId="tasks" direction="horizontal">
                   {(provided) => (
                     <div
-                      className="flex items-center"
+                      className="flex"
                       {...provided.droppableProps}
                       ref={provided.innerRef}
                     >
@@ -1038,7 +990,7 @@ const RoadmapCreatePage = (props) => {
                             >
                               {(provided) => (
                                 <div
-                                  className="flex items-center h-full"
+                                  className="flex"
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
                                   ref={provided.innerRef}
@@ -1103,6 +1055,62 @@ const RoadmapCreatePage = (props) => {
           </div>
         </form>
       </div>
+      <TwoButtonModal
+        isOpen={publicModal}
+        onLightPress={() => setPublicModal(false)}
+        onDarkPress={handlePublicityChange}
+        textField={{
+          title: `Change to ${isPublic ? '"private"' : '"public"'}?`,
+          body: `Are you sure you want to change the roadmap to ${
+            isPublic ? '"private"' : '"public"'
+          }?`,
+          lightButtonText: "Cancel",
+          darkButtonText: "OK",
+        }}
+      />
+
+      <TwoButtonModal
+        isOpen={errorModal}
+        onDarkPress={handleErrorRedirect}
+        textField={{
+          title: "Error",
+          body: errorHandle.message,
+          lightButtonText: "Cancel",
+          darkButtonText: "OK",
+        }}
+        oneButton={true}
+      />
+
+      <TwoButtonModal
+        isOpen={discardModal}
+        onLightPress={() => setDiscardModal(false)}
+        onDarkPress={handleDiscard}
+        textField={{
+          title: `Discard Change?`,
+          body: "Are you sure you want to discard change?",
+          lightButtonText: "Cancel",
+          darkButtonText: "OK",
+        }}
+      />
+
+      <AnimatePresence mode="wait">
+        {modalState ? (
+          // id -1 is passed as a temp id to let the modal know it's in create mode, otherwise it's in edit mode
+          editTaskID == -1 ? (
+            <TaskModal
+              oldData={{ id: -1 }}
+              editTaskCallBack={editTaskCallBack}
+            />
+          ) : (
+            <TaskModal
+              oldData={tasks.find((task) => task.id === editTaskID)}
+              editTaskCallBack={editTaskCallBack}
+            />
+          )
+        ) : null}
+      </AnimatePresence>
+
+      <SpinnerNeo visible={loading} />
       {showHelp && (
         <div className="absolute flex flex-col left-0 justify-center items-center w-full h-full max-xs:max-h-full bg-gray-300 bg-opacity-[0.58] z-[100]">
           <div className="flex justify-start items-center px-[23px] w-1/2 min-w-[292px] max-w-[790px] h-fit bg-[#00286E] rounded-t-[20px]">
