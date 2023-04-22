@@ -4,7 +4,7 @@ import { ReactComponent as AddButton } from "../assets/addButton.svg";
 import { ReactComponent as DeleteButton } from "../assets/deleteButton.svg";
 import { ReactComponent as ArrowIcon } from "../assets/taskmodal/arrow.svg";
 import { ReactComponent as CalendarIcon } from "../assets/taskmodal/calendar.svg";
-import { ReactComponent as TrashIcon } from "../assets/taskmodal/trash.svg";
+import { ReactComponent as TrashIcon } from "../assets/taskmodal/whiteTrash.svg";
 import { ReactComponent as WhiteTrash } from "../assets/taskmodal/whiteTrash.svg";
 import DatePicker from "react-datepicker";
 import Spinner from "./Spinner";
@@ -16,6 +16,7 @@ import { motion } from "framer-motion";
 import { useMediaQuery } from "../hooks/useMediaQuery";
 
 import "react-datepicker/dist/react-datepicker.css";
+import CECLogo from "./CECLogo";
 
 // Current issues
 // 2. Date data domain has yet to be enforced
@@ -319,11 +320,12 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
             <div className=" rounded-2xl shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
               {/*header*/}
               <div
-                className={`flex justify-between py-4 px-5 xl:py-8 border-b border-solid border-slate-200 rounded-t-2xl transition duration-300 items-center bg-white`}
+                className={`flex justify-between py-4 px-5 xl:py-8 border-b border-solid border-slate-200 rounded-t-2xl transition duration-300 items-center bg-nav-blue`}
               >
-                <div className={`${oldData.id === -1 ? "" : "w-[50px]"}`}></div>
-                <h3 className="text-4xl font-semibold text-black flex justify-center">
-                  {oldData.id === -1 ? "Create" : "Edit"} TASK
+                {/* <div className={`${oldData.id === -1 ? "" : "w-[50px]"}`}></div> */}
+                <CECLogo mode={oldData.id === -1 ? "create" : "edit"} className="w-10 h-10 hidden xs:block" fillColor="white"/>
+                <h3 className="text-4xl font-semibold  justify-center text-white">
+                  {oldData.id === -1 ? "Create" : "Edit"} Task
                 </h3>
                 {oldData.id === -1 ? (
                   <div></div>
@@ -529,7 +531,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                     </div>
                     <div className="flex items-center justify-end p-4 rounded-b gap-3">
                       <button
-                        className="text-black border border-black background-transparent rounded-full font-bold uppercase text-sm h-10 w-24 "
+                        className="text-nav-blue border border-nav-blue background-transparent rounded-full font-bold uppercase text-sm h-10 w-24 "
                         type="button"
                         onClick={handleDetectChangeBeforeClose}
                       >
