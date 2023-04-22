@@ -87,6 +87,7 @@ const TaskItem = ({
   setModalState,
   disabled,
   isLastitem,
+  index
 }) => {
   // Task node Component
   return (
@@ -126,7 +127,7 @@ const TaskItem = ({
               </button>
               <div className="flex w-28 grow">
                 <span className="block font-bold w-full text-center leading-5 font-nunito-sans my-auto">
-                  {task.name === "" ? "Milestone" : task.name}
+                  {task.name === "" ? `Task #${index+1}` : task.name}
                 </span>
               </div>
             </div>
@@ -988,6 +989,7 @@ const RoadmapCreatePage = (props) => {
                                 (tasks[index - 1].isDone && !tasks.isTempId)
                               }
                               isLastitem={index === tasks.length - 1}
+                              index={index}
                             />
                           ) : (
                             <Draggable
@@ -1012,6 +1014,7 @@ const RoadmapCreatePage = (props) => {
                                       (index < 1 ||
                                         (tasks[index - 1].isDone && !tasks.id))
                                     }
+                                    index={index}
                                   />
                                 </div>
                               )}
