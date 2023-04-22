@@ -13,6 +13,7 @@ import TwoButtonModal from "./TwoButtonModal";
 import { getTask } from "../functions/roadmapFunction";
 import { roundTimeToNearest30 } from "../functions/formatFunction";
 import { motion } from "framer-motion";
+import { useMediaQuery } from "../hooks/useMediaQuery";
 
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -48,6 +49,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
   const [deleteModal, setDeleteModal] = useState(false);
   const [unSavedModal, setUnSavedModal] = useState(false);
   const [taskWasFetched, setTaskWasFetched] = useState(false);
+  const islessthan900px = useMediaQuery("(max-width: 900px)");
   const DatePickerButton = forwardRef(({ value, onClick }, ref) => (
     <div className="w-full">
       <button
@@ -419,9 +421,9 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                           ))}
                         </select>
                       </div>
-                      <div className="bg-gray-100 basis-1/2 rounded-lg flex flex-col content-center border-gray-300 border-2">
+                      <div className="bg-gray-100 basis-1/2 rounded-lg flex flex-col content-center border-gray-300 border-2 justify-evenly">
                         <p className="font-bold text-gray-400 pl-2">Shape</p>
-                        <div className="flex gap-2 justify-center">
+                        <div className="flex gap-1 sm:gap-2 justify-center">
                           <button
                             type="button"
                             onClick={() =>
@@ -429,6 +431,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                             }
                           >
                             <CustomSVG
+                              size={islessthan900px ? 36 : undefined}
                               isStrokeOn={nodeShape === "circle"}
                               className={`${nodeColor.twfill}`}
                             />
@@ -441,6 +444,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                             }
                           >
                             <CustomSVG
+                              size={islessthan900px ? 36 : undefined}
                               type="square"
                               isStrokeOn={nodeShape === "square"}
                               className={`${nodeColor.twfill}`}
@@ -455,12 +459,15 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                             value="triangle"
                           >
                             <CustomSVG
+                              size={islessthan900px ? 36 : undefined}
                               type="triangle"
                               isStrokeOn={nodeShape === "triangle"}
                               className={`${nodeColor.twfill}`}
                             />
                           </button>
+                          
                         </div>
+                        <p className="opacity-0">Shape</p>
                       </div>
                     </div>
                   </div>

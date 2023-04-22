@@ -55,6 +55,7 @@ import Step5_md from "../assets/helpCreateRoadmap_assets/step_5_md.jpg";
 import Step5_xs from "../assets/helpCreateRoadmap_assets/step_5_xs.jpg";
 import SpinnerNeo from "../components/SpinnerNeo";
 import LockUnlockButton from "../components/LockUnlockButton";
+import CECLogo from "../components/CECLogo";
 
 const MAX_TASKS_NONPREMIUM = 16;
 const MAX_RMNAME_LENGTH = 30;
@@ -90,48 +91,48 @@ const TaskItem = ({
   // Task node Component
   return (
     <div className="flex">
-    <div className={`relative h-full break-words w-28 z-10`}>
-      <div
-        className={`h-full after:h-1 after:w-full after:top-[30px] after:absolute after:translate-x-12 ${
-          isLastitem
-            ? "after:border-t-4 after:border-dashed after:border-black after:bg-transparent "
-            : "after:bg-black after:z-10 "
-        }`}
-      >
-        <div className="flex h-full">
-          <div className="flex flex-col gap-2 items-center h-full justify-center">
-            <button
-              type="button"
-              disabled={disabled}
-              onClick={() => {
-                setEditTaskID(task.id);
-                setModalState(true);
-              }}
-              className="z-20 relative focus:outline-none"
-            >
-              <TaskLock
-                hidden={!disabled}
-                className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 h-8 w-8"
-              />
-              <CustomSVG
-                type={task.nodeShape}
-                className={`${
-                  disabled ? "fill-gray-400" : getTWFill(task.nodeColor)
-                }`}
-                size={60}
-                isStrokeOn={true}
-                noScaleOnHover={disabled}
-              />
-            </button>
-            <div className="flex w-28 grow">
-              <span className="block font-bold w-full text-center leading-5 font-nunito-sans my-auto">
-                {task.name === "" ? "Milestone" : task.name}
-              </span>
+      <div className={`relative h-full break-words w-28 z-10`}>
+        <div
+          className={`h-full after:h-1 after:w-full after:top-[30px] after:absolute after:translate-x-12 ${
+            isLastitem
+              ? "after:border-t-4 after:border-dashed after:border-black after:bg-transparent "
+              : "after:bg-black after:z-10 "
+          }`}
+        >
+          <div className="flex h-full">
+            <div className="flex flex-col gap-2 items-center h-full justify-center">
+              <button
+                type="button"
+                disabled={disabled}
+                onClick={() => {
+                  setEditTaskID(task.id);
+                  setModalState(true);
+                }}
+                className="z-20 relative focus:outline-none"
+              >
+                <TaskLock
+                  hidden={!disabled}
+                  className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 h-8 w-8"
+                />
+                <CustomSVG
+                  type={task.nodeShape}
+                  className={`${
+                    disabled ? "fill-gray-400" : getTWFill(task.nodeColor)
+                  }`}
+                  size={60}
+                  isStrokeOn={true}
+                  noScaleOnHover={disabled}
+                />
+              </button>
+              <div className="flex w-28 grow">
+                <span className="block font-bold w-full text-center leading-5 font-nunito-sans my-auto">
+                  {task.name === "" ? "Milestone" : task.name}
+                </span>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
     </div>
   );
 };
@@ -143,8 +144,8 @@ const DropDownMenu = ({
   setOption,
   optionComparer,
   Icon,
-  className="",
-  taskModalState
+  className = "",
+  taskModalState,
 }) => {
   const [isMenuShowing, setIsMenuShowing] = useState(false);
   const prevState = useRef(false);
@@ -160,7 +161,7 @@ const DropDownMenu = ({
     } else {
       setIsMenuShowing(prevState.current);
     }
-  }, [taskModalState])
+  }, [taskModalState]);
 
   const handleMenuShowUnshow = (event) => {
     event.preventDefault();
@@ -860,16 +861,20 @@ const RoadmapCreatePage = (props) => {
     <>
       <div className="flex justify-center items-center flex-col m-auto max-w-5xl w-[90%]">
         {/* <div className="text-4xl font-bold flex items-start"> */}
-        <div className="flex w-full justify-between mt-10">
-          <span className="text-4xl text-nav-blue font-extrabold">
-            {mode === "create"
-              ? "Create"
-              : mode === "edit"
-              ? "Edit"
-              : mode === "clone"
-              ? "Clone"
-              : null}{" "}
-          </span>
+        <div className="flex w-full justify-between items-center my-8">
+          <div className="flex gap-3">
+            <CECLogo mode={mode} fillColor={"#00286E"} className="w-12 h-12 xs:w-10 xs:h-10" />
+            <span className="text-4xl text-nav-blue font-extrabold hidden xs:block text-center">
+              {mode === "create"
+                ? "Create"
+                : mode === "edit"
+                ? "Edit"
+                : mode === "clone"
+                ? "Clone"
+                : null}{" "}
+            </span>
+          </div>
+
           <button
             onClick={helpClick}
             className="rounded-full w-32 inline xs:w-32 h-10 bg-nav-blue font-bold text-white"
@@ -944,20 +949,22 @@ const RoadmapCreatePage = (props) => {
           ) : null}
 
           <div className="">
-            <label className="text-md font-bold text-nav-blue">Roadmap Description </label>
+            <label className="text-md font-bold text-nav-blue">
+              Roadmap Description{" "}
+            </label>
             <textarea
               className="rounded-lg border-gray-400 text-gray-400 block text-md p-1 w-full focus:outline-none shadow-lg shadow-gray-300 placeholder:text-italic"
               rows="3"
               cols="60"
               value={RMDesc}
               onChange={handleDescriptionChange}
-              placeholder="Enter roadmap description..."
+              placeholder="Enter roadmap description"
             ></textarea>
           </div>
 
-          <div className="grow max-h-[60%] min-h-[200px]">
+          <div className="flex flex-col grow max-h-[60%] min-h-[200px]">
             {/* Giant task box */}
-            <div className="flex overflow-x-auto relative flex-col justify-center bg-blue-100 shadow-xl h-full border-gray-300 rounded-3xl items-start p-10 pl-8 pr-16 z-0">
+            <div className="flex grow overflow-x-auto relative flex-col justify-center bg-blue-100 shadow-xl h-full border-gray-300 rounded-3xl items-start p-10 pl-8 pr-16 z-0">
               <DragDropContext onDragEnd={handleOrderSwitch}>
                 <StrictModeDroppable droppableId="tasks" direction="horizontal">
                   {(provided) => (
