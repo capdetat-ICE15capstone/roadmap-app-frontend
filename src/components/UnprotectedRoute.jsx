@@ -3,7 +3,7 @@ import { axiosInstance } from "../functions/axiosInstance";
 import { Navigate } from "react-router-dom";
 import Spinner from './Spinner';
 
-function ProtectedRoute({ children }) {
+function UnprotectedRoute({ children }) {
   const route = '/user/'
   const [authStatus, setAuthStatus] = useState(null);
 
@@ -29,10 +29,10 @@ function ProtectedRoute({ children }) {
   if (authStatus == null) {
     return <Spinner />;
   } else if (authStatus === true) {
-    return children;
+    return <Navigate replace to="/" />;
   } else {
-    return <Navigate replace to="/intro" />;
+    return children;
   }
 }
 
-export default ProtectedRoute
+export default UnprotectedRoute

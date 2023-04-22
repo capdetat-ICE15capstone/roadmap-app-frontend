@@ -26,7 +26,7 @@ import { ReactComponent as NotiOff } from "../assets/notification/notiOff.svg";
 import { ReactComponent as NotiOn } from "../assets/notification/notiOn.svg";
 import NotiButton from "../components/NotiButton";
 import { roundTimeToNearest30 } from "../functions/formatFunction";
-import { ReactComponent as QuestionMark } from "../assets/taskmodal/QuestionMark.svg";
+import { ReactComponent as QuestionMark } from "../assets/taskmodal/questionMark.svg";
 import { ReactComponent as Close } from "../assets/close.svg";
 import { useIsSM } from "../hooks/useMediaQuery";
 import Step1 from "../assets/helpCreateRoadmap_assets/step_1.jpg";
@@ -55,6 +55,7 @@ import Step5_md from "../assets/helpCreateRoadmap_assets/step_5_md.jpg";
 import Step5_xs from "../assets/helpCreateRoadmap_assets/step_5_xs.jpg";
 import SpinnerNeo from "../components/SpinnerNeo";
 import LockUnlockButton from "../components/LockUnlockButton";
+import CECLogo from "../components/CECLogo";
 
 const MAX_TASKS_NONPREMIUM = 16;
 const MAX_RMNAME_LENGTH = 30;
@@ -63,11 +64,6 @@ const notificationDayOption = [1, 3, 5, 7, 14];
 const notificationOption = {
   options: ["No notification"],
   optionValues: [{ on: false, detail: { day: 0, beforeDueDate: false } }],
-};
-const modalAnimationVariants = {
-  initial: { opacity: 0 },
-  animate: { opacity: 1 },
-  exit: { opacity: 0 },
 };
 
 notificationDayOption.forEach((day) => {
@@ -91,46 +87,49 @@ const TaskItem = ({
   setModalState,
   disabled,
   isLastitem,
+  index
 }) => {
   // Task node Component
   return (
-    <div className={`relative h-full break-words w-28 z-10`}>
-      <div
-        className={`h-full after:h-1 after:w-full after:top-[30px] after:absolute after:translate-x-12 ${
-          isLastitem
-            ? "after:border-t-4 after:border-dashed after:border-black after:bg-transparent "
-            : "after:bg-black after:z-10 "
-        }`}
-      >
-        <div className="flex h-full">
-          <div className="flex flex-col gap-2 items-center h-full justify-center">
-            <button
-              type="button"
-              disabled={disabled}
-              onClick={() => {
-                setEditTaskID(task.id);
-                setModalState(true);
-              }}
-              className="z-20 relative focus:outline-none"
-            >
-              <TaskLock
-                hidden={!disabled}
-                className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 h-8 w-8"
-              />
-              <CustomSVG
-                type={task.nodeShape}
-                className={`${
-                  disabled ? "fill-gray-400" : getTWFill(task.nodeColor)
-                }`}
-                size={60}
-                isStrokeOn={true}
-                noScaleOnHover={disabled}
-              />
-            </button>
-            <div className="flex w-28 grow">
-              <span className="block font-bold w-full text-center leading-5 font-nunito-sans my-auto">
-                {task.name === "" ? "Milestone" : task.name}
-              </span>
+    <div className="flex">
+      <div className={`relative h-full break-words w-28 z-10`}>
+        <div
+          className={`h-full after:h-1 after:w-full after:top-[30px] after:absolute after:translate-x-12 ${
+            isLastitem
+              ? "after:border-t-4 after:border-dashed after:border-black after:bg-transparent "
+              : "after:bg-black after:z-10 "
+          }`}
+        >
+          <div className="flex h-full">
+            <div className="flex flex-col gap-2 items-center h-full justify-center">
+              <button
+                type="button"
+                disabled={disabled}
+                onClick={() => {
+                  setEditTaskID(task.id);
+                  setModalState(true);
+                }}
+                className="z-20 relative focus:outline-none"
+              >
+                <TaskLock
+                  hidden={!disabled}
+                  className="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 h-8 w-8"
+                />
+                <CustomSVG
+                  type={task.nodeShape}
+                  className={`${
+                    disabled ? "fill-gray-400" : getTWFill(task.nodeColor)
+                  }`}
+                  size={60}
+                  isStrokeOn={true}
+                  noScaleOnHover={disabled}
+                />
+              </button>
+              <div className="flex w-28 grow">
+                <span className="block font-bold w-full text-center leading-5 font-nunito-sans my-auto">
+                  {task.name === "" ? `Task #${index+1}` : task.name}
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -146,13 +145,24 @@ const DropDownMenu = ({
   setOption,
   optionComparer,
   Icon,
-  className,
+  className = "",
+  taskModalState,
 }) => {
   const [isMenuShowing, setIsMenuShowing] = useState(false);
+  const prevState = useRef(false);
 
   useEffect(() => {
     optionValues = optionValues ?? options;
   }, []);
+
+  useEffect(() => {
+    if (taskModalState === true) {
+      prevState.current = isMenuShowing;
+      setIsMenuShowing(false);
+    } else {
+      setIsMenuShowing(prevState.current);
+    }
+  }, [taskModalState]);
 
   const handleMenuShowUnshow = (event) => {
     event.preventDefault();
@@ -166,7 +176,7 @@ const DropDownMenu = ({
   };
 
   return (
-    <div className={`${className} z-40`}>
+    <div className={`${className}`}>
       <button
         onClick={handleMenuShowUnshow}
         type="button"
@@ -191,7 +201,7 @@ const DropDownMenu = ({
         {isMenuShowing ? (
           <motion.div
             key={"notification_menu"}
-            className="absolute bg-white border rounded-md flex flex-col left-0 xs:left-auto xs:right-0 [@media(max-width:360px)]:-left-full"
+            className="absolute bg-white border rounded-md flex flex-col left-0 xs:left-auto xs:right-0 [@media(max-width:360px)]:-left-full z-10"
             initial={{ y: "-50%", opacity: 0, scale: 0 }}
             animate={{ y: "0%", opacity: 1, scale: 1 }}
             exit={{ opacity: 0, y: "10%" }}
@@ -850,6 +860,211 @@ const RoadmapCreatePage = (props) => {
 
   return (
     <>
+      <div className="flex justify-center items-center flex-col m-auto max-w-5xl w-[90%]">
+        {/* <div className="text-4xl font-bold flex items-start"> */}
+        <div className="flex w-full justify-between items-center my-8">
+          <div className="flex gap-3">
+            <CECLogo mode={mode} fillColor={"#00286E"} className="w-12 h-12 xs:w-10 xs:h-10" />
+            <span className="text-4xl text-nav-blue font-extrabold hidden xs:block text-center">
+              {mode === "create"
+                ? "Create"
+                : mode === "edit"
+                ? "Edit"
+                : mode === "clone"
+                ? "Clone"
+                : null}{" "}
+            </span>
+          </div>
+
+          <button
+            onClick={helpClick}
+            className="rounded-full w-32 inline xs:w-32 h-10 bg-nav-blue font-bold text-white"
+          >
+            Help
+          </button>
+        </div>
+        {/* </div> */}
+        <form
+          onSubmit={handleSubmit}
+          className={`rounded-3xl w-full gap-3 flex flex-col bg-white p-10 min-h-[80%] xs:min-h-[60%] m-3 shadow-lg shadow-gray-400 border-gray-400`}
+        >
+          <div className="flex flex-col md:flex-row justify-between items-center gap-2">
+            <label className="hidden md:visible text-3xl font-bold md:block leading-none text-nav-blue">
+              Name
+            </label>
+            <label className="visible text-md md:hidden font-bold block leading-none text-nav-blue">
+              Roadmap name
+            </label>
+            <input
+              className="text-3xl focus:outline-none text-ellipsis font-bold w-full leading-none placeholder:font-extrabold text-center md:text-left rounded-lg text-gray-400"
+              value={RMName}
+              onChange={handleNameChange}
+              placeholder="UNTITLED"
+            />
+            <div className="flex gap-2 justify-evenly">
+              {/* Notification Setting */}
+              <div className="relative flex justify-center items-center">
+                <DropDownMenu
+                  optionValues={notificationOption.optionValues}
+                  options={notificationOption.options}
+                  currentOption={notiStatus}
+                  setOption={setNotiStatus}
+                  optionComparer={compareNotificationChange}
+                  Icon={
+                    <NotiButton
+                      notiStatus={notiStatus}
+                      className="w-6 h-6"
+                      fillColor={notiStatus.on ? "#00286E" : "white"}
+                    />
+                  }
+                  taskModalState={modalState}
+                />
+              </div>
+              {/* End of Notification Setting */}
+              <div className="flex justify-center items-center">
+                <button
+                  type="button"
+                  onClick={() => setPublicModal(true)}
+                  className={`hover:scale-110 flex gap-1 transition duration-150 items-center border-nav-blue rounded-full border-2 p-2 ${
+                    publicModal === true ? "animate-bounce" : ""
+                  } ${!isPublic ? "bg-white" : "bg-nav-blue"}`}
+                >
+                  <LockUnlockButton
+                    isLock={isPublic}
+                    className="w-6 h-6"
+                    fillColor={!isPublic ? "#00286E" : "white"}
+                  />
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {tags.length > 0 && tags.length <= 3 ? (
+            <motion.div className="text-gray-400">
+              Tags: {tags.join(", ")}
+            </motion.div>
+          ) : tags.length > 3 ? (
+            <motion.div className="text-gray-400">
+              Tags: {`${tags.slice(0, 3).join(", ")}, +${tags.length - 3}`}
+            </motion.div>
+          ) : null}
+
+          <div className="">
+            <label className="text-md font-bold text-nav-blue">
+              Roadmap Description{" "}
+            </label>
+            <textarea
+              className="rounded-lg border-gray-400 text-gray-400 block text-md p-1 w-full focus:outline-none shadow-lg shadow-gray-300 placeholder:text-italic"
+              rows="3"
+              cols="60"
+              value={RMDesc}
+              onChange={handleDescriptionChange}
+              placeholder="Enter roadmap description"
+            ></textarea>
+          </div>
+
+          <div className="flex flex-col grow max-h-[60%] min-h-[200px]">
+            {/* Giant task box */}
+            <div className="flex grow overflow-x-auto relative flex-col justify-center bg-blue-100 shadow-xl h-full border-gray-300 rounded-3xl items-start p-10 pl-8 pr-16 z-0">
+              <DragDropContext onDragEnd={handleOrderSwitch}>
+                <StrictModeDroppable droppableId="tasks" direction="horizontal">
+                  {(provided) => (
+                    <div
+                      className="flex"
+                      {...provided.droppableProps}
+                      ref={provided.innerRef}
+                    >
+                      {/* Task list */}
+                      {tasks.map((task, index) => {
+                        {
+                          return mode === "edit" &&
+                            (index < 1 || tasks[index - 1].isDone) ? (
+                            <TaskItem
+                              task={task}
+                              key={task.id}
+                              setEditTaskID={setEditTaskID}
+                              setModalState={setModalState}
+                              disabled={
+                                index < 1 ||
+                                (tasks[index - 1].isDone && !tasks.isTempId)
+                              }
+                              isLastitem={index === tasks.length - 1}
+                              index={index}
+                            />
+                          ) : (
+                            <Draggable
+                              key={task.id}
+                              draggableId={task.id.toString()}
+                              index={index}
+                            >
+                              {(provided) => (
+                                <div
+                                  className="flex"
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                  ref={provided.innerRef}
+                                >
+                                  <TaskItem
+                                    task={task}
+                                    setEditTaskID={setEditTaskID}
+                                    setModalState={setModalState}
+                                    isLastitem={index === tasks.length - 1}
+                                    disabled={
+                                      mode === "edit" &&
+                                      (index < 1 ||
+                                        (tasks[index - 1].isDone && !tasks.id))
+                                    }
+                                    index={index}
+                                  />
+                                </div>
+                              )}
+                            </Draggable>
+                          );
+                        }
+                      })}
+                      {provided.placeholder}
+                      {/* End of task list */}
+                      {/* Add button */}
+                      <div
+                        className={`flex self-start ${
+                          tasks.length > 0 ? "w-28" : ""
+                        } justify-center`}
+                      >
+                        <button
+                          type="button"
+                          disabled={isAddButtonDisabled()}
+                          onClick={initializeTaskCreator}
+                          className="translate-y-[12px] translate-x-3"
+                        >
+                          <AddButton className="h-10 w-10" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </StrictModeDroppable>
+              </DragDropContext>
+            </div>
+            {/* End of Task box */}
+          </div>
+          <div className="justify-end flex">
+            <div className="right-0 w-full xs:w-auto flex gap-2">
+              <button
+                className="bg-transparent inline border-nav-blue text-nav-blue w-full font-bold xs:w-32 h-10 rounded-full border-2  m-0"
+                type="button"
+                onClick={() => setDiscardModal(true)}
+              >
+                Discard
+              </button>
+              <button
+                className="rounded-full w-full inline xs:w-32 h-10 bg-nav-blue font-bold text-white"
+                type="submit"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
       <TwoButtonModal
         isOpen={publicModal}
         onLightPress={() => setPublicModal(false)}
@@ -906,203 +1121,6 @@ const RoadmapCreatePage = (props) => {
       </AnimatePresence>
 
       <SpinnerNeo visible={loading} />
-      <div className="flex justify-center items-center flex-col m-auto max-w-5xl w-[90%]">
-        {/* <div className="text-4xl font-bold flex items-start"> */}
-        <div className="flex w-full justify-between mt-10">
-          <span className="text-4xl text-nav-blue font-extrabold">
-            {mode === "create"
-              ? "Create"
-              : mode === "edit"
-              ? "Edit"
-              : mode === "clone"
-              ? "Clone"
-              : null}{" "}
-          </span>
-          <button
-            onClick={helpClick}
-            className="rounded-full w-32 inline xs:w-32 h-10 bg-nav-blue font-bold text-white"
-          >
-            Help
-          </button>
-        </div>
-        {/* </div> */}
-        <form
-          onSubmit={handleSubmit}
-          className={`rounded-3xl w-full gap-3 flex flex-col bg-white p-10 min-h-[80%] xs:min-h-[60%] m-3 shadow-lg shadow-gray-400 border-gray-400`}
-        >
-          <div className="flex flex-col md:flex-row justify-between items-center gap-2">
-            <label className="hidden md:visible text-3xl font-bold md:block leading-none text-nav-blue">
-              Name
-            </label>
-            <label className="visible text-md md:hidden font-bold block leading-none text-nav-blue">
-              Roadmap name
-            </label>
-            <input
-              className="text-3xl focus:outline-none text-ellipsis font-bold w-full leading-none placeholder:font-extrabold text-center md:text-left rounded-lg text-gray-400"
-              value={RMName}
-              onChange={handleNameChange}
-              placeholder="UNTITLED"
-            />
-            <div className="flex gap-2 justify-evenly">
-              {/* Notification Setting */}
-              <div className="relative flex justify-center items-center">
-                <DropDownMenu
-                  optionValues={notificationOption.optionValues}
-                  options={notificationOption.options}
-                  currentOption={notiStatus}
-                  setOption={setNotiStatus}
-                  optionComparer={compareNotificationChange}
-                  Icon={
-                    <NotiButton
-                      notiStatus={notiStatus}
-                      className="w-6 h-6"
-                      fillColor={notiStatus.on ? "#00286E" : "white"}
-                    />
-                  }
-                  className="z-10"
-                />
-              </div>
-              {/* End of Notification Setting */}
-              <div className="flex justify-center items-center">
-                <button
-                  type="button"
-                  onClick={() => setPublicModal(true)}
-                  className={`hover:scale-110 flex gap-1 transition duration-150 items-center border-nav-blue rounded-full border-2 p-2 ${
-                    publicModal === true ? "animate-bounce" : ""
-                  } ${!isPublic ? "bg-white" : "bg-nav-blue"}`}
-                >
-                  <LockUnlockButton
-                    isLock={isPublic}
-                    className="w-6 h-6"
-                    fillColor={!isPublic ? "#00286E" : "white"}
-                  />
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {tags.length > 0 && tags.length <= 3 ? (
-            <motion.div className="text-gray-400">
-              Tags: {tags.join(", ")}
-            </motion.div>
-          ) : tags.length > 3 ? (
-            <motion.div className="text-gray-400">
-              Tags: {`${tags.slice(0, 3).join(", ")}, +${tags.length - 3}`}
-            </motion.div>
-          ) : null}
-
-          <div className="">
-            <label className="text-md font-bold text-nav-blue">Roadmap Description </label>
-            <textarea
-              className="rounded-lg border-gray-400 text-gray-400 block text-md p-1 w-full focus:outline-none shadow-lg shadow-gray-300 placeholder:text-italic"
-              rows="3"
-              cols="60"
-              value={RMDesc}
-              onChange={handleDescriptionChange}
-              placeholder="Enter roadmap description..."
-            ></textarea>
-          </div>
-
-          <div className="grow max-h-[60%] min-h-[200px]">
-            {/* Giant task box */}
-            <div className="flex overflow-x-auto relative flex-col justify-center bg-blue-100 shadow-xl h-full border-gray-300 rounded-3xl items-start p-10 pl-8 pr-16 z-0">
-              <DragDropContext onDragEnd={handleOrderSwitch}>
-                <StrictModeDroppable droppableId="tasks" direction="horizontal">
-                  {(provided) => (
-                    <div
-                      className="flex items-center"
-                      {...provided.droppableProps}
-                      ref={provided.innerRef}
-                    >
-                      {/* Task list */}
-                      {tasks.map((task, index) => {
-                        {
-                          return mode === "edit" &&
-                            (index < 1 || tasks[index - 1].isDone) ? (
-                            <TaskItem
-                              task={task}
-                              key={task.id}
-                              setEditTaskID={setEditTaskID}
-                              setModalState={setModalState}
-                              disabled={
-                                index < 1 ||
-                                (tasks[index - 1].isDone && !tasks.isTempId)
-                              }
-                              isLastitem={index === tasks.length - 1}
-                            />
-                          ) : (
-                            <Draggable
-                              key={task.id}
-                              draggableId={task.id.toString()}
-                              index={index}
-                            >
-                              {(provided) => (
-                                <div
-                                  className="flex items-center h-full"
-                                  {...provided.draggableProps}
-                                  {...provided.dragHandleProps}
-                                  ref={provided.innerRef}
-                                >
-                                  <TaskItem
-                                    task={task}
-                                    setEditTaskID={setEditTaskID}
-                                    setModalState={setModalState}
-                                    isLastitem={index === tasks.length - 1}
-                                    disabled={
-                                      mode === "edit" &&
-                                      (index < 1 ||
-                                        (tasks[index - 1].isDone && !tasks.id))
-                                    }
-                                  />
-                                </div>
-                              )}
-                            </Draggable>
-                          );
-                        }
-                      })}
-                      {provided.placeholder}
-                      {/* End of task list */}
-                      {/* Add button */}
-                      <div
-                        className={`flex self-start ${
-                          tasks.length > 0 ? "w-28" : ""
-                        } justify-center`}
-                      >
-                        <button
-                          type="button"
-                          disabled={isAddButtonDisabled()}
-                          onClick={initializeTaskCreator}
-                          className="translate-y-[12px] translate-x-3"
-                        >
-                          <AddButton className="h-10 w-10" />
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </StrictModeDroppable>
-              </DragDropContext>
-            </div>
-            {/* End of Task box */}
-          </div>
-          <div className="justify-end flex">
-            <div className="right-0 w-full xs:w-auto flex gap-2">
-              <button
-                className="bg-transparent inline border-nav-blue text-nav-blue w-full font-bold xs:w-32 h-10 rounded-full border-2  m-0"
-                type="button"
-                onClick={() => setDiscardModal(true)}
-              >
-                Discard
-              </button>
-              <button
-                className="rounded-full w-full inline xs:w-32 h-10 bg-nav-blue font-bold text-white"
-                type="submit"
-              >
-                Save
-              </button>
-            </div>
-          </div>
-        </form>
-      </div>
       {showHelp && (
         <div className="absolute flex flex-col left-0 justify-center items-center w-full h-full max-xs:max-h-full bg-gray-300 bg-opacity-[0.58] z-[100]">
           <div className="flex justify-start items-center px-[23px] w-1/2 min-w-[292px] max-w-[790px] h-fit bg-[#00286E] rounded-t-[20px]">

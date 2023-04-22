@@ -7,6 +7,7 @@ import UserBanner from '../components/UserBanner';
 import Prompt from '../components/Prompt';
 import { motion } from 'framer-motion';
 import DropdownMenuItem from '../components/DropdownMenuItem';
+import { completeQuestCheckFeed } from './Activity';
 
 import { getRoadmap, getRid, getTagRid, getUid, getUser, classifyInput } from '../functions/feedFunction';
 import SpinnerNeo from '../components/SpinnerNeo';
@@ -138,6 +139,8 @@ const Feed = () => {
       return;
     }
     getRecommendRoadmap();
+
+    completeQuestCheckFeed();
   }, []);
 
   const DateAscending = (array) => {
@@ -213,7 +216,7 @@ const Feed = () => {
             {/*Search Result*/}
             {displayType === "roadmap" && (
               <div className='flex flex-col h-full w-full items-center overflow-y-auto'>
-                <div className='flex flex-col justify-center items-center w-[90%] py-6 space-y-8'>
+                <div className='flex flex-col justify-center items-center w-[90%] py-4 space-y-8'>
                   <div className='grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8'>
                     {currentRoadmapList.map((roadmap, index) => {
                       return (
@@ -227,7 +230,7 @@ const Feed = () => {
                         </div>
                       )
                     })}
-                    <div className="pb-4"></div>
+                    <div className="pb-4" />
                   </div>
                 </div>
               </div>
@@ -235,7 +238,7 @@ const Feed = () => {
             {displayType === "user" && (
               <>
                 <div className='flex flex-col h-full w-full items-center bg-white overflow-y-auto'>
-                  <div className='flex flex-col justify-center items-center w-[90%] py-6 space-y-8'>
+                  <div className='flex flex-col justify-center items-center w-[90%] py-4 space-y-8'>
                     {currentUserList.map((user, index) => (
                       <UserBanner
                         key={index}
@@ -252,7 +255,7 @@ const Feed = () => {
             {displayType === "empty" && (
               <>
                 <div className='flex flex-col h-full w-full items-center overflow-y-auto'>
-                  <div className='flex flex-col justify-center items-center w-[90%] py-6 space-y-8'>
+                  <div className='flex flex-col justify-center items-center w-[90%] py-4 space-y-8'>
                   </div>
                 </div>
                 <Prompt visible={true} title={"Error"} message={searchTypeName + ' Not Found'} positiveText="Return" positiveFunction={() => getRecommendRoadmap()} />

@@ -6,6 +6,8 @@ import ShopItemDetail from '../components/ShopItemDetail';
 
 import { motion } from 'framer-motion';
 
+import { completeQuestCheckShop } from './Activity';
+
 function Shop() {
 
   const [isViewingItem, setIsViewingItem] = useState(false);
@@ -143,6 +145,8 @@ function Shop() {
 
   useEffect(() => {
     setCurrentItemList([...itemList]);
+
+    completeQuestCheckShop();
   }, []);
 
   return (

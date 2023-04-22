@@ -5,6 +5,7 @@ import NoPage from "./pages/NoPage";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import ProtectedRoute from "./components/ProtectedRoute";
+import UnprotectedRoute from "./components/UnProtectedRoute";
 import Shop from "./pages/Shop";
 
 const Login = lazy(() => import("./pages/Login"));
@@ -28,17 +29,21 @@ function App() {
             <Route
               path="/signup"
               element={
-                <Suspense fallback={<Spinner />}>
-                  <Signup />
-                </Suspense>
+                <UnprotectedRoute>
+                  <Suspense fallback={<Spinner />}>
+                    <Signup />
+                  </Suspense>
+                </UnprotectedRoute>
               }
             ></Route>
             <Route
               path="/login"
               element={
-                <Suspense fallback={<Spinner />}>
-                  <Login />
-                </Suspense>
+                <UnprotectedRoute>
+                  <Suspense fallback={<Spinner />}>
+                    <Login />
+                  </Suspense>
+                </UnprotectedRoute>
               }
             ></Route>
             <Route

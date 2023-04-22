@@ -120,7 +120,6 @@ const Home = () => {
       const response = await axiosInstance.get('/user/');
       return response.data.uid;
     } catch (error) {
-      console.error(error);
       console.error(error.message);
       setErrorMessage(error.message);
       setIsWarning(true);
@@ -148,7 +147,7 @@ const Home = () => {
       {hasFetchedRef.current &&
         <>
           <motion.div
-            className='flex flex-col items-center w-full h-full space-y-8 overflow-y-auto'
+            className='flex flex-col items-center w-full h-full'
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             transition={{
@@ -156,7 +155,7 @@ const Home = () => {
               duration: "0.3"
             }}
           >
-            <div className='flex w-4/5 h-10 mt-10 mx-8 space-x-4'>
+            <div className='flex justify-between items-center w-4/5 h-10 mt-10 mx-8 mb-8 space-x-4'>
               <div className='flex items-center shrink-0 h-full text-4xl font-extrabold text-nav-blue space-x-2'>
                 <DarkHomeIcon className='h-10 w-10' />
                 <div>
@@ -164,7 +163,7 @@ const Home = () => {
                 </div>
               </div>
             </div>
-            <div className='flex flex-col h-full w-full items-center space-y-8'>
+            <div className='flex flex-col h-full w-full items-center py-4 space-y-8 overflow-y-auto'>
               <div className={`flex flex-col items-center w-4/5 bg-[#FFFFFF] border border-[#D9D9D9] shadow-md rounded-3xl`}>
                 <div className="flex flex-col-reverse sm:flex-row items-center justify-between">
                   <div className="flex flex-col space-y-2 p-4">
@@ -285,7 +284,7 @@ const Home = () => {
         </>
       }
       <Prompt visible={isWarning} title="Error" message={errorMessage} positiveText="return" positiveFunction={() => { setIsWarning(false); navigate(-1); }} />
-      <SpinnerNeo visible={!hasFetchedRef.current} />
+      <SpinnerNeo visible={!hasFetchedRef.current}/>
     </>
   );
 };

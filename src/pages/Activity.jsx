@@ -165,6 +165,7 @@ export const getQuest = async (timeout = 0) => {
 
     try {
         let response = await axiosInstance.get(route, { timeout: timeout });
+        console.log("get quest");
         console.log(response.data);
         return response;
     } catch (error) {
@@ -173,29 +174,32 @@ export const getQuest = async (timeout = 0) => {
 }
 
 export const insertDailyQuests = async (timeout = 0) => {
-    const route = '/quest/insert_daily_quest/';
     const now = currentDateTime();
     const body1 = {qid: 0, date: now, is_done: false};
     const body2 = {qid: 1, date: now, is_done: false};
     const body3 = {qid: 2, date: now, is_done: false};
+    const body4 = {qid: 3, date: now, is_done: false};
+    const body5 = {qid: 4, date: now, is_done: false};
 
     insertDailyQuest(body1);
-    insertDailyQuest(body2);
+    //insertDailyQuest(body2);
     insertDailyQuest(body3);
+    insertDailyQuest(body4);
+    insertDailyQuest(body5);
 }
 
 const insertDailyQuest = async (body, timeout = 0) => {
-    const route = '/quest/insert_daily_quest/';
+    const route = '/quest/insert_daily_quest';
 
     try {
         console.log("---attempt insert daily quest: " + body.qid + "---");
         console.log(body);
         let response = await axiosInstance.post(route, body, { timeout: timeout });
         console.log(response.data);
-        console.log("---success---");
+        console.log("---success--- + " + body.qid);
         return response;
     } catch (error) {
-        console.log("---fail---");
+        console.log("---fail--- + " + body.qid);
     }
 }
 
@@ -254,23 +258,37 @@ const formatQuestData = ({data}) => {
     data = data.data;
     const comparedData = [
         {
-            name: "Daily login",
+            name: "Daily Login",
             point: 25,
             qid: 0,
             des: "/",
             isDone: false
         },
         {
-            name: "Public a roadmap",
+            name: "Public a Roadmap",
             point: 25,
             qid: 1,
             des: "/",
             isDone: false
         },
         {
-            name: "Rate a roadmap",
+            name: "Rate a Roadmap",
             point: 25,
             qid: 2,
+            des: "/",
+            isDone: false
+        },
+        {
+            name: "Visit Shop",
+            point: 25,
+            qid: 3,
+            des: "/",
+            isDone: false
+        },
+        {
+            name: "Visit Feed",
+            point: 25,
+            qid: 4,
             des: "/",
             isDone: false
         }
@@ -292,7 +310,7 @@ const formatQuestData = ({data}) => {
 }
 
 const generalCompleteQuest = async (qid, point, timeout = 0) => {
-    const route = '/quest/complete_daily_quest/';
+    const route = '/quest/complete_daily_quest';
     const body = { qid, point };
     console.log(body);
 
@@ -300,7 +318,6 @@ const generalCompleteQuest = async (qid, point, timeout = 0) => {
         let response = await axiosInstance.post(route, body, { timeout: timeout });
         console.log(response);
     } catch (error) {
-        console.error(error);
     }
 }
 
@@ -314,6 +331,14 @@ export const completeQuestPublicRoadmap = () => {
 
 export const completeQuestRateRoadmap = () => {
     generalCompleteQuest(2, 25);
+}
+
+export const completeQuestCheckShop = () => {
+    generalCompleteQuest(3, 25);
+}
+
+export const completeQuestCheckFeed = () => {
+    generalCompleteQuest(4, 25);
 }
 
 export default Activity;

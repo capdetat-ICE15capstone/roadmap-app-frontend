@@ -1,10 +1,13 @@
 import { axiosInstance } from "./axiosInstance";
+import { completeQuestRateRoadmap } from "../pages/Activity";
 
 export async function likeRoadmap(roadmap_id) {
   const route = `/roadmap/like/?rid=${roadmap_id}`;
   axiosInstance.put(route)
     .then((response) => {
       console.log(response.data);
+
+      completeQuestRateRoadmap();
     })
     .catch((error) => {
       console.error(error);
