@@ -3,29 +3,36 @@ import { Link, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import Roadmap from "../components/Roadmap";
 import { useIsMD } from "../hooks/useMediaQuery";
-import { ReactComponent as DollarSign } from "../assets/intro/dollarSign.svg"
-import Img0 from "../assets/intro/0.svg"
-import Img1 from "../assets/intro/1.svg"
-import Img2 from "../assets/intro/2.svg"
-import Img3 from "../assets/intro/3.svg"
-import Img4 from "../assets/intro/4.svg"
-import Img5 from "../assets/intro/5.svg"
-import Img6 from "../assets/intro/6.svg"
-import Img7 from "../assets/intro/7.svg"
-import Img8 from "../assets/intro/8.svg"
-import Img9 from "../assets/intro/9.svg"
-import Img10 from "../assets/intro/10.svg"
-import Logo from "../assets/intro/logo.svg"
-import MileMap from "../assets/intro/MileMap.svg"
+import { ReactComponent as DollarSign } from "../assets/intro/dollarSign.svg";
+import Img0 from "../assets/intro/0.svg";
+import Img1 from "../assets/intro/1.svg";
+import Img2 from "../assets/intro/2.svg";
+import Img3 from "../assets/intro/3.svg";
+import Img4 from "../assets/intro/4.svg";
+import Img5 from "../assets/intro/5.svg";
+import Img6 from "../assets/intro/6.svg";
+import Img7 from "../assets/intro/7.svg";
+import Img8 from "../assets/intro/8.svg";
+import Img9 from "../assets/intro/9.svg";
+import Img10 from "../assets/intro/10.svg";
+import Logo from "../assets/intro/logo.svg";
+import MileMap from "../assets/intro/MileMap.svg";
+import { ReactComponent as RecRoadmap1 } from "../assets/intro/recRoadmap1.svg";
+import { ReactComponent as RecRoadmap2 } from "../assets/intro/recRoadmap2.svg";
+import { ReactComponent as RecRoadmap3 } from "../assets/intro/recRoadmap3.svg";
+import { ReactComponent as RecRoadmap4 } from "../assets/intro/recRoadmap4.svg";
+import { ReactComponent as RecRoadmap5 } from "../assets/intro/recRoadmap5.svg";
 
 const itemVariant = {
   initial: { y: 100, opacity: 0 },
   whileInView: { y: 0, opacity: 1 },
+  whileHover: { scale: 1.1 },
   exit: { y: 100, opacity: 0 },
   transition: {
     type: "spring",
     stiffness: 260,
     damping: 20,
+    duration: 100
   },
 };
 
@@ -86,87 +93,44 @@ const secondRowData = [
   },
 ];
 
+const FakeRoadmap = ({ SvgPanel }) => {
+  return (
+    <motion.div
+      variants={itemVariant}
+      initial="initial"
+      whileInView="whileInView"
+      exit="exit"
+      transition="transition"
+      whileHover="whileHover"
+    >
+      <Link to="/login">
+        <SvgPanel />
+      </Link>
+    </motion.div>
+  );
+};
+
 const RecommendedRoadmap = React.forwardRef((props, ref) => {
   // component for displaying 4 roadmap at the footer
 
   // get 4 roadmap data
   // fake data
-  const RMdata = [
-    {
-      owner_id: 1,
-      creator_id: 2,
-      owner_name: "Taiwan",
-      creator_name: "China",
-      rid: 4,
-      views_count: 200,
-      stars_count: 600,
-      forks_count: 400,
-      created_at: "ssssssssss",
-      edited_at: "SSSSSSSSS",
-      title: "How to not suck",
-    },
-    {
-      owner_id: 1,
-      creator_id: 2,
-      owner_name: "Taiwan",
-      creator_name: "China",
-      rid: 5,
-      views_count: 200,
-      stars_count: 600,
-      forks_count: 400,
-      created_at: "ssssssssss",
-      edited_at: "SSSSSSSSS",
-      title: "How to not suck",
-    },
-    {
-      owner_id: 1,
-      creator_id: 2,
-      owner_name: "Taiwan",
-      creator_name: "China",
-      rid: 6,
-      views_count: 200,
-      stars_count: 600,
-      forks_count: 400,
-      created_at: "ssssssssss",
-      edited_at: "SSSSSSSSS",
-      title: "How to not suck",
-    },
-    {
-      owner_id: 1,
-      creator_id: 2,
-      owner_name: "Taiwan",
-      creator_name: "China",
-      rid: 7,
-      views_count: 200,
-      stars_count: 600,
-      forks_count: 400,
-      created_at: "ssssssssss",
-      edited_at: "SSSSSSSSS",
-      title: "How to not suck",
-    },
-  ];
 
   return (
-    <div className="flex flex-col justify-center bg-nav-blue px-10 pb-10" ref={ref}>
+    <div
+      className="flex flex-col justify-center bg-nav-blue px-10 pb-10"
+      ref={ref}
+    >
       <div className="text-white font-bold flex text-2xl justify-center my-10">
         Recommended Roadmap
       </div>
       <div>
-        <div className="flex gap-4 justify-evenly flex-wrap">
-          {RMdata.map((roadmap, index) => {
-            return (
-              <motion.div
-                key={roadmap.rid}
-                variants={itemVariant}
-                initial="initial"
-                whileInView="whileInView"
-                exit="exit"
-                transition="transition"
-              >
-                <Roadmap {...roadmap} />
-              </motion.div>
-            );
-          })}
+        <div className="flex justify-evenly flex-wrap">
+          <FakeRoadmap SvgPanel={RecRoadmap1} />
+          <FakeRoadmap SvgPanel={RecRoadmap2} />
+          <FakeRoadmap SvgPanel={RecRoadmap3} />
+          <FakeRoadmap SvgPanel={RecRoadmap4} />
+          <FakeRoadmap SvgPanel={RecRoadmap5} />
         </div>
       </div>
     </div>
@@ -189,17 +153,21 @@ const FeatureList = (props) => {
             initial={{ y: 100, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
             exit={{ y: 300, opacity: 0 }}
-            transition= {isMD ? {
-              type: "spring",
-              stiffness: 260,
-              damping: 20,
-              delay: index * 0.05
-            } : {
-              type: "spring",
-              stiffness: 260,
-              damping: 20,
-              delay: 0
-            }}
+            transition={
+              isMD
+                ? {
+                    type: "spring",
+                    stiffness: 260,
+                    damping: 20,
+                    delay: index * 0.05,
+                  }
+                : {
+                    type: "spring",
+                    stiffness: 260,
+                    damping: 20,
+                    delay: 0,
+                  }
+            }
           >
             <div className="flex justify-center">
               <img
@@ -221,9 +189,9 @@ const PremiumPage = React.forwardRef((props, ref) => {
   const navigate = useNavigate();
 
   const handleNavigateLogin = (premium) => {
-    navigate("/login", {state: {premium: premium}})
-  }
- 
+    navigate("/login", { state: { premium: premium } });
+  };
+
   const planDetail = [
     {
       borderClass: "border-gray-300",
@@ -239,7 +207,7 @@ const PremiumPage = React.forwardRef((props, ref) => {
       buttonText: "Choose Starter",
       buttonClassName:
         "border-2 border-nav-blue bg-transparent w-2/3 text-nav-blue font-bold rounded-md my-20",
-      premium: false
+      premium: false,
     },
     {
       borderClass: "border-nav-blue",
@@ -255,20 +223,22 @@ const PremiumPage = React.forwardRef((props, ref) => {
       buttonText: "Choose Professional",
       buttonClassName:
         "border bg-nav-blue w-2/3 text-white font-bold rounded-md my-20 min-w-min",
-      premium: true
+      premium: true,
     },
   ];
 
   return (
     <div className="flex w-full h-full flex-col items-center" ref={ref}>
       <div className="flex justify-center my-14 items-center gap-2">
-        <DollarSign/>
+        <DollarSign />
         <span className="text-nav-blue text-3xl font-bold">Pricing</span>
       </div>
       <div className="flex h-4/5 w-4/5 gap-4 lg:w-full justify-evenly flex-col lg:flex-row mb-4">
         {planDetail.map((plan) => {
           return (
-            <div className={`p-8 flex flex-col border-2 border-t-[16px] basis-1/3 mx-4 gap-4 items-center justify-between rounded-2xl ${plan.borderClass}`}>
+            <div
+              className={`p-8 flex flex-col border-2 border-t-[16px] basis-1/3 mx-4 gap-4 items-center justify-between rounded-2xl ${plan.borderClass}`}
+            >
               <div className="items-center flex flex-col gap-4">
                 <span>{plan.line1}</span>
                 <span className="text-4xl block text-center">{plan.line2}</span>
@@ -281,7 +251,10 @@ const PremiumPage = React.forwardRef((props, ref) => {
                   </ol>
                 </div>
               </div>
-              <button className={`${plan.buttonClassName} px-2 py-2`} onClick={() => handleNavigateLogin(plan.premium)}>
+              <button
+                className={`${plan.buttonClassName} px-2 py-2`}
+                onClick={() => handleNavigateLogin(plan.premium)}
+              >
                 {plan.buttonText}
               </button>
             </div>
@@ -295,38 +268,36 @@ const PremiumPage = React.forwardRef((props, ref) => {
 const MotionRecommendedRoadmap = motion(RecommendedRoadmap);
 const MotionPremiumPage = motion(PremiumPage);
 
-const Introduction = ({ wantPremium=false }) => {
+const Introduction = ({ wantPremium = false }) => {
   const [inPremium, setInPremium] = useState(false);
 
   useEffect(() => {
     setInPremium(wantPremium);
-  }, [])
+  }, []);
 
   return (
     <>
       <AnimatePresence>
         <div className="h-20 w-full sticky flex justify-between items-center shadow-xl">
           <div className="m-4">
-            <img
-              src={Logo}
-              className="inline-block mr-2"
-            ></img>
-            <img
-              src={MileMap}
-              className="hidden md:inline-block"
-            ></img>
+            <img src={Logo} className="inline-block mr-2"></img>
+            <img src={MileMap} className="hidden md:inline-block"></img>
           </div>
           <div className="flex items-center">
             {/* this path is only temporary */}
             <button
-              className={`m-4 font-bold hover:scale-125 duration:200 transition ease-in ${inPremium ? "underline underline-offset-4" : ""}`}
+              className={`m-4 font-bold hover:scale-125 duration:200 transition ease-in ${
+                inPremium ? "underline underline-offset-4" : ""
+              }`}
               type="button"
               onClick={() => setInPremium(true)}
             >
               Premium
             </button>
             <button
-              className={`m-4 font-bold hover:scale-125 transition duration:200 ease-in ${!inPremium ? "underline underline-offset-4" : ""}`}
+              className={`m-4 font-bold hover:scale-125 transition duration:200 ease-in ${
+                !inPremium ? "underline underline-offset-4" : ""
+              }`}
               type="button"
               onClick={() => setInPremium(false)}
             >
