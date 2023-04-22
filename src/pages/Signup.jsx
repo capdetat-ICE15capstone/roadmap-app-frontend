@@ -126,11 +126,11 @@ export default function Signup() {
 
   return (
     <>
-      <div className={`relative flex flex-row h-screen w-screen bg-gradient-to-b from-sub-blue to-main-blue overflow-y-auto py-8`}>
+      <div className={`relative flex flex-row h-screen w-screen bg-white overflow-y-auto py-8`}>
         <button type="button" onClick={() => navigate(-1)} className="absolute top-4 left-4 bg-nav-blue text-white shadow font-bold py-2 px-4 rounded-full transition ease-in-out hover:bg-mid-blue duration-300">
-          ˂ Back
+          Back
         </button>
-        <div className="flex items-center justify-center bg-white m-auto rounded-2xl shadow-2xl">
+        <div className="flex items-center justify-center bg-white m-auto rounded-2xl shadow-2xl border border-gray-300">
           <div className="flex flex-col justify-center m-8">
             <p className="text-center mb-4 text-3xl font-bold text-slate-600">
               Create Account
@@ -268,7 +268,7 @@ export default function Signup() {
             </form>
             <div className="flex justify-center mt-4">
               <button type="button" className="text-xs font-light text-gray-400" onClick={() => navigate("/login", { state: { firstLogin: true } })}>
-                Alrady have an account?
+                Already have an account?
               </button>
             </div>
           </div>

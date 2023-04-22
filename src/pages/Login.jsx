@@ -79,7 +79,7 @@ export default function Login() {
             <button type="button" onClick={() => navigate(-1)} className="absolute top-4 left-4 bg-black text-white shadow font-bold py-2 px-4 rounded-full transition ease-in-out hover:bg-mid-blue duration-300">
               Back
             </button>
-            <div className={`flex flex-row-reverse items-center justify-center h-1/2 w-4/5 max-w-lg rounded-2xl shadow-lg border border-gray-300`}>
+            <div className={`flex flex-row-reverse items-center justify-center h-4/5 max-h-80 w-4/5 max-w-lg rounded-2xl shadow-lg border border-gray-300`}>
               <div className="flex flex-col p-6 h-full w-1/2 max-xs:w-full rounded-r-2xl max-xs:rounded-2xl justify-center items-center bg-white">
                 <div className="flex text-2xl font-black text-slate-600 mb-4">
                   User Login
