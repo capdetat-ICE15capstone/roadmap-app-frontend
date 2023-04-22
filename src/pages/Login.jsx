@@ -124,7 +124,7 @@ export default function Login() {
                     <button type="submit" className="bg-sub-blue text-white shadow font-bold py-2 rounded-lg transition ease-in-out hover:bg-blue-900 duration-300">
                       Log In
                     </button>
-                    <button type="button" className="bg-transparent border border-sub-blue text-sub-blue shadow font-bold py-2 rounded-lg transition ease-in-out hover:bg-blue-900 hover:text-white duration-300" onClick={() => navigate("/signup")}>
+                    <button type="button" className="bg-transparent border border-sub-blue text-sub-blue shadow font-bold py-2 rounded-lg transition ease-in-out hover:bg-red-500 hover:border-transparent hover:text-white duration-300" onClick={() => navigate("/signup")}>
                       Sign Up
                     </button>
                   </div>
