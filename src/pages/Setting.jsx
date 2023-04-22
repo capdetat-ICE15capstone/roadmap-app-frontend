@@ -1,10 +1,12 @@
 import React, {useState} from 'react';
 import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { axiosInstance } from "../functions/axiosInstance";
 import SettingTab from '../components/SettingTab';
 import ToggleSwitch from '../components/ToggleSwitch';
 import SettingProfileImageSelector from '../components/SettingProfileImageSelector';
 import { getProfilePictureSrc } from '../components/SettingProfileImageSelector';
+import Prompt from "../components/Prompt";
 
 import Spinner from "../components/Spinner";
 
@@ -57,6 +59,10 @@ const Setting = () => {
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
     const [level, setLevel] = useState(0);
+
+    const [isDeactivating, setIsDeactivating] = useState(false);
+
+    const navigate = useNavigate();
 
     //-----PWA thingy----------------------------------------------------------------
 
@@ -162,6 +168,7 @@ const Setting = () => {
             setBio(response.data.bio);
             setAccountPublic(!response.data.is_private);
             setProfilePictureID(response.data.profile_picture_id);
+            setEmail(response.data.email);
             const response2 = await getHomeData();
             setLevel(Math.round(response2.data.profile.exp/100));
         }
@@ -245,6 +252,16 @@ const Setting = () => {
     const RenderAccount = () => {
         return (
             <div className='flex flex-col'>
+                {/* notification */}
+                <SettingTitle text="Notifications" Icon={NotificationIcon}/>
+                <div className='flex max-w-4xl pl-4 pb-8'>
+                    {notification ? 
+                        <ToggleSwitch name={"Allow Notifications"} isToggled={notification} callOnChanged={handleNotiUnsubscription}/>
+                    :
+                        <ToggleSwitch name={"Allow Notifications"} isToggled={notification} callOnChanged={handleNotiSubscription}/>
+                    }
+                </div>
+
                 <SettingTitle text='Account' Icon={AccountIcon}/>
                 {/* account privacy, email */}
                 <div className='flex-col max-w-4xl pl-4'>
@@ -267,21 +284,12 @@ const Setting = () => {
                     </p>
                     <button 
                         className="shadow appearance-none border rounded-lg py-2 px-6 text-sm text-red-500 bg-white leading-tight focus:outline-none focus:shadow-outline font-bold"
-                        onClick={() => deleteAccount()}
+                        onClick={() => setIsDeactivating(true)}
                     >
                         Delete your account
                     </button>
                 </div>
-    
-                {/* notification */}
-                <SettingTitle text="Notifications" Icon={NotificationIcon}/>
-                <div className='flex max-w-4xl pl-4'>
-                    {notification ? 
-                        <ToggleSwitch name={"Allow Notifications"} isToggled={notification} callOnChanged={handleNotiUnsubscription}/>
-                    :
-                        <ToggleSwitch name={"Allow Notifications"} isToggled={notification} callOnChanged={handleNotiSubscription}/>
-                    }
-                </div>
+
                 <div className='h-36'></div>
             </div>
         )
@@ -412,6 +420,17 @@ const Setting = () => {
                         id="newPassword"
                         ></textarea>
                     </div>
+                    <div className='flex-col max-lg:hidden'>
+                        <SettingText text="Confirm New Password"/>
+                        <textarea
+                        type="text"
+                        className="w-72 px-3 py-2 h-10 text-sm text-gray-700 border rounded-lg focus:outline-none resize-none focus:shadow-outline shadow bg-gray-100"
+                        placeholder={'********'}
+                        id="confirmNewPassword"
+                        ></textarea>
+                    </div>
+                </div>
+                <div className="lg:hidden max-lg:visible flex justify-between gap-20 pt-3">
                     <div className='flex-col'>
                         <SettingText text="Confirm New Password"/>
                         <textarea
@@ -502,9 +521,13 @@ const Setting = () => {
         updateSetting("/user/" + name + "/", { ...data, [name]: value});
     }
 
-    const deleteAccount = () => {
+    const deleteAccount = async () => {
         console.log("delete account");
-        updateSetting("/account/deactivate");
+        updateSetting("/account/deactivate")
+        .then(() => {
+            handleLogout();
+        })
+
     }
 
     const updatePrivacy = () => {
@@ -524,11 +547,22 @@ const Setting = () => {
 
     }
 
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        if (localStorage.getItem('saved_email') !== null && localStorage.getItem('saved_password') !== null) {
+          localStorage.removeItem('saved_email');
+          localStorage.removeItem('saved_password');
+        }
+        navigate('/login');
+    }
+
     if (!data) {
         return <Spinner/>;
     }
 
     return (
+        <>
+        {console.log(isDeactivating === true)}
         <div className='flex-col h-screen overflow-y-scroll'>
             <div className="relative flex top-[59px] left-[38px] w-fit h-fit mb-24">
                 <div className="mr-[13px]">
@@ -544,6 +578,18 @@ const Setting = () => {
             </div>
             <SettingProfileImageSelector isOpen={isProfileModalOpen} setIsOpen={setIsProfileModalOpen} selectedIndex={profilePictureID} setProfilePicture={updateProfilePicture} level={level}/>
         </div>
+        <div className="z-50">
+            <Prompt
+                visible={isDeactivating}
+                title="Deactivating Account"
+                message="Are you sure that you want to permanently deactivate your account?"
+                positiveText="Yes"
+                positiveFunction={() => deleteAccount()}
+                negativeText="No"
+                negativeFunction={() => setIsDeactivating(false)}
+            />
+        </div>
+        </>
     )
 }
 

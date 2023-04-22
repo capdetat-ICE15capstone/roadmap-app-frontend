@@ -7,6 +7,7 @@ import UserBanner from '../components/UserBanner';
 import Prompt from '../components/Prompt';
 import { motion } from 'framer-motion';
 import DropdownMenuItem from '../components/DropdownMenuItem';
+import { completeQuestCheckFeed } from './Activity';
 
 import { getRoadmap, getRid, getTagRid, getUid, getUser, classifyInput } from '../functions/feedFunction';
 import SpinnerNeo from '../components/SpinnerNeo';
@@ -138,6 +139,8 @@ const Feed = () => {
       return;
     }
     getRecommendRoadmap();
+
+    completeQuestCheckFeed();
   }, []);
 
   const DateAscending = (array) => {
