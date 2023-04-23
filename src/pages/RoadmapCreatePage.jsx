@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import TaskModal from "../components/TaskModal";
 import { useLocation, useNavigate, useParams } from "react-router";
 import {
@@ -240,6 +240,7 @@ const RoadmapCreatePage = (props) => {
     tasks: [],
     tags: [],
     notiStatus: { on: false },
+    roadmapDeadline: new Date()
   });
   const { mode } = props; // props from parent
   const { state } = useLocation(); // state from previous page, including fetched roadmap data
@@ -266,7 +267,7 @@ const RoadmapCreatePage = (props) => {
   });
   const [discardModal, setDiscardModal] = useState(false);
   const [premium, setPremium] = useState(false);
-  const isSM = useIsSM();
+  // const isSM = useIsSM();
   const [showHelp, setShowHelp] = useState(false);
   const [helpPage, setHelpPage] = useState(1);
 
@@ -368,6 +369,7 @@ const RoadmapCreatePage = (props) => {
             tasks: state.roadmap.tasks,
             tags: state.roadmap.tags,
             notiStatus: notificationObject,
+            roadmapDeadline: state.roadmap.roadmapDeadline
           };
         }
         let highestID = 0;
@@ -405,6 +407,7 @@ const RoadmapCreatePage = (props) => {
               tasks: tempRoadmap.tasks,
               tags: tempRoadmap.tags,
               notiStatus: notificationObject,
+              roadmapDeadline: tempRoadmap.roadmapDeadline
             };
           }
           let highestID = 0;
@@ -562,7 +565,7 @@ const RoadmapCreatePage = (props) => {
     setTasks(items);
   };
 
-  const compareRoadmapChange = () => {
+  const compareRoadmapChange = (roadmapDeadline) => {
     // compare name, desc, public, notisetting
     // If detect change, return full object
     // if no change, return null;
@@ -570,6 +573,7 @@ const RoadmapCreatePage = (props) => {
       RMName !== initialState.current.name ||
       RMDesc !== initialState.current.description ||
       isPublic !== initialState.current.isPublic ||
+      roadmapDeadline.getTime() !== initialState.current.roadmapDeadline.getTime() ||
       JSON.stringify(notiStatus) !==
         JSON.stringify(initialState.current.notiStatus) ||
       mode === "create" ||
@@ -581,6 +585,7 @@ const RoadmapCreatePage = (props) => {
         description: RMDesc,
         isPublic: isPublic,
         notiStatus: notiStatus,
+        roadmapDeadline: roadmapDeadline
       };
     return null;
   };
@@ -611,8 +616,7 @@ const RoadmapCreatePage = (props) => {
       const taskIntersection = initState.find(
         (inittask) => task.id === inittask.id
       );
-      console.log(task.nodeShape);
-      console.log(taskIntersection.nodeShape);
+
       if (
         taskIntersection.hasFetched === true &&
         (task.name !== taskIntersection.name ||
@@ -623,7 +627,6 @@ const RoadmapCreatePage = (props) => {
           task.dueDate.getTime() !== taskIntersection.dueDate.getTime())
       ) {
         // edited task
-        console.log(`added task ${task.id} to edit list`);
         taskChange.edit.push(task);
         return;
       }
@@ -670,7 +673,7 @@ const RoadmapCreatePage = (props) => {
   };
 
   const compareTagChange = () => {
-    console.log(searchTags());
+    // console.log(searchTags());
     let tagChanges = { add: [], delete: [] };
     initialState.current.tags.forEach((inittag) => {
       if (tags.find((tag) => inittag === tag) === undefined)
@@ -698,6 +701,7 @@ const RoadmapCreatePage = (props) => {
       return false;
     return true;
   };
+
 
   const handleSendingApi = async (
     roadmapObject,
@@ -734,15 +738,21 @@ const RoadmapCreatePage = (props) => {
     let subTaskChange = { add: [], edit: [], delete: [] };
     let taskRelationChange = null;
 
-    // check for rm name, description, publicity change
-    let roadmapChange = compareRoadmapChange();
-
     // check for task change
     let taskChange = compareTaskChange(initialState.current.tasks, tasks);
 
+    // variable for max roadmap deadline
+    let roadmapDeadline = new Date(0);
+
     // check for subtask change
     tasks.forEach((task) => {
-      console.log(initialState.current);
+      // console.log(initialState.current);
+      if (task.startDate.getTime() > roadmapDeadline.getTime()) {
+        roadmapDeadline = task.startDate;
+      }
+      if (task.dueDate.getTime() > roadmapDeadline.getTime()) {
+        roadmapDeadline = task.dueDate;
+      }
       const initTask = initialState.current.tasks.find(
         (t) => t.id === task.id
       ) ?? { subtasks: [] };
@@ -761,6 +771,9 @@ const RoadmapCreatePage = (props) => {
       );
       subTaskChange.delete.push(...comparison.delete);
     });
+
+    // check for rm name, description, publicity change
+    let roadmapChange = compareRoadmapChange(roadmapDeadline);
 
     // check for task relation change
     const newTaskRelation = tasks.map((task) => task.id);
