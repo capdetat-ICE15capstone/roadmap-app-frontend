@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Outlet, NavLink, Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
-import { AnimatePresence ,motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 // Image/Logo SVG
 import { ReactComponent as Logo } from "../assets/logo.svg"
