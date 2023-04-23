@@ -24,6 +24,7 @@ const inboundSubtaskName = [
 const inboundRoadmapName = [
   { from: "title", to: "name" },
   { from: "is_private", to: "isPublic" },
+  { from: "roadmap_deadline", to: "roadmapDeadline"}
 ];
 
 const objRename = (obj = null, renameToObj = null) => {
@@ -346,7 +347,7 @@ const PRIVATE_createRoadmap = async (roadmap, timeout = DEFAULT_TIMEOUT) => {
   const reqBody = {
     title: roadmap.name,
     description: roadmap.description,
-    roadmap_deadline: "2023-04-06T04:57:41.691",
+    roadmap_deadline: roadmap.roadmapDeadline.toISOString().slice(0, -5),
     is_before_start_time: !roadmap.notiStatus.detail.beforeDueDate,
     reminder_time: roadmap.notiStatus.detail.day,
     is_private: !roadmap.isPublic,
@@ -377,7 +378,7 @@ const PRIVATE_updateRoadmap = async (roadmap, timeout = DEFAULT_TIMEOUT) => {
     rid: roadmap.id,
     title: roadmap.name,
     description: roadmap.description,
-    roadmap_deadline: "2023-04-06T04:57:41.691",
+    roadmap_deadline: roadmap.roadmapDeadline.toISOString().slice(0, -5),
     is_before_start_time: !roadmap.notiStatus.detail.beforeDueDate,
     reminder_time: roadmap.notiStatus.detail.day,
     is_private: !roadmap.isPublic,
@@ -632,8 +633,8 @@ const reformTask = (taskObj) => {
     return objRename(subtask, inboundSubtaskName);
   });
 
-  newTaskObj.start_time = new Date(taskObj.start_time);
-  newTaskObj.deadline = new Date(taskObj.deadline);
+  newTaskObj.start_time = new Date(`${taskObj.start_time}z`);
+  newTaskObj.deadline = new Date(`${taskObj.deadline}z`);
   newTaskObj.isTempId = false;
   newTaskObj.hasFetched = true;
 
@@ -646,6 +647,7 @@ const reformRoadmap = (roadmapObject) => {
 
   // front and back use different name
   newRoadmapObj.is_private = !newRoadmapObj.is_private;
+  newRoadmapObj.roadmap_deadline = new Date(`${roadmapObject.roadmap_deadline}z`)
 
   return objRename(newRoadmapObj, inboundRoadmapName);
 };
