@@ -561,17 +561,18 @@ const Setting = () => {
     }
 
     return (
-        <>
+        <div className=''>
         {console.log(isDeactivating === true)}
-        <div className='flex-col h-screen overflow-y-scroll'>
-            <div className="relative flex top-[59px] left-[38px] w-fit h-fit mb-24">
-                <div className="mr-[13px]">
-                <GearIcon/>
-                </div>          
-                <div className="font-inter font-extrabold text-[40px] text-[#09275B] leading-[48px]">
-                Setting
+        <div className='flex flex-col items-center w-full h-full'>
+            <div className='flex justify-between items-center w-4/5 h-10 mt-10 mx-8 mb-8 space-x-4'>
+              <div className='flex items-center shrink-0 h-full text-4xl font-extrabold text-nav-blue space-x-2'>
+                <GearIcon className='h-10 w-10' />
+                <div>
+                  Setting
                 </div>
+              </div>
             </div>
+          
             <div className='w-3/4 max-w-4xl mx-auto'>
                 <RenderProfile/>
                 <RenderAccount/>
@@ -589,7 +590,7 @@ const Setting = () => {
                 negativeFunction={() => setIsDeactivating(false)}
             />
         </div>
-        </>
+        </div>
     )
 }
 
