@@ -22,6 +22,7 @@ import { ReactComponent as RecRoadmap2 } from "../assets/intro/recRoadmap2.svg";
 import { ReactComponent as RecRoadmap3 } from "../assets/intro/recRoadmap3.svg";
 import { ReactComponent as RecRoadmap4 } from "../assets/intro/recRoadmap4.svg";
 import { ReactComponent as RecRoadmap5 } from "../assets/intro/recRoadmap5.svg";
+import { isUserLoggedIn } from "../functions/userFunction";
 
 const itemVariant = {
   initial: { y: 100, opacity: 0 },
@@ -32,7 +33,7 @@ const itemVariant = {
     type: "spring",
     stiffness: 260,
     damping: 20,
-    duration: 100
+    duration: 150,
   },
 };
 
@@ -152,7 +153,7 @@ const FeatureList = (props) => {
             className="flex flex-col basis-1/2 gap-2"
             initial={{ y: 100, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
-            exit={{ y: 300, opacity: 0 }}
+            // exit={{ y: 300, opacity: 0 }}
             transition={
               isMD
                 ? {
@@ -228,7 +229,7 @@ const PremiumPage = React.forwardRef((props, ref) => {
   ];
 
   return (
-    <div className="flex w-full h-full flex-col items-center" ref={ref}>
+    <div className="flex w-full h-full flex-col items-center mt-20" ref={ref}>
       <div className="flex justify-center my-14 items-center gap-2">
         <DollarSign />
         <span className="text-nav-blue text-3xl font-bold">Pricing</span>
@@ -270,49 +271,70 @@ const MotionPremiumPage = motion(PremiumPage);
 
 const Introduction = ({ wantPremium = false }) => {
   const [inPremium, setInPremium] = useState(false);
+  const [logInStatus, setLoginStatus] = useState(null);
 
   useEffect(() => {
     setInPremium(wantPremium);
+    const checkLogin = async () => {
+      const response = await isUserLoggedIn();
+      setLoginStatus(response);
+    }
+
+    checkLogin();
   }, []);
 
   return (
     <>
-      <AnimatePresence>
-        <div className="h-20 w-full sticky flex justify-between items-center shadow-xl">
-          <div className="m-4">
-            <img src={Logo} className="inline-block mr-2"></img>
-            <img src={MileMap} className="hidden md:inline-block"></img>
-          </div>
-          <div className="flex items-center">
-            {/* this path is only temporary */}
-            <button
-              className={`m-4 font-bold hover:scale-125 duration:200 transition ease-in ${
-                inPremium ? "underline underline-offset-4" : ""
-              }`}
-              type="button"
-              onClick={() => setInPremium(true)}
-            >
-              Premium
-            </button>
-            <button
-              className={`m-4 font-bold hover:scale-125 transition duration:200 ease-in ${
-                !inPremium ? "underline underline-offset-4" : ""
-              }`}
-              type="button"
-              onClick={() => setInPremium(false)}
-            >
-              Explore
-            </button>
-            <Link
-              to="/login"
-              className="bg-dark-blue text-white font-bold rounded-md h-10 w-20 flex justify-center items-center m-4"
-            >
-              Login
-            </Link>
-          </div>
+      <div className="h-20 top-0 w-full fixed flex justify-between items-center shadow-xl bg-white z-20">
+        <div className="m-4">
+          <img src={Logo} className="inline-block mr-2"></img>
+          <img src={MileMap} className="hidden md:inline-block"></img>
         </div>
+        <div className="flex items-center">
+          {/* this path is only temporary */}
+          <button
+            className={`m-4 font-bold hover:scale-125 duration:200 transition focus:outline-none ease-in ${
+              inPremium ? "underline underline-offset-4" : ""
+            }`}
+            type="button"
+            onClick={() => setInPremium(true)}
+          >
+            Premium
+          </button>
+          <button
+            className={`m-4 font-bold hover:scale-125 transition duration:200 focus:outline-none ease-in ${
+              !inPremium ? "underline underline-offset-4" : ""
+            }`}
+            type="button"
+            onClick={() => setInPremium(false)}
+          >
+            Explore
+          </button>
+          <Link
+            to="/login"
+            className="bg-dark-blue text-white font-bold rounded-md h-10 w-20 flex justify-center items-center m-4"
+          >
+            {logInStatus === true ? "Home" : logInStatus === false ? "Login" : "Loading"}
+          </Link>
+        </div>
+      </div>
+      <AnimatePresence mode="wait">
         {inPremium ? (
           <MotionPremiumPage
+            key="premiumPage"
+            initial={{ x: -300, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: -300, opacity: 0 }}
+            transition={{
+              type: "spring",
+              stiffness: 260,
+              damping: 20,
+              delay: 0,
+            }}
+          />
+        ) : (
+          <motion.div
+            key="introPage"
             initial={{ x: 300, opacity: 0 }}
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: 300, opacity: 0 }}
@@ -320,10 +342,10 @@ const Introduction = ({ wantPremium = false }) => {
               type: "spring",
               stiffness: 260,
               damping: 20,
+              delay: 0,
             }}
-          />
-        ) : (
-          <>
+            className="mt-20"
+          >
             <div className="w-full flex flex-col md:flex-row bg-gray-background justify-between">
               <div className="flex flex-col items-start justify-center p-10 gap-4">
                 <h1 className="text-dark-blue text-5xl font-bold">
@@ -366,7 +388,7 @@ const Introduction = ({ wantPremium = false }) => {
                 whileInView={{ opacity: 1 }}
               />
             </a>
-          </>
+          </motion.div>
         )}
       </AnimatePresence>
     </>

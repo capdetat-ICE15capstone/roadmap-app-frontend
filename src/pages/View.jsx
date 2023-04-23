@@ -92,12 +92,17 @@ export default function View() {
       const userResponse = await axiosInstance.get(`/user/`);
       if (userResponse.data.uid === fetchedRoadmap.owner_id) {
         setIsOwner(true);
+        const userProfileResponse = await axiosInstance.get(`/feed/user?uids=${fetchedRoadmap.owner_id}`);
+        setOwnerProfile(userProfileResponse.data[0]);
+        setExp(calculateGuagePercentage(userProfileResponse.data[0].exp));
       } else {
         setIsOwner(false);
+        setOwnerProfile({
+          'profile_picture_id': fetchedRoadmap.owner_profile_picture_id,
+          'name': fetchedRoadmap.owner_name,
+        })
       }
-      const userProfileResponse = await axiosInstance.get(`/feed/user?uids=${fetchedRoadmap.owner_id}`);
-      setOwnerProfile(userProfileResponse.data[0]);
-      setExp(calculateGuagePercentage(userProfileResponse.data[0].exp));
+
 
       const userLikeResponse = await axiosInstance.get(`/roadmap/like/?rid=${roadmap_id}`);
       setIsLiked(Boolean(userLikeResponse.data.liked.toLowerCase() === 'true'));
@@ -187,27 +192,47 @@ export default function View() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className='flex flex-col h-full w-full items-center' 
+            className='flex flex-col h-full w-full items-center'
           >
             <div className='flex justify-between items-center w-4/5 h-10 mt-10 mx-8 mb-8 space-x-4'>
-              <div className='max-md:hidden flex j items-center shrink-0 h-full text-4xl font-extrabold text-nav-blue space-x-2'>
-                <RoadmapIcon className="flex h-8 w-8 fill-[#09275B]" />
-                <div className=''>
-                  View
-                </div>
-              </div>
-              <div className='flex w-full items-center bg-base-blue drop-shadow-[0_2px_5px_rgba(0,0,0,0.25)] rounded-3xl p-2 space-x-2  max-w-sm'>
-                <img className='w-8 h-8 rounded-full' src={getProfilePictureSrc(ownerProfile.profile_picture_id)} />
-                <div className='flex flex-col'>
-                  <span className='text-xs font-bold text-white'>{ownerProfile.username}</span>
-                  <span className='text-xs font-bold text-white'>LVL. {Math.floor(0.01 * ownerProfile.exp)}</span>
-                </div>
-                <div className={`flex flex-auto relative bg-gray-500 rounded-2xl h-8`}>
-                  <div className={`${isOwner ? 'bg-[#F43054]' : 'bg-gray-700'} h-full rounded-2xl transition-all duration-500 ease-in-out`} style={{ width: `${exp}%` }}>
-                    <span className="text-white w-full text-lg font-bold text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">{exp} / 100</span>
+              {isOwner &&
+                <>
+                  <div className='flex items-center shrink-0 h-full text-4xl font-extrabold text-nav-blue space-x-2'>
+                    <RoadmapIcon className="flex h-8 w-8 fill-[#09275B]" />
+                    <div className='max-md:hidden'>
+                      View
+                    </div>
                   </div>
-                </div>
-              </div>
+                  <div className='flex w-full items-center bg-base-blue drop-shadow-[0_2px_5px_rgba(0,0,0,0.25)] rounded-3xl p-2 space-x-2  max-w-sm'>
+                    <img className='w-8 h-8 rounded-full' src={getProfilePictureSrc(ownerProfile.profile_picture_id)} />
+                    <div className='flex flex-col'>
+                      <span className='text-xs font-bold text-white'>{ownerProfile.username}</span>
+                      <span className='text-xs font-bold text-white'>LVL. {Math.floor(0.01 * ownerProfile.exp)}</span>
+                    </div>
+                    <div className={`flex flex-auto relative bg-gray-500 rounded-2xl h-8`}>
+                      <div className={`bg-[#F43054] h-full rounded-2xl transition-all duration-500 ease-in-out`} style={{ width: `${exp}%` }}>
+                        <span className="text-white w-full text-lg font-bold text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">{exp} / 100</span>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              }
+              {!isOwner &&
+                <>
+                  <div className='flex items-center shrink-0 h-full text-4xl font-extrabold text-nav-blue space-x-2'>
+                    <RoadmapIcon className="flex h-8 w-8 fill-[#09275B]" />
+                    <div className='max-md:hidden'>
+                      View
+                    </div>
+                  </div>
+                  <div className='flex items-center bg-base-blue drop-shadow-[0_2px_5px_rgba(0,0,0,0.25)] rounded-3xl p-2 space-x-2  max-w-sm'>
+                    <img className='w-8 h-8 rounded-full' src={getProfilePictureSrc(ownerProfile.profile_picture_id)} />
+                    <div className='flex flex-col'>
+                      <span className='text-xs font-bold text-white pr-2'>{ownerProfile.name}</span>
+                    </div>
+                  </div>
+                </>
+              }
             </div>
             <div className='flex flex-col h-full w-full items-center py-4 overflow-y-auto'>
               <div className="w-4/5 flex-col justify-center space-y-6">

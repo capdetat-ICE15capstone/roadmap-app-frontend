@@ -42,9 +42,9 @@ const CECLogo = ({ mode, className, fillColor = "#00286E" }) => {
                   //   fill={fillColor}
                   fill="none"
                   stroke={fillColor}
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
                 />
 
                 <polygon
@@ -52,9 +52,9 @@ const CECLogo = ({ mode, className, fillColor = "#00286E" }) => {
                   fill="none"
                   points="12.5 15.8 22 6.2 17.8 2 8.3 11.5 8 16 12.5 15.8"
                   stroke={fillColor}
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
                 />
               </g>
             </g>
@@ -70,20 +70,20 @@ const CECLogo = ({ mode, className, fillColor = "#00286E" }) => {
           className={className}
         >
           <path
-            fill-rule="evenodd"
-            clip-rule="evenodd"
+            fillRule="evenodd"
+            clipRule="evenodd"
             d="M2.5 5C3.88071 5 5 3.88071 5 2.5C5 1.11929 3.88071 0 2.5 0C1.11929 0 0 1.11929 0 2.5C0 3.88071 1.11929 5 2.5 5ZM2.5 3.5C3.05228 3.5 3.5 3.05228 3.5 2.5C3.5 1.94772 3.05228 1.5 2.5 1.5C1.94772 1.5 1.5 1.94772 1.5 2.5C1.5 3.05228 1.94772 3.5 2.5 3.5Z"
             fill={fillColor}
           />
           <path
-            fill-rule="evenodd"
-            clip-rule="evenodd"
+            fillRule="evenodd"
+            clipRule="evenodd"
             d="M10.5 8C11.8807 8 13 6.88071 13 5.5C13 4.11929 11.8807 3 10.5 3C9.11929 3 8 4.11929 8 5.5C8 6.88071 9.11929 8 10.5 8ZM10.5 6.5C11.0523 6.5 11.5 6.05228 11.5 5.5C11.5 4.94772 11.0523 4.5 10.5 4.5C9.94772 4.5 9.5 4.94772 9.5 5.5C9.5 6.05228 9.94772 6.5 10.5 6.5Z"
             fill={fillColor}
           />
           <path
-            fill-rule="evenodd"
-            clip-rule="evenodd"
+            fillRule="evenodd"
+            clipRule="evenodd"
             d="M2.5 15C3.88071 15 5 13.8807 5 12.5C5 11.1193 3.88071 10 2.5 10C1.11929 10 0 11.1193 0 12.5C0 13.8807 1.11929 15 2.5 15ZM2.5 13.5C3.05228 13.5 3.5 13.0523 3.5 12.5C3.5 11.9477 3.05228 11.5 2.5 11.5C1.94772 11.5 1.5 11.9477 1.5 12.5C1.5 13.0523 1.94772 13.5 2.5 13.5Z"
             fill={fillColor}
           />
@@ -91,11 +91,11 @@ const CECLogo = ({ mode, className, fillColor = "#00286E" }) => {
             d="M2 5.3V4H3.5V5.3V5.95V7.9V10.5H3H2V9.85V9.2V7.9V6.6V5.3Z"
             fill={fillColor}
             stroke="#2431A1"
-            stroke-width="0.1"
+            strokeWidth="0.1"
           />
           <path
-            fill-rule="evenodd"
-            clip-rule="evenodd"
+            fillRule="evenodd"
+            clipRule="evenodd"
             d="M8.99232 7H10.9898C10.9911 7.15565 10.9931 7.29789 10.9949 7.43135C11.0004 7.82447 11.0047 8.14136 10.9898 8.5L10.3239 9.5L9.65813 10L8.32651 10.5L6.32907 11H4.99744H3V9.25781H5.0358C5.73155 9.23563 6.27137 9.19588 6.6327 9.16928C6.82257 9.1553 6.96316 9.14495 7.05118 9.14268C7.23967 9.11212 7.36451 9.06125 7.45321 9.00093C8.17318 8.99656 8.77198 8.65404 8.90954 8.20006C8.94922 8.15265 8.97825 8.08809 8.99232 8C9.05118 7.63159 9.03112 7.47074 9.01128 7.31165C8.99988 7.22021 8.98855 7.12935 8.99232 7Z"
             fill={fillColor}
           />
