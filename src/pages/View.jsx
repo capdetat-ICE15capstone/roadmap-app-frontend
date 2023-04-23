@@ -114,8 +114,8 @@ export default function View() {
       setRoadmap(temp);
 
     } catch (error) {
-      console.error(error.message);
-      setErrorMessage(error.message);
+      console.error(error.response.data.detail);
+      setErrorMessage(error.response.data.detail);
       setIsWarning(true);
       setIsLoading(false);
     }
@@ -154,35 +154,35 @@ export default function View() {
       console.log(response);
       fetchRoadmap(roadmap_id);
     } catch (error) {
-      console.error(error.message);
-      setErrorMessage(error.message);
+      console.error(error.response.data.detail);
+      setErrorMessage(error.response.data.detail);
       setIsWarning(true);
       setIsLoading(false);
     }
   }
 
-  function updateSubtasks() {
+  async function updateSubtasks() {
     setIsSaving(false);
     setIsLoading(true);
-    currentTask.subtasks.forEach((subtask) => {
-      updateEachSubtask(subtask);
-    });
-    fetchRoadmap(roadmap_id);
-    setIsLoading(false);
-  }
-
-  async function updateEachSubtask(subtask) {
     try {
-      const response = await axiosInstance.put(`/subtask/`, {
-        "title": subtask.detail,
-        "stid": subtask.id,
-        "is_done": subtask.status
+      let res = [];
+      currentTask.subtasks.forEach((subtask) => {
+        res.push(
+          {
+            "title": subtask.detail,
+            "stid": subtask.id,
+            "is_done": subtask.status
+          }
+        )
       });
+      const response = await axiosInstance.put(`/subtask/subtasks`, res);
       console.log(response.data);
+      setIsLoading(false);
     } catch (error) {
       console.error(error.message);
       setErrorMessage(error.message);
       setIsWarning(true);
+      setIsLoading(false);
     }
   }
 
