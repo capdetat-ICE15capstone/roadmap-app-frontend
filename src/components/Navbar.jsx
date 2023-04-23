@@ -91,30 +91,64 @@ const Navbar = () => {
           >
             {!isPremium && 
             <AnimatePresence>
-              <Link to={`/premium`} className="relative flex flex-col w-2/3 h-[100px] px-6 mx-auto bg-base-blue">
-                <motion.div className="flex w-full h-full justify-start items-center font-inter font-semibold text-5xl text-[#FFFFFF]"
+              <Link to={`/premium`} className="relative flex flex-col items-center w-2/3 h-[100px] mx-auto bg-base-blue">
+                <motion.div className="absolute flex w-full h-full justify-center items-center font-inter font-semibold text-5xl text-[#FFFFFF]"
                   animate={{ opacity: [0, 1, 1, 0] }}
                   transition={{
                     repeat: "infinity",
                     repeatType: "reverse",
-                    repeatDelay: "7",
+                    repeatDelay: "20",
                     delay: "2",
                     duration: "1",
-                    times: [0, 1, 5, 6]
+                    times: [0, 0.5, 3.5, 4]
+                  }}>
+                  Hate our ad?
+                </motion.div>
+                <motion.div className="absolute flex flex-col w-full h-full justify-center items-start font-inter font-semibold text-2xl text-[#FFFFFF]"
+                  animate={{ opacity: [0, 1, 1, 0] }}
+                  transition={{
+                    repeat: "infinity",
+                    repeatType: "reverse",
+                    repeatDelay: "20",
+                    delay: "2",
+                    duration: "1",
+                    times: [4, 4.5, 9.5, 10]
+                  }}>
+                  <div className="mb-2 w-fit">
+                    Premium account is the answer
+                  </div>
+                  <div className="flex justify-center bg-[#FFFFFF] text-[#000000] text-base min-w-fit w-1/4 h-fit rounded-full">
+                    Click Here
+                  </div>        
+                </motion.div>
+                <motion.div className="absolute flex w-full h-full justify-center items-center font-inter font-semibold text-5xl text-[#FFFFFF]"
+                  animate={{ opacity: [0, 1, 1, 0] }}
+                  transition={{
+                    repeat: "infinity",
+                    repeatType: "reverse",
+                    repeatDelay: "20",
+                    delay: "2",
+                    duration: "1",
+                    times: [10, 10.5, 13.5, 14]
                   }}>
                   Bored of ad display?
                 </motion.div>
-                <motion.div className="flex w-full h-full justify-end items-center font-inter font-semibold text-2xl text-[#FFFFFF]"
+                <motion.div className="absolute flex flex-col w-full h-full justify-center items-start font-inter font-semibold text-2xl text-[#FFFFFF]"
                   animate={{ opacity: [0, 1, 1, 0] }}
                   transition={{
                     repeat: "infinity",
                     repeatType: "reverse",
-                    repeatDelay: "7",
+                    repeatDelay: "20",
                     delay: "2",
                     duration: "1",
-                    times: [1, 2, 6, 7]
+                    times: [14, 14.5, 19.5, 20]
                   }}>
-                  What are you waiting for, buy premium
+                  <div className="mb-2">
+                    What are you waiting for, buy premium
+                  </div>
+                  <div className="flex justify-center bg-[#FFFFFF] text-[#000000] text-base min-w-fit w-1/4 h-fit rounded-full">
+                    Click Here
+                  </div>                    
                 </motion.div>
               </Link>
             </AnimatePresence>
