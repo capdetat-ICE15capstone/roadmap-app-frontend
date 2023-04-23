@@ -11,6 +11,7 @@ import RoadmapDetail from '../components/RoadmapDetail';
 import RoadmapTaskDetail from '../components/RoadmapTaskDetail';
 import PopUpTaskViewer from '../components/PopUpTaskViewer';
 import { getProfilePictureSrc } from '../components/SettingProfileImageSelector';
+import { completeQuestCompleteTask } from './Activity';
 
 import { ReactComponent as RoadmapIcon } from "../assets/shapes/roadmap.svg"
 import { AnimatePresence, motion } from 'framer-motion';
@@ -147,6 +148,7 @@ export default function View() {
   async function completeTask() {
     setIsLoading(true);
     setIsCompleting(false);
+    completeQuestCompleteTask(); 
     try {
       const response = await axiosInstance.put(`/task/complete?tid=${currentTask.id}`);
       console.log(response);
@@ -247,7 +249,7 @@ export default function View() {
                     handleLike={handleLike}
                   />
                   <RoadmapViewer isArchived={isArchived} roadmap={roadmap} currentTaskID={currentTask.id} handleTaskView={(task) => { setCurrentViewTask(task); setIsViewingTask(true) }} />
-                  <RoadmapTaskDetail isEmpty={isEmpty} isCompleted={isCompleted} isArchived={isArchived} task={currentTask} handleTaskUpdate={(task) => setCurrentTask(task)} handleIsSaving={() => setIsSaving(true)} handleIsCompleting={() => setIsCompleting(true)} isOwner={isOwner} displaySaveButton={saveButton} displayCompleteButton={completeButton} />
+                  <RoadmapTaskDetail isEmpty={isEmpty} isCompleted={isCompleted} isArchived={isArchived} task={currentTask} handleTaskUpdate={(task) => setCurrentTask(task)} handleIsSaving={() => setIsSaving(true)} handleIsCompleting={() => {setIsCompleting(true)}} isOwner={isOwner} displaySaveButton={saveButton} displayCompleteButton={completeButton} />
                 </div>
                 <div className="pb-4" />
               </div>

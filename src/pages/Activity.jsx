@@ -182,7 +182,7 @@ export const insertDailyQuests = async (timeout = 0) => {
     const body5 = {qid: 4, date: now, is_done: false};
 
     insertDailyQuest(body1);
-    //insertDailyQuest(body2);
+    insertDailyQuest(body2);
     insertDailyQuest(body3);
     insertDailyQuest(body4);
     insertDailyQuest(body5);
@@ -265,7 +265,7 @@ const formatQuestData = ({data}) => {
             isDone: false
         },
         {
-            name: "Public a Roadmap",
+            name: "Complete a Task",
             point: 25,
             qid: 1,
             des: "/",
@@ -325,7 +325,7 @@ export const completeQuestDailyLogin = () => {
     generalCompleteQuest(0, 25);
 }
 
-export const completeQuestPublicRoadmap = () => {
+export const completeQuestCompleteTask = () => {
     generalCompleteQuest(1, 25);
 }
 
