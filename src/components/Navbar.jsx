@@ -81,7 +81,7 @@ const Navbar = () => {
           </div>
         </div>
         <div className="flex flex-col flex-grow h-full bg-white overflow-x-hidden">
-          <motion.div className="flex justify-center bg-nav-blue"
+          <motion.div className="flex justify-center h-fit min-h-[100px] bg-nav-blue"
             initial={{ display: "none" }}
             animate={{ display: "flex" }}
             transition={{
@@ -91,8 +91,8 @@ const Navbar = () => {
           >
             {!isPremium && 
             <AnimatePresence>
-              <Link to={`/premium`} className="relative flex flex-col items-center w-2/3 h-[100px] mx-auto bg-base-blue">
-                <motion.div className="absolute flex w-full h-full justify-center items-center font-inter font-semibold text-5xl text-[#FFFFFF]"
+              <Link to={`/premium`} className="relative flex flex-col items-center w-2/3 h-full mx-auto bg-base-blue">
+                <motion.div className="absolute flex w-full h-full justify-center items-center font-inter font-semibold max-md:text-2xl text-4xl text-[#FFFFFF]"
                   animate={{ opacity: [0, 1, 1, 0] }}
                   transition={{
                     repeat: "infinity",
@@ -104,7 +104,7 @@ const Navbar = () => {
                   }}>
                   Hate our ad?
                 </motion.div>
-                <motion.div className="absolute flex flex-col w-full h-full justify-center items-start font-inter font-semibold text-2xl text-[#FFFFFF]"
+                <motion.div className="absolute flex flex-col w-full h-full justify-center items-center font-inter font-semibold max-xs:text-base max-md:text-lg text-2xl text-[#FFFFFF]"
                   animate={{ opacity: [0, 1, 1, 0] }}
                   transition={{
                     repeat: "infinity",
@@ -114,14 +114,21 @@ const Navbar = () => {
                     duration: "1",
                     times: [4, 4.5, 9.5, 10]
                   }}>
-                  <div className="mb-2 w-fit">
-                    Premium account is the answer
+                  <div className="flex justify-between items-center w-[90%]">
+                    <div>
+                      <div className="mb-2">
+                        Premium account is the answer
+                      </div>
+                      <div className="flex justify-center bg-[#FFFFFF] text-[#000000] max-xs:text-xs text-base min-w-fit w-1/4 h-fit rounded-full">
+                        Click Here
+                      </div>        
+                    </div>
+                    <div>
+                      <Logo/>
+                    </div>
                   </div>
-                  <div className="flex justify-center bg-[#FFFFFF] text-[#000000] text-base min-w-fit w-1/4 h-fit rounded-full">
-                    Click Here
-                  </div>        
                 </motion.div>
-                <motion.div className="absolute flex w-full h-full justify-center items-center font-inter font-semibold text-5xl text-[#FFFFFF]"
+                <motion.div className="absolute flex w-full h-full justify-center items-center font-inter font-semibold max-md:text-2xl text-4xl text-[#FFFFFF]"
                   animate={{ opacity: [0, 1, 1, 0] }}
                   transition={{
                     repeat: "infinity",
@@ -133,7 +140,7 @@ const Navbar = () => {
                   }}>
                   Bored of ad display?
                 </motion.div>
-                <motion.div className="absolute flex flex-col w-full h-full justify-center items-start font-inter font-semibold text-2xl text-[#FFFFFF]"
+                <motion.div className="absolute flex flex-col w-full h-full justify-center items-center font-inter font-semibold max-xs:text-base max-md:text-lg text-2xl text-[#FFFFFF]"
                   animate={{ opacity: [0, 1, 1, 0] }}
                   transition={{
                     repeat: "infinity",
@@ -143,12 +150,19 @@ const Navbar = () => {
                     duration: "1",
                     times: [14, 14.5, 19.5, 20]
                   }}>
-                  <div className="mb-2">
-                    What are you waiting for, buy premium
+                  <div className="flex justify-between items-center w-[90%]">
+                    <div>
+                      <div className="mb-2">
+                        What are you waiting for, buy premium
+                      </div>
+                      <div className="flex justify-center bg-[#FFFFFF] text-[#000000] max-xs:text-xs text-base min-w-fit w-1/4 h-fit rounded-full">
+                        Click Here
+                      </div>
+                    </div>
+                    <div>
+                      <Logo/>  
+                    </div>                   
                   </div>
-                  <div className="flex justify-center bg-[#FFFFFF] text-[#000000] text-base min-w-fit w-1/4 h-fit rounded-full">
-                    Click Here
-                  </div>                    
                 </motion.div>
               </Link>
             </AnimatePresence>
