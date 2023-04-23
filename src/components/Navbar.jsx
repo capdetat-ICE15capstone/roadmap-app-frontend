@@ -168,7 +168,7 @@ const Navbar = () => {
             </AnimatePresence>
             }
           </motion.div>
-          <div className="overflow-y-auto z-20">
+          <div className="overflow-y-auto z-10">
             <Outlet />
           </div>
         </div>
