@@ -364,6 +364,13 @@ const RoadmapCreatePage = (props) => {
             setLoading(false);
             handleDisplayErrorMessage("User is not authorized", "/", true);
           }
+          if (state.roadmap.archive_date !== null) {
+            setLoading(false);
+            handleDisplayErrorMessage("This roadmap is archived and cannot be edit", "/", true);
+          }
+          if (premiumStatus !== true && state.roadmap.tasks.length > MAX_TASKS_NONPREMIUM) {
+            handleDisplayErrorMessage("As a non premium user, you are not allowed to clone this roadmap", "/", true)
+          }
           initialState.current = {
             name: state.roadmap.name,
             description: state.roadmap.description,
@@ -387,10 +394,6 @@ const RoadmapCreatePage = (props) => {
         setTags(state.roadmap.tags);
         setNotiStatus(notificationObject);
         setLastId(highestID + 1);
-
-        if (premiumStatus !== true && state.roadmap.tasks.length > MAX_TASKS_NONPREMIUM) {
-          handleDisplayErrorMessage("As a non premium user, you are not allowed to clone this roadmap", "/", true)
-        }
       } else {
         // fetch the roadmap data
         // then set the data to variable
@@ -398,13 +401,21 @@ const RoadmapCreatePage = (props) => {
         const tempRoadmap = await getRoadmap(id, 10000, true);
         if (tempRoadmap === null) {
           setLoading(false);
-          handleDisplayErrorMessage("Roadmap Loading Failed", "/home", true);
+          handleDisplayErrorMessage("Roadmap Loading Failed", "/", true);
         } else {
           const notificationObject = setUpNotification(tempRoadmap);
           if (mode === "edit") {
             if (userInfo.uid !== tempRoadmap.owner_id) {
               setLoading(false);
               handleDisplayErrorMessage("User is not authorized", "/", true);
+            }
+            if (tempRoadmap.archive_date !== null) {
+              setLoading(false);
+              handleDisplayErrorMessage("This roadmap is archived and cannot be edit", "/", true);
+            }
+            if (premiumStatus !== true && tempRoadmap.tasks.length > MAX_TASKS_NONPREMIUM) {
+              setLoading(false);
+              handleDisplayErrorMessage("As a non premium user, you are not allowed to clone this roadmap", "/", true)
             }
             initialState.current = {
               name: tempRoadmap.name,
@@ -429,10 +440,6 @@ const RoadmapCreatePage = (props) => {
           setTags(tempRoadmap.tags);
           setNotiStatus(notificationObject);
           setLastId(highestID + 1);
-
-          if (premiumStatus !== true && tempRoadmap.tasks.length > MAX_TASKS_NONPREMIUM) {
-            handleDisplayErrorMessage("As a non premium user, you are not allowed to clone this roadmap", "/", true)
-          }
         }
       }
     }
