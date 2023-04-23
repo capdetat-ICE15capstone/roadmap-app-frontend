@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import TaskModal from "../components/TaskModal";
 import { useLocation, useNavigate, useParams } from "react-router";
 import {
@@ -87,17 +87,17 @@ const TaskItem = ({
   setModalState,
   disabled,
   isLastitem,
-  index
+  index,
 }) => {
   // Task node Component
   return (
     <div className="flex">
-      <div className={`relative h-full break-words w-28 z-10`}>
+      <div className={`relative h-full break-words w-28`}>
         <div
           className={`h-full after:h-1 after:w-full after:top-[30px] after:absolute after:translate-x-12 ${
             isLastitem
               ? "after:border-t-4 after:border-dashed after:border-black after:bg-transparent "
-              : "after:bg-black after:z-10 "
+              : "after:bg-black "
           }`}
         >
           <div className="flex h-full">
@@ -127,7 +127,7 @@ const TaskItem = ({
               </button>
               <div className="flex w-28 grow">
                 <span className="block font-bold w-full text-center leading-5 font-nunito-sans my-auto">
-                  {task.name === "" ? `Task #${index+1}` : task.name}
+                  {task.name === "" ? `Task #${index + 1}` : task.name}
                 </span>
               </div>
             </div>
@@ -180,7 +180,7 @@ const DropDownMenu = ({
       <button
         onClick={handleMenuShowUnshow}
         type="button"
-        className={`flex p-2 border-2 gap-1 items-center rounded-full hover:scale-110 transition duration-150 ${
+        className={`flex p-2 relative border-2 gap-1 items-center rounded-full hover:scale-110 transition duration-150 ${
           isMenuShowing ? "animate-bounce" : ""
         } ${currentOption.on ? "border-nav-blue" : "bg-nav-blue border-white"}`}
       >
@@ -196,6 +196,7 @@ const DropDownMenu = ({
               }`
             : "Off"}
         </span>
+        
       </button>
       <AnimatePresence mode="wait">
         {isMenuShowing ? (
@@ -227,6 +228,7 @@ const DropDownMenu = ({
           </motion.div>
         ) : null}
       </AnimatePresence>
+      
     </div>
   );
 };
@@ -240,6 +242,7 @@ const RoadmapCreatePage = (props) => {
     tasks: [],
     tags: [],
     notiStatus: { on: false },
+    roadmapDeadline: new Date(),
   });
   const { mode } = props; // props from parent
   const { state } = useLocation(); // state from previous page, including fetched roadmap data
@@ -266,7 +269,7 @@ const RoadmapCreatePage = (props) => {
   });
   const [discardModal, setDiscardModal] = useState(false);
   const [premium, setPremium] = useState(false);
-  const isSM = useIsSM();
+  // const isSM = useIsSM();
   const [showHelp, setShowHelp] = useState(false);
   const [helpPage, setHelpPage] = useState(1);
 
@@ -368,6 +371,7 @@ const RoadmapCreatePage = (props) => {
             tasks: state.roadmap.tasks,
             tags: state.roadmap.tags,
             notiStatus: notificationObject,
+            roadmapDeadline: state.roadmap.roadmapDeadline,
           };
         }
         let highestID = 0;
@@ -405,6 +409,7 @@ const RoadmapCreatePage = (props) => {
               tasks: tempRoadmap.tasks,
               tags: tempRoadmap.tags,
               notiStatus: notificationObject,
+              roadmapDeadline: tempRoadmap.roadmapDeadline,
             };
           }
           let highestID = 0;
@@ -562,7 +567,7 @@ const RoadmapCreatePage = (props) => {
     setTasks(items);
   };
 
-  const compareRoadmapChange = () => {
+  const compareRoadmapChange = (roadmapDeadline) => {
     // compare name, desc, public, notisetting
     // If detect change, return full object
     // if no change, return null;
@@ -570,6 +575,8 @@ const RoadmapCreatePage = (props) => {
       RMName !== initialState.current.name ||
       RMDesc !== initialState.current.description ||
       isPublic !== initialState.current.isPublic ||
+      roadmapDeadline.getTime() !==
+        initialState.current.roadmapDeadline.getTime() ||
       JSON.stringify(notiStatus) !==
         JSON.stringify(initialState.current.notiStatus) ||
       mode === "create" ||
@@ -581,6 +588,7 @@ const RoadmapCreatePage = (props) => {
         description: RMDesc,
         isPublic: isPublic,
         notiStatus: notiStatus,
+        roadmapDeadline: roadmapDeadline,
       };
     return null;
   };
@@ -611,8 +619,7 @@ const RoadmapCreatePage = (props) => {
       const taskIntersection = initState.find(
         (inittask) => task.id === inittask.id
       );
-      console.log(task.nodeShape);
-      console.log(taskIntersection.nodeShape);
+
       if (
         taskIntersection.hasFetched === true &&
         (task.name !== taskIntersection.name ||
@@ -623,7 +630,6 @@ const RoadmapCreatePage = (props) => {
           task.dueDate.getTime() !== taskIntersection.dueDate.getTime())
       ) {
         // edited task
-        console.log(`added task ${task.id} to edit list`);
         taskChange.edit.push(task);
         return;
       }
@@ -670,7 +676,7 @@ const RoadmapCreatePage = (props) => {
   };
 
   const compareTagChange = () => {
-    console.log(searchTags());
+    // console.log(searchTags());
     let tagChanges = { add: [], delete: [] };
     initialState.current.tags.forEach((inittag) => {
       if (tags.find((tag) => inittag === tag) === undefined)
@@ -731,18 +737,33 @@ const RoadmapCreatePage = (props) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (tasks.length < 3) {
+      handleDisplayErrorMessage(
+        "Please add at least 3 tasks to save! (Hint: Split your task into smaller chunks makes it a lot more manageable!",
+        null,
+        true
+      );
+      return;
+    }
+
     let subTaskChange = { add: [], edit: [], delete: [] };
     let taskRelationChange = null;
-
-    // check for rm name, description, publicity change
-    let roadmapChange = compareRoadmapChange();
 
     // check for task change
     let taskChange = compareTaskChange(initialState.current.tasks, tasks);
 
+    // variable for max roadmap deadline
+    let roadmapDeadline = new Date(0);
+
     // check for subtask change
     tasks.forEach((task) => {
-      console.log(initialState.current);
+      // console.log(initialState.current);
+      if (task.startDate.getTime() > roadmapDeadline.getTime()) {
+        roadmapDeadline = task.startDate;
+      }
+      if (task.dueDate.getTime() > roadmapDeadline.getTime()) {
+        roadmapDeadline = task.dueDate;
+      }
       const initTask = initialState.current.tasks.find(
         (t) => t.id === task.id
       ) ?? { subtasks: [] };
@@ -761,6 +782,9 @@ const RoadmapCreatePage = (props) => {
       );
       subTaskChange.delete.push(...comparison.delete);
     });
+
+    // check for rm name, description, publicity change
+    let roadmapChange = compareRoadmapChange(roadmapDeadline);
 
     // check for task relation change
     const newTaskRelation = tasks.map((task) => task.id);
@@ -860,11 +884,20 @@ const RoadmapCreatePage = (props) => {
 
   return (
     <>
-      <motion.div className="flex justify-center items-center flex-col m-auto max-w-5xl w-[90%]" initial={{opacity: 0}} animate={{opacity:1}} exit={{opacity:0}}>
+      <motion.div
+        className="flex justify-center items-center flex-col m-auto max-w-5xl w-[90%]"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+      >
         {/* <div className="text-4xl font-bold flex items-start"> */}
         <div className="flex w-full justify-between items-center my-8">
           <div className="flex gap-3">
-            <CECLogo mode={mode} fillColor={"#00286E"} className="w-12 h-12 xs:w-10 xs:h-10" />
+            <CECLogo
+              mode={mode}
+              fillColor={"#00286E"}
+              className="w-12 h-12 xs:w-10 xs:h-10"
+            />
             <span className="text-4xl text-nav-blue font-extrabold hidden xs:block text-center">
               {mode === "create"
                 ? "Create"
@@ -889,10 +922,16 @@ const RoadmapCreatePage = (props) => {
           className={`rounded-3xl w-full gap-3 flex flex-col bg-white p-10 min-h-[80%] xs:min-h-[60%] m-3 shadow-lg shadow-gray-400 border-gray-400`}
         >
           <div className="flex flex-col md:flex-row justify-between items-center gap-2">
-            <label className="hidden md:visible text-3xl font-bold md:block leading-none text-nav-blue" htmlFor="roadmapName">
+            <label
+              className="hidden md:visible text-3xl font-bold md:block leading-none text-nav-blue"
+              htmlFor="roadmapName"
+            >
               Name
             </label>
-            <label className="visible text-md md:hidden font-bold block leading-none text-nav-blue" htmlFor="roadmapName">
+            <label
+              className="visible text-md md:hidden font-bold block leading-none text-nav-blue"
+              htmlFor="roadmapName"
+            >
               Roadmap name
             </label>
             <input
@@ -951,7 +990,10 @@ const RoadmapCreatePage = (props) => {
           ) : null}
 
           <div className="">
-            <label className="text-md font-bold text-nav-blue" htmlFor="roadmapDescription">
+            <label
+              className="text-md font-bold text-nav-blue"
+              htmlFor="roadmapDescription"
+            >
               Roadmap Description{" "}
             </label>
             <textarea
