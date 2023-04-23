@@ -55,8 +55,8 @@ function ShopItemDetail({ visible, item, points, handlePoints, handleClose }) {
   }
 
   function handleExchange() {
-    if (points > item.cost) {
-      handlePoints(points - item.cost);
+    if (points >= item.cost) {
+      handlePoints(points);
       setIsComplete(true);
       setIsConfirming(false);
     } else {

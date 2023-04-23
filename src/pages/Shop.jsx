@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 
+import { axiosInstance } from '../functions/axiosInstance';
+
 import { ReactComponent as ShopLogo } from "../assets/shapes/shopping_bag.svg"
 import ShopItem from '../components/ShopItem';
 import ShopItemDetail from '../components/ShopItemDetail';
@@ -21,48 +23,56 @@ function Shop() {
     {
       'id': 1,
       'name': "Test Search",
+      'imageName': "eno_orange.png",
       'description': "Item description",
       'cost': 100,
     },
     {
       'id': 2,
       'name': "Item",
+      'imageName': "eno_orange.png",
       'description': "Item description",
       'cost': 100,
     },
     {
       'id': 3,
       'name': "Item",
+      'imageName': "eno_orange.png",
       'description': "Item description",
       'cost': 100,
     },
     {
       'id': 4,
       'name': "Item",
+      'imageName': "eno_orange.png",
       'description': "Item description",
       'cost': 100,
     },
     {
       'id': 5,
       'name': "Item",
+      'imageName': "eno_orange.png",
       'description': "Item description",
       'cost': 100,
     },
     {
       'id': 6,
       'name': "Item",
+      'imageName': "eno_orange.png",
       'description': "Item description",
       'cost': 100,
     },
     {
       'id': 7,
       'name': "Item",
+      'imageName': "eno_orange.png",
       'description': "Item description",
       'cost': 100,
     },
     {
       'id': 8,
       'name': "Item",
+      'imageName': "eno_orange.png",
       'description': "Item description",
       'cost': 100,
     },
@@ -71,53 +81,78 @@ function Shop() {
   const [currentItemList, setCurrentItemList] = useState([
     {
       'id': 1,
-      'name': "Item",
+      'name': "Test Search",
+      'imageName': "eno_orange.png",
       'description': "Item description",
       'cost': 100,
     },
     {
       'id': 2,
       'name': "Item",
+      'imageName': "eno_orange.png",
       'description': "Item description",
       'cost': 100,
     },
     {
       'id': 3,
       'name': "Item",
+      'imageName': "eno_orange.png",
       'description': "Item description",
       'cost': 100,
     },
     {
       'id': 4,
       'name': "Item",
+      'imageName': "eno_orange.png",
       'description': "Item description",
       'cost': 100,
     },
     {
       'id': 5,
       'name': "Item",
+      'imageName': "eno_orange.png",
       'description': "Item description",
       'cost': 100,
     },
     {
       'id': 6,
       'name': "Item",
+      'imageName': "eno_orange.png",
       'description': "Item description",
       'cost': 100,
     },
     {
       'id': 7,
       'name': "Item",
+      'imageName': "eno_orange.png",
       'description': "Item description",
       'cost': 100,
     },
     {
       'id': 8,
       'name': "Item",
+      'imageName': "eno_orange.png",
       'description': "Item description",
       'cost': 100,
     },
   ]);
+
+  const [isWarning, setIsWarning] = useState();
+  const [profile, setProfile] = useState();
+  const [errorMessage, setErrorMessage] = useState();
+
+  const fetchData = async () => {
+    try {
+      const response = await axiosInstance.get('/home/me');
+      setProfile(response.data.profile);
+      setPoints(response.data.profile.points)
+      console.log(response.data.profile);
+    } catch (error) {
+      console.error(error.message);
+      setErrorMessage(error.message);
+      setIsWarning(true);
+    }
+  }
 
   function handleSelectItem(item) {
     setSelectedItem(item);
@@ -139,13 +174,24 @@ function Shop() {
     }
   }
 
+  async function handleExchangePoints(points) {
+    try {
+      const response = await axiosInstance.put(`/user/spend_points/?points=${1}`);
+      console.log(response.data);
+    } catch (error) {
+      console.error(error.message);
+      setErrorMessage(error.message);
+      setIsWarning(true);
+    }
+  }
+
   useEffect(() => {
     console.log(selectedItem);
   }, [selectedItem]);
 
   useEffect(() => {
+    fetchData();
     setCurrentItemList([...itemList]);
-
     completeQuestCheckShop();
   }, []);
 
@@ -200,7 +246,7 @@ function Shop() {
           </div>
         </div>
       </motion.div>
-      <ShopItemDetail visible={isViewingItem} item={selectedItem} points={points} handlePoints={(amount) => { setPoints(amount) }} handleClose={() => setIsViewingItem(false)} />
+      <ShopItemDetail visible={isViewingItem} item={selectedItem} points={points} handlePoints={handleExchangePoints} handleClose={() => setIsViewingItem(false)} />
     </>
   )
 }
