@@ -739,7 +739,7 @@ const RoadmapCreatePage = (props) => {
 
     if (tasks.length < 3) {
       handleDisplayErrorMessage(
-        "Please add at least 3 tasks to save! (Hint: Split your task into smaller chunks makes it a lot more manageable!",
+        "Please add at least 3 tasks to save! (Hint: Split your task into smaller chunks makes it a lot more manageable!)",
         null,
         true
       );

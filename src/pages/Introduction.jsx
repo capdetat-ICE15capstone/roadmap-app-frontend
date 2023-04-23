@@ -33,7 +33,7 @@ const itemVariant = {
     type: "spring",
     stiffness: 260,
     damping: 20,
-    duration: 100,
+    duration: 150,
   },
 };
 
@@ -293,7 +293,7 @@ const Introduction = ({ wantPremium = false }) => {
         <div className="flex items-center">
           {/* this path is only temporary */}
           <button
-            className={`m-4 font-bold hover:scale-125 duration:200 transition ease-in ${
+            className={`m-4 font-bold hover:scale-125 duration:200 transition focus:outline-none ease-in ${
               inPremium ? "underline underline-offset-4" : ""
             }`}
             type="button"
@@ -302,7 +302,7 @@ const Introduction = ({ wantPremium = false }) => {
             Premium
           </button>
           <button
-            className={`m-4 font-bold hover:scale-125 transition duration:200 ease-in ${
+            className={`m-4 font-bold hover:scale-125 transition duration:200 focus:outline-none ease-in ${
               !inPremium ? "underline underline-offset-4" : ""
             }`}
             type="button"
