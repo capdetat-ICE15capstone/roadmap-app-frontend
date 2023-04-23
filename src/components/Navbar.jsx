@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Outlet, NavLink, Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 
 // Image/Logo SVG
 import { ReactComponent as Logo } from "../assets/logo.svg"
@@ -81,31 +81,93 @@ const Navbar = () => {
           </div>
         </div>
         <div className="flex flex-col flex-grow h-full bg-white overflow-x-hidden">
-          <div className="flex justify-center bg-nav-blue">
-            {!isPremium &&
-              <Link to={`/premium`} className="relative flex flex-col w-2/3 h-[100px] px-6 mx-auto bg-base-blue">
-                <motion.div className="flex w-full h-full justify-start items-center font-inter font-semibold text-5xl text-[#FFFFFF]"
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
+          <motion.div className="flex justify-center h-fit min-h-[100px] bg-nav-blue"
+            initial={{ display: "none" }}
+            animate={{ display: "flex" }}
+            transition={{
+              type: "easeInOut",
+              delay: "2"
+            }}
+          >
+            {!isPremium && 
+            <AnimatePresence>
+              <Link to={`/premium`} className="relative flex flex-col items-center min-w-[180px] w-2/3 h-full mx-auto bg-base-blue">
+                <motion.div className="absolute flex w-full h-full justify-center items-center font-inter font-semibold max-md:text-2xl text-4xl text-[#FFFFFF]"
+                  animate={{ opacity: [0, 1, 1, 0] }}
                   transition={{
-                    type: "easeInOut",
-                    duration: "0.5"
+                    repeat: "infinity",
+                    repeatType: "reverse",
+                    repeatDelay: "20",
+                    delay: "2",
+                    duration: "1",
+                    times: [0, 0.5, 3.5, 4]
+                  }}>
+                  Hate our ad?
+                </motion.div>
+                <motion.div className="absolute flex flex-col w-full h-full justify-center items-center font-inter font-semibold max-xs:text-base max-md:text-lg text-2xl text-[#FFFFFF]"
+                  animate={{ opacity: [0, 1, 1, 0] }}
+                  transition={{
+                    repeat: "infinity",
+                    repeatType: "reverse",
+                    repeatDelay: "20",
+                    delay: "2",
+                    duration: "1",
+                    times: [4, 4.5, 9.5, 10]
+                  }}>
+                  <div className="flex justify-between items-center w-[90%]">
+                    <div>
+                      <div className="mb-2">
+                        Premium account is the answer
+                      </div>
+                      <div className="flex justify-center bg-[#FFFFFF] text-[#000000] max-xs:text-xs text-base min-w-fit w-1/4 h-fit rounded-full">
+                        Click Here
+                      </div>        
+                    </div>
+                    <div>
+                      <Logo/>
+                    </div>
+                  </div>
+                </motion.div>
+                <motion.div className="absolute flex w-full h-full justify-center items-center font-inter font-semibold max-md:text-2xl text-4xl text-[#FFFFFF]"
+                  animate={{ opacity: [0, 1, 1, 0] }}
+                  transition={{
+                    repeat: "infinity",
+                    repeatType: "reverse",
+                    repeatDelay: "20",
+                    delay: "2",
+                    duration: "1",
+                    times: [10, 10.5, 13.5, 14]
                   }}>
                   Bored of ad display?
                 </motion.div>
-                <motion.div className="flex w-full h-full justify-end items-center font-inter font-semibold text-2xl text-[#FFFFFF]"
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
+                <motion.div className="absolute flex flex-col w-full h-full justify-center items-center font-inter font-semibold max-xs:text-base max-md:text-lg text-2xl text-[#FFFFFF]"
+                  animate={{ opacity: [0, 1, 1, 0] }}
                   transition={{
-                    type: "easeInOut",
-                    delay: "0.5",
-                    duration: "0.5"
+                    repeat: "infinity",
+                    repeatType: "reverse",
+                    repeatDelay: "20",
+                    delay: "2",
+                    duration: "1",
+                    times: [14, 14.5, 19.5, 20]
                   }}>
-                  What are you waiting for, buy premium
+                  <div className="flex justify-between items-center w-[90%]">
+                    <div>
+                      <div className="mb-2">
+                        What are you waiting for, buy premium
+                      </div>
+                      <div className="flex justify-center bg-[#FFFFFF] text-[#000000] max-xs:text-xs text-base min-w-fit w-1/4 h-fit rounded-full">
+                        Click Here
+                      </div>
+                    </div>
+                    <div>
+                      <Logo/>  
+                    </div>                   
+                  </div>
                 </motion.div>
               </Link>
+            </AnimatePresence>
             }
-          </div>
+          </motion.div>
           <div className="overflow-y-auto z-20">
             <Outlet />
           </div>
