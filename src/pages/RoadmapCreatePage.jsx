@@ -387,6 +387,10 @@ const RoadmapCreatePage = (props) => {
         setTags(state.roadmap.tags);
         setNotiStatus(notificationObject);
         setLastId(highestID + 1);
+
+        if (premiumStatus !== true && state.roadmap.tasks.length > MAX_TASKS_NONPREMIUM) {
+          handleDisplayErrorMessage("As a non premium user, you are not allowed to clone this roadmap", "/", true)
+        }
       } else {
         // fetch the roadmap data
         // then set the data to variable
@@ -425,6 +429,10 @@ const RoadmapCreatePage = (props) => {
           setTags(tempRoadmap.tags);
           setNotiStatus(notificationObject);
           setLastId(highestID + 1);
+
+          if (premiumStatus !== true && tempRoadmap.tasks.length > MAX_TASKS_NONPREMIUM) {
+            handleDisplayErrorMessage("As a non premium user, you are not allowed to clone this roadmap", "/", true)
+          }
         }
       }
     }
@@ -530,13 +538,17 @@ const RoadmapCreatePage = (props) => {
   };
 
   const initializeTaskCreator = () => {
+    if (!premium && tasks.length >= MAX_TASKS_NONPREMIUM) {
+      handleDisplayErrorMessage(`As a non premium user, you are only allowed ${MAX_TASKS_NONPREMIUM} tasks per roadmap`, null, true);
+      return;
+    }
     setModalState(true);
     setEditTaskID(-1);
   };
 
-  const isAddButtonDisabled = () => {
-    return !premium && tasks.length >= MAX_TASKS_NONPREMIUM;
-  };
+  // const isAddButtonDisabled = () => {
+  //   return 
+  // };
 
   const handleNameChange = (event) => {
     if (event.target.value.length <= MAX_RMNAME_LENGTH) {
@@ -1076,7 +1088,7 @@ const RoadmapCreatePage = (props) => {
                       >
                         <button
                           type="button"
-                          disabled={isAddButtonDisabled()}
+                          // disabled={isAddButtonDisabled()}
                           onClick={initializeTaskCreator}
                           className="translate-y-[12px] translate-x-3"
                         >
