@@ -5,7 +5,7 @@ import NoPage from "./pages/NoPage";
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { lazy, Suspense } from "react";
 import ProtectedRoute from "./components/ProtectedRoute";
-import UnprotectedRoute from "./components/UnProtectedRoute";
+import UnprotectedRoute from "./components/UnprotectedRoute";
 import Shop from "./pages/Shop";
 
 const Login = lazy(() => import("./pages/Login"));
