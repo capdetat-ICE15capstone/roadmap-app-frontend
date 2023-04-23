@@ -133,15 +133,15 @@ const Activity = () => {
     }
 
     return (
-        <div className="flex-col">
+        <div className="flex flex-col items-center w-full h-full">
             {/* page title */}
-            <div className="flex m-[38px] mt-[59px] items-center">
-                <div className="">
-                    <BookIcon/>
-                </div>          
-                <div className="font-inter font-extrabold text-3xl text-[#09275B] leading-[48px] px-3">
-                    Activity
+            <div className='flex justify-between items-center w-4/5 h-10 mt-10 mx-8 mb-8 space-x-4'>
+              <div className='flex items-center shrink-0 h-full text-4xl font-extrabold text-nav-blue space-x-2'>
+                <BookIcon className='h-10 w-10' />
+                <div>
+                  Activity
                 </div>
+              </div>
             </div>
 
             {/* duo sub page selector */}
