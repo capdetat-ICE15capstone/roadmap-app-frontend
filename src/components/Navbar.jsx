@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Outlet, NavLink, Link } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
-import { motion } from 'framer-motion';
+import { AnimatePresence ,motion } from 'framer-motion';
 
 // Image/Logo SVG
 import { ReactComponent as Logo } from "../assets/logo.svg"
@@ -81,31 +81,45 @@ const Navbar = () => {
           </div>
         </div>
         <div className="flex flex-col flex-grow h-full bg-white overflow-x-hidden">
-          <div className="flex justify-center bg-nav-blue">
-            {!isPremium &&
+          <motion.div className="flex justify-center bg-nav-blue"
+            initial={{ display: "none" }}
+            animate={{ display: "flex" }}
+            transition={{
+              type: "easeInOut",
+              delay: "2"
+            }}
+          >
+            {!isPremium && 
+            <AnimatePresence>
               <Link to={`/premium`} className="relative flex flex-col w-2/3 h-[100px] px-6 mx-auto bg-base-blue">
                 <motion.div className="flex w-full h-full justify-start items-center font-inter font-semibold text-5xl text-[#FFFFFF]"
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
+                  animate={{ opacity: [0, 1, 1, 0] }}
                   transition={{
-                    type: "easeInOut",
-                    duration: "0.5"
+                    repeat: "infinity",
+                    repeatType: "reverse",
+                    repeatDelay: "7",
+                    delay: "2",
+                    duration: "1",
+                    times: [0, 1, 5, 6]
                   }}>
                   Bored of ad display?
                 </motion.div>
                 <motion.div className="flex w-full h-full justify-end items-center font-inter font-semibold text-2xl text-[#FFFFFF]"
-                  initial={{ opacity: 0 }}
-                  whileInView={{ opacity: 1 }}
+                  animate={{ opacity: [0, 1, 1, 0] }}
                   transition={{
-                    type: "easeInOut",
-                    delay: "0.5",
-                    duration: "0.5"
+                    repeat: "infinity",
+                    repeatType: "reverse",
+                    repeatDelay: "7",
+                    delay: "2",
+                    duration: "1",
+                    times: [1, 2, 6, 7]
                   }}>
                   What are you waiting for, buy premium
                 </motion.div>
               </Link>
+            </AnimatePresence>
             }
-          </div>
+          </motion.div>
           <div className="overflow-y-auto z-20">
             <Outlet />
           </div>
