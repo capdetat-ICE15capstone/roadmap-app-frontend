@@ -735,6 +735,11 @@ const RoadmapCreatePage = (props) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (tasks.length < 3) {
+      handleDisplayErrorMessage("Please add at least 3 tasks to save!", null, true);
+      return;
+    }
+
     let subTaskChange = { add: [], edit: [], delete: [] };
     let taskRelationChange = null;
 
