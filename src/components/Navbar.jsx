@@ -91,7 +91,7 @@ const Navbar = () => {
           >
             {!isPremium && 
             <AnimatePresence>
-              <Link to={`/premium`} className="relative flex flex-col items-center w-2/3 h-full mx-auto bg-base-blue">
+              <Link to={`/premium`} className="relative flex flex-col items-center min-w-[180px] w-2/3 h-full mx-auto bg-base-blue">
                 <motion.div className="absolute flex w-full h-full justify-center items-center font-inter font-semibold max-md:text-2xl text-4xl text-[#FFFFFF]"
                   animate={{ opacity: [0, 1, 1, 0] }}
                   transition={{
