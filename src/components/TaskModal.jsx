@@ -110,7 +110,10 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
     setName(taskObj.name);
     setDescription(taskObj.description);
     setSubTasks(taskObj.subtasks);
-    setNodeColor(allNodeColor.find(({ name }) => name === taskObj.nodeColor) ?? allNodeColor[0]);
+    setNodeColor(
+      allNodeColor.find(({ name }) => name === taskObj.nodeColor) ??
+        allNodeColor[0]
+    );
     setNodeShape(taskObj.nodeShape);
     setStartDate(taskObj.startDate);
     setdueDate(taskObj.dueDate);
@@ -153,7 +156,10 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
   };
 
   const handleNodeColorChange = (event) => {
-    setNodeColor(allNodeColor.find(({ name }) => name === event.target.value) ?? allNodeColor[0]);
+    setNodeColor(
+      allNodeColor.find(({ name }) => name === event.target.value) ??
+        allNodeColor[0]
+    );
   };
 
   const handleNodeShapeChange = (event, shapeType) => {
@@ -303,14 +309,12 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
 
   return (
     <>
-    
       <motion.form
         onSubmit={handleSubmit}
         variants={taskModalVariants}
         initial="initial"
         animate="animate"
         exit="exit"
-
       >
         <div className="opacity-25 fixed inset-0 bg-black"></div>
         <div className="justify-center items-center flex overflow-y-auto fixed inset-0 outline-none focus:outline-none py-3">
@@ -322,17 +326,24 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
               <div
                 className={`flex justify-between py-4 px-5 xl:py-8 border-b border-solid border-slate-200 rounded-t-2xl transition duration-300 items-center bg-nav-blue`}
               >
-                {/* <div className={`${oldData.id === -1 ? "" : "w-[50px]"}`}></div> */}
-                <CECLogo mode={oldData.id === -1 ? "create" : "edit"} className="w-10 h-10 hidden xs:block" fillColor="white"/>
-                <h3 className="text-4xl font-semibold  justify-center text-white">
-                  {oldData.id === -1 ? "Create" : "Edit"} Task
-                </h3>
+                <div className={`${oldData.id === -1 ? "" : "w-[50px]"}`}></div>
+                <div className="flex gap-2">
+                  <CECLogo
+                    mode={oldData.id === -1 ? "create" : "edit"}
+                    className="w-10 h-10 hidden xs:block"
+                    fillColor="white"
+                  />
+                  <h3 className="text-4xl font-semibold  justify-center text-white">
+                    {oldData.id === -1 ? "Create" : "Edit"} Task
+                  </h3>
+                </div>
+
                 {oldData.id === -1 ? (
                   <div></div>
                 ) : (
                   <button
                     type="button"
-                    // className="p-1 bg-transparent border-0 text-white text-3xl"
+                    className="hover:scale-110 duration-200 transition"
                     onClick={() => setDeleteModal(true)}
                   >
                     {" "}
@@ -344,16 +355,24 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
               <div className="flex flex-col md:flex-row max-h-full">
                 {/* Left side */}
                 <div className="flex flex-col w-full md:w-1/2 p-6 overflow-y-auto">
-                  <label className="font-inter font-bold">Name</label>
+                  <label className="font-inter font-bold" htmlFor="taskName">
+                    Name
+                  </label>
                   <input
                     type="text"
                     value={name}
                     className="border-2 border-gray-300 rounded-md my-1 placeholder:italic px-1 font-inter"
                     placeholder=" Enter task name..."
                     onChange={(e) => handleNameChange(e)}
+                    id="taskName"
                   ></input>
 
-                  <label className="font-inter font-bold">Description</label>
+                  <label
+                    className="font-inter font-bold"
+                    htmlFor="taskDescription"
+                  >
+                    Description
+                  </label>
                   <textarea
                     className="border-2 border-gray-300 rounded-md my-1 grow placeholder:italic placeholder:justify-start px-1 font-inter"
                     value={description}
@@ -361,6 +380,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                     rows="4"
                     placeholder=" Enter description..."
                     onChange={(e) => handleDescriptionChange(e)}
+                    id="taskDescription"
                   ></textarea>
 
                   {/* Date Setting */}
@@ -467,7 +487,6 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                               className={`${nodeColor.twfill}`}
                             />
                           </button>
-                          
                         </div>
                         <p className="opacity-0">Shape</p>
                       </div>
@@ -494,7 +513,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                               </button>
                               <input
                                 type="text"
-                                className="border border-black rounded-md grow font-inter"
+                                className="border border-black rounded-md grow font-inter overflow-x-auto"
                                 onChange={() =>
                                   onSubtaskTextEdit(
                                     event.target.value,

@@ -67,7 +67,7 @@ const notificationOption = {
 };
 
 notificationDayOption.forEach((day) => {
-  return [true, false].forEach((beforeDueDate) => {
+  return [false, true].forEach((beforeDueDate) => {
     notificationOption.optionValues.push({
       on: true,
       detail: {
@@ -860,7 +860,7 @@ const RoadmapCreatePage = (props) => {
 
   return (
     <>
-      <div className="flex justify-center items-center flex-col m-auto max-w-5xl w-[90%]">
+      <motion.div className="flex justify-center items-center flex-col m-auto max-w-5xl w-[90%]" initial={{opacity: 0}} animate={{opacity:1}} exit={{opacity:0}}>
         {/* <div className="text-4xl font-bold flex items-start"> */}
         <div className="flex w-full justify-between items-center my-8">
           <div className="flex gap-3">
@@ -889,10 +889,10 @@ const RoadmapCreatePage = (props) => {
           className={`rounded-3xl w-full gap-3 flex flex-col bg-white p-10 min-h-[80%] xs:min-h-[60%] m-3 shadow-lg shadow-gray-400 border-gray-400`}
         >
           <div className="flex flex-col md:flex-row justify-between items-center gap-2">
-            <label className="hidden md:visible text-3xl font-bold md:block leading-none text-nav-blue">
+            <label className="hidden md:visible text-3xl font-bold md:block leading-none text-nav-blue" htmlFor="roadmapName">
               Name
             </label>
-            <label className="visible text-md md:hidden font-bold block leading-none text-nav-blue">
+            <label className="visible text-md md:hidden font-bold block leading-none text-nav-blue" htmlFor="roadmapName">
               Roadmap name
             </label>
             <input
@@ -900,6 +900,7 @@ const RoadmapCreatePage = (props) => {
               value={RMName}
               onChange={handleNameChange}
               placeholder="UNTITLED"
+              id="roadmapName"
             />
             <div className="flex gap-2 justify-evenly">
               {/* Notification Setting */}
@@ -950,7 +951,7 @@ const RoadmapCreatePage = (props) => {
           ) : null}
 
           <div className="">
-            <label className="text-md font-bold text-nav-blue">
+            <label className="text-md font-bold text-nav-blue" htmlFor="roadmapDescription">
               Roadmap Description{" "}
             </label>
             <textarea
@@ -960,6 +961,7 @@ const RoadmapCreatePage = (props) => {
               value={RMDesc}
               onChange={handleDescriptionChange}
               placeholder="Enter roadmap description"
+              id="roadmapDescription"
             ></textarea>
           </div>
 
@@ -1064,7 +1066,7 @@ const RoadmapCreatePage = (props) => {
             </div>
           </div>
         </form>
-      </div>
+      </motion.div>
       <TwoButtonModal
         isOpen={publicModal}
         onLightPress={() => setPublicModal(false)}
