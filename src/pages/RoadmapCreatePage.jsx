@@ -186,9 +186,9 @@ const DropDownMenu = ({
       >
         {Icon}
         <span
-          className={`visible md:hidden font-bold [@media(max-width:360px)]:hidden ${
+          className={`[@media(max-width:360px)]:hidden md:hidden lg:block font-bold  ${
             currentOption.on ? "text-nav-blue" : "text-white"
-          }`}
+          } whitespace-nowrap`}
         >
           {currentOption.on
             ? `${currentOption.detail.day}d: ${
@@ -364,6 +364,13 @@ const RoadmapCreatePage = (props) => {
             setLoading(false);
             handleDisplayErrorMessage("User is not authorized", "/", true);
           }
+          if (state.roadmap.archive_date !== null) {
+            setLoading(false);
+            handleDisplayErrorMessage("This roadmap is archived and cannot be edit", "/", true);
+          }
+          if (premiumStatus !== true && state.roadmap.tasks.length > MAX_TASKS_NONPREMIUM) {
+            handleDisplayErrorMessage("As a non premium user, you are not allowed to clone this roadmap", "/", true)
+          }
           initialState.current = {
             name: state.roadmap.name,
             description: state.roadmap.description,
@@ -392,15 +399,24 @@ const RoadmapCreatePage = (props) => {
         // then set the data to variable
         // const tempRoadmap = await getRoadmap(id, 10000, mode === "clone"); //individual fetch is bugged
         const tempRoadmap = await getRoadmap(id, 10000, true);
+        console.log(tempRoadmap);
         if (tempRoadmap === null) {
           setLoading(false);
-          handleDisplayErrorMessage("Roadmap Loading Failed", "/home", true);
+          handleDisplayErrorMessage("Roadmap Loading Failed", "/", true);
         } else {
           const notificationObject = setUpNotification(tempRoadmap);
           if (mode === "edit") {
             if (userInfo.uid !== tempRoadmap.owner_id) {
               setLoading(false);
               handleDisplayErrorMessage("User is not authorized", "/", true);
+            }
+            if (tempRoadmap.archive_date !== null) {
+              setLoading(false);
+              handleDisplayErrorMessage("This roadmap is archived and cannot be edit", "/", true);
+            }
+            if (premiumStatus !== true && tempRoadmap.tasks.length > MAX_TASKS_NONPREMIUM) {
+              setLoading(false);
+              handleDisplayErrorMessage("As a non premium user, you are not allowed to clone this roadmap", "/", true)
             }
             initialState.current = {
               name: tempRoadmap.name,
@@ -530,13 +546,17 @@ const RoadmapCreatePage = (props) => {
   };
 
   const initializeTaskCreator = () => {
+    if (!premium && tasks.length >= MAX_TASKS_NONPREMIUM) {
+      handleDisplayErrorMessage(`As a non premium user, you are only allowed ${MAX_TASKS_NONPREMIUM} tasks per roadmap`, null, true);
+      return;
+    }
     setModalState(true);
     setEditTaskID(-1);
   };
 
-  const isAddButtonDisabled = () => {
-    return !premium && tasks.length >= MAX_TASKS_NONPREMIUM;
-  };
+  // const isAddButtonDisabled = () => {
+  //   return 
+  // };
 
   const handleNameChange = (event) => {
     if (event.target.value.length <= MAX_RMNAME_LENGTH) {
@@ -885,13 +905,13 @@ const RoadmapCreatePage = (props) => {
   return (
     <>
       <motion.div
-        className="flex justify-center items-center flex-col m-auto max-w-5xl w-[90%]"
+        className="flex justify-center items-center flex-col m-auto w-4/5"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
       >
         {/* <div className="text-4xl font-bold flex items-start"> */}
-        <div className="flex w-full justify-between items-center my-8">
+        <div className="flex w-full justify-between items-center mt-10 mb-9">
           <div className="flex gap-3">
             <CECLogo
               mode={mode}
@@ -967,12 +987,12 @@ const RoadmapCreatePage = (props) => {
                   onClick={() => setPublicModal(true)}
                   className={`hover:scale-110 flex gap-1 transition duration-150 items-center border-nav-blue rounded-full border-2 p-2 ${
                     publicModal === true ? "animate-bounce" : ""
-                  } ${!isPublic ? "bg-white" : "bg-nav-blue"}`}
+                  } ${isPublic ? "bg-white" : "bg-nav-blue"}`}
                 >
                   <LockUnlockButton
-                    isLock={isPublic}
+                    isLock={!isPublic}
                     className="w-6 h-6"
-                    fillColor={!isPublic ? "#00286E" : "white"}
+                    fillColor={isPublic ? "#00286E" : "white"}
                   />
                 </button>
               </div>
@@ -1076,7 +1096,7 @@ const RoadmapCreatePage = (props) => {
                       >
                         <button
                           type="button"
-                          disabled={isAddButtonDisabled()}
+                          // disabled={isAddButtonDisabled()}
                           onClick={initializeTaskCreator}
                           className="translate-y-[12px] translate-x-3"
                         >
