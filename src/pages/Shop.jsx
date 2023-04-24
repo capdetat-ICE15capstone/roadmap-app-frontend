@@ -78,64 +78,7 @@ function Shop() {
     },
   ];
 
-  const [currentItemList, setCurrentItemList] = useState([
-    {
-      'id': 1,
-      'name': "Test Search",
-      'imageName': "eno_orange.png",
-      'description': "Item description",
-      'cost': 100,
-    },
-    {
-      'id': 2,
-      'name': "Item",
-      'imageName': "eno_orange.png",
-      'description': "Item description",
-      'cost': 100,
-    },
-    {
-      'id': 3,
-      'name': "Item",
-      'imageName': "eno_orange.png",
-      'description': "Item description",
-      'cost': 100,
-    },
-    {
-      'id': 4,
-      'name': "Item",
-      'imageName': "eno_orange.png",
-      'description': "Item description",
-      'cost': 100,
-    },
-    {
-      'id': 5,
-      'name': "Item",
-      'imageName': "eno_orange.png",
-      'description': "Item description",
-      'cost': 100,
-    },
-    {
-      'id': 6,
-      'name': "Item",
-      'imageName': "eno_orange.png",
-      'description': "Item description",
-      'cost': 100,
-    },
-    {
-      'id': 7,
-      'name': "Item",
-      'imageName': "eno_orange.png",
-      'description': "Item description",
-      'cost': 100,
-    },
-    {
-      'id': 8,
-      'name': "Item",
-      'imageName': "eno_orange.png",
-      'description': "Item description",
-      'cost': 100,
-    },
-  ]);
+  const [currentItemList, setCurrentItemList] = useState([]);
 
   const [isWarning, setIsWarning] = useState();
   const [profile, setProfile] = useState();
