@@ -1,8 +1,11 @@
 import React from 'react'
 import { motion } from 'framer-motion';
-import placeholderImage from "../assets/roadmap_assets/Placeholder_Image.png"
+import placeholderImage from "../assets/shop_assests/eno_orange.png"
 
 function ShopItem({ item, handleSelect }) {
+  const { imageName } = 'eno_orange.png';
+  const imagePath = `../assets/shop_assests/${imageName}`;
+
   function handleClick() {
     handleSelect(item);
   }
@@ -18,7 +21,7 @@ function ShopItem({ item, handleSelect }) {
           duration: "0.5"
         }}
       >
-        <img src={placeholderImage} className="rounded-xl h-full w-full" />
+        <img src={(imagePath)} alt={item.imageName} className="rounded-xl h-full w-full" />
         <div className='flex flex-col space-y-2 pt-2'>
           <div className='font-bold'>
             {item.name}
