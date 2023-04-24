@@ -399,6 +399,7 @@ const RoadmapCreatePage = (props) => {
         // then set the data to variable
         // const tempRoadmap = await getRoadmap(id, 10000, mode === "clone"); //individual fetch is bugged
         const tempRoadmap = await getRoadmap(id, 10000, true);
+        console.log(tempRoadmap);
         if (tempRoadmap === null) {
           setLoading(false);
           handleDisplayErrorMessage("Roadmap Loading Failed", "/", true);
@@ -986,12 +987,12 @@ const RoadmapCreatePage = (props) => {
                   onClick={() => setPublicModal(true)}
                   className={`hover:scale-110 flex gap-1 transition duration-150 items-center border-nav-blue rounded-full border-2 p-2 ${
                     publicModal === true ? "animate-bounce" : ""
-                  } ${!isPublic ? "bg-white" : "bg-nav-blue"}`}
+                  } ${isPublic ? "bg-white" : "bg-nav-blue"}`}
                 >
                   <LockUnlockButton
-                    isLock={isPublic}
+                    isLock={!isPublic}
                     className="w-6 h-6"
-                    fillColor={!isPublic ? "#00286E" : "white"}
+                    fillColor={isPublic ? "#00286E" : "white"}
                   />
                 </button>
               </div>
