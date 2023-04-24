@@ -48,7 +48,7 @@ const LockUnlockButton = ({ isLock, fillColor = "white", className }) => {
           />
         </motion.svg>
       )}
-      <span className={`visible md:hidden font-bold [@media(max-width:360px)]:hidden ${isLock ? "text-white" : "text-nav-blue" }`}>
+      <span className={`[@media(max-width:360px)]:hidden md:hidden lg:block font-bold ${isLock ? "text-white" : "text-nav-blue" }`}>
         {isLock ? "Private" : "Public"}
       </span>
     </>

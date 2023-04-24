@@ -186,9 +186,9 @@ const DropDownMenu = ({
       >
         {Icon}
         <span
-          className={`visible md:hidden font-bold [@media(max-width:360px)]:hidden ${
+          className={`[@media(max-width:360px)]:hidden md:hidden lg:block font-bold  ${
             currentOption.on ? "text-nav-blue" : "text-white"
-          }`}
+          } whitespace-nowrap`}
         >
           {currentOption.on
             ? `${currentOption.detail.day}d: ${
