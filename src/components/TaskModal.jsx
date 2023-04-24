@@ -4,7 +4,7 @@ import { ReactComponent as AddButton } from "../assets/addButton.svg";
 import { ReactComponent as DeleteButton } from "../assets/deleteButton.svg";
 import { ReactComponent as ArrowIcon } from "../assets/taskmodal/arrow.svg";
 import { ReactComponent as CalendarIcon } from "../assets/taskmodal/calendar.svg";
-import { ReactComponent as TrashIcon } from "../assets/taskmodal/trash.svg";
+import { ReactComponent as TrashIcon } from "../assets/taskmodal/whiteTrash.svg";
 import { ReactComponent as WhiteTrash } from "../assets/taskmodal/whiteTrash.svg";
 import DatePicker from "react-datepicker";
 import Spinner from "./Spinner";
@@ -13,8 +13,10 @@ import TwoButtonModal from "./TwoButtonModal";
 import { getTask } from "../functions/roadmapFunction";
 import { roundTimeToNearest30 } from "../functions/formatFunction";
 import { motion } from "framer-motion";
+import { useMediaQuery } from "../hooks/useMediaQuery";
 
 import "react-datepicker/dist/react-datepicker.css";
+import CECLogo from "./CECLogo";
 
 // Current issues
 // 2. Date data domain has yet to be enforced
@@ -48,6 +50,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
   const [deleteModal, setDeleteModal] = useState(false);
   const [unSavedModal, setUnSavedModal] = useState(false);
   const [taskWasFetched, setTaskWasFetched] = useState(false);
+  const islessthan900px = useMediaQuery("(max-width: 900px)");
   const DatePickerButton = forwardRef(({ value, onClick }, ref) => (
     <div className="w-full">
       <button
@@ -107,7 +110,10 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
     setName(taskObj.name);
     setDescription(taskObj.description);
     setSubTasks(taskObj.subtasks);
-    setNodeColor(allNodeColor.find(({ name }) => name === taskObj.nodeColor));
+    setNodeColor(
+      allNodeColor.find(({ name }) => name === taskObj.nodeColor) ??
+        allNodeColor[0]
+    );
     setNodeShape(taskObj.nodeShape);
     setStartDate(taskObj.startDate);
     setdueDate(taskObj.dueDate);
@@ -150,7 +156,10 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
   };
 
   const handleNodeColorChange = (event) => {
-    setNodeColor(allNodeColor.find(({ name }) => name === event.target.value));
+    setNodeColor(
+      allNodeColor.find(({ name }) => name === event.target.value) ??
+        allNodeColor[0]
+    );
   };
 
   const handleNodeShapeChange = (event, shapeType) => {
@@ -300,61 +309,41 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
 
   return (
     <>
-      <TwoButtonModal
-        isOpen={deleteModal}
-        onLightPress={() => setDeleteModal(false)}
-        onDarkPress={() => editTaskCallBack("delete", oldData)}
-        textField={{
-          title: "Confirm Deletion",
-          body: "Deleting task will permanantly remove it from your roadmap?",
-          lightButtonText: "Cancel",
-          darkButtonText: "Delete",
-        }}
-        Icon={WhiteTrash}
-      />
-      <TwoButtonModal
-        isOpen={unSavedModal}
-        onLightPress={() =>
-          editTaskCallBack(
-            taskWasFetched ? "fetch" : "failed",
-            generateTaskData()
-          )
-        }
-        onDarkPress={() => setUnSavedModal(false)}
-        textField={{
-          title: "Unsaved Change",
-          body: "Are you sure you want to discard the change of a task?",
-          lightButtonText: "Ok",
-          darkButtonText: " Cancel",
-        }}
-      />
       <motion.form
         onSubmit={handleSubmit}
         variants={taskModalVariants}
         initial="initial"
         animate="animate"
         exit="exit"
-        className="z-50"
       >
-        <div className="justify-center items-center flex overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none py-3">
+        <div className="opacity-25 fixed inset-0 bg-black"></div>
+        <div className="justify-center items-center flex overflow-y-auto fixed inset-0 outline-none focus:outline-none py-3">
           <div className="relative w-11/12 md:w-5/6 my-6 mx-auto xl:w-2/3 2xl:w-1/2 max-h-screen">
             {/*content*/}
             {loading && <Spinner className="z-30 absolute rounded-xl" />}
             <div className=" rounded-2xl shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
               {/*header*/}
               <div
-                className={`flex justify-between py-4 px-5 xl:py-8 border-b border-solid border-slate-200 rounded-t-2xl transition duration-300 items-center bg-white`}
+                className={`flex justify-between py-4 px-5 xl:py-8 border-b border-solid border-slate-200 rounded-t-2xl transition duration-300 items-center bg-nav-blue`}
               >
                 <div className={`${oldData.id === -1 ? "" : "w-[50px]"}`}></div>
-                <h3 className="text-4xl font-semibold text-black flex justify-center">
-                  {oldData.id === -1 ? "Create" : "Edit"} TASK
-                </h3>
+                <div className="flex gap-2">
+                  <CECLogo
+                    mode={oldData.id === -1 ? "create" : "edit"}
+                    className="w-10 h-10 hidden xs:block"
+                    fillColor="white"
+                  />
+                  <h3 className="text-4xl font-semibold  justify-center text-white">
+                    {oldData.id === -1 ? "Create" : "Edit"} Task
+                  </h3>
+                </div>
+
                 {oldData.id === -1 ? (
                   <div></div>
                 ) : (
                   <button
                     type="button"
-                    // className="p-1 bg-transparent border-0 text-white text-3xl"
+                    className="hover:scale-110 duration-200 transition"
                     onClick={() => setDeleteModal(true)}
                   >
                     {" "}
@@ -366,16 +355,24 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
               <div className="flex flex-col md:flex-row max-h-full">
                 {/* Left side */}
                 <div className="flex flex-col w-full md:w-1/2 p-6 overflow-y-auto">
-                  <label className="font-inter font-bold">Name</label>
+                  <label className="font-inter font-bold" htmlFor="taskName">
+                    Name
+                  </label>
                   <input
                     type="text"
                     value={name}
                     className="border-2 border-gray-300 rounded-md my-1 placeholder:italic px-1 font-inter"
                     placeholder=" Enter task name..."
                     onChange={(e) => handleNameChange(e)}
+                    id="taskName"
                   ></input>
 
-                  <label className="font-inter font-bold">Description</label>
+                  <label
+                    className="font-inter font-bold"
+                    htmlFor="taskDescription"
+                  >
+                    Description
+                  </label>
                   <textarea
                     className="border-2 border-gray-300 rounded-md my-1 grow placeholder:italic placeholder:justify-start px-1 font-inter"
                     value={description}
@@ -383,6 +380,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                     rows="4"
                     placeholder=" Enter description..."
                     onChange={(e) => handleDescriptionChange(e)}
+                    id="taskDescription"
                   ></textarea>
 
                   {/* Date Setting */}
@@ -445,9 +443,9 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                           ))}
                         </select>
                       </div>
-                      <div className="bg-gray-100 basis-1/2 rounded-lg flex flex-col content-center border-gray-300 border-2">
+                      <div className="bg-gray-100 basis-1/2 rounded-lg flex flex-col content-center border-gray-300 border-2 justify-evenly">
                         <p className="font-bold text-gray-400 pl-2">Shape</p>
-                        <div className="flex gap-2 justify-center">
+                        <div className="flex gap-1 sm:gap-2 justify-center">
                           <button
                             type="button"
                             onClick={() =>
@@ -455,6 +453,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                             }
                           >
                             <CustomSVG
+                              size={islessthan900px ? 36 : undefined}
                               isStrokeOn={nodeShape === "circle"}
                               className={`${nodeColor.twfill}`}
                             />
@@ -467,6 +466,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                             }
                           >
                             <CustomSVG
+                              size={islessthan900px ? 36 : undefined}
                               type="square"
                               isStrokeOn={nodeShape === "square"}
                               className={`${nodeColor.twfill}`}
@@ -481,12 +481,14 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                             value="triangle"
                           >
                             <CustomSVG
+                              size={islessthan900px ? 36 : undefined}
                               type="triangle"
                               isStrokeOn={nodeShape === "triangle"}
                               className={`${nodeColor.twfill}`}
                             />
                           </button>
                         </div>
+                        <p className="opacity-0">Shape</p>
                       </div>
                     </div>
                   </div>
@@ -511,7 +513,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                               </button>
                               <input
                                 type="text"
-                                className="border border-black rounded-md grow font-inter"
+                                className="border border-black rounded-md grow font-inter overflow-x-auto"
                                 onChange={() =>
                                   onSubtaskTextEdit(
                                     event.target.value,
@@ -548,7 +550,7 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
                     </div>
                     <div className="flex items-center justify-end p-4 rounded-b gap-3">
                       <button
-                        className="text-black border border-black background-transparent rounded-full font-bold uppercase text-sm h-10 w-24 "
+                        className="text-nav-blue border border-nav-blue background-transparent rounded-full font-bold uppercase text-sm h-10 w-24 "
                         type="button"
                         onClick={handleDetectChangeBeforeClose}
                       >
@@ -567,8 +569,35 @@ const TaskModal = ({ oldData, editTaskCallBack }) => {
             </div>
           </div>
         </div>
-        <div className="opacity-25 fixed inset-0 z-10 bg-black"></div>
       </motion.form>
+      <TwoButtonModal
+        isOpen={deleteModal}
+        onLightPress={() => setDeleteModal(false)}
+        onDarkPress={() => editTaskCallBack("delete", oldData)}
+        textField={{
+          title: "Confirm Deletion",
+          body: "Deleting task will permanantly remove it from your roadmap?",
+          lightButtonText: "Cancel",
+          darkButtonText: "Delete",
+        }}
+        Icon={WhiteTrash}
+      />
+      <TwoButtonModal
+        isOpen={unSavedModal}
+        onLightPress={() =>
+          editTaskCallBack(
+            taskWasFetched ? "fetch" : "failed",
+            generateTaskData()
+          )
+        }
+        onDarkPress={() => setUnSavedModal(false)}
+        textField={{
+          title: "Unsaved Change",
+          body: "Are you sure you want to discard the change of a task?",
+          lightButtonText: "Ok",
+          darkButtonText: " Cancel",
+        }}
+      />
     </>
   );
 };

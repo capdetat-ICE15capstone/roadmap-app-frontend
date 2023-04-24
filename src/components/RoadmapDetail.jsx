@@ -20,7 +20,7 @@ function RoadmapDetail({ roadmap, isOwner, likeCount, isLiked, isCompleted, isAr
               {roadmap.name} {isCompleted ? '✓' : ''}
             </div>
             <div className="flex sm:justify-end sm:space-x-1 max-sm:space-x-2 max-sm:w-full h-9 shrink-0">
-              {(isOwner || isArchived) && (
+              {(isOwner || (isOwner && isArchived)) && (
                 <>
                   <div className="flex sm:w-24 max-sm:flex-1 justify-center items-center space-x-2 bg-gray-600 text-white px-4 py-2 font-semilight rounded-full text-sm font-bold truncate pointer-events-none">
                     {(!isLiked) ? (
@@ -45,7 +45,7 @@ function RoadmapDetail({ roadmap, isOwner, likeCount, isLiked, isCompleted, isAr
                   </button>
                 </>
               )}
-              {isOwner === false && (
+              {!isOwner && (
                 <>
                   <button onClick={handleLike} className="flex sm:w-24 max-sm:flex-1 shrink-0 justify-center items-center space-x-2 bg-sub-blue grow text-white px-4 py-2 font-semilight rounded-full text-sm font-bold truncate transition ease-in-out hover:bg-nav-blue hover:scale-105 hover:z-10 duration-200" type="button">
                     {(!isLiked) ? (

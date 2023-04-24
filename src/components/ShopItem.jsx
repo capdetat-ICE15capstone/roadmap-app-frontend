@@ -1,5 +1,5 @@
 import React from 'react'
-
+import { motion } from 'framer-motion';
 import placeholderImage from "../assets/roadmap_assets/Placeholder_Image.png"
 
 function ShopItem({ item, handleSelect }) {
@@ -9,7 +9,15 @@ function ShopItem({ item, handleSelect }) {
 
   return (
     <>
-      <div className='flex flex-col bg-white rounded-2xl shadow-md p-2 w-60'>
+      <motion.div
+        className='flex flex-col bg-white border border-gray-300 rounded-2xl shadow-md p-2 w-60'
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{
+          type: "easeInOut",
+          duration: "0.5"
+        }}
+      >
         <img src={placeholderImage} className="rounded-xl h-full w-full" />
         <div className='flex flex-col space-y-2 pt-2'>
           <div className='font-bold'>
@@ -22,7 +30,7 @@ function ShopItem({ item, handleSelect }) {
             Details
           </button>
         </div>
-      </div>
+      </motion.div>
     </>
   )
 }

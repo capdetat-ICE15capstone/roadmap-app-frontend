@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom';
 
-import Spinner from '../components/Spinner';
-import Prompt from '../components/Prompt';
-
-import placeholderImage from "../assets/roadmap_assets/Placeholder_Image.png"
 import { ReactComponent as ShopLogo } from "../assets/shapes/shopping_bag.svg"
 import ShopItem from '../components/ShopItem';
 import ShopItemDetail from '../components/ShopItemDetail';
+
+import { motion } from 'framer-motion';
+
+import { completeQuestCheckShop } from './Activity';
 
 function Shop() {
 
@@ -18,7 +17,7 @@ function Shop() {
 
   const [points, setPoints] = useState(20);
 
-  const [itemList, setItemList] = useState([
+  const itemList = [
     {
       'id': 1,
       'name': "Test Search",
@@ -67,7 +66,7 @@ function Shop() {
       'description': "Item description",
       'cost': 100,
     },
-  ]);
+  ];
 
   const [currentItemList, setCurrentItemList] = useState([
     {
@@ -146,11 +145,21 @@ function Shop() {
 
   useEffect(() => {
     setCurrentItemList([...itemList]);
+
+    completeQuestCheckShop();
   }, []);
 
   return (
     <>
-      <div className='flex flex-col items-center h-full w-full bg-white'>
+      <motion.div
+        className='flex flex-col items-center h-full w-full bg-white'
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{
+          type: "easeInOut",
+          duration: "0.3"
+        }}
+      >
         <div className='flex justify-between items-center w-4/5 h-10 mt-10 mx-8 mb-8 space-x-4'>
           <div className='flex items-center shrink-0 h-full text-4xl font-extrabold text-nav-blue space-x-2'>
             <ShopLogo className='h-10 w-10' />
@@ -190,7 +199,7 @@ function Shop() {
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
       <ShopItemDetail visible={isViewingItem} item={selectedItem} points={points} handlePoints={(amount) => { setPoints(amount) }} handleClose={() => setIsViewingItem(false)} />
     </>
   )
