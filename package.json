@@ -18,7 +18,8 @@
     "react-datepicker": "^4.10.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.8.1",
-    "vite-plugin-svgr": "^2.4.0"
+    "vite-plugin-svgr": "^2.4.0",
+    "workbox-recipes": "^6.5.4"
   },
   "devDependencies": {
     "@types/react": "^18.0.27",
