@@ -12,14 +12,14 @@ export default defineConfig({
       strategies: "injectManifest",
       srcDir: "src",
       filename: "sw.js",
-      includeAssets: ["favicon.ico", "apple-touch-icon.png", "**/*.jpg", "**/*.png", "**/*.jpeg"],
+      includeAssets: ["favicon.ico", "apple-touch-icon.png"],
       registerType: "autoUpdate",
       devOptions: {
         enabled: true,
         type: "module",
       },
       workbox: {
-        globPatterns: ["**/*"],
+        globPatterns: ["**/*.{js,css,html,ico,png,svg,jpg,}"],
       },
       manifest: {
         "name": "Milemap",
