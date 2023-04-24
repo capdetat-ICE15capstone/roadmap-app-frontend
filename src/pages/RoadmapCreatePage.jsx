@@ -911,7 +911,7 @@ const RoadmapCreatePage = (props) => {
         exit={{ opacity: 0 }}
       >
         {/* <div className="text-4xl font-bold flex items-start"> */}
-        <div className="flex w-full justify-between items-center my-8">
+        <div className="flex w-full justify-between items-center mt-10 mb-9">
           <div className="flex gap-3">
             <CECLogo
               mode={mode}
