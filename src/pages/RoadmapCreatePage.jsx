@@ -943,7 +943,7 @@ const RoadmapCreatePage = (props) => {
         >
           <div className="flex flex-col md:flex-row justify-between items-center gap-2">
             <label
-              className="hidden md:visible text-3xl font-bold md:block leading-none text-nav-blue"
+              className="hidden [@media(min-width:900px)]:block text-3xl font-bold leading-none text-nav-blue"
               htmlFor="roadmapName"
             >
               Name
