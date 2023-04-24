@@ -905,7 +905,7 @@ const RoadmapCreatePage = (props) => {
   return (
     <>
       <motion.div
-        className="flex justify-center items-center flex-col m-auto max-w-5xl w-[90%]"
+        className="flex justify-center items-center flex-col m-auto w-4/5"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
