@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react'
+import { useNavigate, useLocation } from 'react-router-dom';
 import { axiosInstance } from '../functions/axiosInstance';
 
 import Prompt from '../components/Prompt';
@@ -10,6 +10,8 @@ import { motion } from 'framer-motion';
 
 export default function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const premium = location.state?.premium || false; // Use default value of false if state is null
 
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
@@ -20,8 +22,15 @@ export default function Login() {
 
   const [failMessage, setFailMessage] = useState();
 
+  const isMountedRef = useRef(false);
+
   // Check if there is a saved login information on first render.
   useEffect(() => {
+    if (!isMountedRef.current) {
+      isMountedRef.current = true;
+    } else {
+      return;
+    }
     if (localStorage.getItem('saved_email') !== null && localStorage.getItem('saved_password') !== null) {
       const submission = {
         "email": localStorage.getItem('saved_email'),
@@ -31,6 +40,22 @@ export default function Login() {
     }
     setIsLoading(false);
   }, [])
+
+  useEffect(() => {
+    if (premium) {
+      activatePremium();
+    }
+  }, [])
+
+  async function activatePremium() {
+    const route = `/account/premium/true`
+    try {
+      const response = await axiosInstance.put(route);
+      console.log(response.data);
+    } catch (error) {
+      console.error(error.response.data.detail);
+    }
+  }
 
   function handleSubmit(event) {
     event.preventDefault();
@@ -53,6 +78,9 @@ export default function Login() {
         console.log(response.data.detail);
         const token = response.data.token;
         localStorage.setItem('token', token);
+        if (premium) {
+          activatePremium();
+        }
         navigate('/');
       })
       .catch((error) => {

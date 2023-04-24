@@ -81,6 +81,7 @@ const Navbar = () => {
           </div>
         </div>
         <div className="flex flex-col flex-grow h-full bg-white overflow-x-hidden">
+        {!isPremium && 
           <motion.div className="flex justify-center h-fit min-h-[100px] bg-nav-blue"
             initial={{ display: "none" }}
             animate={{ display: "flex" }}
@@ -88,8 +89,7 @@ const Navbar = () => {
               type: "easeInOut",
               delay: "2"
             }}
-          >
-            {!isPremium && 
+          > 
             <AnimatePresence>
               <Link to={`/premium`} className="relative flex flex-col items-center min-w-[180px] w-2/3 h-full mx-auto bg-base-blue">
                 <motion.div className="absolute flex w-full h-full justify-center items-center font-inter font-semibold max-md:text-2xl text-4xl text-[#FFFFFF]"
@@ -165,9 +165,8 @@ const Navbar = () => {
                   </div>
                 </motion.div>
               </Link>
-            </AnimatePresence>
-            }
-          </motion.div>
+            </AnimatePresence>            
+          </motion.div>}
           <div className="overflow-y-auto z-10">
             <Outlet />
           </div>
