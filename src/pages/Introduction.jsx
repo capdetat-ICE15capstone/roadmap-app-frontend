@@ -213,7 +213,7 @@ const PremiumPage = React.forwardRef((props, ref) => {
     {
       borderClass: "border-nav-blue",
       line1: "Professional",
-      line2: "$69.42 per month",
+      line2: "$6.99 per month",
       line3: "Billed annually",
       list: [
         "Unlimited roadmaps allowed",

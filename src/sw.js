@@ -1,16 +1,21 @@
 import { precacheAndRoute, cleanupOutdatedCaches } from "workbox-precaching";
-import { clientsClaim, skipWaiting } from "workbox-core"
+import { clientsClaim } from "workbox-core"
+import {
+  imageCache,
+  googleFontsCache,
+} from 'workbox-recipes';
 // import { isServerResponding } from "./functions/userFunction";
 
 cleanupOutdatedCaches()
 clientsClaim()
 const myCache = self.__WB_MANIFEST;
 precacheAndRoute(myCache);
+imageCache();
+googleFontsCache();
 
 console.warn("Service worker is now operable");
 
 self.addEventListener("install", (event) => {
-  console.log(self.skipWaiting)
   self.skipWaiting()
 })
 
