@@ -78,7 +78,7 @@ function ShopItemDetail({ visible, item, points, handlePoints, handleClose }) {
           >
             <div className="absolute inset-0 z-10 flex items-center justify-center">
               <div className='flex flex-col bg-white rounded-2xl shadow-md p-2 w-60'>
-                <img src={placeholderImage} className="rounded-xl h-full w-full" />
+                <img src={item.imgSrc} alt={item.imgSrc} className="rounded-xl h-full w-full" />
                 <div className='flex flex-col space-y-4 pt-2'>
                   <div className='flex justify-between m-2'>
                     <div className='font-bold'>
