@@ -28,6 +28,10 @@ import Img15 from "../assets/shop_assests/peptein.png"
 import Img16 from "../assets/shop_assests/ruler.png"
 import Img17 from "../assets/shop_assests/scott_small.png"
 
+const bahtToPoint = (priceInBaht=0) => {
+  return 50 * priceInBaht // 50 points = 1 baht
+}
+
 function Shop() {
 
   const [isViewingItem, setIsViewingItem] = useState(false);
@@ -42,14 +46,14 @@ function Shop() {
       'id': 1,
       'name': "Eno orange flavor",
       'description': "Item description",
-      'cost': 100,
+      'cost': bahtToPoint(12),
       'imgSrc': Img1
     },
     {
       'id': 2,
       'name': "Eno Salt flavor",
       'description': "Item description",
-      'cost': 100,
+      'cost': bahtToPoint(12),
       'imgSrc': Img2
     },
     {
@@ -57,105 +61,105 @@ function Shop() {
       'name': "Fisher man's friend, Cherry flavor",
       'imageName': "eno_orange.png",
       'description': "Item description",
-      'cost': 100,
+      'cost': bahtToPoint(37),
       'imgSrc': Img3
     },
     {
       'id': 4,
       'name': "Fisher man's friend, Mandarin flavor",
       'description': "Item description",
-      'cost': 100,
+      'cost': bahtToPoint(37),
       'imgSrc': Img4
     },
     {
       'id': 5,
       'name': "Fisher man's friend, Mint flavor",
       'description': "Fisher man's friend, Mint flavor",
-      'cost': 100,
+      'cost': bahtToPoint(37),
       'imgSrc': Img5
     },
     {
       'id': 6,
       'name': "Fisher man's friend, Original flavor",
       'description': "Fisher man's friend, Original flavor",
-      'cost': 100,
+      'cost': bahtToPoint(37),
       'imgSrc': Img6
     },
     {
       'id': 7,
       'name': "Fisher man's friend, Spearmint flavor",
       'description': "Fisher man's friend, Spearmint flavor",
-      'cost': 100,
+      'cost': bahtToPoint(37),
       'imgSrc': Img7
     },
     {
       'id': 8,
       'name': "Lactasoy",
       'description': "Lactasoy",
-      'cost': 100,
+      'cost': bahtToPoint(10),
       'imgSrc': Img8
     },
     {
       'id': 9,
       'name': "Lactasoy, Chocolate flavor",
       'description': "Lactasoy, Chocolate flavor",
-      'cost': 100,
+      'cost': bahtToPoint(10),
       'imgSrc': Img9
     },
     {
       'id': 10,
       'name': "Lays classic",
       'description': "Lays classic",
-      'cost': 100,
+      'cost': bahtToPoint(32),
       'imgSrc': Img10
     },
     {
       'id': 11,
       'name': "Lays Seaweed x6",
       'description': "Lays Seaweed x6",
-      'cost': 100,
+      'cost': bahtToPoint(32*6),
       'imgSrc': Img11
     },
     {
       'id': 12,
       'name': "Milo",
       'description': "Milo",
-      'cost': 100,
+      'cost': bahtToPoint(12),
       'imgSrc': Img12
     },
     {
       'id': 13,
       'name': "Milo Cereal",
       'description': "Milo Cereal",
-      'cost': 100,
+      'cost': bahtToPoint(10),
       'imgSrc': Img13
     },
     {
       'id': 14,
       'name': "Marlin writing set",
       'description': "Marlin writing set",
-      'cost': 100,
+      'cost': bahtToPoint(80),
       'imgSrc': Img14
     },
     {
       'id': 15,
       'name': "Peptein",
       'description': "Peptein",
-      'cost': 100,
+      'cost': bahtToPoint(30),
       'imgSrc': Img15
     },
     {
       'id': 16,
       'name': "Ruler",
       'description': "Ruler",
-      'cost': 100,
+      'cost': bahtToPoint(10),
       'imgSrc': Img16
     },
     {
       'id': 17,
       'name': "Scott extra",
       'description': "Scott extra",
-      'cost': 100,
+      'cost': bahtToPoint(20),
       'imgSrc': Img17
     },
   ];
