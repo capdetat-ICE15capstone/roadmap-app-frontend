@@ -1,4 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, lazy } from 'react'
+
+import { axiosInstance } from '../functions/axiosInstance';
 
 import { ReactComponent as ShopLogo } from "../assets/shapes/shopping_bag.svg"
 import ShopItem from '../components/ShopItem';
@@ -7,6 +9,28 @@ import ShopItemDetail from '../components/ShopItemDetail';
 import { motion } from 'framer-motion';
 
 import { completeQuestCheckShop } from './Activity';
+
+import Img1 from "../assets/shop_assests/eno_orange.png"
+import Img2 from "../assets/shop_assests/eno_salt.png"
+import Img3 from "../assets/shop_assests/fsf_cherry.png"
+import Img4 from "../assets/shop_assests/fsf_mandarin.png"
+import Img5 from "../assets/shop_assests/fsf_mint.png"
+import Img6 from "../assets/shop_assests/fsf_original.png"
+import Img7 from "../assets/shop_assests/fsf_spearmint.png"
+import Img8 from "../assets/shop_assests/lactasoy_bottle.png"
+import Img9 from "../assets/shop_assests/lactasoy_box_chocolate.png"
+import Img10 from "../assets/shop_assests/lays_classic.png"
+import Img11 from "../assets/shop_assests/lays_seaweed_x6.jpg"
+import Img12 from "../assets/shop_assests/milo_can.png"
+import Img13 from "../assets/shop_assests/milo_cereal.png"
+import Img14 from "../assets/shop_assests/pen_and_pencil.png"
+import Img15 from "../assets/shop_assests/peptein.png"
+import Img16 from "../assets/shop_assests/ruler.png"
+import Img17 from "../assets/shop_assests/scott_small.png"
+
+const bahtToPoint = (priceInBaht=0) => {
+  return 50 * priceInBaht // 50 points = 1 baht
+}
 
 function Shop() {
 
@@ -20,104 +44,143 @@ function Shop() {
   const itemList = [
     {
       'id': 1,
-      'name': "Test Search",
-      'description': "Item description",
-      'cost': 100,
+      'name': "Eno: Orange flavor",
+      'description': "Eno: Orange flavor",
+      'cost': bahtToPoint(12),
+      'imgSrc': Img1
     },
     {
       'id': 2,
-      'name': "Item",
-      'description': "Item description",
-      'cost': 100,
+      'name': "Eno: Salt flavor",
+      'description': "Eno: Salt flavor",
+      'cost': bahtToPoint(12),
+      'imgSrc': Img2
     },
     {
       'id': 3,
-      'name': "Item",
-      'description': "Item description",
-      'cost': 100,
+      'name': "Fisherman's friend: Cherry flavor",
+      'description': "Fisherman's friend: Cherry flavor",
+      'cost': bahtToPoint(37),
+      'imgSrc': Img3
     },
     {
       'id': 4,
-      'name': "Item",
-      'description': "Item description",
-      'cost': 100,
+      'name': "Fisherman's friend: Mandarin flavor",
+      'description': "Fisherman's friend: Mandarin flavor",
+      'cost': bahtToPoint(37),
+      'imgSrc': Img4
     },
     {
       'id': 5,
-      'name': "Item",
-      'description': "Item description",
-      'cost': 100,
+      'name': "Fisherman's friend: Mint flavor",
+      'description': "Fisherman's friend: Mint flavor",
+      'cost': bahtToPoint(37),
+      'imgSrc': Img5
     },
     {
       'id': 6,
-      'name': "Item",
-      'description': "Item description",
-      'cost': 100,
+      'name': "Fisherman's friend: Original flavor",
+      'description': "Fisherman's friend: Original flavor",
+      'cost': bahtToPoint(37),
+      'imgSrc': Img6
     },
     {
       'id': 7,
-      'name': "Item",
-      'description': "Item description",
-      'cost': 100,
+      'name': "Fisherman's friend: Spearmint flavor",
+      'description': "Fisherman's friend: Spearmint flavor",
+      'cost': bahtToPoint(37),
+      'imgSrc': Img7
     },
     {
       'id': 8,
-      'name': "Item",
-      'description': "Item description",
-      'cost': 100,
+      'name': "Lactasoy",
+      'description': "Lactasoy",
+      'cost': bahtToPoint(10),
+      'imgSrc': Img8
+    },
+    {
+      'id': 9,
+      'name': "Lactasoy: Chocolate flavor",
+      'description': "Lactasoy: Chocolate flavor",
+      'cost': bahtToPoint(10),
+      'imgSrc': Img9
+    },
+    {
+      'id': 10,
+      'name': "Lays: Classic",
+      'description': "Lays: Classic",
+      'cost': bahtToPoint(32),
+      'imgSrc': Img10
+    },
+    {
+      'id': 11,
+      'name': "Lays: Seaweed x6",
+      'description': "Lays: Seaweed x6",
+      'cost': bahtToPoint(32*6),
+      'imgSrc': Img11
+    },
+    {
+      'id': 12,
+      'name': "Milo",
+      'description': "Milo",
+      'cost': bahtToPoint(12),
+      'imgSrc': Img12
+    },
+    {
+      'id': 13,
+      'name': "Cereal Milo",
+      'description': "Cereal Milo",
+      'cost': bahtToPoint(10),
+      'imgSrc': Img13
+    },
+    {
+      'id': 14,
+      'name': "Marlin Writing Set",
+      'description': "Marlin Writing Set",
+      'cost': bahtToPoint(80),
+      'imgSrc': Img14
+    },
+    {
+      'id': 15,
+      'name': "Peptein",
+      'description': "Peptein",
+      'cost': bahtToPoint(30),
+      'imgSrc': Img15
+    },
+    {
+      'id': 16,
+      'name': "Ruler",
+      'description': "Ruler",
+      'cost': bahtToPoint(10),
+      'imgSrc': Img16
+    },
+    {
+      'id': 17,
+      'name': "Scott Extra",
+      'description': "Scott Extra",
+      'cost': bahtToPoint(20),
+      'imgSrc': Img17
     },
   ];
 
-  const [currentItemList, setCurrentItemList] = useState([
-    {
-      'id': 1,
-      'name': "Item",
-      'description': "Item description",
-      'cost': 100,
-    },
-    {
-      'id': 2,
-      'name': "Item",
-      'description': "Item description",
-      'cost': 100,
-    },
-    {
-      'id': 3,
-      'name': "Item",
-      'description': "Item description",
-      'cost': 100,
-    },
-    {
-      'id': 4,
-      'name': "Item",
-      'description': "Item description",
-      'cost': 100,
-    },
-    {
-      'id': 5,
-      'name': "Item",
-      'description': "Item description",
-      'cost': 100,
-    },
-    {
-      'id': 6,
-      'name': "Item",
-      'description': "Item description",
-      'cost': 100,
-    },
-    {
-      'id': 7,
-      'name': "Item",
-      'description': "Item description",
-      'cost': 100,
-    },
-    {
-      'id': 8,
-      'name': "Item",
-      'description': "Item description",
-      'cost': 100,
-    },
-  ]);
+  const [currentItemList, setCurrentItemList] = useState([]);
+
+  const [isWarning, setIsWarning] = useState();
+  const [profile, setProfile] = useState();
+  const [errorMessage, setErrorMessage] = useState();
+
+  const fetchData = async () => {
+    try {
+      const response = await axiosInstance.get('/home/me');
+      setProfile(response.data.profile);
+      setPoints(response.data.profile.points)
+      console.log(response.data.profile);
+    } catch (error) {
+      console.error(error.message);
+      setErrorMessage(error.message);
+      setIsWarning(true);
+    }
+  }
 
   function handleSelectItem(item) {
     setSelectedItem(item);
@@ -139,13 +202,24 @@ function Shop() {
     }
   }
 
+  async function handleExchangePoints(points) {
+    try {
+      const response = await axiosInstance.put(`/user/spend_points/?points=${1}`);
+      console.log(response.data);
+    } catch (error) {
+      console.error(error.message);
+      setErrorMessage(error.message);
+      setIsWarning(true);
+    }
+  }
+
   useEffect(() => {
     console.log(selectedItem);
   }, [selectedItem]);
 
   useEffect(() => {
+    fetchData();
     setCurrentItemList([...itemList]);
-
     completeQuestCheckShop();
   }, []);
 
@@ -200,7 +274,7 @@ function Shop() {
           </div>
         </div>
       </motion.div>
-      <ShopItemDetail visible={isViewingItem} item={selectedItem} points={points} handlePoints={(amount) => { setPoints(amount) }} handleClose={() => setIsViewingItem(false)} />
+      <ShopItemDetail visible={isViewingItem} item={selectedItem} points={points} handlePoints={handleExchangePoints} handleClose={() => setIsViewingItem(false)} />
     </>
   )
 }

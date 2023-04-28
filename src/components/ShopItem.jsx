@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { motion } from 'framer-motion';
-import placeholderImage from "../assets/roadmap_assets/Placeholder_Image.png"
+import placeholderImage from "../assets/shop_assests/eno_orange.png"
 
 function ShopItem({ item, handleSelect }) {
+
   function handleClick() {
     handleSelect(item);
   }
@@ -18,7 +19,10 @@ function ShopItem({ item, handleSelect }) {
           duration: "0.5"
         }}
       >
-        <img src={placeholderImage} className="rounded-xl h-full w-full" />
+        <div className="h-full w-full flex items-center justify-center p-3">
+          <img src={item.imgSrc} alt={item.imgSrc} className="rounded-xl max-h-[200px]"/>
+        </div>
+        
         <div className='flex flex-col space-y-2 pt-2'>
           <div className='font-bold'>
             {item.name}

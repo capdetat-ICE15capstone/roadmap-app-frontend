@@ -11,6 +11,7 @@ import RoadmapDetail from '../components/RoadmapDetail';
 import RoadmapTaskDetail from '../components/RoadmapTaskDetail';
 import PopUpTaskViewer from '../components/PopUpTaskViewer';
 import { getProfilePictureSrc } from '../components/SettingProfileImageSelector';
+import { completeQuestCompleteTask } from './Activity';
 
 import { ReactComponent as RoadmapIcon } from "../assets/shapes/roadmap.svg"
 import { AnimatePresence, motion } from 'framer-motion';
@@ -113,8 +114,8 @@ export default function View() {
       setRoadmap(temp);
 
     } catch (error) {
-      console.error(error.message);
-      setErrorMessage(error.message);
+      console.error(error.response.data.detail);
+      setErrorMessage(error.response.data.detail);
       setIsWarning(true);
       setIsLoading(false);
     }
@@ -147,40 +148,41 @@ export default function View() {
   async function completeTask() {
     setIsLoading(true);
     setIsCompleting(false);
+    completeQuestCompleteTask(); 
     try {
       const response = await axiosInstance.put(`/task/complete?tid=${currentTask.id}`);
       console.log(response);
       fetchRoadmap(roadmap_id);
     } catch (error) {
-      console.error(error.message);
-      setErrorMessage(error.message);
+      console.error(error.response.data.detail);
+      setErrorMessage(error.response.data.detail);
       setIsWarning(true);
       setIsLoading(false);
     }
   }
 
-  function updateSubtasks() {
+  async function updateSubtasks() {
     setIsSaving(false);
     setIsLoading(true);
-    currentTask.subtasks.forEach((subtask) => {
-      updateEachSubtask(subtask);
-    });
-    fetchRoadmap(roadmap_id);
-    setIsLoading(false);
-  }
-
-  async function updateEachSubtask(subtask) {
     try {
-      const response = await axiosInstance.put(`/subtask/`, {
-        "title": subtask.detail,
-        "stid": subtask.id,
-        "is_done": subtask.status
+      let res = [];
+      currentTask.subtasks.forEach((subtask) => {
+        res.push(
+          {
+            "title": subtask.detail,
+            "stid": subtask.id,
+            "is_done": subtask.status
+          }
+        )
       });
+      const response = await axiosInstance.put(`/subtask/subtasks`, res);
       console.log(response.data);
+      setIsLoading(false);
     } catch (error) {
       console.error(error.message);
       setErrorMessage(error.message);
       setIsWarning(true);
+      setIsLoading(false);
     }
   }
 
@@ -247,7 +249,7 @@ export default function View() {
                     handleLike={handleLike}
                   />
                   <RoadmapViewer isArchived={isArchived} roadmap={roadmap} currentTaskID={currentTask.id} handleTaskView={(task) => { setCurrentViewTask(task); setIsViewingTask(true) }} />
-                  <RoadmapTaskDetail isEmpty={isEmpty} isCompleted={isCompleted} isArchived={isArchived} task={currentTask} handleTaskUpdate={(task) => setCurrentTask(task)} handleIsSaving={() => setIsSaving(true)} handleIsCompleting={() => setIsCompleting(true)} isOwner={isOwner} displaySaveButton={saveButton} displayCompleteButton={completeButton} />
+                  <RoadmapTaskDetail isEmpty={isEmpty} isCompleted={isCompleted} isArchived={isArchived} task={currentTask} handleTaskUpdate={(task) => setCurrentTask(task)} handleIsSaving={() => setIsSaving(true)} handleIsCompleting={() => {setIsCompleting(true)}} isOwner={isOwner} displaySaveButton={saveButton} displayCompleteButton={completeButton} />
                 </div>
                 <div className="pb-4" />
               </div>

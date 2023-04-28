@@ -55,8 +55,8 @@ const Home = () => {
       console.log(response.data);
       fetchData();
     } catch (error) {
-      console.error(error.message);
-      setErrorMessage(error.message);
+      console.error(error.response.data.detail);
+      setErrorMessage(error.response.data.detail);
       setIsWarning(true);
     }
   }
@@ -69,8 +69,8 @@ const Home = () => {
       console.log(response.data);
       fetchData();
     } catch (error) {
-      console.error(error.message);
-      setErrorMessage(error.message);
+      console.error(error.response.data.detail);
+      setErrorMessage(error.response.data.detail);
       setIsWarning(true);
     }
   }
@@ -91,8 +91,8 @@ const Home = () => {
       hasFetchedRef.current = true;
       isOtherProfile.current = true;
     } catch (error) {
-      console.error(error.message);
-      setErrorMessage(error.message);
+      console.error(error.response.data.detail);
+      setErrorMessage(error.response.data.detail);
       setIsWarning(true);
     }
   }
@@ -109,8 +109,8 @@ const Home = () => {
 
       hasFetchedRef.current = true;
     } catch (error) {
-      console.error(error.message);
-      setErrorMessage(error.message);
+      console.error(error.response.data.detail);
+      setErrorMessage(error.response.data.detail);
       setIsWarning(true);
     }
   }
@@ -120,8 +120,8 @@ const Home = () => {
       const response = await axiosInstance.get('/user/');
       return response.data.uid;
     } catch (error) {
-      console.error(error.message);
-      setErrorMessage(error.message);
+      console.error(error.response.data.detail);
+      setErrorMessage(error.response.data.detail);
       setIsWarning(true);
       return null;
     }
@@ -223,9 +223,10 @@ const Home = () => {
                           </div>
                         )
                       }
-
                     })}
-                    <RoadmapCreate isPremium={profile.is_premium} roadmapAmount={roadmapList.length} />
+                    {!isOtherProfile.current &&
+                      <RoadmapCreate isPremium={profile.is_premium} roadmapAmount={roadmapList.length} />
+                    }
                   </div>
                 </div>
                 <div className={`${(viewMode === "archive") ? 'visible' : 'hidden'}`}>
@@ -284,7 +285,7 @@ const Home = () => {
         </>
       }
       <Prompt visible={isWarning} title="Error" message={errorMessage} positiveText="return" positiveFunction={() => { setIsWarning(false); navigate(-1); }} />
-      <SpinnerNeo visible={!hasFetchedRef.current}/>
+      <SpinnerNeo visible={!hasFetchedRef.current} />
     </>
   );
 };
