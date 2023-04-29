@@ -148,7 +148,7 @@ export default function View() {
   async function completeTask() {
     setIsLoading(true);
     setIsCompleting(false);
-    completeQuestCompleteTask(); 
+    completeQuestCompleteTask();
     try {
       const response = await axiosInstance.put(`/task/complete?tid=${currentTask.id}`);
       console.log(response);
@@ -164,17 +164,22 @@ export default function View() {
   async function updateSubtasks() {
     setIsSaving(false);
     setIsLoading(true);
+    let res = [];
+    let isReadyToComplete = true;
+    currentTask.subtasks.forEach((subtask) => {
+      if (!subtask.status) {
+        isReadyToComplete = false;
+      }
+      res.push(
+        {
+          "title": subtask.detail,
+          "stid": subtask.id,
+          "is_done": subtask.status
+        }
+      )
+    });
+    setCompleteButton(isReadyToComplete);
     try {
-      let res = [];
-      currentTask.subtasks.forEach((subtask) => {
-        res.push(
-          {
-            "title": subtask.detail,
-            "stid": subtask.id,
-            "is_done": subtask.status
-          }
-        )
-      });
       const response = await axiosInstance.put(`/subtask/subtasks`, res);
       console.log(response.data);
       setIsLoading(false);
@@ -249,7 +254,7 @@ export default function View() {
                     handleLike={handleLike}
                   />
                   <RoadmapViewer isArchived={isArchived} roadmap={roadmap} currentTaskID={currentTask.id} handleTaskView={(task) => { setCurrentViewTask(task); setIsViewingTask(true) }} />
-                  <RoadmapTaskDetail isEmpty={isEmpty} isCompleted={isCompleted} isArchived={isArchived} task={currentTask} handleTaskUpdate={(task) => setCurrentTask(task)} handleIsSaving={() => setIsSaving(true)} handleIsCompleting={() => {setIsCompleting(true)}} isOwner={isOwner} displaySaveButton={saveButton} displayCompleteButton={completeButton} />
+                  <RoadmapTaskDetail isEmpty={isEmpty} isCompleted={isCompleted} isArchived={isArchived} task={currentTask} handleTaskUpdate={(task) => setCurrentTask(task)} handleIsSaving={() => setIsSaving(true)} handleIsCompleting={() => { setIsCompleting(true) }} isOwner={isOwner} displaySaveButton={saveButton} displayCompleteButton={completeButton} />
                 </div>
                 <div className="pb-4" />
               </div>
