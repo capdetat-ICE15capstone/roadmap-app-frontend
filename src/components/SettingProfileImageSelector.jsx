@@ -152,7 +152,11 @@ const SettingProfileImageSelector = ({isOpen, setIsOpen, selectedIndex = 0, setP
                                 <ProfPic id={18} reqLevel={42}/>
                                 <ProfPic id={19} reqLevel={45}/> */}
                             </div>
+                            <div className="flex justify-center mb-3">
+                                <span>Designed by <a href="http://www.freepik.com" className="underline text-blue-500">pikisuperstar / Freepik</a></span>
+                            </div>
                         </div>
+                        
                         {/* Title */}
                         <div className="py-2 px-5 lg:py-2">
                             <div className="flex p-4 rounded-b gap-3 justify justify-end">
