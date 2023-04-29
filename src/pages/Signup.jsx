@@ -141,7 +141,7 @@ export default function Signup() {
   return (
     <>
       <div className={`relative flex flex-row h-screen w-screen bg-white overflow-y-auto py-8`}>
-        <button type="button" onClick={() => navigate(-1)} className="absolute top-4 left-4 bg-black text-white shadow font-bold py-2 px-4 rounded-full transition ease-in-out hover:bg-mid-blue duration-300">
+        <button type="button" onClick={() => navigate('/intro')} className="absolute top-4 left-4 bg-black text-white shadow font-bold py-2 px-4 rounded-full transition ease-in-out hover:bg-mid-blue duration-300">
           Back
         </button>
         <motion.div
