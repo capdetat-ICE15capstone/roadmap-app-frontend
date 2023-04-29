@@ -71,47 +71,47 @@ export default function Signup() {
   // "Password must be longer than 8 charaters and not exceed 24 characters"
   // "Password must match"
 
-  function onEmailChange() {
-    if (!emailValidation.test(email)) {
+  function onEmailChange(input) {
+    if (!emailValidation.test(input)) {
       setValidEmail(false);
     } else {
       setValidEmail(true);
     }
   }
 
-  function onFirstNameChange() {
-    if (!specialChars.test(firstName) || firstName.length > 255 || firstName.length === 0) {
+  function onFirstNameChange(input) {
+    if (!specialChars.test(input) || input.length > 255 || input.length === 0) {
       setValidFirstName(false);
     } else {
       setValidFirstName(true);
     }
   }
 
-  function onLastNameChange() {
-    if (!specialChars.test(lastName) || lastName.length > 255 || lastName.length === 0) {
+  function onLastNameChange(input) {
+    if (!specialChars.test(input) || input.length > 255 || input.length === 0) {
       setValidLastName(false);
     } else {
       setValidLastName(true);
     }
   }
 
-  function onUsernameChange() {
-    if (!specialChars.test(username) || username.length > 24 || username.length === 0) {
+  function onUsernameChange(input) {
+    if (!specialChars.test(input) || input.length > 24 || input.length === 0) {
       setValidUsername(false);
     } else {
       setValidUsername(true);
     }
   }
 
-  function onPasswordChange() {
-    if (password.length < 8 || password.length > 24) {
+  function onPasswordChange(input) {
+    if (input.length < 8 || input.length > 24) {
       setValidPassword(false);
     } else {
       setValidPassword(true);
     }
   }
 
-  function onConfirmPasswordChange() {
+  function onConfirmPasswordChange(input) {
     if (password !== passwordConfirm) {
       setValidPasswordConfirm(false);
     } else {
@@ -157,7 +157,7 @@ export default function Signup() {
             <p className="text-center mb-4 text-3xl font-bold text-slate-600">
               Create Account
             </p>
-            <form id="register-form" autoComplete="off" onSubmit={handleSignupSubmit}>
+            <form id="register-form" autoComplete="off" onSubmit={(e) => handleSignupSubmit(e)}>
               <div className="flex flex-col space-y-1 mb-4">
                 <div className="flex flex-col">
                   <label className='focus:outline-none focus:shadow-outline'>
@@ -191,12 +191,12 @@ export default function Signup() {
                       placeholder="First Name"
                       onChange={(event) => {
                         setFirstName(event.target.value);
-                        onFirstNameChange();
+                        onFirstNameChange(event.target.value);
                       }}
                     />
-                    <div className={`${(validFirstName) ? 'invisible' : 'visible'} text-red-500 text-xs mb-1`}>
+                    <button className={`${(validFirstName) ? 'invisible' : 'visible'} text-red-500 text-xs mb-1`}>
                       invalid first name
-                    </div>
+                    </button>
                   </label>
                   <label className='w-full xs:w-1/2 focus:outline-none focus:shadow-outline'>
                     <div className="text-gray-600 text-xs">
@@ -209,7 +209,7 @@ export default function Signup() {
                       placeholder="Last Name"
                       onChange={(event) => {
                         setLastName(event.target.value);
-                        onLastNameChange();
+                        onLastNameChange(event.target.value);
                       }}
                     />
                     <div className={`${(validLastName) ? 'invisible' : 'visible'} text-red-500 text-xs mb-1`}>
@@ -229,7 +229,7 @@ export default function Signup() {
                       placeholder="Username"
                       onChange={(event) => {
                         setUsername(event.target.value);
-                        onUsernameChange();
+                        onUsernameChange(event.target.value);
                       }}
                     />
                     <div className={`${(validUsername) ? 'invisible' : 'visible'} text-red-500 text-xs mb-1`}>
@@ -249,7 +249,7 @@ export default function Signup() {
                       placeholder="********"
                       onChange={(event) => {
                         setPassword(event.target.value);
-                        onPasswordChange();
+                        onPasswordChange(event.target.value);
                       }}
                     />
                     <div className={`${(validPassword) ? 'invisible' : 'visible'} text-red-500 text-xs mb-1`}>
@@ -267,7 +267,7 @@ export default function Signup() {
                       placeholder="********"
                       onChange={(event) => {
                         setPasswordConfirm(event.target.value);
-                        onConfirmPasswordChange();
+                        onConfirmPasswordChange(event.target.value);
                       }}
                     />
                     <div className={`${(validPasswordConfirm) ? 'invisible' : 'visible'} text-red-500 text-xs mb-1`}>
@@ -277,7 +277,8 @@ export default function Signup() {
                 </div>
               </div>
               <div className="flex flex-col space-y-4">
-                <label className="flex ml-2 text-xs font-medium text-gray-400">
+                <div className='flex'>
+                <label className="flex">
                   <input
                     type="checkbox"
                     className="shrink-0 w-4 h-4S mr-1 bg-gray-100 border-gray-300 rounded"
@@ -285,15 +286,16 @@ export default function Signup() {
                     checked={agreement}
                     onChange={() => setAgreement(!agreement)}
                   />
-                  <div className='flex flex-col xs:flex-row'>
-                    <div className='text-center mr-1'>
-                      I have agreed to
-                    </div>
-                    <button onClick={() => setIsReading(true)} className="text-xs hover:text-red-300 transition-color duration-300 font-bold text-gray-400">
-                      Terms and Conditions for MileMap
-                    </button>
-                  </div>
                 </label>
+                <div className='flex flex-col xs:flex-row'>
+                  <div className='text-center mr-1 ml-2 text-xs font-medium text-gray-400'>
+                    I have agreed to
+                  </div>
+                  <a onClick={() => setIsReading(true)} className="text-xs hover:text-red-300 transition-color text-center duration-300 font-bold text-gray-400">
+                    Terms and Conditions for MileMap
+                  </a>
+                </div>
+                </div>
                 <button type="submit" className="bg-red-500 text-white shadow font-bold py-2 grow rounded-3xl transition ease-in-out hover:bg-red-700 duration-300">
                   Sign Up
                 </button>
