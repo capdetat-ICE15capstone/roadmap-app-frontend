@@ -21,12 +21,12 @@ export default function Signup() {
 
   const [agreement, setAgreement] = useState(false);
 
-  const [validEmail, setValidEmail] = useState(false);
-  const [validFirstName, setValidFirstName] = useState(false);
-  const [validLastName, setValidLastName] = useState(false);
-  const [validUsername, setValidUsername] = useState(false);
-  const [validPassword, setValidPassword] = useState(false);
-  const [validPasswordConfirm, setValidPasswordConfirm] = useState(false);
+  const [validEmail, setValidEmail] = useState(true);
+  const [validFirstName, setValidFirstName] = useState(true);
+  const [validLastName, setValidLastName] = useState(true);
+  const [validUsername, setValidUsername] = useState(true);
+  const [validPassword, setValidPassword] = useState(true);
+  const [validPasswordConfirm, setValidPasswordConfirm] = useState(true);
 
   const [isWarning, setIsWarning] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -39,7 +39,20 @@ export default function Signup() {
 
   function handleSignupSubmit(event) {
     event.preventDefault();
-    if (validEmail && validFirstName && validLastName && validPassword && validPasswordConfirm && validUsername && agreement) {
+    let invalidMessage = "";
+    if (email === "" || password === "" || passwordConfirm === "" || firstName === "" || lastName === "" || username === "") {
+      invalidMessage = "Please fill up all the forms"
+      setFailMessage(invalidMessage);
+      setIsWarning(true);
+      return;
+    }
+    if (validEmail && validFirstName && validLastName && validPassword && validPasswordConfirm && validUsername) {
+      if (!agreement) {
+        invalidMessage = "You must agree to MileMap's terms and conditions"
+        setFailMessage(invalidMessage);
+        setIsWarning(true);
+        return;
+      }
       const submission = {
         "email": email,
         "username": username,
@@ -58,54 +71,53 @@ export default function Signup() {
   // "Password must be longer than 8 charaters and not exceed 24 characters"
   // "Password must match"
 
-  useEffect(() => {
+  function onEmailChange() {
     if (!emailValidation.test(email)) {
       setValidEmail(false);
     } else {
       setValidEmail(true);
     }
-  }, [email])
+  }
 
-  useEffect(() => {
+  function onFirstNameChange() {
     if (!specialChars.test(firstName) || firstName.length > 255 || firstName.length === 0) {
       setValidFirstName(false);
     } else {
       setValidFirstName(true);
     }
-  }, [firstName])
+  }
 
-  useEffect(() => {
+  function onLastNameChange() {
     if (!specialChars.test(lastName) || lastName.length > 255 || lastName.length === 0) {
       setValidLastName(false);
     } else {
       setValidLastName(true);
     }
-  }, [lastName])
+  }
 
-  useEffect(() => {
+  function onUsernameChange() {
     if (!specialChars.test(username) || username.length > 24 || username.length === 0) {
       setValidUsername(false);
     } else {
       setValidUsername(true);
     }
-  }, [username])
+  }
 
-  useEffect(() => {
+  function onPasswordChange() {
     if (password.length < 8 || password.length > 24) {
       setValidPassword(false);
     } else {
       setValidPassword(true);
     }
-  }, [password])
+  }
 
-  useEffect(() => {
+  function onConfirmPasswordChange() {
     if (password !== passwordConfirm) {
       setValidPasswordConfirm(false);
     } else {
       setValidPasswordConfirm(true);
     }
-  }, [passwordConfirm])
-
+  }
 
   async function submitForm(form) {
     setIsLoading(true);
@@ -133,7 +145,7 @@ export default function Signup() {
           Back
         </button>
         <motion.div
-          className="flex items-center justify-center bg-white m-auto rounded-2xl shadow-2xl border border-gray-300"
+          className="flex items-center justify-center sm:bg-white m-auto rounded-2xl sm:shadow-2xl sm:border border-gray-300"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{
@@ -141,7 +153,7 @@ export default function Signup() {
             duration: "0.3"
           }}
         >
-          <div className="flex flex-col justify-center m-8">
+          <div className="flex flex-col justify-center m-8 w-9/10">
             <p className="text-center mb-4 text-3xl font-bold text-slate-600">
               Create Account
             </p>
@@ -157,17 +169,18 @@ export default function Signup() {
                       className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-sm text-gray-700 leading-tight"
                       id="InputEmail"
                       placeholder="Email Address"
-                      onChange={(event) =>
-                        setEmail(event.target.value)
-                      }
+                      onChange={(event) => {
+                        setEmail(event.target.value);
+                        onEmailChange();
+                      }}
                     />
                     <div className={`${(validEmail) ? 'invisible' : 'visible'} text-red-500 text-xs mb-1`}>
                       invalid email
                     </div>
                   </label>
                 </div>
-                <div className="flex flex-row justify-between space-x-4">
-                  <label className='w-1/2 focus:outline-none focus:shadow-outline'>
+                <div className="flex flex-col xs:flex-row justify-between xs:space-x-4">
+                  <label className='w-full xs:w-1/2 focus:outline-none focus:shadow-outline'>
                     <div className="text-gray-600 text-xs">
                       First Name
                     </div>
@@ -176,15 +189,16 @@ export default function Signup() {
                       className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-sm text-gray-700 leading-tight"
                       id="InputFirstName"
                       placeholder="First Name"
-                      onChange={(event) =>
-                        setFirstName(event.target.value)
-                      }
+                      onChange={(event) => {
+                        setFirstName(event.target.value);
+                        onFirstNameChange();
+                      }}
                     />
                     <div className={`${(validFirstName) ? 'invisible' : 'visible'} text-red-500 text-xs mb-1`}>
                       invalid first name
                     </div>
                   </label>
-                  <label className='w-1/2  focus:outline-none focus:shadow-outline'>
+                  <label className='w-full xs:w-1/2 focus:outline-none focus:shadow-outline'>
                     <div className="text-gray-600 text-xs">
                       Last Name
                     </div>
@@ -193,9 +207,10 @@ export default function Signup() {
                       className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-sm text-gray-700 leading-tight"
                       id="InputLastName"
                       placeholder="Last Name"
-                      onChange={(event) =>
-                        setLastName(event.target.value)
-                      }
+                      onChange={(event) => {
+                        setLastName(event.target.value);
+                        onLastNameChange();
+                      }}
                     />
                     <div className={`${(validLastName) ? 'invisible' : 'visible'} text-red-500 text-xs mb-1`}>
                       invalid last name
@@ -212,17 +227,18 @@ export default function Signup() {
                       className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-sm text-gray-700 leading-tight"
                       id="InputUsername"
                       placeholder="Username"
-                      onChange={(event) =>
-                        setUsername(event.target.value)
-                      }
+                      onChange={(event) => {
+                        setUsername(event.target.value);
+                        onUsernameChange();
+                      }}
                     />
                     <div className={`${(validUsername) ? 'invisible' : 'visible'} text-red-500 text-xs mb-1`}>
                       invalid username
                     </div>
                   </label>
                 </div>
-                <div className="flex flex-row justify-between space-x-4">
-                  <label className='w-1/2 focus:outline-none focus:shadow-outline'>
+                <div className="flex flex-col xs:flex-row justify-between xs:space-x-4">
+                  <label className='w-full xs:w-1/2 focus:outline-none focus:shadow-outline'>
                     <div className="text-gray-600 text-xs">
                       Password
                     </div>
@@ -231,15 +247,16 @@ export default function Signup() {
                       className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-sm text-gray-700 leading-tight"
                       id="InputPassword"
                       placeholder="********"
-                      onChange={(event) =>
-                        setPassword(event.target.value)
-                      }
+                      onChange={(event) => {
+                        setPassword(event.target.value);
+                        onPasswordChange();
+                      }}
                     />
                     <div className={`${(validPassword) ? 'invisible' : 'visible'} text-red-500 text-xs mb-1`}>
                       invalid password
                     </div>
                   </label>
-                  <label className='w-1/2 focus:outline-none focus:shadow-outline'>
+                  <label className='w-full xs:w-1/2 focus:outline-none focus:shadow-outline'>
                     <div className="text-gray-600 text-xs">
                       Confirm Password
                     </div>
@@ -248,9 +265,10 @@ export default function Signup() {
                       className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-sm text-gray-700 leading-tight"
                       id="InputPasswordConfirm"
                       placeholder="********"
-                      onChange={(event) =>
-                        setPasswordConfirm(event.target.value)
-                      }
+                      onChange={(event) => {
+                        setPasswordConfirm(event.target.value);
+                        onConfirmPasswordChange();
+                      }}
                     />
                     <div className={`${(validPasswordConfirm) ? 'invisible' : 'visible'} text-red-500 text-xs mb-1`}>
                       password mismatch
@@ -259,17 +277,22 @@ export default function Signup() {
                 </div>
               </div>
               <div className="flex flex-col space-y-4">
-                <label className="ml-2 text-xs font-medium text-gray-400">
+                <label className="flex ml-2 text-xs font-medium text-gray-400">
                   <input
                     type="checkbox"
-                    className="w-4 h-4S mr-1 bg-gray-100 border-gray-300 rounded"
+                    className="shrink-0 w-4 h-4S mr-1 bg-gray-100 border-gray-300 rounded"
                     id="CheckAgree"
+                    checked={agreement}
                     onChange={() => setAgreement(!agreement)}
                   />
-                  I have agreed to
-                  <button onClick={() => setIsReading(true)} className="ml-1 text-xs hover:text-red-300 transition-color duration-300 font-bold text-gray-400">
-                    Terms and Conditions for MileMap
-                  </button>
+                  <div className='flex flex-col xs:flex-row'>
+                    <div className='text-center mr-1'>
+                      I have agreed to
+                    </div>
+                    <button onClick={() => setIsReading(true)} className="text-xs hover:text-red-300 transition-color duration-300 font-bold text-gray-400">
+                      Terms and Conditions for MileMap
+                    </button>
+                  </div>
                 </label>
                 <button type="submit" className="bg-red-500 text-white shadow font-bold py-2 grow rounded-3xl transition ease-in-out hover:bg-red-700 duration-300">
                   Sign Up
@@ -289,7 +312,15 @@ export default function Signup() {
         visible={isReading}
         title="Terms and Conditions for MileMap"
         positiveText="Agree"
-        positiveFunction={() => setIsReading(false)}
+        positiveFunction={() => {
+          setIsReading(false);
+          setAgreement(true);
+        }}
+        negativeText="Disagree"
+        negativeFunction={() => {
+          setIsReading(false);
+          setAgreement(false);
+        }}
         message={
           <div className='space-y-2 text-sm text-left overflow-y-auto h-[200px]'>
             <h2 className='text-lg font-bold'>Introduction</h2>
