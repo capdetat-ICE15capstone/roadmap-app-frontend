@@ -5,7 +5,7 @@ import {
   getRoadmap,
   createRoadmap,
   editRoadmap,
-  countRoadmap,
+  countActiveRoadmap,
 } from "../functions/roadmapFunction.jsx";
 import Spinner from "../components/Spinner";
 import {
@@ -244,6 +244,7 @@ const RoadmapCreatePage = (props) => {
     notiStatus: { on: false },
     roadmapDeadline: new Date(),
   });
+  const creatorId = useRef(null);
   const { mode } = props; // props from parent
   const { state } = useLocation(); // state from previous page, including fetched roadmap data
   const { id } = useParams(); // param from react router placeholder (/edit/:id)
@@ -327,7 +328,7 @@ const RoadmapCreatePage = (props) => {
     setLoading(true);
 
     const loginStatus = await isUserLoggedIn();
-    const roadmapCount = await countRoadmap();
+    const roadmapCount = await countActiveRoadmap();
     const premiumStatus = await isUserPremium();
     const userInfo = await getUserInformation();
 
@@ -371,6 +372,7 @@ const RoadmapCreatePage = (props) => {
           if (premiumStatus !== true && state.roadmap.tasks.length > MAX_TASKS_NONPREMIUM) {
             handleDisplayErrorMessage("As a non premium user, you are not allowed to clone this roadmap", "/", true)
           }
+
           initialState.current = {
             name: state.roadmap.name,
             description: state.roadmap.description,
@@ -381,6 +383,8 @@ const RoadmapCreatePage = (props) => {
             roadmapDeadline: state.roadmap.roadmapDeadline,
           };
         }
+        creatorId.current = state.roadmap.creator_id;
+        console.log(creatorId.current);
         let highestID = 0;
         state.roadmap.tasks.forEach((task) => {
           if (task.id > highestID) {
@@ -418,6 +422,7 @@ const RoadmapCreatePage = (props) => {
               setLoading(false);
               handleDisplayErrorMessage("As a non premium user, you are not allowed to clone this roadmap", "/", true)
             }
+
             initialState.current = {
               name: tempRoadmap.name,
               description: tempRoadmap.description,
@@ -428,6 +433,8 @@ const RoadmapCreatePage = (props) => {
               roadmapDeadline: tempRoadmap.roadmapDeadline,
             };
           }
+
+          creatorId.current = tempRoadmap.creator_id;
           let highestID = 0;
           tempRoadmap.tasks.forEach((task) => {
             if (task.id > highestID) {
@@ -734,12 +741,21 @@ const RoadmapCreatePage = (props) => {
     reportError
   ) => {
     if (mode === "create" || mode === "clone") {
+      let cloneDetail = null;
+      if (mode === "clone") {
+        cloneDetail = {
+          forkId: id,
+          creatorId: creatorId.current
+        }
+      }
+      console.log("clone detail in cec ", cloneDetail)
       return await createRoadmap(
         roadmapObject,
         taskChange,
         subtaskChange,
         tagChanges,
-        reportError
+        reportError,
+        cloneDetail
       );
     } else if (mode === "edit") {
       return await editRoadmap(

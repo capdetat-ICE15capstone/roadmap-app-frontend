@@ -55,6 +55,16 @@ export const countRoadmap = async (timeout=DEFAULT_TIMEOUT) => {
   }
 };
 
+export const countActiveRoadmap = async (timeout=DEFAULT_TIMEOUT) => {
+  try {
+    const response = await axiosInstance.get("/home/me", {timeout:timeout})
+    return response.data.roadmaps.length
+  } catch (error) {
+    console.error(error);
+    return null
+  }
+}
+
 export const getRoadmap = async (
   rid,
   timeout = DEFAULT_TIMEOUT,
@@ -200,6 +210,7 @@ export const createRoadmap = async (
   subtaskChange, // subtaskChange object {add:[], edit:[], delete:[]
   tagChanges,
   reportError,
+  cloneDetail,
   timeout = DEFAULT_TIMEOUT
 ) => {
   console.log("Create roadmap request: ");
@@ -213,7 +224,7 @@ export const createRoadmap = async (
 
   try {
     // create Roadmap
-    response.roadmap = await PRIVATE_createRoadmap(roadmapChange);
+    response.roadmap = await PRIVATE_createRoadmap(roadmapChange, cloneDetail);
     let oldTaskRelation = taskChange.add.map((tChange) => tChange.id);
     const [taskAdd, subTaskAdd, taskRelation] = await PRIVATE_addAndReassign(
       response.roadmap.rid,
@@ -334,7 +345,7 @@ const PRIVATE_addAndReassign = async (
   }
 };
 
-const PRIVATE_createRoadmap = async (roadmap, timeout = DEFAULT_TIMEOUT) => {
+const PRIVATE_createRoadmap = async (roadmap, cloneDetail, timeout = DEFAULT_TIMEOUT) => {
   if (roadmap === null || roadmap === undefined)
     throw new Error("roadmap/is null or undefined");
   if (roadmap.notiStatus.on === false) {
@@ -352,6 +363,13 @@ const PRIVATE_createRoadmap = async (roadmap, timeout = DEFAULT_TIMEOUT) => {
     reminder_time: roadmap.notiStatus.detail.day,
     is_private: !roadmap.isPublic,
   };
+
+  if (cloneDetail !== null) {
+    // console.log("Cloning roadmap");
+    reqBody.creator_id = cloneDetail.creatorId;
+    reqBody.fork_rid = cloneDetail.id;
+    console.log("clone reqBody", reqBody);
+  }
 
   try {
     let response = await axiosInstance.post(route, reqBody, {
