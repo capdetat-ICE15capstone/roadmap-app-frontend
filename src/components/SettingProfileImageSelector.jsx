@@ -1,10 +1,25 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, lazy } from "react";
 import { updateSetting } from '../pages/Setting';
 
-import p1 from "../assets/profileImage_assets/placeholder1.png";
-import p2 from "../assets/profileImage_assets/placeholder2.png";
-import p3 from "../assets/profileImage_assets/placeholder3.jpeg";
-import p4 from "../assets/profileImage_assets/placeholder4.jpeg";
+// import p1 from "../assets/profileImage_assets/placeholder1.png";
+// import p2 from "../assets/profileImage_assets/placeholder2.png";
+// import p3 from "../assets/profileImage_assets/placeholder3.jpeg";
+// import p4 from "../assets/profileImage_assets/placeholder4.jpeg";
+
+import p1 from "../assets/profileImage_assets/1.jpg";
+import p2 from "../assets/profileImage_assets/5.jpg";
+import p3 from "../assets/profileImage_assets/2.jpg";
+import p4 from "../assets/profileImage_assets/6.jpg";
+import p5 from "../assets/profileImage_assets/3.jpg";
+import p6 from "../assets/profileImage_assets/7.jpg";
+import p7 from "../assets/profileImage_assets/4.jpg";
+import p8 from "../assets/profileImage_assets/8.jpg";
+import p9 from "../assets/profileImage_assets/9.jpg";
+import p10 from "../assets/profileImage_assets/10.jpg";
+import p11 from "../assets/profileImage_assets/11.jpg";
+import p12 from "../assets/profileImage_assets/12.jpg";
+import p13 from "../assets/profileImage_assets/13.jpg";
+import p14 from "../assets/profileImage_assets/14.jpg";
 import { ReactComponent as LockIcon } from "../assets/setting_assets/lock.svg";
 
 const lib = {
@@ -12,23 +27,23 @@ const lib = {
     1: p2,
     2: p3,
     3: p4,
-    4: p1,
-    5: p2,
-    6: p3,
-    7: p4,
-    8: p1,
-    9: p2,
-    10: p3,
-    11: p4,
-    12: p1,
-    13: p2,
-    14: p3,
-    15: p4,
-    16: p1,
-    17: p2,
-    18: p3,
-    19: p4,
-    20: p1,
+    4: p5,
+    5: p6,
+    6: p7,
+    7: p8,
+    8: p9,
+    9: p10,
+    10: p11,
+    11: p12,
+    12: p13,
+    13: p14,
+    // 14: p3,
+    // 15: p4,
+    // 16: p1,
+    // 17: p2,
+    // 18: p3,
+    // 19: p4,
+    // 20: p1,
 }
 
 export const getProfilePictureSrc = (id) => {
@@ -118,26 +133,30 @@ const SettingProfileImageSelector = ({isOpen, setIsOpen, selectedIndex = 0, setP
                             <div className="flex flex-wrap px-5 gap-1 justify-evenly my-2">
                                 <ProfPic id={0} reqLevel={0}/>
                                 <ProfPic id={1} reqLevel={0}/>
-                                <ProfPic id={2} reqLevel={0}/>
-                                <ProfPic id={3} reqLevel={0}/>
-                                <ProfPic id={4} reqLevel={0}/>
-                                <ProfPic id={5} reqLevel={3}/>
-                                <ProfPic id={6} reqLevel={6}/>
-                                <ProfPic id={7} reqLevel={9}/>
-                                <ProfPic id={8} reqLevel={12}/>
-                                <ProfPic id={9} reqLevel={15}/>
-                                <ProfPic id={10} reqLevel={18}/>
-                                <ProfPic id={11} reqLevel={21}/>
-                                <ProfPic id={12} reqLevel={24}/>
-                                <ProfPic id={13} reqLevel={27}/>
+                                <ProfPic id={2} reqLevel={5}/>
+                                <ProfPic id={3} reqLevel={5}/>
+                                <ProfPic id={4} reqLevel={10}/>
+                                <ProfPic id={5} reqLevel={10}/>
+                                <ProfPic id={6} reqLevel={15}/>
+                                <ProfPic id={7} reqLevel={15}/>
+                                <ProfPic id={8} reqLevel={20}/>
+                                <ProfPic id={9} reqLevel={25}/>
+                                <ProfPic id={10} reqLevel={30}/>
+                                <ProfPic id={11} reqLevel={35}/>
+                                <ProfPic id={12} reqLevel={40}/>
+                                {/* <ProfPic id={13} reqLevel={27}/>
                                 <ProfPic id={14} reqLevel={30}/>
                                 <ProfPic id={15} reqLevel={33}/>
                                 <ProfPic id={16} reqLevel={36}/>
                                 <ProfPic id={17} reqLevel={39}/>
                                 <ProfPic id={18} reqLevel={42}/>
-                                <ProfPic id={19} reqLevel={45}/>
+                                <ProfPic id={19} reqLevel={45}/> */}
+                            </div>
+                            <div className="flex justify-center mb-3">
+                                <span>Designed by <a href="http://www.freepik.com" className="underline text-blue-500">pikisuperstar / Freepik</a></span>
                             </div>
                         </div>
+                        
                         {/* Title */}
                         <div className="py-2 px-5 lg:py-2">
                             <div className="flex p-4 rounded-b gap-3 justify justify-end">

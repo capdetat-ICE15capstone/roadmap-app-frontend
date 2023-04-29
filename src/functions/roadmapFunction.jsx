@@ -633,8 +633,8 @@ const reformTask = (taskObj) => {
     return objRename(subtask, inboundSubtaskName);
   });
 
-  newTaskObj.start_time = new Date(`${taskObj.start_time}z`);
-  newTaskObj.deadline = new Date(`${taskObj.deadline}z`);
+  newTaskObj.start_time = new Date(`${taskObj.start_time}Z`);
+  newTaskObj.deadline = new Date(`${taskObj.deadline}Z`);
   newTaskObj.isTempId = false;
   newTaskObj.hasFetched = true;
 
@@ -647,7 +647,7 @@ const reformRoadmap = (roadmapObject) => {
 
   // front and back use different name
   newRoadmapObj.is_private = !newRoadmapObj.is_private;
-  newRoadmapObj.roadmap_deadline = new Date(`${roadmapObject.roadmap_deadline}z`)
+  newRoadmapObj.roadmap_deadline = new Date(`${roadmapObject.roadmap_deadline}Z`)
 
   return objRename(newRoadmapObj, inboundRoadmapName);
 };

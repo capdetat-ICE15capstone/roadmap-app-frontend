@@ -81,7 +81,7 @@ const Feed = () => {
       const uidResponse = await getUid(searchValue); // use searchValue to get an array of uid
       // case : uid is found => use uid to fetch for user data and set userFound to true
       if (uidResponse.search_result && uidResponse.search_result.length > 0) {
-        const uidString = encodeURIComponent(uidResponse.search_result.join(`,`));
+        const uidString = encodeURIComponent(uidResponse.search_result.map(item => item.uid).join(`,`));
         const response = await getUser(uidString);
         setCurrentUserList([...response]);
         setDisplayType("user");
