@@ -69,9 +69,11 @@ const Activity = () => {
                                     </div>
                                 </div>
                                 {/* xp */}
+                                {/*}
                                 <div className="min-w-[64px] my-auto">
                                     <p className="bg-red-500 rounded-full w-full py-1 text-center text-white text-sm px-3">{"xp: " + task.xp}</p>
                                 </div>
+                                {*/}
                                 <div className="w-10 my-auto">
                                     <TriangleIcon className="ml-[30%]"/>
                                     
