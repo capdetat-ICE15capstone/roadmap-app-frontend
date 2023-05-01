@@ -367,7 +367,7 @@ const PRIVATE_createRoadmap = async (roadmap, cloneDetail, timeout = DEFAULT_TIM
   if (cloneDetail !== null) {
     // console.log("Cloning roadmap");
     reqBody.creator_id = cloneDetail.creatorId;
-    reqBody.fork_rid = cloneDetail.id;
+    reqBody.fork_rid = cloneDetail.forkId;
     console.log("clone reqBody", reqBody);
   }
 
