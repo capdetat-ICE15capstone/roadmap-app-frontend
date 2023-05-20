@@ -37,6 +37,13 @@ export default function Signup() {
   // const location = useLocation();
   // const isFirst = location.state?.state || false;
 
+  // useEffect(() => {
+  //   console.log("----------------------------------------------------")
+  //   console.log(`currentEmail: ${email}, valid?: `, validEmail);
+  //   console.log(`pw1: ${password}, pw2: ${passwordConfirm},  valid?: `, validPasswordConfirm);
+  //   // console.log(`valid?: `, validPassword);
+  // }, [email,  password, passwordConfirm]);
+
   function handleSignupSubmit(event) {
     event.preventDefault();
     let invalidMessage = "";
@@ -72,6 +79,7 @@ export default function Signup() {
   // "Password must match"
 
   function onEmailChange(input) {
+    console.log(input);
     if (!emailValidation.test(input)) {
       setValidEmail(false);
     } else {
@@ -112,7 +120,7 @@ export default function Signup() {
   }
 
   function onConfirmPasswordChange(input) {
-    if (password !== passwordConfirm) {
+    if (password !== input) {
       setValidPasswordConfirm(false);
     } else {
       setValidPasswordConfirm(true);
@@ -171,7 +179,7 @@ export default function Signup() {
                       placeholder="Email Address"
                       onChange={(event) => {
                         setEmail(event.target.value);
-                        onEmailChange();
+                        onEmailChange(event.target.value);
                       }}
                     />
                     <div className={`${(validEmail) ? 'invisible' : 'visible'} text-red-500 text-xs mb-1`}>
